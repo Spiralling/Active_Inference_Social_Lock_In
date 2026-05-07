@@ -1,0 +1,27 @@
+% notation.tex — single source of truth for active-inference macros.
+% \input{notation} from main.tex preamble. Subagents must use only these macros
+% and must not edit this file.
+
+\newcommand{\FE}{\mathcal{F}}                    % variational free energy
+\newcommand{\EFE}{\mathcal{G}}                   % expected free energy
+\newcommand{\KL}[2]{D_{\mathrm{KL}}\!\left[#1 \,\|\, #2\right]}
+\newcommand{\E}[1]{\mathbb{E}\!\left[#1\right]}
+\newcommand{\Eunder}[2]{\mathbb{E}_{#1}\!\left[#2\right]}
+
+% Active inference primitives
+\newcommand{\C}{\mathbf{C}}                      % prior preferences (log-preferences)
+\newcommand{\Prec}{\boldsymbol{\Pi}}             % precision matrix / vector
+\newcommand{\prc}{\gamma}                        % scalar precision (avoid \prec — already taken)
+\newcommand{\policy}{\pi}                        % policy
+\newcommand{\hidden}{s}                          % hidden state
+\newcommand{\obs}{o}                             % observation
+\newcommand{\Q}{Q}                               % approximate posterior
+\newcommand{\Pgen}{P}                            % generative model
+
+% Domain-specific
+\newcommand{\salience}{\mathrm{Sal}}             % salience operator
+\newcommand{\CRED}{\mathrm{CRED}}                % credibility-enhancing display
+\newcommand{\norm}{\mathcal{N}}                  % a norm (region of high-precision shared C)
+
+% Drafting
+\newcommand{\todo}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}

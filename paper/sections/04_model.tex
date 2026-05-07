@@ -1,0 +1,23 @@
+% =====================================================================
+\section{Multi-Agent Model}
+\label{sec:model}
+% =====================================================================
+
+% TODO: ~2 LNCS pages. NEW section (not in v02). David Hyland's natural
+% contribution slot — he owns or audits the coupling derivation.
+%
+% Spec to formalise:
+%   - N agents on Watts-Strogatz small-world (k=6, beta=0.1)
+%   - Per agent i: prior preference C_i, edge precisions {gamma_ij},
+%     delegation factor d_i in [0,1] from Beta(.,.) with mean ~0.7
+%   - Posterior mixture:
+%       q_i(o) propto (1-d_i) * p_env(o | obs_i)
+%             + d_i * sum_j w_ij * p_j(o)
+%     with w_ij = gamma_ij / sum_k gamma_ik
+%   - C-update gated by variational cost lambda_i * KL(C_new || C_old)
+%     (multi-agent extension of Hyland & Albarracin 2025)
+%   - Trust update (multiplicative on prediction error vs environment):
+%       gamma_ij <- gamma_ij * exp(-eta * E_t[||o_t - q_j^pred(o_t)||])
+%
+% Then: \begin{proposition} stating the rule-induction dissociation
+% (lambda -> 0 limit recovers symmetric tracking).

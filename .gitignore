@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+*.egg-info/
+.ipynb_checkpoints/
+
+# Results (large artifacts)
+results/*.npz
+results/*.csv
+results/*.pkl
+
+# LaTeX build artifacts
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.log
+paper/*.out
+paper/*.toc
+paper/*.fdb_latexmk
+paper/*.fls
+paper/*.synctex.gz
+paper/main.pdf
+paper/sections/*.aux
+
+# DOUBLE-BLIND: real author block must never be committed
+paper/authors-deanon.tex
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp

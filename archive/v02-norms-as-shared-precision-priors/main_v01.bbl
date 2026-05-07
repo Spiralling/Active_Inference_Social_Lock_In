@@ -1,0 +1,238 @@
+\begin{thebibliography}{31}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Albarracin et~al.(2022)Albarracin, Demekas, Ramstead, and
+  Heins]{albarracin2022EpistemicCommunities}
+Mahault Albarracin, Daphne Demekas, Maxwell J.~D. Ramstead, and Conor Heins.
+\newblock Epistemic communities under active inference.
+\newblock \emph{Entropy}, 24\penalty0 (4):\penalty0 476, 2022.
+\newblock \doi{10.3390/e24040476}.
+
+\bibitem[Albarracin et~al.(2025)Albarracin, de~Jager, Hyland, and
+  Manski]{albarracin2025SocialPower}
+Mahault Albarracin, Daniel~Ari de~Jager, David Hyland, and Patrick Manski.
+\newblock The physics and metaphysics of social powers: Bridging cognitive
+  processing and social dynamics, a new perspective on power through active
+  inference.
+\newblock \emph{Entropy}, 27\penalty0 (5):\penalty0 522, 2025.
+\newblock \doi{10.3390/e27050522}.
+\newblock Also arXiv:2501.19368.
+
+\bibitem[Chudek et~al.(2012)Chudek, Heller, Birch, and
+  Henrich]{chudek2012BystanderGaze}
+Maciej Chudek, Sarah Heller, Susan Birch, and Joseph Henrich.
+\newblock Prestige-biased cultural learning: bystander's differential attention
+  to potential models influences children's learning.
+\newblock \emph{Evolution and Human Behavior}, 33\penalty0 (1):\penalty0
+  46--56, 2012.
+\newblock \doi{10.1016/j.evolhumbehav.2011.05.005}.
+
+\bibitem[Constant et~al.(2019)Constant, Ramstead, Veissi{\`e}re, and
+  Friston]{constant2019Regimes}
+Axel Constant, Maxwell J.~D. Ramstead, Samuel P.~L. Veissi{\`e}re, and Karl~J.
+  Friston.
+\newblock Regimes of expectations: An active inference model of social
+  conformity and decision making.
+\newblock \emph{Frontiers in Psychology}, 10:\penalty0 679, 2019.
+\newblock \doi{10.3389/fpsyg.2019.00679}.
+
+\bibitem[Critch and Krueger(2020)]{critchKrueger2020ARCHES}
+Andrew Critch and David Krueger.
+\newblock Ai research considerations for human existential safety (arches).
+\newblock \emph{arXiv preprint}, 2020.
+
+\bibitem[Dafoe et~al.(2020)Dafoe, Hughes, Bachrach, Collins, McKee, Leibo,
+  Larson, and Graepel]{dafoe2020CooperativeAI}
+Allan Dafoe, Edward Hughes, Yoram Bachrach, Tantum Collins, Kevin~R. McKee,
+  Joel~Z. Leibo, Kate Larson, and Thore Graepel.
+\newblock Open problems in cooperative ai.
+\newblock \emph{arXiv preprint}, 2020.
+
+\bibitem[Egozi and Ram(2024)]{egoziRam2024PrestigeFormal}
+Adi Egozi and Yoav Ram.
+\newblock The dynamics of prestige bias in cultural evolution.
+\newblock 2024.
+\newblock Verify exact venue; treats prestige bias as drift-like.
+
+\bibitem[Feldman and Friston(2010)]{feldmanFriston2010Attention}
+Harriet Feldman and Karl~J. Friston.
+\newblock Attention, uncertainty, and free-energy.
+\newblock \emph{Frontiers in Human Neuroscience}, 4:\penalty0 215, 2010.
+\newblock \doi{10.3389/fnhum.2010.00215}.
+
+\bibitem[Friston et~al.(2015)Friston, Rigoli, Ognibene, Mathys, Fitzgerald, and
+  Pezzulo]{friston2015ActiveInferenceEpistemic}
+Karl Friston, Francesco Rigoli, Dimitri Ognibene, Christoph Mathys, Thomas
+  Fitzgerald, and Giovanni Pezzulo.
+\newblock Active inference and epistemic value.
+\newblock \emph{Cognitive Neuroscience}, 6\penalty0 (4):\penalty0 187--214,
+  2015.
+\newblock \doi{10.1080/17588928.2015.1020053}.
+
+\bibitem[Heins et~al.(2024)Heins, Millidge, Da~Costa, Mann, Friston, and
+  Couzin]{heins2024CollectiveSurprise}
+Conor Heins, Beren Millidge, Lancelot Da~Costa, Richard~P. Mann, Karl~J.
+  Friston, and Iain~D. Couzin.
+\newblock Collective behavior from surprise minimization.
+\newblock \emph{Proceedings of the National Academy of Sciences}, 2024.
+\newblock Verify volume/pages; PNAS 2024.
+
+\bibitem[Heins et~al.(2025)]{heins2025AsOneAndMany}
+Conor Heins et~al.
+\newblock As one and many: Group-level generative models in multi-agent active
+  inference.
+\newblock 2025.
+\newblock Verify exact title/venue.
+
+\bibitem[Henrich(2009)]{henrich2009CREDs}
+Joseph Henrich.
+\newblock The evolution of costly displays, cooperation and religion:
+  credibility enhancing displays and their implications for cultural evolution.
+\newblock \emph{Evolution and Human Behavior}, 30\penalty0 (4):\penalty0
+  244--260, 2009.
+\newblock \doi{10.1016/j.evolhumbehav.2009.03.005}.
+
+\bibitem[Henrich and Gil-White(2001)]{henrichGilWhite2001Prestige}
+Joseph Henrich and Francisco~J. Gil-White.
+\newblock The evolution of prestige: Freely conferred deference as a mechanism
+  for enhancing the benefits of cultural transmission.
+\newblock \emph{Evolution and Human Behavior}, 22\penalty0 (3):\penalty0
+  165--196, 2001.
+\newblock \doi{10.1016/S1090-5138(00)00071-4}.
+
+\bibitem[Henrich et~al.(2015)Henrich, Chudek, and
+  Boyd]{henrichChudekBoyd2015BigMan}
+Joseph Henrich, Maciej Chudek, and Robert Boyd.
+\newblock The big man mechanism: how prestige fosters cooperation and creates
+  prosocial leaders.
+\newblock \emph{Philosophical Transactions of the Royal Society B},
+  370\penalty0 (1683):\penalty0 20150013, 2015.
+\newblock \doi{10.1098/rstb.2015.0013}.
+
+\bibitem[Hesp et~al.(2021)Hesp, Smith, Parr, Allen, Friston, and
+  Ramstead]{hesp2021DeeplyFelt}
+Casper Hesp, Ryan Smith, Thomas Parr, Micah Allen, Karl~J. Friston, and Maxwell
+  J.~D. Ramstead.
+\newblock Deeply felt affect: The emergence of valence in deep active
+  inference.
+\newblock \emph{Neural Computation}, 33\penalty0 (2):\penalty0 398--446, 2021.
+\newblock \doi{10.1162/neco_a_01341}.
+
+\bibitem[Heyes(2018)]{heyes2018CognitiveGadgets}
+Cecilia Heyes.
+\newblock \emph{Cognitive Gadgets: The Cultural Evolution of Thinking}.
+\newblock Harvard University Press, 2018.
+
+\bibitem[Heyes(2024)]{heyes2024NormPsychology}
+Cecilia Heyes.
+\newblock Rethinking norm psychology.
+\newblock 2024.
+\newblock Verify exact venue.
+
+\bibitem[K{\"o}ster et~al.(2022)K{\"o}ster, Hadfield-Menell, Hadfield, and
+  Leibo]{koster2022SillyRules}
+Raphael K{\"o}ster, Dylan Hadfield-Menell, Gillian~K. Hadfield, and Joel~Z.
+  Leibo.
+\newblock Silly rules improve the capacity of agents to learn stable
+  enforcement and compliance behaviors.
+\newblock \emph{Proceedings of the National Academy of Sciences}, 2022.
+\newblock Verify exact volume/pages.
+
+\bibitem[Kulveit et~al.(2025)Kulveit, Douglas, and
+  Ammann]{kulveit2025GradualDisempowerment}
+Jan Kulveit, Raymond Douglas, and Nora Ammann.
+\newblock Gradual disempowerment: Systemic existential risks from incremental
+  ai development.
+\newblock \emph{arXiv preprint}, 2025.
+\newblock Verify exact preprint id.
+
+\bibitem[Lanman and Buhrmester(2017)]{lanmanBuhrmester2017CREDs}
+Jonathan~A. Lanman and Michael~D. Buhrmester.
+\newblock Religious actions speak louder than words: exposure to
+  credibility-enhancing displays predicts theism.
+\newblock \emph{Religion, Brain \& Behavior}, 7\penalty0 (1):\penalty0 3--16,
+  2017.
+\newblock \doi{10.1080/2153599X.2015.1117011}.
+
+\bibitem[Limanowski and Friston(2018)]{limanowskiFriston2018Dark}
+Jakub Limanowski and Karl Friston.
+\newblock `seeing the dark': grounding phenomenal transparency and opacity in
+  precision estimation for active inference.
+\newblock \emph{Frontiers in Psychology}, 9:\penalty0 643, 2018.
+\newblock \doi{10.3389/fpsyg.2018.00643}.
+
+\bibitem[Millidge et~al.(2021)Millidge, Tschantz, and Buckley]{millidge2021EFE}
+Beren Millidge, Alexander Tschantz, and Christopher~L. Buckley.
+\newblock Whence the expected free energy?
+\newblock \emph{Neural Computation}, 33\penalty0 (2):\penalty0 447--482, 2021.
+\newblock \doi{10.1162/neco_a_01354}.
+
+\bibitem[Oldenburg and Zhi-Xuan(2024)]{oldenburgZhiXuan2024BayesianRule}
+Niko Oldenburg and Tan Zhi-Xuan.
+\newblock Bayesian rule induction for normative multi-agent systems.
+\newblock In \emph{Proceedings of AAMAS 2024}, 2024.
+
+\bibitem[Parr and Friston(2017)]{parrFriston2017Attention}
+Thomas Parr and Karl~J. Friston.
+\newblock Working memory, attention, and salience in active inference.
+\newblock \emph{Scientific Reports}, 7\penalty0 (14678), 2017.
+\newblock \doi{10.1038/s41598-017-15249-0}.
+
+\bibitem[Parr and Friston(2019)]{parrFriston2019AdvancedAtt}
+Thomas Parr and Karl~J. Friston.
+\newblock Attention or salience?
+\newblock \emph{Current Opinion in Psychology}, 29:\penalty0 1--5, 2019.
+\newblock \doi{10.1016/j.copsyc.2018.10.006}.
+
+\bibitem[Parvizi-Wayne(2024)]{parviziWayne2024PreferencesAttention}
+Darius Parvizi-Wayne.
+\newblock How preferences enslave attention: calling into question the
+  endogenous/exogenous dichotomy from an active inference perspective.
+\newblock \emph{Phenomenology and the Cognitive Sciences}, 2024.
+\newblock Verify final volume/pages; was Limanowski-cited but author is
+  Parvizi-Wayne.
+
+\bibitem[Ransom et~al.(2020)Ransom, Fazelpour, and Mole]{ransom2020Cognition}
+Madeleine Ransom, Sina Fazelpour, and Christopher Mole.
+\newblock Attention and the cognitive penetrability of perception.
+\newblock \emph{Cognition}, 2020.
+\newblock Empirical challenge to attention-as-precision; engage explicitly.
+
+\bibitem[Torresan et~al.(2025)Torresan, Kanai, and
+  Baltieri]{torresan2025ShapeC}
+Riccardo Torresan, Ryota Kanai, and Manuel Baltieri.
+\newblock Prior preferences in active inference agents: soft, hard, and goal
+  shaping.
+\newblock \emph{arXiv preprint}, 2025.
+
+\bibitem[Vasil et~al.(2020)Vasil, Badcock, Constant, Friston, and
+  Ramstead]{vasil2020SameKind}
+Jared Vasil, Paul~B. Badcock, Axel Constant, Karl~J. Friston, and Maxwell J.~D.
+  Ramstead.
+\newblock A world unto itself: Human communication as active inference.
+\newblock \emph{Frontiers in Psychology}, 11:\penalty0 417, 2020.
+\newblock \doi{10.3389/fpsyg.2020.00417}.
+
+\bibitem[Veissi{\`e}re et~al.(2020)Veissi{\`e}re, Constant, Ramstead, Friston,
+  and Kirmayer]{veissiere2020TTOM}
+Samuel P.~L. Veissi{\`e}re, Axel Constant, Maxwell J.~D. Ramstead, Karl~J.
+  Friston, and Laurence~J. Kirmayer.
+\newblock Thinking through other minds: A variational approach to cognition and
+  culture.
+\newblock \emph{Behavioral and Brain Sciences}, 43:\penalty0 e90, 2020.
+\newblock \doi{10.1017/S0140525X19001213}.
+
+\bibitem[Vinitsky et~al.(2023)Vinitsky, K{\"o}ster, Agapiou,
+  Du{\'e}{\~n}ez-Guzm{\'a}n, Vezhnevets, and Leibo]{vinitsky2023sanctions}
+Eugene Vinitsky, Raphael K{\"o}ster, John~P. Agapiou, Edgar~A.
+  Du{\'e}{\~n}ez-Guzm{\'a}n, Alexander~S. Vezhnevets, and Joel~Z. Leibo.
+\newblock A learning agent that acquires social norms from public sanctions in
+  decentralized multi-agent settings.
+\newblock \emph{Collective Intelligence}, 2\penalty0 (2), 2023.
+\newblock \doi{10.1177/26339137231162025}.
+
+\end{thebibliography}

@@ -1,0 +1,190 @@
+\section{Where Values Come From: Prestige, CREDs, and the Cultural-Evolution
+Substrate}\label{sec:cultural-evolution}
+
+Humans are, in a fundamental sense, obligate cultural learners: the overwhelming
+share of what any individual knows, wants, and treats as worth attending to was
+acquired from other people rather than rediscovered from scratch
+\citep{henrichGilWhite2001Prestige}.
+This dependence runs deeper than the transmission of practical skills or factual
+beliefs.
+What counts as a \emph{value} — which outcomes are desirable, which actions are
+admirable, which objects are sacred or disgusting — is itself downstream of what
+gets attended to, imitated, and rehearsed in a community's daily life.
+A child who grows up watching elders fast, or observing neighbours donate
+conspicuously to shared projects, or noticing which adults attract the gaze and
+proximity of many others, acquires not just a collection of beliefs but a
+structured landscape of salience: some things matter a great deal, others barely
+register.
+The cultural-evolution tradition, crystallised in \citet{henrichGilWhite2001Prestige},
+has spent the past quarter-century documenting the population-level mechanisms
+that produce and maintain these landscapes.
+This section surveys that account in enough detail to reveal where a formal
+bridge to predictive processing is both possible and necessary.
+
+\subsection*{Prestige as a coordination device for collective attention}
+
+The central conceptual move in \citet{henrichGilWhite2001Prestige} is the
+distinction between \emph{prestige} and \emph{dominance} as two structurally
+different routes to social influence.
+Dominance hierarchies, which appear across social primates, are sustained by
+intimidation: individuals defer to dominant animals to avoid costs.
+Prestige, by contrast, is \emph{freely conferred deference}.
+Copiers voluntarily attend to, sit near, gift, and imitate high-prestige models
+because doing so raises their own fitness by providing access to superior
+information or skill.
+The evolutionary logic is straightforward: when acquiring complex cumulative
+culture requires accurately identifying good models, individuals who can cheaply
+infer model quality by reading others' deference choices will outcompete those
+who must independently assess each candidate.
+The community's existing attention distribution therefore functions as a
+\emph{second-order prior} over whom it is worth attending to — a public signal
+that learners consult before committing their own attentional resources.
+
+\citet{henrichChudekBoyd2015BigMan} formalise this logic in a
+culture--gene coevolutionary model of ``big man'' leadership.
+In small-scale egalitarian societies, the big man acquires followers not through
+coercion but through accumulated demonstrations of generosity, oratory, and
+successful co-ordination.
+Critically, followers copy big-man behaviours (including prosocial ones), which
+in turn creates selection pressure for big men who are genuinely prosocial —
+because their only currency is the continued attention and copying their conduct
+commands.
+The model shows that this prestige channel produces phenotype correlation between
+leaders and followers and generates prosocial norms as stable downstream
+outcomes: the attention asymmetry is not merely a readout of pre-existing value
+distributions but actively reshapes them.
+Egalitarian levelling mechanisms — gossip, mockery, ostracism, and in extremis
+execution — function not as alternatives to prestige dynamics but as its
+complement: they \emph{withdraw} community attention from would-be dominants,
+enforcing the condition under which prestige (rather than coercion) remains the
+operative currency.
+Flat societies are densely attention-managed, not attention-neutral.
+
+The clearest experimental demonstration of how this second-order attention
+mechanism works at the level of individual learning is \citet{chudek2012BystanderGaze}.
+In a series of studies with 3--4-year-old children, a purely \emph{attentional}
+cue — ten seconds of differential bystander gaze toward one of two adult
+demonstrators, with no other information about their competence or history — more
+than doubled the probability that children subsequently copied that demonstrator
+on a novel task.
+Crucially, the effect \emph{generalised across domains}: prestige established
+through others' gaze in one context (e.g., artifact use) transferred to
+unrelated copying choices (e.g., food preferences).
+This domain-generality is theoretically decisive.
+A content-specific prior — ``this person knows about artifacts'' — would not
+transfer to food choices; the prestige cue would stay in the domain where it was
+established.
+What does transfer is a \emph{precision signal}: ``this person's behaviour is
+worth attending to, period.''
+In predictive-processing terms (though the authors do not use this vocabulary),
+the bystander gaze cue behaves like a generalised precision parameter rather than
+a domain-restricted content prior.
+It raises the weight accorded to the high-prestige model's actions across the
+entire space of observable behaviours, without specifying what those actions will
+contain.
+Section~\ref{sec:formal} formalises this observation precisely.
+
+\subsection*{CREDs and the costliness logic}
+
+Once language evolved to allow the cheap transmission of beliefs, cultural
+learners faced a new inference problem: which professed values does a model
+\emph{actually hold}, and which are mere verbal performance?
+\citet{henrich2009CREDs} argues that natural selection favoured learners who
+weighted models' expressed beliefs by the costliness of their observable
+commitment to those beliefs — what he calls Credibility-Enhancing Displays
+(CREDs).
+Fasting, painful initiations, celibacy, martyrdom, and public sacrifice are
+actions whose costs make sense only if the agent genuinely holds the associated
+belief or value; they are costly signals that cannot be cheaply faked.
+Learners who copied the values of agents who performed CREDs systematically
+acquired the values of genuinely committed models, rather than those of
+convenient verbal performers.
+
+The fit with precision-weighted inference is near-direct, and Section~\ref{sec:formal}
+develops it explicitly.
+Informally: without CREDs, a model's verbal claim about a value provides
+low-precision evidence — it could reflect genuine commitment or could be
+strategic posturing.
+A CRED raises the precision of the channel from observed-other-behaviour to
+one's own value-prior.
+High-CRED demonstrations are high-confidence messages about what the transmitter
+actually values; low-CRED environments produce noisy, uncertain updates.
+Empirical work by Lanman and Buhrmester \citep{lanmanBuhrmester2017CREDs} has
+confirmed this logic: childhood exposure to parental CREDs predicts adult theism
+more robustly than competing accounts based on cognitive style or existential
+anxiety, suggesting that what gets installed is not a bare belief but a
+\emph{calibrated prior} whose strength tracks the evidential quality of the
+exposure.
+The CRED mechanism and the prestige mechanism are thus complementary channels in
+the same installation system: prestige cues direct \emph{which} models receive
+attention; CREDs modulate \emph{how much confidence} to accord to those models'
+expressed commitments.
+
+\subsection*{Attentional infrastructure is itself culturally inherited}
+
+A natural objection at this point is that while the \emph{contents} of attention
+may vary culturally, the \emph{mechanisms} that structure attention — what kinds
+of agents and events are even candidates for imitation — must be
+evolutionarily fixed.
+\citet{heyes2018CognitiveGadgets} mounts a sustained argument that this
+objection is wrong.
+Her ``cognitive gadgets'' thesis distinguishes a domain-general genetic
+``starter kit'' of social attentional biases (sensitivity to faces, voices, and
+social rewards) from the higher-order mechanisms of selective social learning
+— including imitation, mind-reading, and norm compliance — which are themselves
+culturally assembled during development.
+The decisive piece of evidence for present purposes: there is empirical support
+for the claim that humans can \emph{socially learn attentional biases},
+specifically by learning to attend more to some agents than others through the
+mechanism of following third-party gaze.
+That is, the same bystander-gaze cue that Chudek et al.\ use as an experimental
+manipulation of prestige is also the mechanism by which children acquire durable
+attentional dispositions — what to find exemplary, whom to watch, which features
+of the social environment carry signal.
+The salience landscape is not merely populated through cultural transmission; its
+\emph{topography} — which gradients channel attention up rather than down — is
+itself inherited.
+
+\citet{heyes2024NormPsychology} extends this framework to norm psychology
+specifically.
+Rather than treating norm-following as a genetically fixed motivational module
+(``normative competence as instinct''), she argues that normative competence is a
+culturally assembled cognitive gadget built atop domain-general attentional and
+motivational capacities.
+Crucially, what counts as a norm — which regularities in others' behaviour are
+picked up as prescriptive rather than merely descriptive — is not given in
+advance but is itself acquired through the same prestige-and-gaze mechanisms
+that structure learning more generally.
+The implications for any account of value transmission are significant: there is
+no innate, domain-general ``norm receptor'' that picks out which social patterns
+to treat as obligatory.
+Instead, the very categories through which norms are perceived and reproduced
+are part of what gets transmitted.
+This recursive structure — attentional dispositions shaping what gets copied,
+which in turn shapes attentional dispositions in the next generation — is
+precisely the loop this paper seeks to formalise.
+
+\subsection*{The ceiling of the cultural-evolution account}
+
+The literature surveyed in this section provides a rich \emph{empirical} story
+about value transmission: which individuals attract community attention, under
+what conditions, through what cues, with what consequences for the behavioural
+repertoires of those who copy them.
+The account is anchored in experimental data \citep{chudek2012BystanderGaze},
+population-genetic formalisms \citep{henrichChudekBoyd2015BigMan,egoziRam2024PrestigeFormal},
+and developmental evidence \citep{heyes2018CognitiveGadgets,heyes2024NormPsychology}.
+What this literature does \emph{not} provide is a vocabulary that connects these
+dynamics to the computational architecture of the individual learner: why does
+bystander gaze function as a domain-general precision signal rather than a
+domain-specific content cue?
+What is happening, formally, when a CRED raises the confidence with which a
+value-prior is adopted?
+How do community-level patterns of attention crystallise into the stable
+configurations we call norms?
+These questions ask for a level of mechanistic description that cultural
+evolution's largely informal vocabulary does not supply.
+The next section takes up precisely this gap, mapping prestige- and
+CRED-mediated attentional dynamics onto the formal language of
+precision-weighted predictive processing, and showing how the loop that closes
+from community priors through attention and copying back to community priors can
+be given a rigorous active-inference rendering.

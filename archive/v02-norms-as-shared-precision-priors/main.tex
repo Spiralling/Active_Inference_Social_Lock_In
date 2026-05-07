@@ -1,0 +1,221 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{hyperref}
+\usepackage[margin=1in]{geometry}
+\usepackage{natbib}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, calc, fit, backgrounds,
+                shapes.geometric, decorations.pathreplacing, decorations.pathmorphing}
+% All figures in this draft use manual TikZ positioning, so we stay on pdfLaTeX.
+% To switch to auto-laid-out figures (Fig. 2, Fig. 4), uncomment the two lines
+% below AND compile with LuaLaTeX (lualatex main.tex). See figure-source comments.
+% \usetikzlibrary{graphs,graphdrawing}
+% \usegdlibrary{layered,force}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+\input{notation}
+
+% Give figures more breathing room
+\setlength{\textfloatsep}{20pt plus 4pt minus 4pt}
+\setlength{\intextsep}{18pt plus 4pt minus 4pt}
+\setlength{\floatsep}{18pt plus 4pt minus 4pt}
+\setlength{\abovecaptionskip}{10pt}
+\setlength{\belowcaptionskip}{6pt}
+
+\newtheorem{definition}{Definition}[section]
+\newtheorem{proposition}[definition]{Proposition}
+
+\title{\textbf{Norms as Shared Precision Priors: \\[0.3em]
+Values, Salience, and Cultural Transmission \\[0.3em]
+in Active Inference}}
+\author{Jonas Hallgren\textsuperscript{1} \\
+\textsuperscript{1}Equilibria Network \\
+\texttt{contact@eq-network.org}}
+\date{\today \\ \textit{Working Draft --- v0.1}}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Norms --- shared regularities of behaviour that enable coordination among
+agents with heterogeneous preferences --- are studied separately across game
+theory, cultural evolution, cognitive sociology, and active inference, with
+limited integration. The substrate problem is how prior preferences come to be
+shared across a community in the first place: how values are installed in
+individual agents through community-level dynamics. We address this problem
+within the active-inference framework. Values are identified with prior
+preferences ($\C$) in an agent's generative model; prestige cues and
+credibility-enhancing displays are formalised as precision modulators on the
+channel through which $\C$ is updated from observed behaviour; and norms are
+characterised as stabilised regions of high-precision shared $\C$ across a
+community. The resulting fixed-point dynamics --- community priors shape
+salience, salience directs attention and copying, copying installs priors in
+next-generation agents --- admit three regimes (convergence on a shared norm,
+bifurcation into multiple sub-community attractors, and dissolution into
+incoherence) determined by the precision gain of the social channel. The
+shape of $\C$ itself further governs the exploration--exploitation tradeoff
+in installed values. The account is complementary to existing treatments of
+social influence as policy-precision modulation, operating one layer up on
+the content of prior preferences. We propose a multi-agent simulation that
+operationalises the regime predictions and discuss implications for tracking
+how mediated information environments may restructure community-level value
+distributions.
+\end{abstract}
+
+%% ============================================================
+\section{Introduction}
+\label{sec:intro}
+%% ============================================================
+
+The cognitive and cultural substrates of norms --- shared regularities of
+behaviour through which agents with heterogeneous preferences coordinate
+---  have been the subject of sustained inquiry across multiple disciplines,
+with limited integration. Game theory and the study of conventions, descended
+from Lewis, frame norms as equilibria of repeated interaction
+\citep{koster2022SillyRules,oldenburgZhiXuan2024BayesianRule,
+vinitsky2023sanctions}. Cultural evolution
+\citep{henrichGilWhite2001Prestige,heyes2018CognitiveGadgets} documents the
+population-level mechanisms by which behaviours and values are transmitted
+across generations, with particular attention to prestige-biased copying and
+credibility-enhancing displays \citep{henrich2009CREDs,chudek2012BystanderGaze}.
+Cognitive sociology, anchored in Bourdieu's account of habitus and developed
+empirically by \citet{vaisey2009DualProcess}, locates norms in durable
+dispositions acquired through participation in social life. Active inference
+\citep{friston2015ActiveInferenceEpistemic,parrFriston2017Attention} provides
+a computational vocabulary in which values are prior preferences in an
+agent's generative model and attention is precision-weighting on prediction
+error; multi-agent extensions of this framework
+\citep{albarracin2022EpistemicCommunities,heins2024CollectiveSurprise} have
+begun to apply these tools to collective phenomena.
+
+What has been missing is a formal account of the substrate that connects
+these traditions: the cognitive mechanism by which the prior preferences
+that make a norm binding for an individual agent come to be shared across a
+community. Equilibrium framings yield stable behaviour without specifying a
+cognitive substrate; cultural evolution describes the empirical transmission
+process in informal vocabulary; cognitive sociology characterises the
+phenomenology without committing to a computational mechanism; active
+inference has the formal apparatus but has not been systematically applied
+at the junction where individual generative models are coupled by social
+observation. The substrate problem is the gap into which this paper places
+its contribution.
+
+Working in the active-inference framework, we identify values with prior
+preferences ($\C$) in an agent's generative model. We propose that prestige
+cues and credibility-enhancing displays modulate the precision of the
+channel through which $\C$ is updated from observed behaviour, and that
+norms are best characterised as stabilised regions of high-precision shared
+$\C$ across a community. The resulting fixed-point loop --- community priors
+shape salience, salience directs attention and copying, copying installs
+priors in next-generation agents --- admits three regimes (convergence on a
+shared norm, bifurcation into echo chambers, dissolution into incoherence)
+determined by the precision gain of the social channel. The shape of $\C$
+itself --- sharp, broad, or what \citet{torresan2025ShapeC} call ``shaped''
+--- governs the exploration--exploitation tradeoff and the robustness of
+installed values.
+
+The contribution is threefold. First, we provide a formal definition of
+norms as high-precision shared regions of $\C$, with explicit stability
+conditions for the loop dynamics. Second, we differentiate the account from
+\citet{albarracin2025SocialPower}'s treatment of social power as
+policy-precision modulation: we operate one layer up, on the content of
+prior preferences. Third, we propose a minimum viable multi-agent simulation
+that operationalises the regime predictions and provides a target for
+empirical work.
+
+The paper proceeds as follows. Section~\ref{sec:cooperative-ai} situates the
+substrate problem within contemporary norm research in multi-agent systems
+and cognitive science. Section~\ref{sec:cultural-evolution} surveys the
+cultural-evolution backdrop, paying particular attention to the
+domain-generality of prestige cues, which behave as precision parameters
+rather than content priors. Section~\ref{sec:formal} develops the formal
+account, including the definition of norms and the bifurcation conditions
+of the loop. Section~\ref{sec:simulation} proposes a multi-agent simulation
+that operationalises the framework's regime predictions.
+Section~\ref{sec:discussion} closes with limitations and remarks on the
+implications for environments in which artificial agents mediate the
+substrate of value transmission.
+
+\input{section_1}
+
+\input{section_2}
+
+\input{section_3}
+
+\input{section_4}
+
+%% ============================================================
+\section{Discussion and Open Work}
+\label{sec:discussion}
+%% ============================================================
+
+We have argued that cooperative AI's working concept of norm is best refined
+as a stabilised region of high-precision shared prior preference, installed
+in agents by a precision-weighted attentional channel that prestige cues and
+credibility-enhancing displays modulate. The fixed-point loop we formalise
+--- community priors shape salience, salience directs copying, copying
+installs priors --- is the same loop that the cultural-evolution tradition
+documents informally and that active inference has the apparatus to render
+formally; the contribution is to close the loop explicitly and to locate it
+on the prior-preference content layer ($\C$), one level up from the
+policy-precision account of social power developed by
+\citet{albarracin2025SocialPower}.
+
+Three threads warrant brief comment.
+
+\paragraph{Gradual disempowerment as channel capture.}
+The substrate of normative life, on this account, is the precision channel
+through which $\C$ is installed; whoever mediates that channel shapes which
+priors get installed in the next generation. The
+\citet{kulveit2025GradualDisempowerment} thesis acquires a clean mechanistic
+reading in this picture: the worry is not that AI systems will explicitly
+override human preferences but that they already mediate the channel through
+which preferences are formed. Recommendation systems, conversational
+interfaces, and AI-shaped attention markets are precision-allocators, not
+just content-providers. Whether their integration constitutes capture,
+augmentation, or genuine partnership turns on whether the
+$\C$-installation channel remains a function of the community's own values
+or becomes a function of the system's optimisation objective. We flag this
+as a first-order question for cooperative AI without developing it here.
+
+\paragraph{Limitations and what is not in this paper.}
+Several formal moves require empirical anchoring we do not provide. The
+CRED-as-precision-modulator hypothesis is novel and predicts specific
+dose-response relationships between display costliness and posterior
+precision on transmitted values; the simulation in
+Section~\ref{sec:simulation} tests one consequence (regime transitions in
+prestige-precision gain) but not this empirical specification directly. A
+follow-up empirical programme would profitably target precision-shift
+markers under controlled CRED exposure. Separately, this paper does not
+develop the structural / spectral reading hinted at in
+Section~\ref{sec:simulation}'s in-community measurements: the broader
+project of using spectral-graph quantities as cross-mechanism signatures
+of coordination structure is left for a separate paper. Finally, the
+political-theory bridge (Bourdieu's habitus, Lukes' third face of power as
+preference-shaping) is invoked as motivation but not formalised here beyond
+the explicit differentiation from \citet{albarracin2025SocialPower}.
+
+\paragraph{What we hope this draft does.}
+We have presented this as a working draft for active-inference colleagues.
+We welcome feedback, especially from those embedded in multi-agent
+active-inference, cultural-evolution, or cooperative-AI norm research,
+where the framework most directly intersects existing programmes and where
+the formalism is most likely to over- or under-reach.
+
+\bibliographystyle{plainnat}
+\bibliography{values-salience}
+
+\end{document}

@@ -1,0 +1,207 @@
+\section{A Proposed Simulation: Norm Formation under Prestige-Biased Precision}%
+\label{sec:simulation}
+
+The formal account in Section~\ref{sec:formal} yields a set of testable predictions about
+regime transitions in a community of active-inference agents: as the precision
+gain on inter-agent observation channels rises, the community should traverse
+states of heterogeneous individual priors, broad consensus, bifurcated
+echo-chamber attractors, and finally degenerate fixation on a single agent's
+prior. We sketch here a minimum viable simulation that operationalises these
+predictions. The base platform is the pymdp epistemic-communities setup of
+\citet{albarracin2022EpistemicCommunities}, which already demonstrates that
+self-confirming sampling under shared priors produces stable echo chambers
+without any malign design. We extend that setup with an explicit
+\emph{prestige-cue mechanism} that modulates the precision on inter-agent
+observation channels, allowing us to sweep through the predicted regime
+sequence in a single parameter.
+
+\subsection*{Setup}
+
+We consider $N \approx 20$ agents, each running a discrete-state active-inference
+loop implemented in pymdp. Each agent $i$ maintains a generative model with a
+shared discrete outcome space $\mathcal{O}$ and a privately initialised prior
+preference vector $\C_i \in \mathbb{R}^{|\mathcal{O}|}$ (the log-preference, in
+the sense of \citealt{torresan2025ShapeC}).  Agents observe each other's most
+recent actions through a precision-weighted observation channel: the
+\emph{effective channel precision} from agent $j$ to agent $i$ is
+\begin{equation}
+  \prc_{ij} \;=\; \prc_0 \cdot f(\rho_{ij}),
+  \label{eq:prestige-precision}
+\end{equation}
+where $\prc_0 > 0$ is a baseline precision, $\rho_{ij} \in [0,1]$ is a
+prestige cue, and $f : [0,1] \to \mathbb{R}_{>0}$ is a monotone gain function
+(e.g.\ $f(\rho) = e^{g\rho}$ with gain parameter $g \geq 0$). A higher
+$\prc_{ij}$ means that agent $i$ weights agent $j$'s actions more heavily when
+updating its own $\C_i$ --- precisely the attentional inheritance mechanism
+formalised in Section~\ref{sec:installation}.
+
+\paragraph{Key extension over \citet{albarracin2022EpistemicCommunities}.}
+Albarracin et al.\ treat all inter-agent channels with a uniform precision;
+the community's attractor structure follows from the topology of which sources
+agents prefer to sample. Here we add a \emph{prestige layer} that modulates
+channel precision independently of source preference. The prestige cue
+$\rho_{ij}$ can be operationalised in two ways that correspond to distinct
+cultural-learning regimes identified by \citet{henrichGilWhite2001Prestige}:
+
+\begin{enumerate}[label=(\alph*)]
+  \item \textbf{Exogenous prestige.} A small fraction $p_h \approx 0.15$ of
+    agents are designated high-prestige at the outset ($\rho_{ij} = 1$ for
+    high-prestige $j$, $\rho_{ij} = 0$ otherwise). This recovers the simplest
+    case of model-based learning studied by \citet{chudek2012BystanderGaze},
+    where bystanders differentially attend to marked individuals.
+
+  \item \textbf{Endogenous prestige.} $\rho_{ij}$ self-organises via a
+    Henrich-style success-bias rule: after each round, $\rho_{ij}$ is
+    proportional to the reduction in free energy that agent $j$ achieved in the
+    preceding episode.  Agents that minimise their prediction error most
+    efficiently accrue prestige and attract greater attentional weight,
+    implementing the ``copy the successful'' heuristic at the precision level.
+\end{enumerate}
+
+Both variants share the functional form~\eqref{eq:prestige-precision}; they
+differ only in how $\rho_{ij}$ evolves. Variant (b) is the richer case for
+the norm-formation question but variant (a) is analytically cleaner for
+isolating the regime transitions.
+
+\subsection*{Figure 4 --- Simulation schematic}
+
+\begin{figure}[ht]
+\centering
+% NOTE: This TikZ figure uses the `graphs` and `graphdrawing` libraries
+% (loaded in main.tex) together with the `force` graph-drawing algorithm.
+% These require LuaLaTeX. When compiling with pdfLaTeX, replace the
+% \graph{} block with manually positioned \node / \draw commands.
+\begin{tikzpicture}[
+  agent/.style   = {circle, draw, minimum size=0.75cm, inner sep=1pt,
+                    font=\small},
+  prestige/.style= {circle, draw, very thick, minimum size=0.75cm, inner sep=1pt,
+                    font=\small, fill=gray!20},
+  chan/.style    = {->, >=Stealth, gray},
+  hichan/.style  = {->, >=Stealth, line width=2.5pt, black!70},
+  label distance=2pt
+]
+% --- manually positioned layout (pdfLaTeX-safe version) ---
+% Outer ring: 8 ordinary agents
+\foreach \i/\angle in {1/0, 2/45, 3/90, 4/135, 5/180, 6/225, 7/270, 8/315}{
+  \node[agent] (a\i) at ({2.4*cos(\angle)},{2.4*sin(\angle)})
+        {$\C_{\i}$};
+}
+% Inner core: 2 high-prestige agents
+\node[prestige] (p1) at (-0.7, 0.0) {$\C^{*}_{1}$};
+\node[prestige] (p2) at ( 0.7, 0.0) {$\C^{*}_{2}$};
+
+% Low-precision channels (ordinary → ordinary, thin)
+\foreach \s/\t in {1/2, 2/3, 3/4, 4/5, 5/6, 6/7, 7/8, 8/1, 1/5, 3/7}{
+  \draw[chan] (a\s) -- (a\t);
+}
+% High-precision channels (ordinary → prestige, thick)
+\foreach \s in {1,2,3,4,5,6,7,8}{
+  \draw[hichan] (a\s) -- (p1);
+  \draw[hichan] (a\s) -- (p2);
+}
+% Mutual channel between high-prestige agents
+\draw[hichan, <->] (p1) -- (p2);
+
+% Prestige labels on thick edges (one representative)
+\draw[hichan] (a1) -- node[above right, font=\scriptsize]{$\prc_{ij}\!=\!\prc_0 e^{g\rho_{ij}}$} (p1);
+
+% Legend
+\node[agent,  below left=0.3cm and 0.0cm of a8, font=\scriptsize]  (leg1) {};
+\node[right=0.05cm of leg1, font=\scriptsize] {ordinary agent ($\C_i$)};
+\node[prestige, below=0.45cm of leg1, font=\scriptsize] (leg2) {};
+\node[right=0.05cm of leg2, font=\scriptsize] {high-prestige agent ($\C^*$)};
+\draw[chan,  below=0.6cm of leg2] (0,-3.6) -- node[right, font=\scriptsize]{low $\prc_{ij}$} ++(0.8,0);
+\draw[hichan] (0,-3.95) -- node[right, font=\scriptsize]{high $\prc_{ij}$} ++(0.8,0);
+\end{tikzpicture}
+\caption{Proposed simulation schematic: $N$ agents with individual prior
+preferences $\C_i$ observe each other through precision-weighted channels
+modulated by prestige cues $\rho_{ij}$.  High-prestige agents (shaded, inner
+ring) attract thick observation channels from all other agents; ordinary
+agents are connected by thin channels with baseline precision $\prc_0$.  The
+community-level $\C$-distribution evolves via attention-mediated copying as
+defined in Eq.~\eqref{eq:prestige-precision}.}
+\label{fig:sim-schematic}
+\end{figure}
+
+\subsection*{Predicted regime transitions}
+
+As the prestige-precision gain $g$ increases from zero, the model predicts
+the following sequence of community-level behaviours. At \emph{low} $g$
+($g \approx 0$), inter-agent observation channels carry negligible precision
+above the individual's self-model; transmitted information is too weak to
+overcome agents' prior heterogeneity, and the population $\C$-distribution
+remains broad---no norm forms. At \emph{intermediate} $g$, transmission is
+strong enough for iterative updating to draw the community toward a single
+high-density region: a shared $\C$ emerges, corresponding to the
+\emph{shaped} $\C$ regime of Section~\ref{sec:shape-of-C}. At \emph{high} $g$ the
+dynamics bifurcate: sub-communities that share initial $\C$-proximity lock
+onto distinct attractors, recovering the echo-chamber result of
+\citet{albarracin2022EpistemicCommunities} by a complementary mechanism (there,
+echo chambers follow from source-sampling bias; here, they follow from
+heterogeneous prestige cue weights). At \emph{very high} $g$, the community
+collapses onto a single high-prestige agent's $\C$, producing the
+\emph{degenerate fixation} regime: the spiky $\C$ of a community captured by
+one model.  These four qualitative outcomes span the spiky/broad/shaped $\C$
+taxonomy introduced in Section~\ref{sec:shape-of-C} and predicted by the stability
+analysis of Section~\ref{sec:loop}.
+
+\subsection*{Quantities to measure}
+
+The simulation collects three primary observables as functions of $g$:
+
+\begin{enumerate}[label=(\roman*)]
+  \item \textbf{Mean pairwise KL divergence} $\bar{D}(g) = \binom{N}{2}^{-1}
+    \sum_{i < j} \KL{\C_i}{\C_j}$, measuring aggregate heterogeneity of the
+    community's prior-preference distribution; this should be non-monotone in
+    $g$, peaking at the echo-chamber bifurcation before collapsing at
+    degenerate fixation.
+
+  \item \textbf{Population $\C$-entropy} $H(g) = -\int p(\C) \log p(\C)\,
+    \mathrm{d}\C$, estimated by kernel density over the empirical distribution
+    of $\C_i$ vectors; a unimodal drop in $H$ marks the consensus regime,
+    while a bimodal recovery marks the bifurcation.
+
+  \item \textbf{Attractor count} $K(g)$, estimated by $k$-means clustering on
+    the converged $\{\C_i\}$ with silhouette-based model selection; $K$
+    should trace the sequence $K > 1 \to K = 1 \to K = 2 \to K = 1$ as $g$
+    increases through the four regimes.
+\end{enumerate}
+
+These observables admit a complementary spectral-graph reading that
+connects the simulation directly to the structural analysis of
+\citet{heins2024CollectiveSurprise}. Construct the agent influence graph
+$\mathcal{G}$ with edge weights equal to the realised $\prc_{ij}$ at
+convergence. The \emph{spectral gap} $\lambda_2(\mathcal{G})$ --- the second
+eigenvalue of the normalised Laplacian --- measures how quickly information
+diffuses across the weakest bottleneck; a large spectral gap indicates a
+well-mixed community (consensus regime), while a small spectral gap flags a
+bottleneck consistent with bifurcated echo chambers. The \emph{Fiedler
+vector} $\mathbf{v}_2(\mathcal{G})$ identifies the natural partition of the
+community: its sign pattern should recover the two attractor clusters at high
+$g$. Tracking $\lambda_2$ and $\mathbf{v}_2$ as functions of $g$ thus gives
+a spectral read-out of the same regime transitions measured by
+$\bar{D}(g)$ and $K(g)$.
+
+\subsection*{Connection to the silly-rules result}
+
+The prediction in regime (ii)---the intermediate-$g$ fragile-consensus
+window---has a direct analogue in \citet{koster2022SillyRules}. Silly rules,
+in the cooperative-AI setting, are arbitrary behavioural taboos that carry no
+direct welfare content but substantially improve agents' capacity to learn
+stable enforcement and compliance. In the present framework the mechanism is
+transparent: silly rules pump precision on the policy prior
+``follow-norms-in-general'' without committing to any specific $\C$-content.
+They are, in effect, a device for raising $g$ artificially at the level of
+policy selection, making the normative channel more legible without specifying
+what travels through it. Our framework predicts that silly rules should be
+most beneficial precisely in the intermediate-$g$ regime, where the
+consensus-forming process is fragile: the channel precision is high enough to
+synchronise agents but the attractor is not yet locked in, making additional
+precision-pumping most valuable. At very high $g$ (degenerate fixation) silly
+rules add noise around an already-collapsed distribution; at low $g$ they
+cannot compensate for an insufficiently precise transmission channel. The
+intermediate window is where content-neutral precision amplification does
+meaningful normative work, consistent with the \citeauthor{koster2022SillyRules}
+finding that spurious normativity enhances acquisition of welfare-relevant
+compliance.
+

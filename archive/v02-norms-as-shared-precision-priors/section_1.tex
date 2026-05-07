@@ -1,0 +1,204 @@
+\section{Norm Learning Without a Substrate: The Installation Problem}\label{sec:cooperative-ai}
+
+%% ~1500 words / ~2 pages. No EFE formalism. No §3 apparatus.
+%% Anchor keys: dafoe2020CooperativeAI, critchKrueger2020ARCHES,
+%%   koster2022SillyRules, oldenburgZhiXuan2024BayesianRule,
+%%   kulveit2025GradualDisempowerment, albarracin2025SocialPower.
+%% Light forward refs: albarracin2022EpistemicCommunities, henrich2009CREDs.
+
+Cooperative intelligence --- the capacity of agents to find mutually
+beneficial joint courses of action --- is the organising concept behind a
+rapidly consolidating research field. \citet{dafoe2020CooperativeAI} lay out
+the agenda: cooperation rests on understanding, communication, commitment, and
+norms. Of these four pillars, norms carry the heaviest load. They stabilise
+expectations across agents who cannot fully observe one another's preferences,
+sustain coordination under incomplete contracting, and provide the decentralised
+scaffolding that makes institutions tractable. Whether the agents in question are
+AI--AI, AI--human, or human--human-via-AI, a world with more capable AI systems
+is a world in which norms do more work, not less~\citep{critchKrueger2020ARCHES}.
+Getting their computational basis right is therefore not a peripheral concern for
+cooperative AI: it is foundational.
+
+\subsection*{Norms-as-Equilibria: What Works and What Is Missing}
+
+The dominant treatment of norms in cooperative AI follows the game-theoretic
+tradition inaugurated by Lewis and formalised by Schelling: a norm is a
+self-enforcing equilibrium of behaviour sustained by mutual expectations. In this
+frame, a social norm \textit{exists} when compliance and sanctioning behaviour
+jointly persist at population scale under coordination or social-dilemma
+pressure. The practical advantage of this framing is substantial. It interfaces
+naturally with multi-agent reinforcement learning (MARL), makes the stability
+conditions of norms tractable, and generates testable predictions about which
+equilibria persist under evolutionary pressure. The Leibo lineage of cooperative
+MARL papers, the decentralised sanctioning work of \citet{vinitsky2023sanctions},
+and the Bayesian rule-induction approach of \citet{oldenburgZhiXuan2024BayesianRule}
+all inherit this framing, and all deliver real scientific progress within it.
+
+What the equilibrium framing does not deliver is a \textit{cognitive substrate}
+--- a mechanistic story about what a norm is in the head of a single agent.
+The equilibrium frame treats the agent's internal representation as a black box:
+whatever it contains, if compliance and sanctioning persist, the norm is present.
+Three observations mark the limits of this silence. First, violations of norms
+\textit{feel surprising} in a way that violations of mere regularities do not;
+they elicit moral outrage, not just strategic recalculation. Second, some norms
+are \textit{sticky}: agents continue to follow them even when enforcement is
+relaxed and even when they cannot articulate a welfare rationale. Third, and
+most relevant here, agents can shift from \textit{imitating} a norm --- following
+it to avoid sanctions --- to \textit{embodying} it, at which point the norm shapes
+what they attend to, what they notice as salient, and what they find imaginable
+as a course of action. The equilibrium account has no vocabulary for this
+phenomenology, because it operates at the level of policy outputs, not generative
+model structure.
+
+The \citet{koster2022SillyRules} result makes this gap vivid in a particularly
+elegant way. Adding arbitrary ``silly rules'' --- taboos that carry no welfare
+justification --- into a MARL foraging environment \textit{improves} agents'
+acquisition of compliance and enforcement with welfare-relevant taboos. This
+result is surprising under the equilibrium frame, because silly rules add no
+information about the welfare-relevant equilibrium; under a precision-substrate
+account, it is exactly what one would expect. Silly rules supply additional
+Bayesian evidence that a \textit{normative regime is in operation} ---
+they pump up the precision of the agents' prior over the policy distribution
+``follow taboos'' without specifying any particular content. Once that
+precision is elevated, the agents learn welfare-relevant norms faster. The
+mechanism Koster et al.\ identify is not primarily about content; it is about
+the legibility of the normative substrate as such. This is the empirical
+signature of a precision-shaping story, written in MARL language.
+
+\citet{oldenburgZhiXuan2024BayesianRule} is the most cognitively rich current
+treatment and the most direct dialogue partner for this paper. Their agents
+Bayesianly induce shared norms as discrete obligative or prohibitive rules from
+observed compliance and sanction data; they show that a \textit{shared
+assumption} that a norm system is operating is sufficient to bootstrap common
+knowledge of specific norms, enabling rapid convergence and stable transmission
+to newcomers. This is a genuine advance: unlike equilibrium-only accounts, it
+gives norms propositional structure in individual agents. But the ``shared
+assumption'' itself remains unmodelled prior content. It is posited as an
+external parameter of the inference problem rather than as something agents
+acquire from a community, transmit with fidelity, and maintain through
+coordinated attention. Representing norms as discrete inferred rules also
+forecloses the graded, phenomenologically thick account of norm-internationalisation
+that the sticky-norm and violation-surprise phenomena require. The rules are
+the outputs of inference; the question of what \textit{installs the prior} that
+makes the shared assumption credible is left open.
+
+\subsection*{The Installation Question}
+
+Where do an agent's priors over what-counts-as-a-norm come from? This is the
+question the equilibrium and Bayesian-rule accounts both treat as exogenous.
+Norms are handed to agents, or emerge from iterated play, but in neither case
+does the account say how one generation's normative landscape gets written into
+the next generation's starting priors. In human cognition and cultural evolution,
+this is precisely the question that \textit{is} answered: credibility-enhancing
+displays, prestige-biased transmission, and community-level attention allocation
+are the mechanisms by which prior preferences over outcomes are shaped and
+reproduced~\citep{henrich2009CREDs}. Any formal account of norm learning that
+cannot speak to these mechanisms is incomplete at the level of mechanism, even
+if it is complete at the level of equilibrium description.
+
+The stakes of this incompleteness become acute when AI systems participate in
+human normative life. \citet{kulveit2025GradualDisempowerment} argue that
+incremental AI integration can gradually disempower human populations not through
+any adversarial takeover but through structural drift: as AI systems become
+load-bearing participants in economic, cultural, and institutional life, the
+implicit alignment between human interests and system behaviour that comes from
+human participation being generative is progressively eroded. Under the equilibrium
+framing of norms, AI systems that sit at the behavioural equilibrium look
+unproblematic. But if norms supervene on shared cognitive architecture --- if
+their stability is grounded in the precision-shaping dynamics through which a
+community installs prior preferences in its members --- then AI systems that
+participate only at the policy level, without contributing to the substrate that
+makes norms credible, can hollow out the normative structure even while the
+behaviour looks intact. The installation question is therefore not merely a
+technical gap in formal models; it is the micro-level mechanism through which
+gradual disempowerment operates.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+  node distance = 2.4cm and 3.2cm,
+  box/.style = {
+    draw, rectangle, rounded corners=3pt,
+    minimum width=2.4cm, minimum height=0.9cm,
+    font=\small, align=center
+  },
+  missing/.style = {
+    draw=gray!60, rectangle, rounded corners=3pt,
+    minimum width=2.4cm, minimum height=0.9cm,
+    font=\small, align=center, dashed, fill=gray!10
+  },
+  arr/.style  = {-Stealth, thick},
+  marr/.style = {-Stealth, thick, dashed, gray!70}
+]
+  %% Main horizontal chain
+  \node[box] (world)   {World};
+  \node[box, right=of world]  (policy)  {Policy $\policy$};
+  \node[box, right=of policy] (action)  {Action};
+
+  %% Off-axis community node
+  \node[missing, above=1.5cm of policy] (community) {Community};
+
+  %% Horizontal arrows
+  \draw[arr]  (world)  -- (policy);
+  \draw[arr]  (policy) -- (action);
+
+  %% Missing arrow: community -> prior layer (annotated)
+  \draw[marr] (community) -- node[right, font=\footnotesize, text=gray!80]
+              {missing / proposed} (policy);
+
+  %% Label under the policy node to indicate the prior layer
+  \node[font=\footnotesize, below=0.15cm of policy, text=gray!60]
+        {prior $\C$};
+
+\end{tikzpicture}
+\caption{The missing arrow: existing cooperative-AI norm models operate on the
+horizontal chain (world $\to$ policy $\to$ action) and leave the community-to-prior
+channel exogenous (dashed). This paper's contribution is to formalise the shaded
+arrow: how community-level precision dynamics install an agent's prior preferences
+over outcomes ($\C$), constituting the cognitive substrate of norms.}
+\label{fig:missing-arrow}
+\end{figure}
+
+\subsection*{Differentiation from Albarracin et al.\ (2025)}
+
+\citet{albarracin2025SocialPower} formalise social power as the differential
+capacity to set the policy-precision parameter ($\prc$) in others' generative
+models. In their account, a socially powerful agent is one who can raise or
+lower how confidently another agent pursues a given policy --- shaping the
+effective temperature of the policy distribution without necessarily altering
+what the agent considers valuable in the first place. This is a significant
+contribution: it gives power a formal active-inference definition, it engages
+Bourdieu's concepts of habitus, field, and capital, and it shows how
+Foucauldian disciplinary mechanisms can be read as precision-modulation
+operations. Our move is one layer up, on the \textit{content} of prior
+preferences ($\C$) --- that is, what an agent comes to consider valuable
+in the first place, rather than how confidently it pursues a given policy.
+Both layers are causally involved in the cultural reproduction of norms:
+a community that controls the policy-precision parameter $\prc$ in its
+members (the Albarracin layer) can enforce compliance, but a community that
+controls the content of $\C$ (our layer) shapes what counts as desirable
+before any enforcement becomes necessary. The prior-preference content layer
+is, we argue, the substrate that cooperative-AI norm theory currently lacks.
+Albarracin et al.\ provide the complementary half of the story; this paper
+provides the other half, and together they constitute a two-layer account of
+normativity in active-inference agents. The dynamics by which epistemic
+communities stabilise or fragment around shared $\C$-vectors are developed
+in~\citet{albarracin2022EpistemicCommunities}, which we build on directly
+in Section~\ref{sec:formal}.
+
+\subsection*{Roadmap}
+
+The remainder of the paper develops the missing arrow in three steps.
+Section~\ref{sec:cultural-evolution} establishes the cultural-evolution backdrop,
+reviewing the mechanisms --- prestige-biased transmission, credibility-enhancing
+displays~\citep{henrich2009CREDs}, and community-level attention allocation ---
+through which prior preferences are differentially shaped and reproduced across
+agents.
+Section~\ref{sec:formal} develops the formal account: we define norms as
+stabilised regions of high-precision shared $\C$, characterise the installation
+channel as a community-level precision-shaping process, and derive stability
+conditions for the resulting attractor landscape.
+Section~\ref{sec:simulation} proposes a minimal simulation instantiating the
+account in a pymdp multi-agent environment, designed to exhibit the bifurcation
+between norm-convergence and echo-chamber fragmentation as a function of
+the precision dynamics.

@@ -1,0 +1,52 @@
+This is BibTeX, Version 0.99d
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: main_v01.aux
+Reallocating 'name_of_file' (item size: 1) to 9 items.
+The style file: plainnat.bst
+Reallocating 'name_of_file' (item size: 1) to 16 items.
+Database file #1: values-salience.bib
+Warning--empty journal in egoziRam2024PrestigeFormal
+Warning--empty journal in heins2025AsOneAndMany
+Warning--empty journal in heyes2024NormPsychology
+You've used 31 entries,
+            2773 wiz_defined-function locations,
+            804 strings with 11955 characters,
+and the built_in function-call counts, 14566 in all, are:
+= -- 1270
+> -- 993
+< -- 14
++ -- 334
+- -- 303
+* -- 1230
+:= -- 2345
+add.period$ -- 120
+call.type$ -- 31
+change.case$ -- 192
+chr.to.int$ -- 31
+cite$ -- 65
+duplicate$ -- 627
+empty$ -- 1080
+format.name$ -- 353
+if$ -- 2977
+int.to.chr$ -- 1
+int.to.str$ -- 1
+missing$ -- 32
+newline$ -- 190
+num.names$ -- 124
+pop$ -- 341
+preamble$ -- 1
+purify$ -- 162
+quote$ -- 0
+skip$ -- 494
+stack$ -- 0
+substring$ -- 322
+swap$ -- 29
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 336
+warning$ -- 3
+while$ -- 117
+width$ -- 0
+write$ -- 448
+(There were 3 warnings)

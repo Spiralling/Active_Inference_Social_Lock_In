@@ -1,0 +1,72 @@
+% =====================================================================
+% Variational Paradigm Dynamics
+% IWAI 2026 submission — DOUBLE-BLIND
+%
+% This file uses Springer's LNCS class. Drop llncs.cls into this folder
+% before compiling. Compile with pdfLaTeX:
+%   pdflatex main && bibtex main && pdflatex main && pdflatex main
+%
+% Real author block lives in authors-deanon.tex (gitignored).
+% Submission build keeps \author{Anonymous} below.
+% =====================================================================
+\documentclass[runningheads]{llncs}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb}
+% NB: amsthm conflicts with LNCS's built-in \proof; LNCS provides its own
+% theorem environment via \spnewtheorem if needed.
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, calc, fit, backgrounds,
+                shapes.geometric, decorations.pathreplacing, decorations.pathmorphing}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+\input{notation}
+
+% --- Anonymization ---------------------------------------------------
+% For the camera-ready, replace this block with \input{authors-deanon}.
+\title{Variational Paradigm Dynamics: \\
+       Norms, Phase Transitions, and the Cost of Changing Your Mind \\
+       in Multi-Agent Active Inference}
+\titlerunning{Variational Paradigm Dynamics}
+\author{Anonymous}
+\authorrunning{Anonymous}
+\institute{Anonymous}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\textit{[250-word abstract — drafted by 2026-05-22, locked by 2026-05-24]}
+\end{abstract}
+
+\keywords{active inference \and norms \and phase transitions \and
+          multi-agent systems \and variational free energy}
+
+% =====================================================================
+\input{sections/01_introduction}
+
+\input{sections/02_related_work}
+
+\input{sections/03_formal_background}
+
+\input{sections/04_model}
+
+\input{sections/05_experiments}
+
+\input{sections/06_discussion}
+% =====================================================================
+
+\bibliographystyle{splncs04}
+\bibliography{refs}
+
+\end{document}
