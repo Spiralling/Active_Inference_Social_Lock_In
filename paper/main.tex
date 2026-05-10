@@ -2,8 +2,7 @@
 % Variational Paradigm Dynamics
 % IWAI 2026 submission — DOUBLE-BLIND
 %
-% This file uses Springer's LNCS class. Drop llncs.cls into this folder
-% before compiling. Compile with pdfLaTeX:
+% Compile:
 %   pdflatex main && bibtex main && pdflatex main && pdflatex main
 %
 % Real author block lives in authors-deanon.tex (gitignored).
@@ -14,8 +13,10 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{amsmath,amssymb}
+\usepackage{mathtools}
+\usepackage{bm}
 % NB: amsthm conflicts with LNCS's built-in \proof; LNCS provides its own
-% theorem environment via \spnewtheorem if needed.
+% theorem environment via \spnewtheorem.
 \usepackage{booktabs}
 \usepackage{hyperref}
 \usepackage{xcolor}
@@ -23,34 +24,37 @@
 \usepackage{caption}
 \usepackage{array}
 \usepackage{tabularx}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+% NOTE: For IWAI submission, restore [numbers]+splncs04. plainnat with
+% author-year is used for drafting so \citet renders author names.
+\usepackage[round,authoryear]{natbib}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta, positioning, calc, fit, backgrounds,
-                shapes.geometric, decorations.pathreplacing, decorations.pathmorphing}
+                shapes.geometric, decorations.pathreplacing, decorations.pathmorphing,
+                matrix, graphs, quotes}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
 
 \input{notation}
 
-% --- Anonymization ---------------------------------------------------
-% For the camera-ready, replace this block with \input{authors-deanon}.
-\title{Variational Paradigm Dynamics: \\
-       Norms, Phase Transitions, and the Cost of Changing Your Mind \\
-       in Multi-Agent Active Inference}
-\titlerunning{Variational Paradigm Dynamics}
-\author{Anonymous}
-\authorrunning{Anonymous}
-\institute{Anonymous}
+% LNCS predefines: theorem, lemma, proposition, corollary, definition,
+% example, remark. We rely on those built-ins; do not redeclare.
+
+% --- De-anonymized author block (drafting only — restore Anonymous for
+%     double-blind submission). authors-deanon.tex is gitignored.
+\input{authors-deanon}
 
 \begin{document}
 
 \maketitle
 
 \begin{abstract}
-\textit{[250-word abstract — drafted by 2026-05-22, locked by 2026-05-24]}
+\textit{[250-word abstract --- drafted by 2026-05-22, locked by 2026-05-24]}
 \end{abstract}
 
-\keywords{active inference \and norms \and phase transitions \and
-          multi-agent systems \and variational free energy}
+\keywords{active inference \and norms \and precision learning \and
+          variational free energy \and multi-agent systems}
 
 % =====================================================================
 \input{sections/01_introduction}
@@ -66,7 +70,8 @@
 \input{sections/06_discussion}
 % =====================================================================
 
-\bibliographystyle{splncs04}
+% NOTE: For IWAI submission, restore splncs04.
+\bibliographystyle{plainnat}
 \bibliography{refs}
 
 \end{document}

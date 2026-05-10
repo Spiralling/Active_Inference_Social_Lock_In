@@ -3,9 +3,50 @@
 \label{sec:intro}
 % =====================================================================
 
-% TODO: Reframe v02's introduction around variational paradigm dynamics.
-% Anchor on Hyland & Albarracin (2025). Motivate Kuhnian phase transitions
-% in coupled-agent systems as the empirical phenomenon. Position against
-% Bayesian rule-induction (Oldenburg & Zhi-Xuan 2024). Target ~1.5 LNCS pp.
-%
-% Source for harvest: archive/v02-norms-as-shared-precision-priors/section_1.tex
+Norms --- shared regularities of behaviour through which agents with
+heterogeneous preferences coordinate --- are studied separately across
+game theory \citep{koster2022SillyRules,oldenburgZhiXuan2024BayesianRule},
+cultural evolution
+\citep{henrich2009CREDs,henrichGilWhite2001Prestige,heyes2018CognitiveGadgets},
+and active inference
+\citep{constant2019Regimes,albarracin2022EpistemicCommunities}, with
+limited integration. The substrate problem common to all three is how
+the priors that make a norm binding for an individual agent come to be
+shared, maintained, and revised across a community.
+
+This paper proposes a single technical apparatus for that problem.
+Norms are formalised as \emph{salience priors}: high-precision
+components of an agent's prior preference distribution
+$\C$ that direct attention to particular features of the environment.
+The community-level dynamics of these priors are governed by two
+precision-related quantities. First, the precision $\trust{i}{j}$ that
+agent $i$ assigns to the channel from neighbouring agent $j$ is
+\emph{learned}, in the same Bayesian sense as any other channel
+precision in active inference: it tracks the prediction error that
+$j$'s prior actions induced about subsequently observed environmental
+ground truth. Trust, on this view, is not a separate module; it is
+what precision-weighting looks like when one of the agent's evidence
+channels happens to be another agent. Second, the agent's own update
+to $\C$ is gated by a \emph{variational cost of changing one's mind}
+\citep{hylandAlbarracin2025MindChange}: a Kullback--Leibler asymmetry
+that penalises movement away from the current $\C$ and so generates
+hysteresis under environmental drift. Together, the two pieces
+articulate the joint dynamics by which a community of agents installs,
+maintains, and (sometimes failing to) revises its salience priors.
+
+The contribution is technical: we lift a single-agent variational cost
+of mind-change \citep{hylandAlbarracin2025MindChange} to a coupled
+multi-agent setting on a small-world graph
+\citep{wattsStrogatz1998SmallWorld}, integrate it with a precision-as-trust
+account of the social channel, and show that the resulting dynamics
+admit a clean dissociation in the $\stub \to 0$ limit from
+Bayesian rule-induction baselines
+\citep{oldenburgZhiXuan2024BayesianRule}.
+
+Section~\ref{sec:related} situates the contribution against immediate
+neighbours in the literature.
+Section~\ref{sec:formal} develops the formal background:
+variational free energy, the complexity-as-cost-of-mind-change reading,
+precision-as-attention, and the formalisation of norms as salience
+priors. Section~\ref{sec:model} specifies the multi-agent model.
+Section~\ref{sec:experiments} outlines the empirical programme.

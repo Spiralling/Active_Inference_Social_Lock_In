@@ -1,27 +1,46 @@
 % notation.tex — single source of truth for active-inference macros.
-% \input{notation} from main.tex preamble. Subagents must use only these macros
-% and must not edit this file.
+% \input{notation} from main.tex preamble. Use only these macros; do not
+% redefine.
 
+% ---------- Information-theoretic primitives ------------------------
 \newcommand{\FE}{\mathcal{F}}                    % variational free energy
 \newcommand{\EFE}{\mathcal{G}}                   % expected free energy
 \newcommand{\KL}[2]{D_{\mathrm{KL}}\!\left[#1 \,\|\, #2\right]}
 \newcommand{\E}[1]{\mathbb{E}\!\left[#1\right]}
 \newcommand{\Eunder}[2]{\mathbb{E}_{#1}\!\left[#2\right]}
+\newcommand{\Real}{\mathbb{R}}
+\newcommand{\Nat}{\mathbb{N}}
+\newcommand{\indicator}[1]{\mathbf{1}\!\left[#1\right]}
 
-% Active inference primitives
+% ---------- Active inference primitives -----------------------------
 \newcommand{\C}{\mathbf{C}}                      % prior preferences (log-preferences)
-\newcommand{\Prec}{\boldsymbol{\Pi}}             % precision matrix / vector
-\newcommand{\prc}{\gamma}                        % scalar precision (avoid \prec — already taken)
+\newcommand{\Cnorm}[1]{C_{#1}}                   % per-norm scalar component
+\newcommand{\Prec}{\boldsymbol{\Pi}}             % precision matrix
+\newcommand{\prc}{\gamma}                        % scalar precision
 \newcommand{\policy}{\pi}                        % policy
 \newcommand{\hidden}{s}                          % hidden state
 \newcommand{\obs}{o}                             % observation
-\newcommand{\Q}{Q}                               % approximate posterior
-\newcommand{\Pgen}{P}                            % generative model
+\newcommand{\Q}{q}                               % approximate posterior
+\newcommand{\Pgen}{p}                            % generative density
 
-% Domain-specific
+% ---------- Coupling layer (this paper) -----------------------------
+\newcommand{\agentset}{V}                        % set of agents (vertices)
+\newcommand{\edgeset}{E}                         % social edges
+\newcommand{\graph}{\mathcal{G}}                 % social graph
+\newcommand{\nbhd}[1]{\mathcal{N}(#1)}           % neighbours of agent i
+\newcommand{\Nagents}{N}                         % population size
+\newcommand{\Rnorms}{R}                          % number of norms
+\newcommand{\trust}[2]{\gamma_{#1#2}}            % trust precision i->j
+\newcommand{\delegate}{d}                        % delegation factor (social vs env)
+\newcommand{\stub}{\lambda}                      % cost of mind-change (stubbornness)
+\newcommand{\mindcost}[2]{\lambda_{#1,#2}}       % per-agent per-norm stubbornness
+\newcommand{\feature}{\phi}                      % observation feature
 \newcommand{\salience}{\mathrm{Sal}}             % salience operator
-\newcommand{\CRED}{\mathrm{CRED}}                % credibility-enhancing display
-\newcommand{\norm}{\mathcal{N}}                  % a norm (region of high-precision shared C)
+\newcommand{\situation}{\sigma}                  % situation (game) at time t
+\newcommand{\actionspace}{\mathcal{A}}           % action set
+\newcommand{\norm}{\mathcal{N}}                  % a norm
+\newcommand{\envprec}{\gamma_{\mathrm{env}}}     % environmental channel precision
+\newcommand{\sigmoid}{\sigma_{\mathrm{logistic}}}
 
-% Drafting
+% ---------- Drafting ------------------------------------------------
 \newcommand{\todo}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}

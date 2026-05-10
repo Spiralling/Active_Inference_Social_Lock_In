@@ -1,23 +1,290 @@
 % =====================================================================
 \section{Formal Background}
-\label{sec:background}
+\label{sec:formal}
 % =====================================================================
 
-% TODO: ~2.5 LNCS pages. Compress v02 §3 (currently ~4.5 article pages).
-% Key elements to preserve:
-%   - Active inference primer: prior preferences C, precision \Pi, free energy
-%   - Attention as precision (Feldman & Friston 2010)
-%   - Salience as expected information gain (Parr & Friston 2017, 2019)
-%   - Values as prior preferences C; valence as expected precision
-%     of action model (Hesp et al. 2021)
-%   - The variational cost of mind-change: KL(C_new || C_old)
-%     foregrounded as motivational cost (Hyland & Albarracin 2025)
-%
-% Cut from v02:
-%   - Cultural-evolution backdrop (prestige, CREDs, Heyes) —
-%     mention only briefly as motivation
-%   - Bourdieu / Lukes political-theory bridge
-%   - Differentiation from Albarracin et al. 2025 (one paragraph)
-%
-% Source for harvest:
-%   archive/v02-norms-as-shared-precision-priors/section_3.tex
+This section develops the four formal commitments on which the
+multi-agent model of Section~\ref{sec:model} rests:
+(i)~variational free energy as the agent's objective;
+(ii)~the complexity term re-read as a motivational cost of mind-change;
+(iii)~precision as attentional weighting on evidence channels; and
+(iv)~norms as salience priors --- high-precision components of $\C$
+that direct attention to particular features of the environment.
+
+% --------------------------------------------------------------------
+\subsection{Variational Free Energy}
+\label{ssec:vfe}
+% --------------------------------------------------------------------
+
+An active-inference agent carries a generative model
+$\Pgen(\obs, \hidden)$ over observations $\obs \in \mathcal{O}$ and
+hidden states $\hidden \in \mathcal{S}$, together with a recognition
+density $\Q(\hidden)$ that approximates the posterior $\Pgen(\hidden \mid \obs)$.
+The agent updates $\Q$ by minimising the variational free energy
+\begin{equation}
+\FE[\Q] \;=\; \Eunder{\Q}{\ln \Q(\hidden) - \ln \Pgen(\obs, \hidden)}
+\;=\; \underbrace{\KL{\Q(\hidden)}{\Pgen(\hidden)}}_{\text{complexity}}
+\;-\; \underbrace{\Eunder{\Q}{\ln \Pgen(\obs \mid \hidden)}}_{\text{accuracy}}.
+\label{eq:vfe}
+\end{equation}
+Action selection in active inference proceeds by minimising the
+expected free energy of policies; for our purposes,
+Eq.~\eqref{eq:vfe} is the only quantity required, because the
+model dynamics we develop concern belief revision rather than
+multi-step planning.
+
+Prior preferences are encoded as a log-density $\C \in \Real^{|\mathcal{O}|}$
+over outcomes, normalised so that $\Pgen(\obs) \propto \exp \C(\obs)$.
+The same formal object that other treatments call \emph{values}
+\citep{hesp2021DeeplyFelt,torresan2025ShapeC} thus appears here as
+$\C$. We will use the two terms interchangeably; the substantive
+work is done by what we say about how $\C$ is updated.
+
+% --------------------------------------------------------------------
+\subsection{The Complexity Term as a Cost of Mind-Change}
+\label{ssec:cost-of-mind-change}
+% --------------------------------------------------------------------
+
+Standard treatments of Eq.~\eqref{eq:vfe} read complexity as a
+regulariser: a quantity that prevents over-fitting by penalising
+posteriors that wander far from the prior. \citet{hylandAlbarracin2025MindChange}
+argue that this reading is incomplete. The same KL term, when applied
+to the update of an agent's prior preferences from $\C^{(t)}$ to
+$\C^{(t+1)}$ in light of new evidence, is most naturally read as
+a \emph{motivational cost}: the agent experiences resistance to
+revising its prior proportional to
+$\KL{\Pgen(\obs \mid \C^{(t+1)})}{\Pgen(\obs \mid \C^{(t)})}$.
+
+Two observations follow. First, this cost is asymmetric in
+$\C^{(t)}$ and $\C^{(t+1)}$. The Kullback--Leibler divergence is not a
+metric; under a fixed evidence stream, the path from prior $A$ to prior
+$B$ is not the time-reverse of the path from $B$ to $A$. Second, the
+asymmetry has dynamical consequences whenever the environment is not
+stationary. An agent whose update is gated by a positive cost of
+mind-change exhibits hysteresis: a cycle of environmental change
+followed by reversion to the original state does not return $\C$ to
+its starting value. This is the formal signature we exploit in
+Section~\ref{sec:model}.
+
+We write the variational $\C$-update as
+\begin{equation}
+\C^{(t+1)}
+\;=\;
+\arg\min_{\C}
+\Bigl[\,
+\KL{\Q^{(t+1)}(\obs)}{\Pgen(\obs \mid \C)}
+\;+\;
+\stub \,\KL{\Pgen(\obs \mid \C)}{\Pgen(\obs \mid \C^{(t)})}
+\,\Bigr],
+\label{eq:c-update}
+\end{equation}
+where $\Q^{(t+1)}(\obs)$ is the posterior over outcomes implied by the
+agent's current beliefs about the world, and $\stub \geq 0$ is the
+\emph{stubbornness} parameter. Setting $\stub = 0$ recovers the
+Bayes-optimal projection of the posterior onto $\Pgen(\obs \mid \C)$;
+$\stub \to \infty$ freezes $\C$ at $\C^{(t)}$. Eq.~\eqref{eq:c-update}
+is the technical content of the cost-of-mind-change reading;
+\citet{hylandAlbarracin2025MindChange} establish it for a single
+agent.
+
+\begin{remark}
+The asymmetric form
+$\KL{\Pgen(\obs \mid \C)}{\Pgen(\obs \mid \C^{(t)})}$
+is essential. Replacing it with the symmetric Jensen--Shannon
+divergence eliminates the path-dependence of belief revision and so
+removes the hysteretic dynamics the model is built to exhibit.
+\end{remark}
+
+Figure~\ref{fig:landscape} visualises the effect of $\stub$ on the
+location of the variational minimum.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.78\linewidth, height=5.4cm,
+  xlabel={candidate $C$},
+  ylabel={objective in Eq.~\eqref{eq:c-update}},
+  xmin=-3, xmax=3,
+  ymin=0,  ymax=4,
+  xtick={-2.0, 0.6}, xticklabels={$C^{(t)}$, $C^{*}$},
+  ytick=\empty,
+  axis lines=left,
+  legend style={font=\scriptsize, draw=none,
+                at={(0.98,0.98)}, anchor=north east,
+                fill=white, fill opacity=0.85, text opacity=1},
+  legend cell align=left,
+  every axis plot/.append style={very thick}
+]
+% Accuracy term: KL[q || p(o|C)] — proxied by (C - C*)^2 / 2 with C* = 0.6
+\addplot[domain=-3:3, samples=80, color=black!60, dashed]
+  {0.5*(x - 0.6)^2};
+\addlegendentry{accuracy term}
+
+% Cost of mind-change: KL[p(C) || p(C_old)] — proxied by (C - C_old)^2 / 2, C_old = -2
+\addplot[domain=-3:3, samples=80, color=red!60!black, dotted]
+  {0.5*(x - (-2.0))^2};
+\addlegendentry{cost of mind-change}
+
+% Combined for lambda = 0
+\addplot[domain=-3:3, samples=80, color=blue!30]
+  {0.5*(x - 0.6)^2};
+\addlegendentry{$\stub = 0$}
+
+% lambda = 0.5
+\addplot[domain=-3:3, samples=80, color=blue!60]
+  {0.5*(x - 0.6)^2 + 0.5*0.5*(x - (-2.0))^2};
+\addlegendentry{$\stub = 0.5$}
+
+% lambda = 2.0
+\addplot[domain=-3:3, samples=80, color=blue!90!black]
+  {0.5*(x - 0.6)^2 + 2.0*0.5*(x - (-2.0))^2};
+\addlegendentry{$\stub = 2.0$}
+
+% Mark minima
+\node[circle, fill=blue!30, inner sep=1.4pt] at (axis cs:0.6,0)   {};
+\node[circle, fill=blue!60, inner sep=1.4pt] at (axis cs:-0.27,0) {};
+\node[circle, fill=blue!90!black, inner sep=1.4pt]
+  at (axis cs:-1.13,0) {};
+
+\end{axis}
+\end{tikzpicture}
+\caption{The cost-of-mind-change reading of the complexity term shifts
+the variational minimum. Accuracy alone (dashed black) is minimised at
+the Bayes-optimal $C^{*}$; the asymmetric KL penalty (dotted red) is
+minimised at $C^{(t)}$. The combined objective in
+Eq.~\eqref{eq:c-update} interpolates between the two as $\stub$
+increases (blue curves), with the minimum --- marked --- pulled away
+from $C^{*}$ toward $C^{(t)}$. As $\stub \to \infty$ the agent freezes
+at $C^{(t)}$.}
+\label{fig:landscape}
+\end{figure}
+
+% --------------------------------------------------------------------
+\subsection{Precision as Attention}
+\label{ssec:precision-attention}
+% --------------------------------------------------------------------
+
+Active-inference agents weight evidence from each of their channels by
+a precision parameter $\prc$, formally a parameter of the likelihood
+$\Pgen(\obs \mid \hidden; \prc)$ controlling how tightly observations
+cluster around their generating hidden state.
+\citet{feldmanFriston2010Attention} identify this parameter with
+\emph{attention}: high-precision channels dominate posterior updates,
+low-precision channels barely register. The mathematical content is
+standard. For Gaussian likelihoods, the posterior precision after
+combining $K$ channels is $\sum_k \prc_k$; the posterior mean is the
+precision-weighted mean of the channel signals.
+
+\citet{parrFriston2017Attention} distinguish \emph{attention} from
+\emph{salience}. Attention is a posterior quantity: precision-weighting
+applied to currently observed signals. Salience is a prior quantity:
+the expected information gain associated with sampling from a channel
+or feature, evaluated under the agent's current generative model.
+The salience landscape thus determines what the agent is \emph{disposed}
+to attend to, before any specific observation is made.
+
+\begin{definition}[Salience prior]
+\label{def:salience-prior}
+A salience prior on a feature $\feature: \mathcal{O} \to \Real$ is a
+component of $\C$ that assigns differential preference weight to
+outcomes distinguished by $\feature$, thereby raising the expected
+information gain associated with sampling channels that report on
+$\feature$. We denote the salience operator by $\salience_{\feature}(\C)$.
+\end{definition}
+
+The empirical content of Definition~\ref{def:salience-prior} is that
+the shape of $\C$ governs not only what the agent prefers but also
+\emph{what the agent attends to}: a sharp $\C$ along feature
+$\feature$ produces a high-precision attentional channel for
+$\feature$-relevant evidence
+\citep{parviziWayne2024PreferencesAttention,limanowskiFriston2018Dark}.
+The empirical bridge to attention-as-precision is well-established
+\citep{feldmanFriston2010Attention,parrFriston2017Attention}; the
+empirical bridge to behaviour is the subject of
+\citet{torresan2025ShapeC}.
+
+% --------------------------------------------------------------------
+\subsection{Norms as Salience Priors}
+\label{ssec:norms-as-salience}
+% --------------------------------------------------------------------
+
+We are now in a position to state the central conceptual move. A norm,
+on the present account, is not a content prior over actions but an
+attentional prior over what features of a situation count as
+normatively relevant. The honesty norm does not say ``say true things'';
+it says ``attend to truth-conditions of statements you make.''
+The generosity norm does not say ``give things away''; it says
+``attend to others' material needs.'' Norm-following behaviour is
+then the policy that minimises expected free energy under the
+agent's normative salience landscape, in concert with whatever
+non-normative preferences the agent holds.
+
+\begin{definition}[Norm]
+\label{def:norm}
+A norm $\norm$ is a salience prior $\salience_{\feature_\norm}(\C)$
+that is shared across a community $V_\norm \subseteq V$ in the
+precise sense that the agents in $V_\norm$ assign correlated
+high-precision weight to feature $\feature_\norm$ in their
+respective $\C$.
+\end{definition}
+
+Two consequences of Definition~\ref{def:norm} should be flagged. First,
+norms are objects of \emph{population-level} attention rather than
+individual conviction; the binding force of a norm derives from its
+being shared, in the sense that an agent's neighbours also weight the
+same feature highly. Second, the precision-weighting structure of
+norms means that whoever modulates the precision of the channel that
+installs a feature into $\C$ thereby modulates which norms become
+active in the community. This is the formal bridge to the
+multi-agent model of Section~\ref{sec:model}: \emph{trust} ---
+the precision an agent assigns to evidence supplied by neighbours ---
+is the variable through which norms are installed in
+$\C$ and through which they are maintained against environmental drift.
+Figure~\ref{fig:variables-loop} summarises the four variables and
+their update relations.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+  box/.style    = {draw, rounded corners=3pt, minimum width=3.4cm,
+                   minimum height=1.1cm, font=\small, align=center,
+                   fill=gray!5},
+  varbox/.style = {draw, rounded corners=3pt, minimum width=3.4cm,
+                   minimum height=1.1cm, font=\small, align=center,
+                   fill=blue!10, draw=blue!60, very thick},
+  arr/.style    = {-Stealth, semithick},
+  lbl/.style    = {font=\scriptsize, midway, fill=white,
+                   inner sep=2pt, align=center}
+]
+% Four corners of a wide rectangular loop
+\node[varbox]                          (Ci)    {\textit{salience prior} $\C_i$};
+\node[box, right=4.6cm of Ci]          (act)   {action $a_i$};
+\node[box, below=2.2cm of act]         (post)  {posterior $\Q_i$ \\
+                                               \scriptsize Eq.~\eqref{eq:posterior-mix}};
+\node[varbox, below=2.2cm of Ci]       (trust) {\textit{trust} $\trust{i}{j}$};
+
+% Loop edges, clockwise
+\draw[arr] (Ci)    -- node[lbl]{sample from $\C_i$} (act);
+\draw[arr] (act)   -- node[lbl]{neighbours observe; \\
+                                environment reveals $\hidden^{*}$} (post);
+\draw[arr] (post)  -- node[lbl]{prediction error \\
+                                Eq.~\eqref{eq:trust-update}} (trust);
+\draw[arr] (trust) -- node[lbl]{weights neighbours \\
+                                in Eq.~\eqref{eq:posterior-mix}} (Ci);
+
+% Diagonal arrow: posterior drives C-update
+\draw[arr, dashed] (post) -- node[lbl, pos=0.42]
+  {Eq.~\eqref{eq:c-update-multinorm},~$\stub_{i,r}$} (Ci);
+\end{tikzpicture}
+\caption{The four variables of the multi-agent model and their update
+loop, traversed clockwise. The salience prior $\C_i$ shapes the
+agent's action; the action is observed by the social neighbourhood
+and the environment reveals ground truth; the resulting posterior
+$\Q_i$ both drives an asymmetric-KL update of $\C_i$ (dashed,
+gated by stubbornness $\stub_{i,r}$) and supplies the prediction
+errors that update channel precision $\trust{i}{j}$. The two
+boxed quantities are the dynamical state of agent $i$ in this paper;
+the grey nodes are derived per-step quantities.}
+\label{fig:variables-loop}
+\end{figure}

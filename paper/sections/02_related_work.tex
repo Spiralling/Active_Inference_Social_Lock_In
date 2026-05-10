@@ -3,13 +3,42 @@
 \label{sec:related}
 % =====================================================================
 
-% TODO: ~1 LNCS page. Cover:
-%   - Single-agent variational cost of mind-change (Hyland & Albarracin 2025)
-%   - Multi-agent active inference (Albarracin et al. 2022 epistemic
-%     communities; Heins et al. 2024 collective behaviour;
-%     Pitliya et al. 2025 ToM-AIF)
-%   - Normative active inference (Constant, Albarracin, Friston 2025)
-%   - Bayesian rule induction for normative MAS (Oldenburg & Zhi-Xuan 2024)
-%   - Theory of appropriateness (Leibo et al. 2024, 2025)
-%   - Cooperative MARL silly-rules (Köster et al. 2022)
-%   - Bifurcation analyses of MARL learning dynamics (Barfuss et al.)
+Three immediate neighbours frame the contribution.
+
+\paragraph{Single-agent cost of mind-change.}
+\citet{hylandAlbarracin2025MindChange} re-foreground the complexity
+term of variational free energy as a motivational quantity rather than
+a regulariser: the agent experiences a cost proportional to the
+Kullback--Leibler divergence between a candidate posterior and the
+current prior. The asymmetry of that divergence implies that belief
+revision is path-dependent --- the cost of reaching $C'$ from $C$ is
+not the cost of reaching $C$ from $C'$. We adopt this reading and
+extend it to the multi-agent setting, treating $\stub_{i,r}$ as a
+per-agent, per-norm parameter that gates each agent's update to its
+own salience priors.
+
+\paragraph{Multi-agent active inference.}
+\citet{albarracin2022EpistemicCommunities} establish the formal
+apparatus for coupling pymdp agents through shared observations and
+characterise echo-chamber bifurcation as a function of inter-agent
+precision; \citet{constant2019Regimes} formalise norm-following as
+Bayes-optimal action under environmentally cued policy priors;
+\citet{albarracin2025SocialPower} formalise social power as the
+differential capacity to set policy precision in others' generative
+models. Our model inherits the coupling apparatus of
+\citet{albarracin2022EpistemicCommunities} and the deontic-cue
+mechanism of \citet{constant2019Regimes}, and complements
+\citet{albarracin2025SocialPower} by operating one layer up: we treat
+the \emph{content} of prior preferences ($\C$) rather than
+policy-precision as the locus of normative dynamics.
+
+\paragraph{Bayesian rule-induction baseline.}
+\citet{oldenburgZhiXuan2024BayesianRule} treat norms as discrete
+obligative or prohibitive rules induced from compliance and sanction
+observations via Bayes' rule. Their inference is symmetric in time:
+the same evidence accrual that locks in a rule will, when reversed,
+unlock it on a comparable timescale. They have no asymmetric
+revision cost. The $\stub \to 0$ limit of our model recovers
+symmetric tracking; for $\stub > 0$, forward and reverse adaptation
+trajectories diverge. This is the dissociation our experimental
+programme (Section~\ref{sec:experiments}) targets directly.
