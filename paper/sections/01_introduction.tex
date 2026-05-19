@@ -3,50 +3,78 @@
 \label{sec:intro}
 % =====================================================================
 
-Norms --- shared regularities of behaviour through which agents with
-heterogeneous preferences coordinate --- are studied separately across
-game theory \citep{koster2022SillyRules,oldenburgZhiXuan2024BayesianRule},
-cultural evolution
-\citep{henrich2009CREDs,henrichGilWhite2001Prestige,heyes2018CognitiveGadgets},
-and active inference
-\citep{constant2019Regimes,albarracin2022EpistemicCommunities}, with
-limited integration. The substrate problem common to all three is how
-the priors that make a norm binding for an individual agent come to be
-shared, maintained, and revised across a community.
+Scientific communities do not revise their theoretical commitments the
+moment the evidence turns. Anomalies accumulate; the prevailing
+framework persists; the shift, when it comes, is abrupt and
+path-dependent \citep{kuhn1962Structure}. The persistence of Newtonian
+mechanics well into the era of measurable relativistic corrections is
+the canonical example: most experiments simply did not probe the
+regime in which the theories disagree, and even once they did, the
+community moved slowly and unevenly. The interesting question is not
+why belief lags --- a Bayesian agent with a sharp prior is the obvious
+proximate cause --- but \emph{what generates the gradient against
+which belief is moving}. Our reading, following the sociology of
+science \citep{bourdieu1975ScientificField} and the empirical
+science-of-science literature \citep{wang2021ScienceOfScience,
+azoulay2019StarsShadow}, is that the gradient is material: scientific
+communities are \emph{coupled belief--resource systems}, and beliefs
+are sustained not only by their predictive power but by the resource
+topology that rewards some belief moves and punishes others.
 
-This paper proposes a single technical apparatus for that problem.
-Norms are formalised as \emph{salience priors}: high-precision
-components of an agent's prior preference distribution
-$\C$ that direct attention to particular features of the environment.
-The community-level dynamics of these priors are governed by two
-precision-related quantities. First, the precision $\trust{i}{j}$ that
-agent $i$ assigns to the channel from neighbouring agent $j$ is
-\emph{learned}, in the same Bayesian sense as any other channel
-precision in active inference: it tracks the prediction error that
-$j$'s prior actions induced about subsequently observed environmental
-ground truth. Trust, on this view, is not a separate module; it is
-what precision-weighting looks like when one of the agent's evidence
-channels happens to be another agent. Second, the agent's own update
-to $\C$ is gated by a \emph{variational cost of changing one's mind}
-\citep{hylandAlbarracin2025MindChange}: a Kullback--Leibler asymmetry
-that penalises movement away from the current $\C$ and so generates
-hysteresis under environmental drift. Together, the two pieces
-articulate the joint dynamics by which a community of agents installs,
-maintains, and (sometimes failing to) revises its salience priors.
+This paper formalises that reading as a multi-agent active-inference
+model with resource flow at the substrate level. Each agent
+\citep{friston2015ActiveInferenceEpistemic} maintains a Gaussian
+posterior over a parameterised theory and chooses experiments to
+maximise expected resource gain; agents are coupled on a structured
+social graph \citep{wattsStrogatz1998SmallWorld,
+albarracin2022EpistemicCommunities}, with a learned channel precision
+--- the \emph{trust matrix} $\trustmat$, updated by Gamma-conjugate
+Bayesian precision learning on cross-surprisals --- as the only
+relational learned object in the model. The substrate adds a scalar
+resource state $\resource{i}$ per agent that is a \emph{deterministic
+readout of $\trustmat$}: the patronage flow $\flowmat$ is the
+row-normalised trust matrix, and the exogenous inflow is allocated by
+aggregate incoming trust. Information gain enters the policy
+\emph{instrumentally}, not as a separate intrinsic value: discriminating-%
+regime experiments are the only ones whose cross-surprisals
+differentiate agents and reshuffle trust, which is the only route
+through which an agent earns resources. A per-agent cognitive trait
+$\stub$ scales a socially-induced affective utility in the sense of
+\citet{hylandAlbarracin2025MindChange} that pulls the posterior
+toward the beliefs of resource-rich neighbours. The result is two
+closed feedback loops --- one for trust, one for resources --- sharing
+one world--agent--policy--action spine, with paradigm persistence as
+the substrate-level dynamics of a population of agents who are
+simultaneously investigating the world and surviving in the field.
 
-The contribution is technical: we lift a single-agent variational cost
-of mind-change \citep{hylandAlbarracin2025MindChange} to a coupled
-multi-agent setting on a small-world graph
-\citep{wattsStrogatz1998SmallWorld}, integrate it with a precision-as-trust
-account of the social channel, and show that the resulting dynamics
-admit a clean dissociation in the $\stub \to 0$ limit from
-Bayesian rule-induction baselines
-\citep{oldenburgZhiXuan2024BayesianRule}.
+The interesting dynamics of paradigm change --- contested periods,
+factions that convert at different rates, a mainstream held back
+while a vanguard moves --- are properties of population
+\emph{structure} and of the \emph{distribution} of resources across
+agents, not of their averages. A homogeneous population on a symmetric
+graph is a degenerate case: trust-weighted pooling collapses to a
+uniform neighbour average, the population moves as a single pooled
+trajectory, and there is nothing for the social or resource structure
+to do. We take a structured, heterogeneous population as the canonical
+object and report per-community and per-agent quantities throughout
+--- supplemented by \emph{resource-weighted} population summaries that
+capture which agents' beliefs are materially consequential --- never a
+single unweighted mean.
 
-Section~\ref{sec:related} situates the contribution against immediate
-neighbours in the literature.
-Section~\ref{sec:formal} develops the formal background:
-variational free energy, the complexity-as-cost-of-mind-change reading,
-precision-as-attention, and the formalisation of norms as salience
-priors. Section~\ref{sec:model} specifies the multi-agent model.
-Section~\ref{sec:experiments} outlines the empirical programme.
+The contribution is a model and an experimental programme.
+Section~\ref{sec:related} situates the work against its immediate
+neighbours in active inference, the sociology of science, and progress
+studies. Section~\ref{sec:formal} develops the formal background: the
+parameterised reality, per-agent conjugate inference, trust as a
+learned channel precision (the central Bayesian learned object), the
+resource topology read off the trust matrix, and the cost of
+mind-change as a per-agent cognitive trait.
+Section~\ref{sec:model} specifies the coupled multi-agent dynamics and
+states the trust-driven path-dependence claim the programme targets.
+Section~\ref{sec:experiments} sets out a three-axis experimental
+programme --- initial trust structure, resource scale and initial
+concentration, and difficulty curves --- whose interactions
+characterise the qualitative regimes of the coupled model. The progress-studies reading of
+Section~\ref{sec:discussion} closes the paper: the programme is
+\emph{prescriptive} as well as descriptive, because the controls it
+sweeps are the levers a funding agency actually pulls.

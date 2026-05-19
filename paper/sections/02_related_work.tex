@@ -3,42 +3,80 @@
 \label{sec:related}
 % =====================================================================
 
-Three immediate neighbours frame the contribution.
+The model sits at the intersection of three literatures.
 
-\paragraph{Single-agent cost of mind-change.}
+\paragraph{Active inference: cost of mind-change, epistemic
+communities, social power.}
 \citet{hylandAlbarracin2025MindChange} re-foreground the complexity
-term of variational free energy as a motivational quantity rather than
-a regulariser: the agent experiences a cost proportional to the
+term of variational free energy as a motivational quantity: an agent
+experiences a cost of revising its own beliefs, proportional to a
 Kullback--Leibler divergence between a candidate posterior and the
-current prior. The asymmetry of that divergence implies that belief
-revision is path-dependent --- the cost of reaching $C'$ from $C$ is
-not the cost of reaching $C$ from $C'$. We adopt this reading and
-extend it to the multi-agent setting, treating $\stub_{i,r}$ as a
-per-agent, per-norm parameter that gates each agent's update to its
-own salience priors.
-
-\paragraph{Multi-agent active inference.}
-\citet{albarracin2022EpistemicCommunities} establish the formal
-apparatus for coupling pymdp agents through shared observations and
-characterise echo-chamber bifurcation as a function of inter-agent
-precision; \citet{constant2019Regimes} formalise norm-following as
-Bayes-optimal action under environmentally cued policy priors;
+current one. Because that divergence is asymmetric, belief revision is
+path-dependent. We adopt this reading and embed it in the multi-agent
+setting: the per-agent cost of mind-change $\stub$ scales a
+socially-induced affective utility $\utility$ whose content is the
+resource topology. \citet{albarracin2022EpistemicCommunities} establish
+the apparatus for coupling active-inference agents through shared
+observations and characterise echo-chamber bifurcation as a function
+of inter-agent precision; we inherit the coupling apparatus, but treat
+the inter-agent precision as itself \emph{learned}, by Gamma-conjugate
+precision learning from prediction error.
 \citet{albarracin2025SocialPower} formalise social power as the
 differential capacity to set policy precision in others' generative
-models. Our model inherits the coupling apparatus of
-\citet{albarracin2022EpistemicCommunities} and the deontic-cue
-mechanism of \citet{constant2019Regimes}, and complements
-\citet{albarracin2025SocialPower} by operating one layer up: we treat
-the \emph{content} of prior preferences ($\C$) rather than
-policy-precision as the locus of normative dynamics.
+models; the patronage matrix $\flowmat$ in our model is the
+operational version of that capacity, made specific to the
+resource-allocation setting.
 
 \paragraph{Bayesian rule-induction baseline.}
-\citet{oldenburgZhiXuan2024BayesianRule} treat norms as discrete
-obligative or prohibitive rules induced from compliance and sanction
-observations via Bayes' rule. Their inference is symmetric in time:
-the same evidence accrual that locks in a rule will, when reversed,
-unlock it on a comparable timescale. They have no asymmetric
-revision cost. The $\stub \to 0$ limit of our model recovers
-symmetric tracking; for $\stub > 0$, forward and reverse adaptation
-trajectories diverge. This is the dissociation our experimental
-programme (Section~\ref{sec:experiments}) targets directly.
+\citet{oldenburgZhiXuan2024BayesianRule} treat norms as discrete rules
+induced from observation via Bayes' rule. Their inference is symmetric
+in time: the evidence accrual that locks in a rule will, reversed,
+unlock it on a comparable timescale, because there is no learned
+social channel, no revision cost, and --- critically --- no resource
+topology. This is the natural \emph{trust-and-resource-free} baseline
+for our model. The contrast our experimental programme
+(Section~\ref{sec:experiments}) targets is between that symmetric
+baseline and the asymmetric, path-dependent dynamics that the coupled
+belief--resource substrate produces on a structured population.
+
+\paragraph{Sociology of science: field, capital, gatekeeping.}
+\citet{bourdieu1975ScientificField} characterises the scientific field
+as anisotropic and self-reinforcing: gatekeepers control the
+resources that junior agents need to continue investigating, and the
+gatekeepers' allocations are shaped by their own paradigm
+commitments. This is the empirical phenomenon our resource topology
+formalises. The Kuhnian observation \citep{kuhn1962Structure} that
+paradigm persistence is sociologically generated, not merely
+cognitively maintained, becomes a quantitative claim about the trust
+matrix $\trustmat$ and its update rule (Eq.~\ref{eq:trust-update}),
+from which the patronage matrix $\flowmat$ is read off
+(Eq.~\ref{eq:flow-from-trust}).
+
+\paragraph{Science of science and progress studies.}
+The empirical \emph{science of science} literature
+\citep{wang2021ScienceOfScience, azoulay2019StarsShadow} documents the
+patterns our model is built to generate --- entrenchment thresholds,
+gatekeeper effects, the productivity-shadow of star scientists --- but
+without a generative substrate against which mechanisms can be tested.
+The \emph{progress studies} programme \citep{collison2019ProgressStudies}
+asks the prescriptive question --- which funding regimes shorten the
+lag between explanatory power and adoption --- but lacks a mechanistic
+account of how funding regimes translate into belief dynamics. Our
+contribution to both is a substrate-level model in which the funding
+ecology's controls (the magnitude of the exogenous inflow
+$\inflowrate$ and the concentration of the initial trust matrix
+$\trustmat^{(0)}$) feed directly into the belief dynamics that
+generate the empirical observables, closing the loop between
+prescriptive theory and mechanistic dynamics.
+
+\paragraph{Planck's principle as a limit case.}
+\citet{planck1949Autobiography} observed that ``a new scientific truth
+does not triumph by convincing its opponents \dots\ but rather because
+its opponents eventually die.'' This is the limit case of the
+resource-topology argument: when the trust matrix is so entrenched
+that no realistic sequence of cross-surprisals can move it, only the
+literal turnover of agents can change the gatekeeper distribution. Our model captures the
+precursor stage --- resource flow shifting against the old guard ---
+without modelling agent birth and death, which we mark explicitly as
+out of scope (Section~\ref{sec:discussion}) and as the natural next
+extension.

@@ -1,18 +1,23 @@
-"""Population: per-agent multi-feature salience priors plus inter-agent
-coupling state.
+"""Population: thin orchestration of the trust-centric per-step cycle.
 
-Aligned with paper §4 (Algorithm 1):
-  - Each step samples a situation σ_t (= live feature index this step).
-  - Agents act on their preference for the live feature.
-  - Posterior mixture (Eq 3) combines env channel (only for live feature)
-    with trust-weighted social pool (every feature).
-  - Per-norm closed-form C-update (Eq 5).
-  - Trust update via prediction error on the live feature (Eq 7).
+Composes pure modules:
+  policy        — choose x_i (v2 EIG−cost OR new resource-gain objective)
+  world         — sample o_i from N(h0 + theta* h1, sigma^2)
+  inference     — private Bayes update
+  utility       — social target + lambda-modified blend (Hyland λ·U term)
+  inference     — precision-weighted social pool
+  trust         — Gamma-conjugate update on (alpha, beta) per edge
+  resource      — flow_from_trust → W, inflow_share → eta, flow_step → r
 
-A ``pymdp.Agent`` instance is retained as a *symbolic* placeholder so the
-active-inference idiom (``A``, ``B``, ``C``, ``D``, ``infer_states``) is
-visible to AIF reviewers; the multi-feature model state lives in dedicated
-``equinox.Module`` fields (``C``, ``q_post``, ``gamma``, ``lambda_``).
+Per-step cycle (PDF §3, trust-centric refactor):
+  1. choose experiment x_i^(t) via softmax-policy (objective: PolicyConfig)
+  2. sample environment o_i ~ N(h0(x) + theta*(t) h1(x), sigma^2)
+  3. form private posterior q_i^data from (x_i, o_i)
+  4. compute socially-induced target (mu_tgt, tau_tgt) from neighbours weighted
+     by resource; blend with q_i^data via lambda_mc (λ·U term)
+  5. precision-pool the blended private posterior over the closed neighbourhood
+  6. surprisal eps_ij; Gamma-conjugate update of (alpha, beta), gamma'
+  7. W = row-normalise(gamma'); eta = col-sum-normalise(gamma'); r-step
 """
 
 from __future__ import annotations
@@ -21,209 +26,171 @@ import equinox as eqx
 import jax
 import jax.numpy as jnp
 import numpy as np
-from pymdp.agent import Agent as PymdpAgent
 
-from src.agent import (
-    EPS,
-    act_for_situation,
-    neighbour_pool_feature,
-    p_env_bernoulli,
-    p_env_uniform,
-    posterior_mixture,
-    update_C_feature,
-)
-from src.config import ModelConfig, sample_lambda
-from src.environment import CoordinationEnvironment
+from src import inference, policy, resource, trust, utility, world
+from src.config import ModelConfig
 from src.network import build_adjacency
 
 
-def _make_pymdp_agent(cfg: ModelConfig) -> PymdpAgent:
-    """Symbolic pymdp.Agent — a 1-modality, 2-state placeholder.
-
-    The model's actual salience prior lives in ``Population.C`` (shape
-    (N, R)). This placeholder is kept so reviewers scanning the code
-    see ``isinstance(agent, PymdpAgent)`` and the standard A/B/C/D
-    surface, but no math runs through it.
-    """
-    N = cfg.n_agents
-    n_obs = 2
-    A = [jnp.broadcast_to(jnp.eye(n_obs)[None], (N, n_obs, n_obs))]
-    B = [jnp.broadcast_to(jnp.eye(n_obs)[None, :, :, None], (N, n_obs, n_obs, 1))]
-    C = [jnp.zeros((N, n_obs))]
-    D = [jnp.full((N, n_obs), 1.0 / n_obs)]
-    return PymdpAgent(A=A, B=B, C=C, D=D, batch_size=N, num_iter=1)
-
-
 class Population(eqx.Module):
-    """Multi-feature salience-prior population with learned trust precisions."""
+    """Per-agent (mu, tau, r); per-edge (alpha, beta, gamma) trust state.
+
+    W and eta are NOT carried as state — they are computed each step as
+    deterministic readouts of gamma (architectural decision #1 of the plan).
+    """
 
     cfg: ModelConfig = eqx.field(static=True)
-
-    agent: PymdpAgent          # symbolic AIF placeholder (see _make_pymdp_agent)
-    A_adj: jax.Array           # (N, N) adjacency 0/1, zero diagonal
-    gamma: jax.Array           # (N, N) trust precisions, masked by A_adj
-    d: jax.Array               # (N,) delegation factors
-    lambda_: jax.Array         # (N, R) per-norm stubbornness λ_{i,r}
-    C: jax.Array               # (N, R) salience prior logits
-    q_post: jax.Array          # (N, R, 2) per-feature Bernoulli posteriors
+    A_adj: jax.Array          # (N, N) raw adjacency, zero diagonal
+    A_self_adj: jax.Array     # (N, N) adjacency + identity
+    mu: jax.Array             # (N,) posterior mean over theta
+    tau: jax.Array            # (N,) posterior precision
+    alpha: jax.Array          # (N, N) Gamma shape, masked by A_self_adj
+    beta: jax.Array           # (N, N) Gamma rate,  masked by A_self_adj
+    gamma: jax.Array          # (N, N) alpha/beta, row-normalised
+    r: jax.Array              # (N,) endogenous resource
     key: jax.Array
+
+    # ------------------------------------------------------------------
+    # Construction
+    # ------------------------------------------------------------------
 
     @classmethod
     def init(cls, cfg: ModelConfig, key: jax.Array) -> "Population":
-        N, R = cfg.n_agents, cfg.n_features
+        N = cfg.n_agents
 
         A_np = build_adjacency(
-            n_agents=N, mean_degree=cfg.mean_degree,
-            rewiring_p=cfg.rewiring_p, seed=cfg.seed, kind=cfg.network_kind,
+            n_agents=N,
+            mean_degree=cfg.network.mean_degree,
+            rewiring_p=cfg.network.rewiring_p,
+            seed=cfg.seed,
+            kind=cfg.network.kind,
+            society_membership=None,
+            intra_prob=cfg.network.intra_prob,
+            inter_prob=cfg.network.inter_prob,
         )
         A_adj = jnp.asarray(A_np)
+        A_self_adj = A_adj + jnp.eye(N, dtype=A_adj.dtype)
 
-        k_d, k_lam, k_main = jax.random.split(key, 3)
-        d = jax.random.beta(k_d, cfg.delegation_alpha, cfg.delegation_beta, (N,))
-        lambda_ = sample_lambda(cfg.lambda_dist, N, R, cfg.lambda_scope, k_lam)
+        mu = jnp.full((N,), cfg.mu_0)
+        tau = jnp.full((N,), cfg.tau_0)
 
-        agent = _make_pymdp_agent(cfg)
-        C = jnp.full((N, R), cfg.init_C_strength)
-        q_post = jnp.full((N, R, 2), 0.5)
-        gamma = cfg.init_gamma * A_adj
+        n0 = cfg.trust.prior_n0
+        beta0 = cfg.trust.prior_n0 * cfg.trust.prior_eps0
+        alpha = n0 * A_self_adj
+        beta_ = beta0 * A_self_adj
+        gamma_raw = (alpha / (beta_ + 1e-12)) * A_self_adj
+        row_sum = gamma_raw.sum(axis=1, keepdims=True) + 1e-12
+        gamma = (gamma_raw / row_sum) * A_self_adj
+
+        r0 = jnp.full((N,), cfg.resource.r0)
 
         return cls(
-            cfg=cfg, agent=agent, A_adj=A_adj, gamma=gamma,
-            d=d, lambda_=lambda_, C=C, q_post=q_post, key=k_main,
+            cfg=cfg, A_adj=A_adj, A_self_adj=A_self_adj,
+            mu=mu, tau=tau, alpha=alpha, beta=beta_, gamma=gamma,
+            r=r0, key=key,
         )
 
     def __repr__(self) -> str:
-        N, R = self.cfg.n_agents, self.cfg.n_features
+        N = self.cfg.n_agents
         n_edges = int((self.A_adj != 0).sum() // 2)
         return (
-            f"Population(N={N}, R={R}, edges={n_edges}, "
-            f"d_mean={float(self.d.mean()):.3f}, "
-            f"lambda_mean={float(self.lambda_.mean()):.3f}, "
-            f"gamma_mean={float(self.gamma.sum() / max(self.A_adj.sum(), 1)):.3f}, "
-            f"C_std={float(jnp.std(self.C)):.3f})"
+            f"Population(N={N}, edges={n_edges}, "
+            f"mu_mean={float(self.mu.mean()):+.3f}, "
+            f"tau_mean={float(self.tau.mean()):.3f}, "
+            f"gamma_mean={float(self.gamma[self.A_self_adj > 0].mean()):.4f}, "
+            f"r_mean={float(self.r.mean()):.3f})"
         )
 
     # ------------------------------------------------------------------
-    # one-step API — pure functional updates
+    # One-step API
     # ------------------------------------------------------------------
 
-    def act(self, sigma_t: int | jax.Array) -> tuple["Population", jax.Array]:
-        """Sample one binary action per agent for the live feature σ_t."""
-        return _act_jit(self, jnp.asarray(sigma_t, dtype=jnp.int32))
-
-    def observe(
-        self, sigma_t: int | jax.Array, true_value: int | jax.Array
-    ) -> "Population":
-        """Apply the four updates (Algorithm 1 lines 5–9):
-
-        1. p_env: Bernoulli(σ(γ_env)) on observed bit for the live feature;
-           uniform for non-live features.
-        2. p_social: trust-weighted neighbour pool per feature.
-        3. q ← linear mixture (Eq 3); C ← closed-form (Eq 5).
-        4. γ ← multiplicative decay on prediction error (Eq 7).
-        """
-        return _observe_jit(
-            self,
-            jnp.asarray(sigma_t, dtype=jnp.int32),
-            jnp.asarray(true_value, dtype=jnp.int32),
+    def step(self, t: int | jax.Array) -> tuple["Population", dict]:
+        """One round of the per-step cycle. Returns (new_pop, step_out)."""
+        new_pop, x_chosen, o_obs, theta_star = _step_jit(
+            self, jnp.asarray(t, dtype=jnp.int32),
         )
-
-    def step(
-        self,
-        env: CoordinationEnvironment,
-    ) -> tuple["Population", dict]:
-        """Drive one full env-pop timestep. Returns (new_pop, env_out dict).
-
-        Order matches paper Algorithm 1: situation drawn first, agents act
-        conditional on situation, env evaluates and evolves, agents observe.
-        """
-        sigma_t = env.draw_situation()
-        pop_acted, actions = self.act(sigma_t)
-        env_out = env.step(np.asarray(actions), situation=sigma_t)
-        new_pop = pop_acted.observe(sigma_t, int(env_out["true_value"]))
-        return new_pop, env_out
+        return new_pop, dict(
+            theta_star=float(np.asarray(theta_star)),
+            x_chosen=np.asarray(x_chosen),
+            o_obs=np.asarray(o_obs),
+        )
 
 
 # ----------------------------------------------------------------------
-# JIT-compiled cores. The ``Population`` methods are thin wrappers so JAX
-# transforms (jit, vmap, grad) cache by static cfg + shape signatures.
+# JIT-compiled core
 # ----------------------------------------------------------------------
 
 
 @eqx.filter_jit
-def _act_jit(pop: "Population", sigma_t: jax.Array) -> tuple["Population", jax.Array]:
-    new_key, sub = jax.random.split(pop.key)
-    keys = jax.random.split(sub, pop.cfg.n_agents)
-    actions = jax.vmap(act_for_situation, in_axes=(0, None, 0))(pop.C, sigma_t, keys)
-    return eqx.tree_at(lambda p: p.key, pop, new_key), actions
-
-
-@eqx.filter_jit
-def _observe_jit(
-    pop: "Population", sigma_t: jax.Array, true_value: jax.Array
-) -> "Population":
-    """Per-step belief, preference and trust updates."""
+def _step_jit(pop: "Population", t: jax.Array
+              ) -> tuple["Population", jax.Array, jax.Array, jax.Array]:
     cfg = pop.cfg
-    N, R = cfg.n_agents, cfg.n_features
-    gamma_env = jnp.asarray(cfg.gamma_env)
 
-    # -------------------------------------------------------------- #
-    # 1. p_env per feature.
-    #    Live feature σ_t: Bernoulli softened with γ_env on true_value.
-    #    Non-live features: uniform [0.5, 0.5] (no env evidence this step).
-    # -------------------------------------------------------------- #
-    live_p = p_env_bernoulli(true_value, gamma_env)                # (2,)
-    feature_idx = jnp.arange(R)
-    is_live = (feature_idx == sigma_t)[:, None]                   # (R, 1)
-    p_env_per_feature = jnp.where(is_live, live_p[None, :], p_env_uniform((R, 2)))
-    p_env = jnp.broadcast_to(p_env_per_feature[None, :, :], (N, R, 2))
+    # 1. Policy: each agent picks x_i.
+    key_pol, key_obs, key_next = jax.random.split(pop.key, 3)
+    if cfg.policy.objective == "eig_minus_cost":
+        x_chosen = policy.softmax_choose_x(pop.tau, key_pol, cfg.policy, cfg.world)
+    elif cfg.policy.objective == "resource_gain":
+        x_chosen = policy.resource_gain_policy(
+            pop.mu, pop.tau, pop.r,
+            pop.alpha, pop.beta, pop.gamma, pop.A_self_adj,
+            key_pol, cfg.policy, cfg.world, cfg.trust, cfg.resource,
+        )
+    else:
+        raise ValueError(f"Unknown policy.objective: {cfg.policy.objective!r}")
 
-    # -------------------------------------------------------------- #
-    # 2. p_social: trust-weighted pool of neighbours' previous q_post,
-    #    per feature. q_post has shape (N, R, 2); transpose to (R, N, 2)
-    #    so the inner vmap pools across agents per feature.
-    # -------------------------------------------------------------- #
-    q_by_feature = jnp.transpose(pop.q_post, (1, 0, 2))           # (R, N, 2)
+    # 2. Environment.
+    theta_star = world.theta_schedule(t, cfg.world)
+    o_obs = world.sample_o(x_chosen, theta_star, cfg.world, key_obs)
 
-    def pool_one_agent_one_feature(gamma_row, A_row, q_feature):
-        return neighbour_pool_feature(gamma_row, A_row, q_feature)
-
-    # vmap inner: across features at fixed agent
-    # vmap outer: across agents
-    def pool_one_agent(gamma_row, A_row):
-        return jax.vmap(pool_one_agent_one_feature, in_axes=(None, None, 0))(
-            gamma_row, A_row, q_by_feature
-        )                                                          # (R, 2)
-
-    p_social = jax.vmap(pool_one_agent, in_axes=(0, 0))(pop.gamma, pop.A_adj)  # (N, R, 2)
-
-    # -------------------------------------------------------------- #
-    # 3. Linear posterior mixture (Eq 3) and closed-form C-update (Eq 5).
-    # -------------------------------------------------------------- #
-    d_b = pop.d[:, None, None]                                     # (N, 1, 1)
-    q_new = posterior_mixture(p_env, p_social, d_b)                # (N, R, 2)
-
-    def update_C_one_agent(C_row, q_row, lambda_row):
-        return jax.vmap(update_C_feature, in_axes=(0, 0, 0))(C_row, q_row, lambda_row)
-
-    C_new = jax.vmap(update_C_one_agent, in_axes=(0, 0, 0))(
-        pop.C, q_new, pop.lambda_,
-    )                                                              # (N, R)
-
-    # -------------------------------------------------------------- #
-    # 4. Trust update (Eq 7) — uses *previous* q_post on the live feature
-    #    (each neighbour j's track record before this step's update).
-    #       ε_ij = -ln q_j^{(t)}(φ_{σ_t} = true_value)
-    #       γ_ij ← γ_ij · exp(-η_γ · ε_ij)
-    # -------------------------------------------------------------- #
-    q_live_prev = pop.q_post[:, sigma_t, :]                        # (N, 2)
-    p_true = q_live_prev[:, true_value] + EPS                      # (N,)
-    eps_per_neighbour = -jnp.log(p_true)                            # (N,)
-    decay = jnp.exp(-cfg.eta_gamma * eps_per_neighbour)             # (N,)
-    gamma_new = pop.gamma * decay[None, :] * pop.A_adj              # (N, N)
-
-    return eqx.tree_at(
-        lambda p: (p.q_post, p.gamma, p.C),
-        pop,
-        (q_new, gamma_new, C_new),
+    # 3. Private Bayes update (data-driven).
+    mu_data, tau_data = inference.private_update(
+        pop.mu, pop.tau, x_chosen, o_obs, cfg.world,
+        cfg.inference.posterior_rho, cfg.mu_0, cfg.tau_0,
     )
+
+    # 4. λ·U term: socially-induced target + Hyland blend.
+    mu_tgt, tau_tgt = utility.socially_induced_U(
+        pop.mu, pop.tau, pop.r, pop.A_self_adj,
+    )
+    mu_priv, tau_priv = utility.lambda_modified_update(
+        mu_data, tau_data, mu_tgt, tau_tgt, cfg.utility.lambda_mc,
+    )
+
+    # 5. Precision-pool with current gamma row.
+    mu_pool, tau_pool = inference.precision_pool(
+        mu_priv, tau_priv, pop.gamma, pop.A_self_adj,
+    )
+
+    # 6. Surprisal matrix + Gamma-conjugate trust update.
+    epsilon = trust.surprisal_matrix(
+        mu_priv, tau_priv, x_chosen, o_obs, pop.A_self_adj, cfg.world,
+    )
+    alpha_new, beta_new, gamma_new = trust.gamma_conjugate_step(
+        pop.alpha, pop.beta, epsilon, pop.A_self_adj, cfg.trust,
+    )
+
+    # 7. Resource step: W and eta are deterministic readouts of gamma_new.
+    W_new = resource.flow_from_trust(gamma_new)
+    eta_new = resource.inflow_share(gamma_new)
+    h1x_sq_over_sigma2 = (world.h1(x_chosen, cfg.world) ** 2) / (cfg.world.sigma ** 2 + 1e-12)
+    c_x = resource.cost_x(
+        x_chosen, pop.r, h1x_sq_over_sigma2,
+        c0=cfg.resource.c0, r_min=cfg.resource.r_min,
+        barrier_eps=cfg.resource.barrier_eps,
+        fisher_cost_steepness=cfg.resource.fisher_cost_steepness,
+    )
+    r_new = resource.flow_step(
+        pop.r, W_new, eta_new, c_x,
+        R_in=cfg.resource.R_in,
+        alpha_flow=cfg.resource.alpha_flow,
+        delta_decay=cfg.resource.delta_decay,
+    )
+
+    new_pop = eqx.tree_at(
+        lambda p: (p.mu, p.tau, p.alpha, p.beta, p.gamma, p.r, p.key),
+        pop,
+        (mu_pool, tau_pool, alpha_new, beta_new, gamma_new, r_new, key_next),
+    )
+    return new_pop, x_chosen, o_obs, theta_star

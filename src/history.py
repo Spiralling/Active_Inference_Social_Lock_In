@@ -35,19 +35,26 @@ class History:
             self._records[k].append(v)
 
     def snap(self, pop, every: int = 1) -> None:
-        """Capture (C, gamma, q_post) for the current pop state on every K-th call.
+        """Capture (mu, tau, gamma, alpha, beta) for the current pop state on
+        every K-th call.
 
         ``every=1`` snaps every step; ``every=5`` every fifth, etc. Step counter
         increments on every call so the cadence is wall-clock-of-rollout, not
         wall-clock-of-process.
         """
         if every < 1 or self._snap_step % every == 0:
-            self._snapshots.append({
+            snap = {
                 "step": self._snap_step,
-                "C": np.asarray(pop.C),         # multi-feature salience prior, (N, R)
-                "gamma": np.asarray(pop.gamma),
-                "q_post": np.asarray(pop.q_post),
-            })
+                "mu": np.asarray(pop.mu),       # (N,) posterior mean over theta
+                "tau": np.asarray(pop.tau),     # (N,) posterior precision
+                "gamma": np.asarray(pop.gamma), # (N, N) trust matrix
+                "alpha": np.asarray(pop.alpha), # (N, N) Gamma shape
+                "beta": np.asarray(pop.beta),   # (N, N) Gamma rate
+            }
+            r = getattr(pop, "r", None)
+            if r is not None:
+                snap["r"] = np.asarray(r)       # (N,) endogenous resource
+            self._snapshots.append(snap)
         self._snap_step += 1
 
     def as_arrays(self) -> dict[str, np.ndarray]:

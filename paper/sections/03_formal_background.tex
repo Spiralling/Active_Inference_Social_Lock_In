@@ -3,288 +3,524 @@
 \label{sec:formal}
 % =====================================================================
 
-This section develops the four formal commitments on which the
-multi-agent model of Section~\ref{sec:model} rests:
-(i)~variational free energy as the agent's objective;
-(ii)~the complexity term re-read as a motivational cost of mind-change;
-(iii)~precision as attentional weighting on evidence channels; and
-(iv)~norms as salience priors --- high-precision components of $\C$
-that direct attention to particular features of the environment.
+This section develops the formal commitments on which the multi-agent
+model of Section~\ref{sec:model} rests. The substrate of the model is a
+\emph{coupled belief--resource system} organised around a single
+Bayesian learned relational object --- the trust matrix $\trustmat$ ---
+from which the resource topology is read off as a deterministic
+readout, and overlaid by a single per-agent cognitive trait $\stub$
+that gates how readily the agent moves its own belief. We introduce
+(i)~the \emph{parameterised reality} --- an observation model in which
+a single parameter $\thetapar$ indexes competing theories, and a
+control variable $\xexp$ selects which regime is probed
+(Section~\ref{ssec:reality});
+(ii)~\emph{per-agent conjugate inference} --- each agent maintains a
+Gaussian posterior over $\thetapar$ that updates in closed form
+(Section~\ref{ssec:inference});
+(iii)~\emph{trust as a learned channel precision} --- the only
+Bayesian learned relational object in the model, a Gamma-conjugate
+precision matrix on inter-agent evidence channels
+(Section~\ref{ssec:trust});
+(iv)~the \emph{resource topology} --- a scalar resource state
+$\resource{i}$ per agent that flows on the social graph through the
+row-normalised trust matrix, with a single trust-aggregated exogenous
+inflow, closing a feedback loop between predictive performance, social
+standing, and resources (Section~\ref{ssec:resource});
+and~(v)~the \emph{variational cost of mind-change} --- a per-agent
+cognitive trait $\stub$ that scales a socially-induced affective
+utility $\utility$ whose content is the alignment of one's belief with
+the beliefs of resource-rich neighbours
+(Section~\ref{ssec:mindchange}).
+
+The narrative arc of one round is the agent's loop: \textbf{action}
+($\xexp_i$, drawn from a policy specified in Section~\ref{ssec:policy})
+$\to$ \textbf{outcome} ($\obs_i$, drawn from the world) $\to$
+\textbf{cross-surprisals} ($\surprisal_{ij}$, scoring each channel)
+$\to$ \textbf{trust update} ($\trust{i}{j}$ via the Gamma conjugate,
+Section~\ref{ssec:trust}) $\to$ \textbf{resource flow} (a deterministic
+readout of the updated trust matrix, Section~\ref{ssec:resource}) $\to$
+\textbf{belief update} (the standard data-driven Gaussian filter,
+pulled by the resource-weighted utility $\stub\,\utility$,
+Section~\ref{ssec:mindchange}). Each non-cognitive step is Bayesian;
+the only purely cognitive scalar is $\stub$.
 
 % --------------------------------------------------------------------
-\subsection{Variational Free Energy}
-\label{ssec:vfe}
+\subsection{The Parameterised Reality}
+\label{ssec:reality}
 % --------------------------------------------------------------------
 
-An active-inference agent carries a generative model
-$\Pgen(\obs, \hidden)$ over observations $\obs \in \mathcal{O}$ and
-hidden states $\hidden \in \mathcal{S}$, together with a recognition
-density $\Q(\hidden)$ that approximates the posterior $\Pgen(\hidden \mid \obs)$.
-The agent updates $\Q$ by minimising the variational free energy
+The world generates observations through a parameterised regression
+family
 \begin{equation}
-\FE[\Q] \;=\; \Eunder{\Q}{\ln \Q(\hidden) - \ln \Pgen(\obs, \hidden)}
-\;=\; \underbrace{\KL{\Q(\hidden)}{\Pgen(\hidden)}}_{\text{complexity}}
-\;-\; \underbrace{\Eunder{\Q}{\ln \Pgen(\obs \mid \hidden)}}_{\text{accuracy}}.
-\label{eq:vfe}
+\obs \mid \xexp, \thetapar
+\;\sim\;
+\mathcal{N}\!\bigl(\hzero(\xexp) + \thetapar\,\hone(\xexp),\; \sigobs^{2}\bigr),
+\label{eq:world}
 \end{equation}
-Action selection in active inference proceeds by minimising the
-expected free energy of policies; for our purposes,
-Eq.~\eqref{eq:vfe} is the only quantity required, because the
-model dynamics we develop concern belief revision rather than
-multi-step planning.
+where $\thetapar \in \Theta$ indexes theories and $\xexp \in \mathcal{X}$
+is the experimental setup. The function $\hzero$ is the \emph{shared
+baseline} that all candidate theories agree on; $\hone$ is the
+\emph{discriminating function} that separates theories at parameter
+value $\thetapar$. The true world sits at $\thetastar$; competing
+theories are other points in $\Theta$. For the running example we take
+the relativistic-correction analogue, $\hzero(\xexp) = \tfrac{1}{2}\xexp$
+and $\hone(\xexp) = \xexp^{3}$, with $\thetapar = 0$ the Newtonian theory
+and $\thetapar = \thetastar > 0$ the relativistic one.
 
-Prior preferences are encoded as a log-density $\C \in \Real^{|\mathcal{O}|}$
-over outcomes, normalised so that $\Pgen(\obs) \propto \exp \C(\obs)$.
-The same formal object that other treatments call \emph{values}
-\citep{hesp2021DeeplyFelt,torresan2025ShapeC} thus appears here as
-$\C$. We will use the two terms interchangeably; the substantive
-work is done by what we say about how $\C$ is updated.
-
-% --------------------------------------------------------------------
-\subsection{The Complexity Term as a Cost of Mind-Change}
-\label{ssec:cost-of-mind-change}
-% --------------------------------------------------------------------
-
-Standard treatments of Eq.~\eqref{eq:vfe} read complexity as a
-regulariser: a quantity that prevents over-fitting by penalising
-posteriors that wander far from the prior. \citet{hylandAlbarracin2025MindChange}
-argue that this reading is incomplete. The same KL term, when applied
-to the update of an agent's prior preferences from $\C^{(t)}$ to
-$\C^{(t+1)}$ in light of new evidence, is most naturally read as
-a \emph{motivational cost}: the agent experiences resistance to
-revising its prior proportional to
-$\KL{\Pgen(\obs \mid \C^{(t+1)})}{\Pgen(\obs \mid \C^{(t)})}$.
-
-Two observations follow. First, this cost is asymmetric in
-$\C^{(t)}$ and $\C^{(t+1)}$. The Kullback--Leibler divergence is not a
-metric; under a fixed evidence stream, the path from prior $A$ to prior
-$B$ is not the time-reverse of the path from $B$ to $A$. Second, the
-asymmetry has dynamical consequences whenever the environment is not
-stationary. An agent whose update is gated by a positive cost of
-mind-change exhibits hysteresis: a cycle of environmental change
-followed by reversion to the original state does not return $\C$ to
-its starting value. This is the formal signature we exploit in
-Section~\ref{sec:model}.
-
-We write the variational $\C$-update as
+Three structural features are needed for Kuhnian dynamics to arise: a
+parameter $\thetapar$ that indexes theories; a control variable $\xexp$
+that makes the model \emph{active} rather than passive (the agent
+chooses what to probe); and \emph{regime-dependent discriminability}.
+The natural formal quantity for the third is the Fisher information,
 \begin{equation}
-\C^{(t+1)}
+\Fisher(\thetapar; \xexp)
 \;=\;
-\arg\min_{\C}
-\Bigl[\,
-\KL{\Q^{(t+1)}(\obs)}{\Pgen(\obs \mid \C)}
-\;+\;
-\stub \,\KL{\Pgen(\obs \mid \C)}{\Pgen(\obs \mid \C^{(t)})}
-\,\Bigr],
-\label{eq:c-update}
+\Eunder{\Pgen(\obs \mid \xexp, \thetapar)}{(\partial_{\thetapar}\ln \Pgen)^{2}}
+\;=\;
+\frac{\hone(\xexp)^{2}}{\sigobs^{2}},
+\label{eq:fisher}
 \end{equation}
-where $\Q^{(t+1)}(\obs)$ is the posterior over outcomes implied by the
-agent's current beliefs about the world, and $\stub \geq 0$ is the
-\emph{stubbornness} parameter. Setting $\stub = 0$ recovers the
-Bayes-optimal projection of the posterior onto $\Pgen(\obs \mid \C)$;
-$\stub \to \infty$ freezes $\C$ at $\C^{(t)}$. Eq.~\eqref{eq:c-update}
-is the technical content of the cost-of-mind-change reading;
-\citet{hylandAlbarracin2025MindChange} establish it for a single
-agent.
-
-\begin{remark}
-The asymmetric form
-$\KL{\Pgen(\obs \mid \C)}{\Pgen(\obs \mid \C^{(t)})}$
-is essential. Replacing it with the symmetric Jensen--Shannon
-divergence eliminates the path-dependence of belief revision and so
-removes the hysteretic dynamics the model is built to exhibit.
-\end{remark}
-
-Figure~\ref{fig:landscape} visualises the effect of $\stub$ on the
-location of the variational minimum.
+which is parameter-free in $\thetapar$ for this linear-in-$\thetapar$
+family. The \emph{discriminating regime} is the set of $\xexp$ where
+$\Fisher$ is large; the \emph{paradigm-consistent regime} is its
+complement, where Newtonian and relativistic predictions overlap within
+the noise. A community can hold a Newtonian paradigm for a long time
+simply because most experiments do not probe the anomaly regime.
+Figure~\ref{fig:reality} illustrates the two regimes.
 
 \begin{figure}[t]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
-  width=0.78\linewidth, height=5.4cm,
-  xlabel={candidate $C$},
-  ylabel={objective in Eq.~\eqref{eq:c-update}},
-  xmin=-3, xmax=3,
-  ymin=0,  ymax=4,
-  xtick={-2.0, 0.6}, xticklabels={$C^{(t)}$, $C^{*}$},
-  ytick=\empty,
+  width=0.80\linewidth, height=5.4cm,
+  xlabel={experimental setup $\xexp$},
+  ylabel={predicted observation $\E{\obs \mid \xexp}$},
+  xmin=0, xmax=2.5,
+  ymin=0, ymax=10,
   axis lines=left,
+  legend style={font=\scriptsize, draw=none,
+                at={(0.02,0.98)}, anchor=north west,
+                fill=white, fill opacity=0.85, text opacity=1},
+  legend cell align=left,
+  every axis plot/.append style={very thick},
+  clip=false
+]
+% Paradigm-consistent band (small x): theories overlap
+\fill[blue!8] (axis cs:0,0) rectangle (axis cs:0.8,10);
+% Anomaly / crisis band (large x): theories diverge
+\fill[red!8]  (axis cs:1.6,0) rectangle (axis cs:2.5,10);
+
+% Newtonian baseline h0(x) = x/2
+\addplot[domain=0:2.5, samples=80, color=blue!70!black, dashed]
+  {0.5*x};
+\addlegendentry{Newtonian, $\thetapar = 0$}
+
+% Relativistic h0(x) + theta* h1(x) = x/2 + x^3  (theta* = 1)
+\addplot[domain=0:2.5, samples=80, color=red!70!black]
+  {0.5*x + x^3};
+\addlegendentry{relativistic, $\thetapar = \thetastar$}
+
+% Band labels
+\node[font=\scriptsize, blue!55!black, align=center]
+  at (axis cs:0.4,9.0) {paradigm-\\consistent};
+\node[font=\scriptsize, red!55!black, align=center]
+  at (axis cs:2.05,9.0) {anomaly\\regime};
+\end{axis}
+\end{tikzpicture}
+\caption{The parameterised reality of Eq.~\eqref{eq:world}, with
+$\hzero(\xexp) = \tfrac{1}{2}\xexp$ and $\hone(\xexp) = \xexp^{3}$. At
+small $\xexp$ (blue band) the discriminating term $\thetapar\,\hone(\xexp)$
+is small relative to the noise $\sigobs$, so Newtonian and relativistic
+predictions overlap and observations do not discriminate paradigms ---
+the Fisher information $\Fisher(\thetapar;\xexp) = \hone(\xexp)^{2}/\sigobs^{2}$
+is small there. At large $\xexp$ (red band) the discriminating term
+dominates and observations separate the theories.}
+\label{fig:reality}
+\end{figure}
+
+% --------------------------------------------------------------------
+\subsection{Per-Agent Conjugate Inference}
+\label{ssec:inference}
+% --------------------------------------------------------------------
+
+Each agent $i$ carries a Gaussian posterior over the world parameter,
+$\Q_i(\thetapar) = \mathcal{N}(\thetapar;\, \muest_i,\, \tauprec_i^{-1})$,
+summarised by a mean $\muest_i$ and a precision $\tauprec_i$, together
+with a scalar resource state $\resource{i} \in \Real_{\geq 0}$ whose
+dynamics is given in Section~\ref{ssec:resource}. The ``paradigm'' an
+agent holds is its estimate $\muest_i$; the community's collective
+belief is the \emph{distribution} of $\{\muest_i\}$ across agents,
+weighted (in empirical observables) by the resource distribution
+$\{\resource{i}\}$ that determines which agents' beliefs are materially
+consequential (Section~\ref{sec:model} returns to this).
+
+Because the family~\eqref{eq:world} is linear-in-$\thetapar$ and
+Gaussian, the agent's generative model is conjugate and inference is
+closed-form. After observing $(\xexp_i, \obs_i)$, the agent forms a
+private posterior with
+\begin{equation}
+\tauprec_i^{\,\mathrm{priv}}
+\;=\;
+\tauprec_i + \frac{\hone(\xexp_i)^{2}}{\sigobs^{2}},
+\qquad
+\muest_i^{\,\mathrm{priv}}
+\;=\;
+\frac{\tauprec_i\,\muest_i
+      + \hone(\xexp_i)\,\bigl(\obs_i - \hzero(\xexp_i)\bigr)/\sigobs^{2}}
+     {\tauprec_i^{\,\mathrm{priv}}}.
+\label{eq:private-update}
+\end{equation}
+The precision increment $\hone(\xexp_i)^{2}/\sigobs^{2}$ is exactly the
+Fisher information~\eqref{eq:fisher}: an experiment in the
+discriminating regime contracts the posterior; one in the
+paradigm-consistent regime barely moves it.
+
+The agent's one-step \emph{predictive} distribution over a fresh
+observation is likewise Gaussian,
+\begin{equation}
+\obs \mid \xexp,\, \Q_i
+\;\sim\;
+\mathcal{N}\!\bigl(\hzero(\xexp) + \muest_i\,\hone(\xexp),\;
+                   \sigobs^{2} + \hone(\xexp)^{2}/\tauprec_i\bigr),
+\label{eq:predictive}
+\end{equation}
+which is the quantity neighbours are scored on
+(Section~\ref{ssec:trust}). Figure~\ref{fig:surprisal} shows why
+scoring on the predictive is informative only in the discriminating
+regime.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.80\linewidth, height=5.0cm,
+  xlabel={observation $\obs$},
+  ylabel={predictive density},
+  xmin=-3.5, xmax=8.5,
+  ymin=0, ymax=0.5,
+  axis lines=left,
+  ytick=\empty,
   legend style={font=\scriptsize, draw=none,
                 at={(0.98,0.98)}, anchor=north east,
                 fill=white, fill opacity=0.85, text opacity=1},
   legend cell align=left,
-  every axis plot/.append style={very thick}
+  every axis plot/.append style={very thick},
+  clip=false
 ]
-% Accuracy term: KL[q || p(o|C)] — proxied by (C - C*)^2 / 2 with C* = 0.6
-\addplot[domain=-3:3, samples=80, color=black!60, dashed]
-  {0.5*(x - 0.6)^2};
-\addlegendentry{accuracy term}
+% Newtonian agent's predictive: centred at f(0, x) (schematic mean 0)
+\addplot[domain=-3.5:8.5, samples=100, color=blue!70!black, dashed]
+  {0.3989*exp(-0.5*(x-0)^2)};
+\addlegendentry{Newtonian agent's predictive}
 
-% Cost of mind-change: KL[p(C) || p(C_old)] — proxied by (C - C_old)^2 / 2, C_old = -2
-\addplot[domain=-3:3, samples=80, color=red!60!black, dotted]
-  {0.5*(x - (-2.0))^2};
-\addlegendentry{cost of mind-change}
+% Relativistic agent's predictive: centred at f(theta*, x) (schematic mean 4)
+\addplot[domain=-3.5:8.5, samples=100, color=red!70!black]
+  {0.3989*exp(-0.5*(x-4)^2)};
+\addlegendentry{relativistic agent's predictive}
 
-% Combined for lambda = 0
-\addplot[domain=-3:3, samples=80, color=blue!30]
-  {0.5*(x - 0.6)^2};
-\addlegendentry{$\stub = 0$}
+% Sampled observation (truth in the anomaly regime, near the relativistic mean)
+\draw[black, thick] (axis cs:3.4,0) -- (axis cs:3.4,0.46);
+\node[circle, fill=black, inner sep=1.3pt] at (axis cs:3.4,0) {};
+\node[font=\scriptsize, anchor=south] at (axis cs:3.4,0.46) {sampled $\obs$};
 
-% lambda = 0.5
-\addplot[domain=-3:3, samples=80, color=blue!60]
-  {0.5*(x - 0.6)^2 + 0.5*0.5*(x - (-2.0))^2};
-\addlegendentry{$\stub = 0.5$}
-
-% lambda = 2.0
-\addplot[domain=-3:3, samples=80, color=blue!90!black]
-  {0.5*(x - 0.6)^2 + 2.0*0.5*(x - (-2.0))^2};
-\addlegendentry{$\stub = 2.0$}
-
-% Mark minima
-\node[circle, fill=blue!30, inner sep=1.4pt] at (axis cs:0.6,0)   {};
-\node[circle, fill=blue!60, inner sep=1.4pt] at (axis cs:-0.27,0) {};
-\node[circle, fill=blue!90!black, inner sep=1.4pt]
-  at (axis cs:-1.13,0) {};
-
+% Surprisal annotations
+\node[font=\scriptsize, blue!55!black, align=center, anchor=west]
+  at (axis cs:-3.2,0.30)
+  {Newtonian:\\high surprisal $\surprisal$};
+\node[font=\scriptsize, red!55!black, align=center, anchor=east]
+  at (axis cs:8.2,0.30)
+  {relativistic:\\low surprisal $\surprisal$};
 \end{axis}
 \end{tikzpicture}
-\caption{The cost-of-mind-change reading of the complexity term shifts
-the variational minimum. Accuracy alone (dashed black) is minimised at
-the Bayes-optimal $C^{*}$; the asymmetric KL penalty (dotted red) is
-minimised at $C^{(t)}$. The combined objective in
-Eq.~\eqref{eq:c-update} interpolates between the two as $\stub$
-increases (blue curves), with the minimum --- marked --- pulled away
-from $C^{*}$ toward $C^{(t)}$. As $\stub \to \infty$ the agent freezes
-at $C^{(t)}$.}
-\label{fig:landscape}
+\caption{Scoring a neighbour on its predictive. In the discriminating
+regime, an observation drawn from the true (relativistic) world lands
+far in the tail of a Newtonian agent's predictive~\eqref{eq:predictive}
+and near the centre of a relativistic agent's. The surprisal
+$\surprisal = -\ln \Pgen(\obs \mid \xexp, \Q)$ is what the trust update
+of Section~\ref{ssec:trust} consumes; the same surprisal differences
+also drive the resource flow of Section~\ref{ssec:resource} via the
+trust matrix. In the paradigm-consistent regime both predictives
+overlap the observation and no trust is learned (schematic; densities
+not to scale).}
+\label{fig:surprisal}
 \end{figure}
 
 % --------------------------------------------------------------------
-\subsection{Precision as Attention}
-\label{ssec:precision-attention}
+\subsection{Trust as Gamma-Conjugate Channel Precision}
+\label{ssec:trust}
 % --------------------------------------------------------------------
 
-Active-inference agents weight evidence from each of their channels by
-a precision parameter $\prc$, formally a parameter of the likelihood
-$\Pgen(\obs \mid \hidden; \prc)$ controlling how tightly observations
-cluster around their generating hidden state.
-\citet{feldmanFriston2010Attention} identify this parameter with
-\emph{attention}: high-precision channels dominate posterior updates,
-low-precision channels barely register. The mathematical content is
-standard. For Gaussian likelihoods, the posterior precision after
-combining $K$ channels is $\sum_k \prc_k$; the posterior mean is the
-precision-weighted mean of the channel signals.
+Agent $i$ treats each of its evidence channels --- its own direct
+observation of the world, and each neighbour $j$ --- as a
+precision-weighted source. We collect these precisions in the
+\emph{trust matrix} $\trustmat$, where the off-diagonal entry
+$\trust{i}{j}$ is the precision $i$ assigns to evidence supplied by
+$j$, and the diagonal entry $\trust{i}{i}$ is the precision $i$ places
+on its own direct environmental observation (\emph{self-trust}).
+Off-diagonal entries are zero outside the edge set $\edgeset$.
+$\trustmat$ is the only Bayesian learned relational object in the
+model: the resource topology of Section~\ref{ssec:resource} is read
+off $\trustmat$ deterministically, and the only further mechanism on
+the agent side is the per-agent cognitive trait $\stub$ of
+Section~\ref{ssec:mindchange}.
 
-\citet{parrFriston2017Attention} distinguish \emph{attention} from
-\emph{salience}. Attention is a posterior quantity: precision-weighting
-applied to currently observed signals. Salience is a prior quantity:
-the expected information gain associated with sampling from a channel
-or feature, evaluated under the agent's current generative model.
-The salience landscape thus determines what the agent is \emph{disposed}
-to attend to, before any specific observation is made.
-
-\begin{definition}[Salience prior]
-\label{def:salience-prior}
-A salience prior on a feature $\feature: \mathcal{O} \to \Real$ is a
-component of $\C$ that assigns differential preference weight to
-outcomes distinguished by $\feature$, thereby raising the expected
-information gain associated with sampling channels that report on
-$\feature$. We denote the salience operator by $\salience_{\feature}(\C)$.
-\end{definition}
-
-The empirical content of Definition~\ref{def:salience-prior} is that
-the shape of $\C$ governs not only what the agent prefers but also
-\emph{what the agent attends to}: a sharp $\C$ along feature
-$\feature$ produces a high-precision attentional channel for
-$\feature$-relevant evidence
-\citep{parviziWayne2024PreferencesAttention,limanowskiFriston2018Dark}.
-The empirical bridge to attention-as-precision is well-established
-\citep{feldmanFriston2010Attention,parrFriston2017Attention}; the
-empirical bridge to behaviour is the subject of
-\citet{torresan2025ShapeC}.
+Trust is \emph{learned}, by the same Bayesian machinery as any other
+precision in active inference. Each edge (including the self-loop)
+carries a Gamma prior with hyperparameters $(\shapegam_{ij},
+\rategam_{ij})$, so that $\trust{i}{j} = \shapegam_{ij}/\rategam_{ij}$
+in expectation. After agent $i$ observes $(\xexp_i, \obs_i)$, it scores
+each source $j$ by the surprisal that $j$'s predictive assigned to that
+observation,
+\begin{equation}
+\surprisal_{ij}
+\;=\;
+-\ln \Pgen\!\bigl(\obs_i \mid \xexp_i, \Q_j\bigr),
+\label{eq:surprisal}
+\end{equation}
+with $\Q_i$ itself supplying the self-channel score $\surprisal_{ii}$.
+The Gamma hyperparameters update by conjugate Bayesian precision
+learning with exponential forgetting $\forget \in (0, 1]$,
+\begin{equation}
+\shapegam_{ij} \;\leftarrow\; \forget\,\shapegam_{ij} + 1,
+\qquad
+\rategam_{ij} \;\leftarrow\; \forget\,\rategam_{ij} + \surprisal_{ij},
+\qquad
+\trust{i}{j} \;=\; \frac{\shapegam_{ij}}{\rategam_{ij}}.
+\label{eq:trust-update}
+\end{equation}
+Sources whose predictives were borne out gain precision; sources that
+were systematically surprised lose it. Eq.~\eqref{eq:trust-update} is
+the standard active-inference precision update under a
+Gamma--conjugate hyperprior \citep{mathys2014HGF}. Because each $i$
+scores $j$ from its own observations, $\trustmat$ is a \emph{directed}
+weighted graph even when the underlying social graph $\graph$ is
+undirected.
 
 % --------------------------------------------------------------------
-\subsection{Norms as Salience Priors}
-\label{ssec:norms-as-salience}
+\subsection{Resources as a Readout of Trust}
+\label{ssec:resource}
 % --------------------------------------------------------------------
 
-We are now in a position to state the central conceptual move. A norm,
-on the present account, is not a content prior over actions but an
-attentional prior over what features of a situation count as
-normatively relevant. The honesty norm does not say ``say true things'';
-it says ``attend to truth-conditions of statements you make.''
-The generosity norm does not say ``give things away''; it says
-``attend to others' material needs.'' Norm-following behaviour is
-then the policy that minimises expected free energy under the
-agent's normative salience landscape, in concert with whatever
-non-normative preferences the agent holds.
+The substrate the belief dynamics ride on is a resource flow on the
+social graph. Each agent $i$ carries a scalar resource state
+$\resource{i} \in \Real_{\geq 0}$. We make a single substantive
+commitment: \emph{resources flow along trust}. The patronage matrix
+$\flowmat$ is not a separately-learned object but the row-normalised
+trust matrix,
+\begin{equation}
+\flow{j}{i}(t)
+\;=\;
+\frac{\trust{j}{i}(t)}{\sum_{k \in \nbhd{j} \cup \{j\}} \trust{j}{k}(t)},
+\label{eq:flow-from-trust}
+\end{equation}
+so that agent $j$ allocates its outflow to those agents whose
+predictives $j$'s own observations have credited. This is the
+operational form of the Bourdieu/Kuhnian \emph{gatekeeper} logic
+\citep{bourdieu1975ScientificField}, with the substantive content that
+the gatekeeper's allocation is itself the same Bayesian quantity that
+governs how heavily $j$ weights $i$'s opinions epistemically: $j$ funds
+those whom $j$'s observations have not refuted, and weights $i$'s
+predictives in proportion to the same.
 
-\begin{definition}[Norm]
-\label{def:norm}
-A norm $\norm$ is a salience prior $\salience_{\feature_\norm}(\C)$
-that is shared across a community $V_\norm \subseteq V$ in the
-precise sense that the agents in $V_\norm$ assign correlated
-high-precision weight to feature $\feature_\norm$ in their
-respective $\C$.
-\end{definition}
+The exogenous inflow at total rate $\inflowrate$ is allocated by the
+same principle, applied at the population scale. The share of inflow
+that reaches agent $i$ is the aggregate trust the community places in
+$i$,
+\begin{equation}
+\inflowshare{i}(t)
+\;=\;
+\frac{\sum_{j \in \agentset} \trust{j}{i}(t)}
+     {\sum_{j,k \in \agentset} \trust{j}{k}(t)}.
+\label{eq:inflow-share}
+\end{equation}
+What would otherwise read as two qualitatively distinct
+``patronage'' and ``meritocratic'' channels --- the first allocating
+by social standing, the second by predictive accuracy --- collapses
+here into one quantity: trust \emph{is} what social standing is, when
+standing is read off the community's Bayesian posterior on each
+agent's predictive reliability. There is no separable merit/patronage
+split because $\trustmat$ is by construction the quantity that
+increases when predictions are borne out and decreases when they are
+not. The price of this collapse is also its content: gatekeepers and
+the field's reviewers are not modelled as separate institutional
+actors with separate utilities, but as readouts of the same underlying
+trust topology at two different aggregation scales.
 
-Two consequences of Definition~\ref{def:norm} should be flagged. First,
-norms are objects of \emph{population-level} attention rather than
-individual conviction; the binding force of a norm derives from its
-being shared, in the sense that an agent's neighbours also weight the
-same feature highly. Second, the precision-weighting structure of
-norms means that whoever modulates the precision of the channel that
-installs a feature into $\C$ thereby modulates which norms become
-active in the community. This is the formal bridge to the
-multi-agent model of Section~\ref{sec:model}: \emph{trust} ---
-the precision an agent assigns to evidence supplied by neighbours ---
-is the variable through which norms are installed in
-$\C$ and through which they are maintained against environmental drift.
-Figure~\ref{fig:variables-loop} summarises the four variables and
-their update relations.
+Combining the trust-driven internal flow, the trust-aggregated inflow,
+and a decay $\rdecay \in (0,1)$, the per-step resource update is
+\begin{equation}
+\resource{i}(t+1)
+\;=\;
+(1-\rdecay)\,\resource{i}(t)
+\;+\;
+\outflow \sum_{j} \flow{j}{i}(t)\,\resource{j}(t)
+\;+\;
+\inflowrate\,\inflowshare{i}(t).
+\label{eq:resource-update}
+\end{equation}
+Total resources are conserved up to the balance between inflow
+$\inflowrate$ and decay $\rdecay\sum_i \resource{i}$, so a steady-state
+population resource scale is set by their ratio. Both the internal
+flow term and the inflow term depend only on $\trustmat$, so the
+entire resource topology is a deterministic readout of the trust
+matrix.
 
-\begin{figure}[t]
+\paragraph{Coupling back into the agent.}
+The resource state $\resource{i}$ enters the agent's dynamics through
+two channels: (a)~the agent's policy, where the expected change in
+$\resource{i}$ under different experimental choices biases what gets
+probed --- this is what makes information gain instrumentally valuable
+in the model (Section~\ref{ssec:policy}); and (b)~the $\stub$-scaled
+affective utility $\utility$ that pulls the posterior toward the
+beliefs of resource-rich neighbours
+(Section~\ref{ssec:mindchange}). Together with the trust update of
+Section~\ref{ssec:trust}, these close two coupled feedback loops on a
+single world--agent--policy--action spine
+(Figure~\ref{fig:coupled-loop}).
+
+\begin{figure}[!ht]
 \centering
+\resizebox{0.92\linewidth}{!}{%
 \begin{tikzpicture}[
-  box/.style    = {draw, rounded corners=3pt, minimum width=3.4cm,
-                   minimum height=1.1cm, font=\small, align=center,
-                   fill=gray!5},
-  varbox/.style = {draw, rounded corners=3pt, minimum width=3.4cm,
-                   minimum height=1.1cm, font=\small, align=center,
-                   fill=blue!10, draw=blue!60, very thick},
-  arr/.style    = {-Stealth, semithick},
-  lbl/.style    = {font=\scriptsize, midway, fill=white,
-                   inner sep=2pt, align=center}
+  >=Stealth,
+  font=\scriptsize,
+  every node/.style={font=\scriptsize},
+  spine/.style   = {rectangle, draw, rounded corners=2pt,
+                    fill=blue!6, minimum width=22mm, minimum height=5.5mm,
+                    align=center, inner sep=2pt},
+  world/.style   = {rectangle, draw=black, thick, rounded corners=2pt,
+                    fill=gray!10, minimum width=22mm, minimum height=6mm,
+                    align=center, inner sep=2pt},
+  trust/.style   = {rectangle, draw=green!50!black, very thick, rounded corners=2pt,
+                    fill=green!10, minimum width=32mm, minimum height=7mm,
+                    align=center, inner sep=2pt},
+  rstate/.style  = {rectangle, draw=red!70!black, very thick,
+                    rounded corners=2pt, fill=red!15,
+                    minimum width=44mm, minimum height=8mm,
+                    align=center, inner sep=2pt},
+  l1/.style      = {->, semithick, blue!70!black},
+  l2/.style      = {->, semithick, green!50!black},
+  l3/.style      = {->, semithick, red!70!black}
 ]
-% Four corners of a wide rectangular loop
-\node[varbox]                          (Ci)    {\textit{salience prior} $\C_i$};
-\node[box, right=4.6cm of Ci]          (act)   {action $a_i$};
-\node[box, below=2.2cm of act]         (post)  {posterior $\Q_i$ \\
-                                               \scriptsize Eq.~\eqref{eq:posterior-mix}};
-\node[varbox, below=2.2cm of Ci]       (trust) {\textit{trust} $\trust{i}{j}$};
+% Epistemic spine
+\node[world]  (W)   at (0,   5.0) {World $\thetastar(t)$};
+\node[spine]  (Q)   at (0,   3.5) {Posterior $\Q_i$};
+\node[spine, minimum height=8mm]
+              (Pi)  at (0,   1.8) {Policy $\policy_i$\\[-1pt]\tiny $\propto \exp\!\bigl(\betaexp\,\E[\Delta\resource{i}\!\mid\!\xexp]\bigr)$};
+\node[spine]  (X)   at (0,   0.0) {Experiment $\xexp_i$};
+\node[spine]  (O)   at (0,  -1.5) {Outcome $\obs_i$};
+\draw[l1] (W)  -- node[right=1pt, font=\tiny]{obs} (Q);
+\draw[l1] (Q)  -- (Pi);
+\draw[l1] (Pi) -- node[right=1pt, font=\tiny]{sample} (X);
+\draw[l1] (X)  -- node[right=1pt, font=\tiny]{run} (O);
 
-% Loop edges, clockwise
-\draw[arr] (Ci)    -- node[lbl]{sample from $\C_i$} (act);
-\draw[arr] (act)   -- node[lbl]{neighbours observe; \\
-                                environment reveals $\hidden^{*}$} (post);
-\draw[arr] (post)  -- node[lbl]{prediction error \\
-                                Eq.~\eqref{eq:trust-update}} (trust);
-\draw[arr] (trust) -- node[lbl]{weights neighbours \\
-                                in Eq.~\eqref{eq:posterior-mix}} (Ci);
+% Trust channel (L2)
+\node[trust]  (Eij)  at (-4.5, -1.5) {cross-surpr.\ $\surprisal_{ij}$\\\tiny Eq.~\eqref{eq:surprisal}};
+\node[trust]  (Gam)  at (-4.5, -3.6) {trust $\trustmat$\\\tiny Gamma update (Eq.~\ref{eq:trust-update})};
+\node[trust]  (Pool) at (-4.5,  3.5) {pool $\Q_i$\\\tiny Eq.~\eqref{eq:pool}};
+\draw[l2] (O.west) -- (Eij);
+\draw[l2] (Eij) -- (Gam);
+\draw[l2] (Gam.west) .. controls (-7.6, -3.6) and (-7.6, 3.5) .. (Pool.west);
+\draw[l2] (Pool) -- (Q);
 
-% Diagonal arrow: posterior drives C-update
-\draw[arr, dashed] (post) -- node[lbl, pos=0.42]
-  {Eq.~\eqref{eq:c-update-multinorm},~$\stub_{i,r}$} (Ci);
-\end{tikzpicture}
-\caption{The four variables of the multi-agent model and their update
-loop, traversed clockwise. The salience prior $\C_i$ shapes the
-agent's action; the action is observed by the social neighbourhood
-and the environment reveals ground truth; the resulting posterior
-$\Q_i$ both drives an asymmetric-KL update of $\C_i$ (dashed,
-gated by stubbornness $\stub_{i,r}$) and supplies the prediction
-errors that update channel precision $\trust{i}{j}$. The two
-boxed quantities are the dynamical state of agent $i$ in this paper;
-the grey nodes are derived per-step quantities.}
-\label{fig:variables-loop}
+% Resource (L3): trust drives both internal flow W and inflow share pi_i
+\node[rstate] (R)    at (4.5, -3.6)
+  {resource $\resource{i}$ (Eq.~\ref{eq:resource-update})\\[-1pt]\tiny
+   internal flow $W = \overline{\trustmat}$\;\;+\;\;inflow share $\inflowshare{i} \propto \sum_j \trust{j}{i}$};
+\draw[l3] (Gam.east) -- node[above, font=\tiny]{$W$, $\inflowshare{i}$} (R.west);
+\draw[l3] (R.north) .. controls (4.5, 1.8) .. (Pi.east);
+\node[font=\tiny, align=left, red!70!black] at (6.4, 0.2)
+  {biases policy via\\$\E[\Delta\resource{i}\!\mid\!\xexp]$};
+\draw[l3] (R.north west) .. controls (1.5, 3.5) and (1.5, 5.0) .. (Q.east);
+\node[font=\tiny, align=left, red!70!black] at (3.3, 4.6)
+  {scales $\stub\!\cdot\!\utility$};
+
+% Legend
+\begin{scope}[shift={(-6.0, 5.0)}, font=\tiny]
+  \draw[l1] (0, 0.3) -- ++(0.5,0); \node[right] at (0.55, 0.3) {L1 epistemic};
+  \draw[l2] (0, 0.0) -- ++(0.5,0); \node[right] at (0.55, 0.0) {L2 trust};
+  \draw[l3] (0,-0.3) -- ++(0.5,0); \node[right] at (0.55,-0.3) {L3 resource};
+\end{scope}
+\end{tikzpicture}%
+}
+\caption{The coupled belief--resource system as one Bayesian learned
+object ($\trustmat$) and one deterministic readout ($\resource{i}$),
+sharing one world--agent--policy--action spine. \textbf{L1 (blue,
+epistemic)}: $\thetastar \to \Q_i \to \policy_i \to \xexp_i \to \obs_i$.
+The policy picks experiments by expected resource gain
+$\E[\Delta\resource{i}\!\mid\!\xexp]$; information gain enters
+\emph{instrumentally}, because only discriminating-regime experiments
+generate the predictive-accuracy differentials that produce trust gains
+for the agent (Section~\ref{ssec:policy}). \textbf{L2 (green, trust)}:
+outcomes generate cross-surprisals $\surprisal_{ij}$
+(Eq.~\ref{eq:surprisal}), which Gamma-conjugately update $\trustmat$
+(Eq.~\ref{eq:trust-update}); trust-weighted pooling (Eq.~\ref{eq:pool})
+closes the loop back into $\Q_i$. \textbf{L3 (red, resource)}: the
+resource state $\resource{i}$ is a deterministic readout of
+$\trustmat$ --- internal flow is the row-normalised trust matrix
+(Eq.~\ref{eq:flow-from-trust}) and the exogenous inflow share is
+aggregate incoming trust (Eq.~\ref{eq:inflow-share}). $\resource{i}$
+re-enters the spine through the policy (the
+expected-resource-gain term) and through the $\stub$-scaled affective
+utility $\utility$ that biases the belief update toward resource-rich
+neighbours (Section~\ref{ssec:mindchange}).}
+\label{fig:coupled-loop}
 \end{figure}
+
+% --------------------------------------------------------------------
+\subsection{The Variational Cost of Mind-Change}
+\label{ssec:mindchange}
+% --------------------------------------------------------------------
+
+Beyond trust --- a precision on \emph{incoming} channels --- the model
+has one further precision-related quantity: the variational \emph{cost
+of mind-change} $\stub$ \citep{hylandAlbarracin2025MindChange}, a
+per-agent penalty on the agent's own revision, read off the complexity
+term of variational free energy as a motivational quantity rather than
+a regulariser. Where trust scales how heavily the agent weights
+incoming evidence, $\stub$ acts on the agent's \emph{outgoing}
+commitments --- it gates how readily the agent moves its posterior.
+
+Following \citet{hylandAlbarracin2025MindChange}, $\stub$ scales an
+\emph{affective utility} $\utility$ over candidate posteriors. The
+resource topology of Section~\ref{ssec:resource} gives $\utility$
+substantive content: the alignment of one's belief with the beliefs of
+resource-rich neighbours is what generates affective preference, not
+some private or context-free preference function. Concretely we take
+\begin{equation}
+\utility\bigl(\Q_i;\,\{\Q_j, \resource{j}\}_j\bigr)
+\;=\;
+-\sum_{j \in \nbhd{i}}
+   \tfrac{\resource{j}}{\sum_{k \in \nbhd{i}} \resource{k}}\,
+   \KL{\Q_i}{\Q_j},
+\label{eq:utility}
+\end{equation}
+a resource-weighted average alignment of $\Q_i$ with the posteriors of
+its neighbours. The free-energy functional the agent minimises at the
+update step is then
+$\FE_i[\Q_i] - \stub\,\utility(\Q_i; \{\Q_j,\resource{j}\}_j)$, and the
+maximiser of this functional is, for the conjugate-Gaussian family,
+again Gaussian with mean and precision in closed form (see
+Section~\ref{sec:model}). The standard data-driven update of
+Eq.~\eqref{eq:private-update} is recovered when $\stub = 0$. Note that
+the resource weighting in Eq.~\eqref{eq:utility} carries the trust
+signal indirectly: because $\resource{j}$ is a readout of
+$\trustmat$, the agents whose beliefs the $\utility$ term pulls
+$\Q_i$ toward are exactly the agents the community has Bayesian
+reason to credit.
+
+\begin{remark}
+The model has two precision-related mechanisms, doing different jobs.
+\emph{Trust} $\trustmat$ is a learned channel precision on incoming
+evidence (Eq.~\ref{eq:trust-update}), updated every observation, and
+the only Bayesian learned relational object: the patronage matrix
+$\flowmat$ is its row-normalised readout
+(Eq.~\ref{eq:flow-from-trust}) and the exogenous inflow share is its
+aggregate-incoming readout (Eq.~\ref{eq:inflow-share}). The \emph{cost
+of mind-change} $\stub$ is a per-agent fixed (or slowly-varying) trait
+scaling an affective preference for posteriors aligned with
+resource-rich neighbours (Eq.~\ref{eq:utility}). Trust governs what the
+agent learns from others; $\stub$ governs how readily the agent
+updates its own beliefs to track them. Together with the inverse
+policy temperature $\betaexp$ that controls action exploration, these
+are the model's full set of precision-like parameters.
+\end{remark}

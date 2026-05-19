@@ -3,11 +3,86 @@
 \label{sec:discussion}
 % =====================================================================
 
-The technical contribution of this paper is to articulate norms as
-salience priors whose multi-agent dynamics are governed by two
-precision-related quantities --- a learned channel precision
-$\trust{i}{j}$ and a variational cost of mind-change $\stub$ --- and
-to derive the dissociation from Bayesian rule-induction stated in
-Proposition~\ref{prop:limit}. A fuller discussion of the empirical
-phenomena and political-theoretic implications is deferred to the
-companion treatment.
+The model articulates paradigm persistence as the dynamics of a
+\emph{coupled belief--resource system} organised around one Bayesian
+learned relational object: the trust matrix $\trustmat$. The patronage
+flow $\flowmat$ and the per-agent resource state $\resource{i}$ are
+deterministic readouts of $\trustmat$
+(Eqs.~\ref{eq:flow-from-trust}--\ref{eq:inflow-share}); the
+cost-of-mind-change $\stub$ is a per-agent cognitive trait that scales
+an affective preference for posteriors aligned with resource-rich
+neighbours (Eq.~\ref{eq:utility}). What would otherwise read as two
+qualitatively distinct funding channels --- a ``patronage'' channel
+allocated by social standing and a ``meritocratic'' channel allocated
+by predictive accuracy --- collapses here into one quantity. The
+substantive claim is that the collapse is correct: in real scientific
+institutions trust \emph{is} what social standing is, when standing is
+read off the community's posterior on each agent's predictive
+reliability. The classical concern --- that a pure-patronage model
+predicts any entrenched paradigm stays entrenched forever --- does not
+apply, because $\trustmat$ updates by Bayesian precision learning
+(Eq.~\ref{eq:trust-update}) on cross-surprisals: superior predictive
+accuracy translates into superior resource access through the same
+trust matrix that allocates resources. The price of the collapse is
+also its content: gatekeepers and the field's reviewers are not
+modelled as institutionally separate actors with separable utilities,
+but as readouts of one underlying trust topology at two aggregation
+scales.
+
+\paragraph{A progress-studies reading.}
+Axis~B of Section~\ref{sec:experiments} makes the model
+\emph{prescriptive}: the magnitude of the exogenous inflow
+$\inflowrate$ and the concentration of the initial trust matrix
+$\trustmat^{(0)}$ are the levers a funding ecology controls. The
+model generates concrete hypotheses that empirical science-of-science
+can test \citep{wang2021ScienceOfScience, azoulay2019StarsShadow,
+collison2019ProgressStudies}: (i)~holding total funding fixed,
+decreasing the concentration of incoming trust lowers entrenchment
+thresholds, an effect that should be visible in natural experiments
+on grant-policy reforms that broaden the set of effective gatekeepers
+without changing the budget; (ii)~the productive funding regime is
+intermediate in trust concentration, not at either extreme, testable
+against cross-field comparisons of paradigm-shift latency;
+(iii)~scientific revolutions coincide with $\inflowrate$ expansion
+rather than with stable or contracting periods, because new resources
+can be captured by new trust patterns without having to be wrested
+from old ones. The mechanistic active-inference account supplies a
+substrate against which these hypotheses become quantitative
+predictions rather than post-hoc rationalisations of historical case
+studies.
+
+\paragraph{Out of scope.}
+Three cuts are explicit. First, \emph{agent birth and death}: Planck's
+remark that ``a new scientific truth does not triumph by convincing
+its opponents \dots\ but rather because its opponents eventually die''
+\citep{planck1949Autobiography} is the limit case of the resource-%
+topology argument, captured here only at the precursor stage
+(resource flow shifting against the old guard as $\trustmat$ updates
+under sustained cross-surprisals). The relative timescales of belief
+revision and generational replacement, and the dynamics of
+graduate-student spawning by gatekeepers, are the natural next
+extension. Second, \emph{endogenous graph formation}: the social
+graph $\graph$ is exogenous by design --- this paper aims to isolate
+the dynamics of trust and belief on a fixed structure, not to explain
+the structure itself. Allowing $\graph$ to form from $\trustmat$ is an
+obvious follow-up but introduces a dynamical claim we are not making
+here. Third, an \emph{information-geometric reading of power}: the
+trust-derived flow $\flowmat$ is, on the gauge-field reading of
+social power developed in \citep{albarracin2025SocialPower}, the
+operational signature of who sources the cost-field for whom. A
+formal treatment requires anisotropic-metric machinery beyond the
+present scope, and is the natural theoretical home of the coupled
+model.
+
+The unification of patronage and meritocratic allocation through
+$\trustmat$ is itself a modelling commitment, not a hidden parameter
+of the experimental programme. The substantive future-work question it
+opens is the \emph{temporal evolution of the trust-allocation
+mapping}: Eqs.~\eqref{eq:flow-from-trust}--\eqref{eq:inflow-share}
+treat the readout from $\trustmat$ to $\flowmat$ and $\inflowshare{i}$
+as fixed, but in reality the institutional rules that translate peer
+credit into resource allocation respond to perceived crises and
+reform episodes. Modelling this meta-level dynamics turns the model
+from a theory of paradigm persistence into a theory of the conditions
+under which scientific institutions reorganise the trust-to-resource
+mapping itself to escape paradigm capture.

@@ -5,11 +5,12 @@
       "WebFetch(domain:arxiv.org)",
       "PowerShell(.venv\\\\Scripts\\\\python.exe _smoke_paper.py)",
       "Bash(.venv/Scripts/python.exe _smoke_memory.py)",
-      "Bash(where pdflatex *)",
-      "Bash(ls \"C:\\\\GitHub\\\\Paradigm_Shift_Act_Inf\\\\paper\\\\figures\")",
-      "Bash(pdflatex -interaction=nonstopmode -halt-on-error main.tex)",
-      "Bash(bibtex main *)",
-      "Bash(where lualatex *)"
+      "Bash(python *)",
+      "Bash(jupyter nbconvert *)",
+      "WebSearch",
+      "WebFetch(domain:pmc.ncbi.nlm.nih.gov)",
+      "Bash(pdflatex -interaction=nonstopmode switch_cost_efe.tex)",
+      "Bash(pdflatex -interaction=nonstopmode experiments_interpretation.tex)"
     ]
   }
 }

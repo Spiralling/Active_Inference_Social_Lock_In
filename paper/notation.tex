@@ -1,6 +1,16 @@
-% notation.tex — single source of truth for active-inference macros.
+% notation.tex --- single source of truth for the v2 model's macros.
 % \input{notation} from main.tex preamble. Use only these macros; do not
-% redefine.
+% redefine inline.
+%
+% v2 model (IWAI26, trust-centric refactor): a parameterised regression
+% world, per-agent Gaussian posteriors over a theory parameter theta, and
+% one Bayesian learned relational object --- the Gamma-conjugate trust
+% matrix Gamma. The patronage flow W and the per-step resource state r
+% are DETERMINISTIC READOUTS of Gamma (W = row-normalised Gamma; inflow
+% share = aggregate incoming trust). The cost of mind-change lambda is
+% retained as the Hyland-style scalar on the socially-induced affective
+% utility U whose content is alignment with resource-rich neighbours ---
+% it is NOT the same object as the channel precision Gamma.
 
 % ---------- Information-theoretic primitives ------------------------
 \newcommand{\FE}{\mathcal{F}}                    % variational free energy
@@ -12,35 +22,75 @@
 \newcommand{\Nat}{\mathbb{N}}
 \newcommand{\indicator}[1]{\mathbf{1}\!\left[#1\right]}
 
-% ---------- Active inference primitives -----------------------------
-\newcommand{\C}{\mathbf{C}}                      % prior preferences (log-preferences)
-\newcommand{\Cnorm}[1]{C_{#1}}                   % per-norm scalar component
-\newcommand{\Prec}{\boldsymbol{\Pi}}             % precision matrix
-\newcommand{\prc}{\gamma}                        % scalar precision
-\newcommand{\policy}{\pi}                        % policy
-\newcommand{\hidden}{s}                          % hidden state
+% ---------- Generative model primitives -----------------------------
 \newcommand{\obs}{o}                             % observation
 \newcommand{\Q}{q}                               % approximate posterior
 \newcommand{\Pgen}{p}                            % generative density
+\newcommand{\policy}{\pi}                        % policy
 
-% ---------- Coupling layer (this paper) -----------------------------
+% ---------- The parameterised reality (Sec. formal, world) ----------
+\newcommand{\thetapar}{\theta}                   % theory parameter
+\newcommand{\thetastar}{\theta^{*}}              % true parameter value
+\newcommand{\hzero}{h_{0}}                       % shared baseline function
+\newcommand{\hone}{h_{1}}                        % discriminating function
+\newcommand{\sigobs}{\sigma}                     % observation noise std
+\newcommand{\xexp}{x}                            % experimental setup (control)
+\newcommand{\Fisher}{\mathcal{I}}                % Fisher information I(theta;x)
+
+% ---------- Per-agent inference state -------------------------------
+\newcommand{\muest}{\mu}                         % posterior mean over theta
+\newcommand{\tauprec}{\tau}                      % posterior precision over theta
+
+% ---------- The coupling layer: graph + trust -----------------------
 \newcommand{\agentset}{V}                        % set of agents (vertices)
 \newcommand{\edgeset}{E}                         % social edges
 \newcommand{\graph}{\mathcal{G}}                 % social graph
 \newcommand{\nbhd}[1]{\mathcal{N}(#1)}           % neighbours of agent i
 \newcommand{\Nagents}{N}                         % population size
-\newcommand{\Rnorms}{R}                          % number of norms
-\newcommand{\trust}[2]{\gamma_{#1#2}}            % trust precision i->j
-\newcommand{\delegate}{d}                        % delegation factor (social vs env)
-\newcommand{\stub}{\lambda}                      % cost of mind-change (stubbornness)
-\newcommand{\mindcost}[2]{\lambda_{#1,#2}}       % per-agent per-norm stubbornness
-\newcommand{\feature}{\phi}                      % observation feature
-\newcommand{\salience}{\mathrm{Sal}}             % salience operator
-\newcommand{\situation}{\sigma}                  % situation (game) at time t
-\newcommand{\actionspace}{\mathcal{A}}           % action set
-\newcommand{\norm}{\mathcal{N}}                  % a norm
-\newcommand{\envprec}{\gamma_{\mathrm{env}}}     % environmental channel precision
-\newcommand{\sigmoid}{\sigma_{\mathrm{logistic}}}
+\newcommand{\trust}[2]{\gamma_{#1#2}}            % trust precision i->j (gamma_ii = self-trust)
+\newcommand{\trustmat}{\boldsymbol{\Gamma}}      % trust matrix
+\newcommand{\shapegam}{\alpha}                   % Gamma shape hyperparameter
+\newcommand{\rategam}{\beta}                     % Gamma rate hyperparameter
+\newcommand{\forget}{\rho}                       % exponential forgetting rate
+\newcommand{\surprisal}{\varepsilon}             % surprisal (negative log-predictive)
+
+% ---------- The active-inference policy -----------------------------
+\newcommand{\EIG}{\mathrm{EIG}}                  % expected information gain
+\newcommand{\betaexp}{\beta_{\mathrm{exp}}}      % EFE softmax temperature
+
+% ---------- The cost of mind-change (separate from trust) -----------
+% lambda scales the socially-induced affective utility U whose content
+% is the alignment of the agent's belief with the beliefs of resource-
+% rich neighbours. This is the Mal-faithful reading: U is where
+% preferences live; preferences are induced by the resource topology,
+% not private/abstract.
+\newcommand{\stub}{\lambda}                      % cost of mind-change
+\newcommand{\mindcost}[1]{\lambda_{#1}}          % per-agent cost of mind-change
+\newcommand{\utility}{U}                         % socially-induced affective utility
+
+% ---------- The resource topology (Sec. formal, resources) ----------
+% Each agent carries a scalar resource state r_i. Resources flow on the
+% graph through a patronage matrix W that is a deterministic readout of
+% the trust matrix (W_{j->i} = row-normalised Gamma_{j->i}), and the
+% exogenous inflow at rate R_in is distributed by aggregate incoming
+% trust (inflowshare_i = sum_j Gamma_{j->i} / total). One Bayesian
+% object (Gamma); the resource topology is a readout.
+\newcommand{\resource}[1]{r_{#1}}                % agent's resource state
+\newcommand{\resourcevec}{\mathbf{r}}            % population resource vector
+\newcommand{\flow}[2]{W_{#1#2}}                  % patronage flow rate j->i (= normalised Gamma)
+\newcommand{\flowmat}{\mathbf{W}}                % patronage flow matrix (readout of Gamma)
+\newcommand{\inflowrate}{R_{\mathrm{in}}}        % total exogenous inflow rate
+\newcommand{\inflowshare}[1]{\pi^{\mathrm{in}}_{#1}}  % share of inflow reaching agent i (aggregate trust)
+\newcommand{\outflow}{\alpha}                    % per-agent outflow fraction along W
+\newcommand{\rdecay}{\delta}                     % resource decay rate
+\newcommand{\gatecost}{c}                        % resource-gated experiment cost c(x; r_i)
+\newcommand{\fishercost}{\gamma}                 % cost-Fisher coupling steepness (Axis C)
+
+% ---------- Communities (structured population) ---------------------
+% Headline quantities are reported per-community, never as a single
+% population mean (the degenerate "pooled" limit).
+\newcommand{\community}[1]{V_{#1}}               % community / faction block
 
 % ---------- Drafting ------------------------------------------------
 \newcommand{\todo}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
+\newcommand{\open}[1]{\textcolor{blue}{\textbf{[OPEN: #1]}}}

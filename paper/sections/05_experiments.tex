@@ -3,44 +3,147 @@
 \label{sec:experiments}
 % =====================================================================
 
-The model of Section~\ref{sec:model} is implemented as a JAX-vectorised
-extension of pymdp. Four experiments are designed to characterise the
-joint role of cost of mind-change $\stub$ and channel precision
-$\trust{i}{j}$ in the population dynamics. We summarise the design
-here and defer the empirical figures.
+The coupled model of Section~\ref{sec:model} has three independently-%
+controlled levers: the structure of the initial trust matrix
+$\trustmat^{(0)}$ (which determines the initial resource topology
+through Eqs.~\ref{eq:flow-from-trust}--\ref{eq:inflow-share}); the
+scale of the exogenous resource economy
+($\inflowrate$ and decay $\rdecay$) together with how concentrated the
+initial trust is across the population; and the coupling between
+experiment cost and Fisher information (the resource-gated cost
+$\gatecost(\xexp;\resource{i})$ of
+Eq.~\ref{eq:expected-resource-gain}). The experimental programme is
+organised around three corresponding axes that probe each lever in
+isolation and, at their interaction, characterise the qualitative
+regimes of the model. Each is reported through per-community and
+per-agent observables (Remark~\ref{rem:no-pool}) and through
+\emph{resource-weighted} population summaries, never a single pooled
+mean.
 
-\paragraph{E1 (Baseline).}
-Stationary environment, $\stub = 0$ for all agents. Sanity check on
-the implementation: under the limit of Proposition~\ref{prop:limit},
-$\C_V^{(t)}$ should track $\hidden^{*}$ tightly with no
-systematic lag.
+\paragraph{Axis~A --- Initial trust structure.}
+Fix the social graph $\graph$, the total inflow $\inflowrate$, and the
+initial belief distribution. Vary the structure of the initial trust
+matrix $\trustmat^{(0)}$ from \emph{uniform} (every edge weighted
+equally) through \emph{block-clustered} (within-community trust high,
+between-community trust low --- the ``schools'' regime) to
+\emph{hub-aligned} (a small set of agents receive high incoming trust
+from everyone). Run the population through a paradigm-shift schedule
+$A \to B$. The hypothesis is that time-to-shift is \emph{non-monotone}
+in block-clustering: uniform trust spreads evidence too thinly across
+schools and shifts are slow; strong block-clustering makes each school
+shift as a unit but blocks transmission \emph{between} schools and
+also slows global shifts; an intermediate clustering --- enough
+within-school trust to integrate evidence locally, enough
+cross-school trust to transmit a vanguard's conversion to the
+mainstream --- maximises shift speed. The primary observables are the
+time at which resource-weighted bimodality collapses; the identity of
+the top-$k$ resource-centrality agents at the start and end of the
+run, with their belief alignment to old and new paradigms; and the
+within-school vs cross-school components of the trust spectrum
+(Fiedler value, see Section~\ref{sec:experiments}) tracked through the
+shift event.
 
-\paragraph{E2 (Adaptation lag under shock).}
-Discrete-shift environment with deterministic flip of one feature at
-$t = t^{*}$. Sweep $\stub$. The expected observable is monotonic
-adaptation lag $\tau(\stub)$: low-$\stub$ communities recover within a
-few timesteps, high-$\stub$ communities persist in the pre-shift
-salience landscape well past $t^{*}$.
+\paragraph{Axis~B --- Resource scale and initial concentration.}
+Hold $\graph$ and the initial belief distribution fixed. Sweep two
+controls jointly: (a)~the total exogenous inflow rate $\inflowrate$
+relative to the decay $\rdecay$, which sets the steady-state
+population resource scale, and (b)~the concentration of the initial
+trust matrix as measured by the Gini of aggregate incoming trust
+$\{\sum_j \trust{j}{i}^{(0)}\}_i$, swept from $0$ (uniform: every
+agent receives the same exogenous share) to near $1$ (a single hub
+absorbs all exogenous inflow). The substantive hypothesis has two
+parts. First, the entrenchment threshold above which paradigm shifts
+fail rises with initial trust concentration: when one community
+already absorbs most of the exogenous inflow, the trust update of
+Eq.~\eqref{eq:trust-update} has to overcome a head start in
+$\trust{j}{\mathrm{hub}}$ before reallocation can begin. Second,
+following the historical observation that scientific revolutions
+coincide with expansions of the scientific enterprise rather than
+with stable or contracting periods, higher $\inflowrate$ facilitates
+shifts because new resources entering can be captured by new
+alignment patterns without having to be wrested from old ones.
+Observables include those of Axis~A plus the endogenous resource
+Gini at steady state and its trajectory across the shift event, and
+the correlation between $\resource{i}$ and within-community average
+$\surprisal_{ii}$ --- high when the trust update has had time to
+re-route resources toward the agents whose predictives now match
+reality, low when concentration is locked in.
 
-\paragraph{E3 (Hysteresis under slow drift).}
-Slow-drift environment in which $\hidden^{*}$ traces a forward
-trajectory $A \to B$ followed by a reverse trajectory $B \to A$. Sweep
-$\stub$. The headline figure is the family of hysteresis loops in
-$(\hidden^{*}, \C_V)$ space; loop area $\propto \stub$
-(Proposition~\ref{prop:limit}). Figure~\ref{fig:hysteresis-schematic}
-shows the predicted loop shape.
+\paragraph{Axis~C --- Difficulty curves and the fitness-valley effect.}
+Use the Fisher-information--coupled experiment cost
+$\gatecost(\xexp;\resource{i}) = c_{0}\,\hone(\xexp)^{2}/\sigobs^{2} \cdot
+\phi(\resource{i})$ of Section~\ref{ssec:policy}. Sweep the steepness
+parameter and the threshold $r_{\min}$ in $\phi$; independently vary the
+placement of $\thetastar$ across cheap and expensive $\thetapar$-regions
+(where ``cheap'' means $\thetastar$ is well-discriminated by
+low-$\hone(\xexp)$ experiments and ``expensive'' means it requires
+high-$\hone(\xexp)$ experiments). The hypothesis is that when
+$\thetastar$ lies in an expensive region, paradigm shifts are gated by
+\emph{resource accumulation} rather than by belief dynamics, with a
+sharp discoverability transition at the resource threshold where the
+discriminating experiments become accessible. Below threshold the
+discriminating evidence is essentially never collected and any
+apparent shift is the result of agents arriving at the right answer
+for the wrong reasons; above threshold the discriminating evidence is
+collected and the standard belief-dynamical mechanisms take over.
+This connects to the historical observation that paradigm shifts
+requiring genuinely new experimental capabilities (relativity, quantum
+mechanics) take far longer to resolve than those settleable with
+existing apparatus.
 
-\begin{figure}[t]
+\paragraph{The interaction grid.}
+The three axes give the basic decomposition. Their interactions are
+where the qualitative regimes live, and the programme explicitly
+probes them. Axis~A$\times$B: block-clustered trust matters more
+when the population resource scale is small (every school must fund
+its own apparatus), and matters less in the high-$\inflowrate$ regime
+where each school's vanguard can be supported by the trust-aggregated
+exogenous inflow. Axis~A$\times$C: a vanguard with the resources to
+run expensive experiments converts the mainstream only if the
+cross-school trust pathway from vanguard to mainstream is
+sufficiently broad. The deepest interaction is B$\times$C:
+high-concentration regimes can in principle fund expensive
+experiments, but only if the high-trust hubs already credit the
+discriminating-regime paradigm, which by Eq.~\eqref{eq:trust-update}
+they do not when their cross-surprisals on the new paradigm are still
+large; concentrated regimes can therefore systematically suppress
+discriminating work, while uniform regimes diffuse resources too
+thinly for individual agents to afford expensive apparatus, with an
+intermediate concentration --- both concentrated enough to fund
+apparatus and distributed enough that the apparatus is built when
+needed --- as the conjectured ``productive'' regime of normal science.
+We identify three representative settings on each axis and run the
+$3\times3\times3$ interaction grid with multiple seeds per cell.
+
+\paragraph{What gets measured.}
+Across all experiments the primary observables are:
+(i)~the resource-weighted population belief distribution over time,
+including its mean, variance, and bimodality;
+(ii)~time-to-shift, defined as the time at which the
+resource-weighted bimodality collapses or the resource-weighted mean
+crosses a paradigm threshold;
+(iii)~the identity of the top-$k$ resource-centrality agents at
+start and end of the run, with their belief alignment to old and new
+paradigms;
+(iv)~the correlation between $\resource{i}$ and belief alignment with
+current gatekeepers, tracked through shift events;
+(v)~reachability and discoverability for Axis~C; and
+(vi)~the endogenous resource Gini at steady state.
+These observables are designed so that each can be plotted against
+each axis sweep, and so that the interaction effects can be
+characterised in two-dimensional plots without further derivation.
+
+\begin{figure}[!ht]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
-  width=0.78\linewidth, height=5.6cm,
-  xlabel={environmental coordinate $\hidden^{*}$},
-  ylabel={population mean $\C_V$},
+  width=0.78\linewidth, height=5.0cm,
+  xlabel={environmental truth $\thetastar(t)$},
+  ylabel={per-community mean $\bar\muest_{\community{k}}$},
   xmin=-0.15, xmax=1.15,
   ymin=-0.15, ymax=1.15,
   xtick={0,1}, xticklabels={$A$, $B$},
-  ytick={0,1}, yticklabels={$C_A$, $C_B$},
+  ytick={0,1}, yticklabels={$\thetapar_A$, $\thetapar_B$},
   axis lines=left,
   legend style={font=\scriptsize, draw=none,
                 at={(0.02,0.98)}, anchor=north west,
@@ -48,59 +151,46 @@ shows the predicted loop shape.
   legend cell align=left,
   every axis plot/.append style={very thick}
 ]
-% lambda = 0: identity line, no loop
-\addplot[domain=0:1, samples=40, color=blue!25, dashed]
-  {x};
-\addlegendentry{$\stub = 0$ (no hysteresis)}
-
-% lambda = 0.5: small loop
-\addplot[domain=0:1, samples=80, color=blue!55,
-         smooth]
-  ({x}, {x - 0.13*sin(deg(pi*x))});
-\addlegendentry{$\stub = 0.5$}
-\addplot[domain=0:1, samples=80, color=blue!55,
-         smooth, forget plot]
-  ({1-x}, {(1-x) + 0.13*sin(deg(pi*(1-x)))});
-
-% lambda = 2.0: large loop
-\addplot[domain=0:1, samples=80, color=blue!90!black,
-         smooth]
-  ({x}, {x - 0.32*sin(deg(pi*x))});
-\addlegendentry{$\stub = 2.0$}
-\addplot[domain=0:1, samples=80, color=blue!90!black,
-         smooth, forget plot]
-  ({1-x}, {(1-x) + 0.32*sin(deg(pi*(1-x)))});
-
-% Annotate loop direction with arrows
-\draw[->, thick, blue!90!black] (axis cs:0.55, 0.39) -- (axis cs:0.65, 0.46);
-\draw[->, thick, blue!90!black] (axis cs:0.45, 0.61) -- (axis cs:0.35, 0.54);
-\node[font=\scriptsize, blue!90!black] at (axis cs:0.78, 0.30) {forward};
-\node[font=\scriptsize, blue!90!black] at (axis cs:0.22, 0.70) {reverse};
-
-% Mark fixed points
+\addplot[domain=0:1, samples=40, color=gray!55, dashed] {x};
+\addlegendentry{decoupled baseline (no loop)}
+\addplot[domain=0:1, samples=80, color=blue!60, smooth]
+  ({x}, {x - 0.12*sin(deg(pi*x))});
+\addlegendentry{vanguard $\community{1}$ (high $\resource{}$)}
+\addplot[domain=0:1, samples=80, color=blue!60, smooth, forget plot]
+  ({1-x}, {(1-x) + 0.12*sin(deg(pi*(1-x)))});
+\addplot[domain=0:1, samples=80, color=red!70!black, smooth]
+  ({x}, {x - 0.34*sin(deg(pi*x))});
+\addlegendentry{mainstream $\community{2}$ (low $\resource{}$)}
+\addplot[domain=0:1, samples=80, color=red!70!black, smooth, forget plot]
+  ({1-x}, {(1-x) + 0.34*sin(deg(pi*(1-x)))});
+\draw[->, thick, red!70!black] (axis cs:0.55,0.37) -- (axis cs:0.65,0.44);
+\draw[->, thick, red!70!black] (axis cs:0.45,0.63) -- (axis cs:0.35,0.56);
+\node[font=\scriptsize, red!70!black] at (axis cs:0.80,0.28) {forward};
+\node[font=\scriptsize, red!70!black] at (axis cs:0.20,0.72) {reverse};
 \node[circle, fill=black, inner sep=1.2pt] at (axis cs:0,0) {};
 \node[circle, fill=black, inner sep=1.2pt] at (axis cs:1,1) {};
-
 \end{axis}
 \end{tikzpicture}
-\caption{Predicted hysteresis loops in
-$(\hidden^{*}, \C_V)$ space under the slow-drift regime of E3
-(schematic, illustrative $\stub$ values). The forward trajectory
-$A \to B$ lags the environmental shift; the reverse trajectory
-$B \to A$ lags it in the opposite direction. The two trajectories
-enclose an area monotone in $\stub$. The $\stub = 0$ limit
-(Proposition~\ref{prop:limit}) collapses the loop to the identity
-line.}
-\label{fig:hysteresis-schematic}
+\caption{Predicted per-community hysteresis under the reversal schedule
+of Claim~\ref{claim:path-dependence}, at a representative cell of the
+$3\times3\times3$ interaction grid (block-clustered initial trust,
+high initial-trust concentration, expensive-region $\thetastar$). A
+vanguard community ($\community{1}$, blue) with sufficient resources
+to run discriminating experiments converts quickly and encloses a
+small loop; a mainstream community ($\community{2}$, red) held back
+by a resource bottleneck encloses a large one. The decoupled baseline
+($\gatecost$ independent of $\resource{i}$ and $\betaexp$ taken to
+the high-temperature limit so that
+$\E[\Delta\resource{i}\!\mid\!\xexp]$ does not differentiate
+experiments) collapses to the identity line in the homogeneous limit.
+Plotting per community --- rather than a single resource-weighted
+mean --- is what keeps the contrast visible (Remark~\ref{rem:no-pool}).}
+\label{fig:reversal-loop}
 \end{figure}
 
-\paragraph{E4 (Dissociation from rule-induction).}
-Identical environment sequence run on (a) the present model and
-(b) a Bayesian rule-induction baseline derived from
-\citet{oldenburgZhiXuan2024BayesianRule}. The expected observable is
-side-by-side trajectories: symmetric tracking in (b), hysteretic loops
-in (a) for any $\stub > 0$.
-
-Each configuration is run for $\geq 20$ random seeds with population
-$\Nagents = 30$ on Watts--Strogatz graphs ($k = 6$, $\beta = 0.1$);
-reported quantities are mean $\pm 95\%$ confidence intervals.
+\noindent The full $3\times3\times3$ grid, multi-seed runs, and
+quantitative phase diagrams are deferred to a companion treatment;
+this paper establishes the programme, the predicted regimes, and a
+gating result from a minimal two-community simulation that confirms
+the resource-coupled substrate produces qualitatively different
+shift-dynamics under uniform versus concentrated exogenous inflow.

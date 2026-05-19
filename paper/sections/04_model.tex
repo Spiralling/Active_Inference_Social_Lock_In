@@ -4,375 +4,283 @@
 % =====================================================================
 
 We now lift the single-agent apparatus of Section~\ref{sec:formal} to a
-coupled multi-agent setting. The model has three moving parts: a
-population on a network with per-agent salience priors
-(Section~\ref{ssec:setup}); a $\C$-update gated by a per-norm cost of
-mind-change (Section~\ref{ssec:c-update-multiagent}); and an
-inter-agent precision $\trust{i}{j}$ that is itself learned from
-prediction error (Section~\ref{ssec:trust-precision}). The per-step
-dynamics (Section~\ref{ssec:dynamics}) and a limiting result
-(Section~\ref{ssec:limit}) close the section.
+coupled population whose dynamics close the two loops of
+Figure~\ref{fig:coupled-loop}. The model has four moving parts: a
+\emph{structured} population on a network (Section~\ref{ssec:setup});
+an active-inference policy over experiment choice whose objective is
+the agent's expected resource gain (Section~\ref{ssec:policy}); a
+$\stub$-modified posterior update that incorporates the
+socially-induced utility of Eq.~\eqref{eq:utility}
+(Section~\ref{ssec:update}); and the per-step dynamics that compose
+private inference, trust-weighted pooling, the Gamma-conjugate trust
+update, and the trust-driven resource update
+(Section~\ref{ssec:dynamics}). Section~\ref{ssec:path-dependence}
+states the path-dependence claim the experimental programme of
+Section~\ref{sec:experiments} targets.
 
 % --------------------------------------------------------------------
-\subsection{Population, Network, and Per-Agent Generative Model}
+\subsection{A Structured Population on a Network}
 \label{ssec:setup}
 % --------------------------------------------------------------------
 
-The population is a set $\agentset = \{1, \dots, \Nagents\}$ of
-$\Nagents$ agents arranged on an undirected social graph
-$\graph = (\agentset, \edgeset)$, drawn as a Watts--Strogatz
-small-world network with mean degree $k$ and rewiring probability
-$\beta$ \citep{wattsStrogatz1998SmallWorld}. We write
-$\nbhd{i} = \{j \in \agentset : (i, j) \in \edgeset\}$ for the
-neighbourhood of agent $i$.
+The population is a set $\agentset = \{1, \dots, \Nagents\}$ of agents
+on a social graph $\graph = (\agentset, \edgeset)$. The graph is
+\emph{exogenous} and structured: $\agentset$ partitions into
+communities $\agentset = \community{1} \cup \dots \cup \community{K}$
+--- factions, schools, a vanguard and a mainstream --- that differ in
+their initial posteriors or their traits. We treat this structure as a
+first-class object, for a substantive reason: a \emph{homogeneous}
+population on a symmetric graph is a degenerate case in which
+trust-weighted pooling collapses to a uniform neighbour average, every
+agent tracks the same trajectory, and the interesting dynamics ---
+contested periods, asymmetric conversion, paradigm capture --- are
+invisible to a population-mean description (Remark~\ref{rem:no-pool}).
+We therefore report per-community and per-agent quantities throughout,
+and never a single population mean.
 
-Each agent $i \in \agentset$ carries:
+Each agent $i$ carries three pieces of state:
 \begin{itemize}
-\item A salience prior $\C_i \in \Real^{\Rnorms}$ over $\Rnorms$
-features $(\feature_1, \dots, \feature_{\Rnorms})$. Each component
-$\Cnorm{i,r}$ is the agent's log-preference weight on
-the $r$-th feature; the family of features is fixed across the
-community, and the variation across agents is in the weights.
-\item A vector of incoming-edge precisions
-$\{\trust{i}{j}\}_{j \in \nbhd{i}}$ representing the precision that
-$i$ assigns to evidence supplied by $j$. We will call $\trust{i}{j}$
-the \emph{trust} of $i$ in $j$; Section~\ref{ssec:trust-precision}
-formalises the sense in which this is a learned precision.
-\item A delegation factor $\delegate_i \in [0, 1]$ controlling the
-balance between direct environmental observation and socially mediated
-evidence, drawn once per agent from a Beta distribution with mean
-$\mu_d$.
-\item A vector $\stub_i = (\mindcost{i}{1}, \dots, \mindcost{i}{\Rnorms})$
-of per-norm stubbornness coefficients gating the $\C_i$-update.
+\item a Gaussian posterior over the world parameter,
+  $\Q_i(\thetapar) = \mathcal{N}(\muest_i, \tauprec_i^{-1})$, with mean
+  $\muest_i$ and precision $\tauprec_i$ (Section~\ref{ssec:inference});
+\item a row of the trust matrix --- the Gamma hyperparameters
+  $(\shapegam_{ij}, \rategam_{ij})$ and induced precisions
+  $\trust{i}{j}$ for $j \in \nbhd{i} \cup \{i\}$, including the
+  self-trust $\trust{i}{i}$ (Section~\ref{ssec:trust});
+\item a scalar resource state $\resource{i} \in \Real_{\geq 0}$
+  (Section~\ref{ssec:resource}). The patronage matrix $\flowmat$ is
+  \emph{not} per-agent state: it is the row-normalised trust matrix
+  (Eq.~\ref{eq:flow-from-trust}) and is recomputed each step.
 \end{itemize}
-
-The environment supplies a sequence of \emph{situations}
-$\situation_t \in \Sigma$ drawn from a fixed distribution. Each
-situation has a payoff structure that depends on the action
-$a_i \in \actionspace$ of each agent and a hidden ground-truth
-state $\hidden^{*}_{t}[\situation_t]$ characterising which
-feature is environmentally rewarded under $\situation_t$. The action
-space $\actionspace$ is finite and small. Three regimes for
-$\hidden^{*}$ will be considered in
-Section~\ref{sec:experiments}: \emph{stationary} (rare random
-flips), \emph{slow drift} (Bernoulli random walk per coordinate),
-and \emph{discrete shift} (deterministic flip at a single
-timestep).
-
-Figure~\ref{fig:graph-matrix} visualises the network on a small
-illustrative population ($\Nagents = 12$) together with the
-corresponding directed trust-precision matrix.
-
-\begin{figure}[t]
-\centering
-\begin{tikzpicture}[every node/.style={font=\scriptsize}]
-% =============== Panel A: Watts-Strogatz network ===============
-\begin{scope}[local bounding box=panelA]
-  \def\R{1.7}
-  % Place 12 nodes on a circle
-  \foreach \i in {1,...,12} {
-    \pgfmathsetmacro{\ang}{90 - 30*(\i-1)}
-    \node[circle, draw=black, fill=white, minimum size=5mm,
-          inner sep=0pt] (n\i) at (\ang:\R) {\i};
-  }
-  % Ring edges (nearest neighbour, undirected)
-  \foreach \a/\b in {1/2,2/3,3/4,4/5,5/6,6/7,7/8,8/9,9/10,10/11,11/12,12/1}
-    {\draw[gray!55, semithick] (n\a) -- (n\b);}
-  % Second-neighbour ring edges (omit ones we rewire)
-  \foreach \a/\b in {1/3,2/4,4/6,5/7,6/8,8/10,9/11,10/12,11/1,12/2}
-    {\draw[gray!55, semithick] (n\a) -- (n\b);}
-  % Rewired (small-world shortcut) edges in red
-  \draw[red!75!black, thick] (n3) -- (n9);
-  \draw[red!75!black, thick] (n7) -- (n1);
-  % Highlight focal agent's high-precision incoming edges in blue
-  \draw[blue!70, line width=1.4pt] (n3) -- (n2);
-  \draw[blue!70, line width=1.4pt] (n3) -- (n4);
-  % Highlight focal agent
-  \node[circle, draw=blue, very thick, fill=blue!15, minimum size=5mm,
-        inner sep=0pt] at (90 - 30*2:\R) {3};
-  \node[font=\small] at (0, -2.4) {(a) social graph $\graph$};
-\end{scope}
-
-% =============== Panel B: trust-precision matrix ===============
-\begin{scope}[shift={(5.7, 0)}]
-  \def\cw{0.30}
-  % Frame
-  \draw[gray!50] (0,0) rectangle ({12*\cw}, {-12*\cw});
-  % Diagonal in grey
-  \foreach \i in {1,...,12} {
-    \fill[gray!25] ({(\i-1)*\cw}, {-(\i-1)*\cw})
-                   rectangle ({\i*\cw}, {-\i*\cw});
-  }
-  % Helper: \fillcell{i}{j}{val} fills cell with blue intensity 0..100
-  % Ring edges (both directions, slightly asymmetric to show learning)
-  \foreach \a/\b/\v in {%
-    1/2/55, 2/1/60, 2/3/70, 3/2/85, 3/4/90, 4/3/55,
-    4/5/40, 5/4/50, 5/6/55, 6/5/45, 6/7/65, 7/6/60,
-    7/8/55, 8/7/50, 8/9/40, 9/8/45, 9/10/55, 10/9/60,
-    10/11/45, 11/10/55, 11/12/35, 12/11/40, 12/1/30, 1/12/35,
-    % Second-neighbour ring
-    1/3/50, 3/1/45, 2/4/40, 4/2/50, 4/6/45, 6/4/40,
-    5/7/55, 7/5/50, 6/8/35, 8/6/40, 8/10/30, 10/8/45,
-    9/11/50, 11/9/45, 10/12/40, 12/10/30, 11/1/30, 1/11/35,
-    12/2/40, 2/12/35,
-    % Rewired shortcuts (high precision)
-    3/9/85, 9/3/80, 7/1/70, 1/7/65}
-    {\fill[blue!\v] ({(\b-1)*\cw}, {-(\a-1)*\cw})
-                    rectangle ({\b*\cw}, {-\a*\cw});}
-  % Outline
-  \draw[gray!50] (0,0) rectangle ({12*\cw}, {-12*\cw});
-  % Row/column ticks (every 3rd)
-  \foreach \i in {1,4,7,10,12} {
-    \node[anchor=east, font=\tiny]
-      at (-0.05, {-(\i-1)*\cw - 0.5*\cw}) {\i};
-    \node[anchor=south, font=\tiny]
-      at ({(\i-1)*\cw + 0.5*\cw}, 0.05) {\i};
-  }
-  % Axis labels
-  \node[anchor=south, font=\scriptsize]
-    at ({6*\cw}, 0.45) {trustee $j$};
-  \node[anchor=south, rotate=90, font=\scriptsize]
-    at (-0.5, {-6*\cw}) {truster $i$};
-  % Caption tag
-  \node[font=\small] at ({6*\cw}, {-12*\cw - 0.45})
-    {(b) trust matrix $\trust{i}{j}$};
-  % Vertical colorbar to the right of the matrix.
-  % \cb = colorbar cell height; bar total height = 10*\cb.
-  % Bar is vertically centred against the matrix.
-  \def\cb{0.22}
-  \begin{scope}[shift={({12*\cw + 0.40}, {-12*\cw + 0.5*(12*\cw - 10*\cb)})}]
-    \foreach \v in {0,10,...,90}{%
-      \pgfmathsetmacro{\y}{\v * \cb / 10}%
-      \fill[blue!\v] (0, \y) rectangle (\cb, {\y + \cb});}
-    \draw[gray!50] (0, 0) rectangle (\cb, {10 * \cb});
-    \node[anchor=west, font=\tiny] at ({\cb + 0.04}, 0)            {low $\trust{i}{j}$};
-    \node[anchor=west, font=\tiny] at ({\cb + 0.04}, {10 * \cb})   {high $\trust{i}{j}$};
-  \end{scope}
-\end{scope}
-\end{tikzpicture}
-\caption{Network and learned trust-precision matrix on an
-illustrative $\Nagents = 12$ Watts--Strogatz graph
-($k = 4$, $\beta \approx 0.17$). \textbf{(a)}~Ring edges in grey;
-two rewired shortcut edges in red; the focal agent (node $3$) and its
-two highest-precision incoming edges in blue. \textbf{(b)}~The
-directed precision matrix $\trust{i}{j}^{(t)}$ at a representative
-timestep: row $i$ gives agent $i$'s precision-weighting on each
-neighbour $j$. Cell shade encodes precision; the diagonal is
-masked (no self-channel); off-edge cells are white. Asymmetry across
-the diagonal reflects that trust is learned per agent: $i$'s estimate
-of $j$'s reliability is independent of $j$'s estimate of $i$'s.}
-\label{fig:graph-matrix}
-\end{figure}
+The cost of mind-change $\mindcost{i}$ is a per-agent cognitive trait
+(fixed or slowly-varying) scaling the socially-induced utility
+$\utility$ of Eq.~\eqref{eq:utility}; it is not learned. The
+environment supplies a truth $\thetastar(t)$ that may change over time;
+Section~\ref{sec:experiments} specifies the schedules (a single step,
+a ramp, and a reversal $A \!\to\! B \!\to\! A$).
 
 % --------------------------------------------------------------------
-\subsection{Per-Agent $\C$-Update with Multi-Norm Cost of Mind-Change}
-\label{ssec:c-update-multiagent}
+\subsection{The Active-Inference Policy: Expected Resource Gain}
+\label{ssec:policy}
 % --------------------------------------------------------------------
 
-At each timestep $t$, agent $i$ assembles a posterior over outcomes
-$\Q_i^{(t+1)}(\obs)$ that mixes a direct environmental likelihood and
-a socially pooled prediction:
+Each agent chooses \emph{which experiment to run} --- a value
+$\xexp_i$ on a discrete grid --- to maximise its expected change in
+resources,
 \begin{equation}
-\Q_i^{(t+1)}(\obs)
+\policy_i(\xexp)
 \;\propto\;
-(1 - \delegate_i)\,
-\Pgen_{\mathrm{env}}\!\bigl(\obs \mid \obs_i^{(t)}; \envprec\bigr)
-\;+\;
-\delegate_i \sum_{j \in \nbhd{i}} w_{ij}^{(t)} \, \Q_j^{(t)}(\obs),
-\label{eq:posterior-mix}
+\exp\!\Bigl(\betaexp\,\E\!\bigl[\Delta\resource{i} \mid \xexp_i = \xexp\bigr]\Bigr),
+\label{eq:policy}
 \end{equation}
-where the social weights are the row-normalisation of the trust
-vector,
+with $\betaexp$ an inverse temperature controlling action exploration.
+There is no separately-added information-gain term, no separately-added
+strategic-gain term, and no separately-added experiment cost on top of
+the policy objective: \emph{all of these enter through}
+$\E[\Delta\resource{i}\!\mid\!\xexp]$, which decomposes (by the
+resource update of Eq.~\ref{eq:resource-update} and the trust update
+of Eq.~\ref{eq:trust-update}) as
 \begin{equation}
-w_{ij}^{(t)} \;=\; \frac{\trust{i}{j}^{(t)}}
-                          {\sum_{k \in \nbhd{i}} \trust{i}{k}^{(t)}},
-\label{eq:social-weights}
-\end{equation}
-and $\envprec$ is a fixed environmental channel precision. The
-delegation factor $\delegate_i$ acts as a top-level allocation of
-attentional precision between the direct environmental channel and
-the aggregate social channel, in the sense of
-\citet{feldmanFriston2010Attention}; the trust weights
-$w_{ij}^{(t)}$ are the precision-allocation \emph{within} the social
-channel.
-
-The agent's $\C_i$-update extends Eq.~\eqref{eq:c-update} to the
-multi-norm setting by treating each component $\Cnorm{i,r}$
-independently:
-\begin{equation}
-\Cnorm{i,r}^{(t+1)}
-\;=\;
-\arg\min_{c}
-\Bigl[\,
-\KL{\Q_i^{(t+1)}(\feature_r)}{\Pgen(\feature_r \mid c)}
+\E\!\bigl[\Delta\resource{i} \mid \xexp\bigr]
+\;\approx\;
+\underbrace{\outflow\,\E\!\Bigl[\textstyle\sum_j \flow{j}{i}(t{+}1)\,\resource{j}(t) \mid \xexp\Bigr]}_{\substack{\text{trust-weighted inflow}\\\text{from neighbours}}}
 \;+\;
-\mindcost{i}{r}\,
-\KL{\Pgen(\feature_r \mid c)}{\Pgen(\feature_r \mid \Cnorm{i,r}^{(t)})}
-\,\Bigr].
-\label{eq:c-update-multinorm}
+\underbrace{\inflowrate\,\E\!\bigl[\inflowshare{i}(t{+}1) \mid \xexp\bigr]}_{\substack{\text{aggregate-trust}\\\text{exogenous share}}}
+\;-\;
+\underbrace{\gatecost(\xexp;\resource{i})}_{\substack{\text{cost of}\\\text{apparatus}}}
+\;-\;
+\rdecay\,\resource{i}(t).
+\label{eq:expected-resource-gain}
 \end{equation}
-Reading: along each feature $\feature_r$, agent $i$ projects the
-current posterior onto the family of preference distributions, gated
-by an asymmetric KL penalty that scales with the agent's per-norm
-stubbornness $\mindcost{i}{r}$. The per-norm decoupling means an agent
-can be liberal with respect to one norm and rigid with respect to
-another --- the empirical observation that motivates the multi-norm
-extension.
+The two trust-mediated terms are what tie information to resources:
+both depend on the post-observation trust
+$\trust{j}{i}(t{+}1)$, which by Eq.~\eqref{eq:trust-update} responds
+to the cross-surprisal $\surprisal_{ji}$ that neighbour $j$ records on
+$i$'s predictive. In the \emph{paradigm-consistent regime} (low Fisher
+information, Eq.~\ref{eq:fisher}), all agents' predictives are equally
+close to the observation, the cross-surprisals do not differentiate
+agents, no trust is reshuffled, and the expected resource gain is
+dominated by the $-\gatecost - \rdecay\resource{i}$ floor: the agent
+has no resource-route reason to run the experiment. In the
+\emph{discriminating regime}, agents whose $\muest_i$ tracks
+$\thetastar$ produce predictives that outperform their neighbours',
+their incoming trust rises, and through
+Eqs.~\eqref{eq:flow-from-trust}--\eqref{eq:inflow-share} their share
+of both internal flow and exogenous inflow rises with it. Information
+gain is therefore not a separate intrinsic value in the policy, as
+in standard expected free energy; it is the \emph{instrumental}
+channel by which the agent earns resources, viz., by being right where
+being right is detectable.
 
-\begin{remark}
-Eq.~\eqref{eq:c-update-multinorm} treats norms as updated component-wise.
-This is a deliberate simplification: a more general model would couple
-the components through a covariance structure (so that revising
-$\Cnorm{i,r}$ drags $\Cnorm{i,r'}$ along correlated dimensions). We
-adopt the decoupled form for analytical tractability and treat norm
-covariance as future work.
-\end{remark}
+The cost term $\gatecost(\xexp;\resource{i}) =
+c_{0}\,\hone(\xexp)^{2}/\sigobs^{2}\cdot \phi(\resource{i})$ scales
+with Fisher information --- discriminating experiments are expensive
+in apparatus as well as informative --- with a barrier
+$\phi(\resource{i}) = 1/\max(\resource{i} - r_{\min}, \epsilon)$ that
+diverges as $\resource{i}$ falls below the cost of a discriminating
+experiment. Axis~C of Section~\ref{sec:experiments} probes the
+parameters of $\gatecost$.
 
 % --------------------------------------------------------------------
-\subsection{Channel Precision: Trust as Learned Precision}
-\label{ssec:trust-precision}
+\subsection{The $\stub$-Modified Posterior Update}
+\label{ssec:update}
 % --------------------------------------------------------------------
 
-The variable $\trust{i}{j}$ is a precision parameter of the channel
-through which agent $j$'s evidence reaches agent $i$. As such it is
-governed by the same Bayesian machinery as any other precision in the
-agent's model: it is the inverse variance of the noise on signals
-arriving from $j$, as estimated by $i$ from prediction error.
-
-Concretely, after agent $i$ has formed its posterior
-$\Q_i^{(t+1)}$ and observed the environmental ground truth
-$\hidden^{*}_{t}[\situation_t]$, $i$ assigns each neighbour $j$ a
-prediction error
+The per-agent update is the standard Gaussian filter of
+Eq.~\eqref{eq:private-update}, modified by the $\stub$-scaled
+socially-induced utility $\utility$ of Eq.~\eqref{eq:utility}. The
+free-energy functional the agent minimises is
 \begin{equation}
-\varepsilon_{ij}^{(t)}
+\Q_i^{\,\mathrm{priv}}
 \;=\;
--\ln \Q_j^{(t)}\!\bigl(\hidden^{*}_{t}[\situation_t]\bigr),
-\label{eq:prediction-error}
+\arg\min_{\Q}
+\Bigl\{
+  \FE_i[\Q]
+  \;-\;
+  \mindcost{i}\,\utility\bigl(\Q;\,\{\Q_j(t), \resource{j}(t)\}_j\bigr)
+\Bigr\},
+\label{eq:lambda-update}
 \end{equation}
-the negative log-likelihood that $j$'s posterior assigned to the
-realised ground truth. The precision update is multiplicative,
-\begin{equation}
-\trust{i}{j}^{(t+1)}
-\;=\;
-\trust{i}{j}^{(t)} \,
-\exp\!\bigl[-\eta_{\gamma}\, \varepsilon_{ij}^{(t)}\bigr],
-\label{eq:trust-update}
-\end{equation}
-with learning rate $\eta_{\gamma} \in (0, 1]$. Eq.~\eqref{eq:trust-update}
-is the multi-agent analogue of standard precision learning under a
-log-Normal hyperprior \citep{mathys2014HGF}: neighbours whose past
-posteriors assigned high probability to subsequently observed truth
-gain precision in $i$'s estimate, neighbours who were systematically
-wrong lose it.
-
-Three substantive consequences follow. First, the variable
-$\trust{i}{j}$ unifies several quantities that the literature has
-historically treated separately: it is what the cultural-evolution
-tradition calls \emph{prestige} \citep{henrichGilWhite2001Prestige},
-what the indirect-reciprocity tradition calls \emph{reputation}
-\citep{nowakSigmund2005IndirectReciprocity}, and what the
-active-inference tradition calls a learned channel precision
-\citep{feldmanFriston2010Attention,mathys2014HGF}. The unification is
-not a stipulation but a consequence of treating other agents as
-evidence channels: trust \emph{is} the precision-weighting that
-emerges from precision learning when one of the agent's channels
-happens to be another agent. Second, Eq.~\eqref{eq:trust-update} is
-asymmetric across the edge $(i, j)$: $i$'s trust in $j$ is governed by
-$j$'s track record from $i$'s perspective, not vice versa. The
-resulting trust network is a directed weighted graph, even when the
-underlying social graph $\graph$ is undirected. Third, the dynamics of
-$\trust{i}{j}$ feed back into $\C_i$ through
-Eq.~\eqref{eq:posterior-mix}: a high-trust neighbour's posterior
-contributes more to $i$'s posterior, which in turn shapes the
-direction of $\C_i$-revision.
+where $\FE_i[\Q]$ is the standard variational free energy of $\Q$
+against the agent's generative model and the new observation
+$(\xexp_i, \obs_i)$. With $\utility$ as in Eq.~\eqref{eq:utility} and
+the Gaussian family, Eq.~\eqref{eq:lambda-update} is again a
+conjugate-Gaussian filter: the minimiser is Gaussian, with precision
+$\tauprec_i^{\,\mathrm{priv}} = \tauprec_i^{\,\mathrm{data}} +
+\mindcost{i}\sum_{j} (\resource{j}/\!\sum_k\!\resource{k})\,\tauprec_j$
+and mean a precision-weighted combination of the data-driven posterior
+(Eq.~\ref{eq:private-update}) with a resource-weighted neighbour mean.
+The posterior is pulled toward the beliefs of high-resource
+neighbours, with strength controlled by the agent's own $\mindcost{i}$;
+the standard data-driven update is recovered at $\mindcost{i} = 0$.
+Because $\resource{j}$ is itself a trust readout, the
+$\stub$-pull effectively channels the same trust signal that drives
+resource flow into the agent's own belief update, at a strength the
+agent's $\stub$ controls.
 
 % --------------------------------------------------------------------
 \subsection{Per-Step Dynamics}
 \label{ssec:dynamics}
 % --------------------------------------------------------------------
 
-The per-step dynamics are the composition of
-Eqs.~\eqref{eq:posterior-mix}--\eqref{eq:trust-update}.
-Algorithm~\ref{alg:step} states the order of operations.
+One round composes the policy, the $\stub$-modified private update,
+the Gamma-conjugate trust update, a trust-weighted pool, and the
+trust-driven resource update. The trust-weighted pool over the closed
+neighbourhood is unchanged from the standard multi-agent
+active-inference treatment:
+\begin{equation}
+\Q_i^{(t+1)}(\thetapar)
+\;\propto\;
+\prod_{j \in \nbhd{i} \cup \{i\}}
+  \bigl[\Q_j^{\,\mathrm{priv}}(\thetapar)\bigr]^{w_{ij}},
+\qquad
+w_{ij}
+\;=\;
+\frac{\trust{i}{j}}{\sum_{k \in \nbhd{i} \cup \{i\}} \trust{i}{k}}.
+\label{eq:pool}
+\end{equation}
+For Gaussian posteriors the pool is closed-form: precisions add
+weightedly and means precision-average. Algorithm~\ref{alg:step}
+states the order of operations and makes the two coupled feedback
+loops of Figure~\ref{fig:coupled-loop} explicit.
 
 \begin{algorithm}
-\caption{One step of the multi-agent model.}
+\caption{One step of the coupled belief--resource model.}
 \label{alg:step}
 \begin{algorithmic}[1]
-\State Sample situation $\situation_t \sim P(\Sigma)$.
-\State Each agent $i$ samples action
-       $a_i^{(t)} \sim \mathrm{softmax}(\C_i^{(t)} \mid \situation_t)$.
-\State Environment reveals
-       $\hidden^{*}_{t}[\situation_t]$; payoffs distributed.
-\For{$i = 1, \dots, \Nagents$}
-  \State Form $\Q_i^{(t+1)}$ via Eq.~\eqref{eq:posterior-mix}.
-  \State Update each $\Cnorm{i,r}$ via Eq.~\eqref{eq:c-update-multinorm}.
-  \For{$j \in \nbhd{i}$}
-    \State Compute $\varepsilon_{ij}^{(t)}$ via Eq.~\eqref{eq:prediction-error}.
-    \State Update $\trust{i}{j}$ via Eq.~\eqref{eq:trust-update}.
-  \EndFor
+\State Environment sets the truth $\thetastar(t)$ for this round.
+\For{each agent $i$}
+  \State Choose experiment $\xexp_i \sim \policy_i$ via Eq.~\eqref{eq:policy}
+         \Comment{policy = expected resource gain}
+  \State Observe $\obs_i \sim \mathcal{N}\bigl(\hzero(\xexp_i)
+         + \thetastar(t)\,\hone(\xexp_i),\, \sigobs^{2}\bigr)$.
+  \State Form private posterior $\Q_i^{\,\mathrm{priv}}$ via
+         Eq.~\eqref{eq:lambda-update}
+         \Comment{$\stub$-scaled $\utility$ enters here}
 \EndFor
-\State Environment evolves $\hidden^{*}$ per regime.
+\For{each agent $i$}
+  \State Compute cross-surprisals $\surprisal_{ij}$ via
+         Eq.~\eqref{eq:surprisal}.
+  \State Update $(\shapegam_{ij}, \rategam_{ij}, \trust{i}{j})$ via
+         Eq.~\eqref{eq:trust-update}.
+  \State Pool $\{\Q_j^{\,\mathrm{priv}}\}_{j \in \nbhd{i} \cup \{i\}}$
+         into $\Q_i^{(t+1)}$ via Eq.~\eqref{eq:pool}
+         \Comment{\textbf{L2 closes}}
+\EndFor
+\For{each agent $i$}
+  \State Read internal flow $\flow{j}{i}$ from $\trustmat$ via
+         Eq.~\eqref{eq:flow-from-trust}.
+  \State Read inflow share $\inflowshare{i}$ from $\trustmat$ via
+         Eq.~\eqref{eq:inflow-share}.
+  \State Resource update via Eq.~\eqref{eq:resource-update}
+         \Comment{\textbf{L3 closes}}
+\EndFor
 \end{algorithmic}
 \end{algorithm}
 
-The salience picture of Section~\ref{ssec:norms-as-salience} maps onto
-Algorithm~\ref{alg:step} as follows. The community's salience
-landscape at time $t$ is the empirical distribution of
-$\{\C_i^{(t)}\}_{i \in V}$ across the population; norms in the sense
-of Definition~\ref{def:norm} are the high-precision modes of this
-distribution. Channel precision $\trust{i}{j}$ controls how rapidly an
-agent's salience prior tracks its neighbours; cost of mind-change
-$\mindcost{i}{r}$ controls how much resistance each component
-$\Cnorm{i,r}$ offers to revision. The two parameters jointly determine
-whether the community-level salience landscape converges, fragments,
-or drifts in step with the environment.
-
 % --------------------------------------------------------------------
-\subsection{Limiting Behaviour and Dissociation from Bayesian Rule-Induction}
-\label{ssec:limit}
+\subsection{Path-Dependence Without a Pooled Trajectory}
+\label{ssec:path-dependence}
 % --------------------------------------------------------------------
 
-The motivating empirical claim of the model is that positive
-$\stub$ generates hysteresis under environmental drift. We state
-this as a limiting result whose proof is straightforward but whose
-empirical consequences are the subject of
-Section~\ref{sec:experiments}.
+The phenomenon the model is built to exhibit is \emph{paradigm
+persistence}: the trajectory of the community's beliefs depends on the
+order of events, not just their aggregate. In the coupled model the
+substrate-level mechanism is \emph{trust-topology drift}: a forward
+leg of an environmental schedule installs a particular distribution
+$\{\resource{i}\}$ --- read off the trust matrix $\trustmat$ via
+Eqs.~\eqref{eq:flow-from-trust}--\eqref{eq:inflow-share} --- that the
+reverse leg does not retrace, because the trust update
+(Eq.~\ref{eq:trust-update}) is sensitive to the entire history of
+cross-surprisals rather than to the environmental schedule alone.
+The three contributors picked apart in earlier informational
+treatments --- trust drift, coupling lag, revision cost --- are the
+downstream \emph{signatures} of this one substrate-level source: trust
+drift is the substrate itself; coupling lag is the low-pass response
+of the pool step; and the cost of mind-change is the cognitive
+component of the same resource gradient that the trust topology
+projects.
 
-\begin{proposition}[Symmetric tracking in the $\stub \to 0$ limit]
-\label{prop:limit}
-Fix the model of Algorithm~\ref{alg:step} and let
-$\hidden^{*}_{t}$ follow the slow-drift regime. Consider an
-environmental trajectory $T_+$ in which $\hidden^{*}$ moves from
-state $A$ to state $B$ over $n$ steps, followed by a trajectory
-$T_-$ that reverses the move from $B$ back to $A$ over $n$ steps.
-Let $\C_{V}^{(t)}$ denote the population-mean salience prior. Then in
-the limit $\stub \to 0$ the trajectories
-$\{\C_{V}^{(t)} : t \in T_+\}$ and
-$\{\C_{V}^{(t)} : t \in T_-\}$ coincide
-(modulo independent stochasticity), and the area enclosed in the
-$(\hidden^{*}, \C_{V})$ plane vanishes. For $\stub > 0$, this area
-is bounded below by a quantity monotone in $\stub$.
-\end{proposition}
+\begin{remark}[Why not a population mean]
+\label{rem:no-pool}
+It is tempting to summarise the community by a single
+$(\thetastar,\bar\muest)$ trajectory. We deliberately do not: in a
+homogeneous population the pool~\eqref{eq:pool} makes every agent
+track the same trajectory and a population mean is adequate, but
+precisely in that regime there is no contested period, no faction,
+and nothing the structure does. Where the structure matters --- a
+vanguard that converts first, a mainstream held back by a resource
+bottleneck --- the population mean averages the phenomenon away. We
+therefore state path-dependence over \emph{per-community} trajectories
+and over \emph{resource-weighted} population summaries.
+\end{remark}
 
-\begin{proof}[Sketch]
-At $\stub = 0$, Eq.~\eqref{eq:c-update-multinorm} reduces to the
-Bayes-optimal projection
-$\Cnorm{i,r}^{(t+1)} = \arg\min_c \KL{\Q_i^{(t+1)}(\feature_r)}{\Pgen(\feature_r \mid c)}$,
-which is independent of $\Cnorm{i,r}^{(t)}$. The full update
-trajectory therefore depends only on the posterior trajectory,
-which is symmetric under time-reversal of $T_+ \cup T_-$. For
-$\stub > 0$, the second-KL term introduces a path-dependence whose
-asymmetry under time-reversal is precisely the area of the
-$(\hidden^{*}, \C_{V})$ loop; standard KL inequalities give the
-monotonicity in $\stub$.
-\end{proof}
+\begin{claim}[Trust-driven path-dependence]
+\label{claim:path-dependence}
+Consider a structured population with at least two communities differing
+in their initial posteriors, run under a reversal schedule
+$\thetastar: A \to B \to A$. Under the full coupled dynamics of
+Algorithm~\ref{alg:step}, the per-community trajectory
+$\{(\thetastar(t),\, \bar\muest_{\community{k}}(t),\,
+   G_{\community{k}}(t))\}$ ---
+where $G_{\community{k}}$ is the within-community resource Gini ---
+encloses a loop of positive area in the
+$(\thetastar, \bar\muest_{\community{k}})$ plane. The loop area is
+non-zero even with $\stub = 0$, because the trust matrix $\trustmat$
+drifts under the schedule and the resulting resource topology gates
+which experiments each community can run on the reverse leg via the
+expected-resource-gain term of the policy
+(Eq.~\ref{eq:expected-resource-gain}) and the apparatus-cost term
+$\gatecost(\xexp;\resource{i})$. The loop area vanishes only when the
+coupling from resources back into the policy is switched off
+($\gatecost$ independent of $\resource{i}$) and the population is
+homogeneous (so trust-topology drift produces no per-community
+asymmetry).
+\end{claim}
 
-Proposition~\ref{prop:limit} is the formal dissociation between our
-model and Bayesian rule-induction accounts of norm learning
-\citep{oldenburgZhiXuan2024BayesianRule}, which lack any equivalent of
-$\stub$ and therefore exhibit symmetric tracking under any
-$\stub$-setting. Section~\ref{sec:experiments} reports the empirical
-counterpart: hysteresis loops in
-$(\envprec\text{-perturbed environmental coordinate}, \C_V)$ space
-whose area scales monotonically with $\stub$.
+\noindent Claim~\ref{claim:path-dependence} is the target of the
+experimental programme of Section~\ref{sec:experiments}; the three
+axes there isolate the contributions of the initial trust topology
+(Axis~A), of the centralisation of inflow induced by initial trust
+concentration and the total inflow magnitude (Axis~B), and of the
+experiment-cost--Fisher coupling (Axis~C).
