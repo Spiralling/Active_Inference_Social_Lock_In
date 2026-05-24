@@ -10,7 +10,13 @@
       "WebSearch",
       "WebFetch(domain:pmc.ncbi.nlm.nih.gov)",
       "Bash(pdflatex -interaction=nonstopmode switch_cost_efe.tex)",
-      "Bash(pdflatex -interaction=nonstopmode experiments_interpretation.tex)"
+      "Bash(pdflatex -interaction=nonstopmode experiments_interpretation.tex)",
+      "Skill(lit-review)",
+      "Bash(pdflatex -interaction=nonstopmode -halt-on-error pomdp_paradigm_model.tex)",
+      "Bash(echo \"EXIT: $?\")",
+      "Read(//tmp/**)",
+      "Bash(pdflatex -interaction=nonstopmode pomdp_paradigm_model.tex)",
+      "Bash(echo \"exit: $?\")"
     ]
   }
 }
