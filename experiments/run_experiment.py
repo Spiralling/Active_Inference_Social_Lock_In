@@ -74,8 +74,18 @@ def expand_sweep(sweep: dict) -> list[dict]:
     return [dict(zip(keys, combo)) for combo in itertools.product(*values)]
 
 
-def run_single(cfg: SimpleConfig) -> dict:
-    out = run_simple(cfg)
+def _build_social_mask(cfg: SimpleConfig, exp: dict) -> np.ndarray | None:
+    """Build per-agent social mask from maverick config."""
+    mav = exp.get("base", {}).get("maverick_fraction", 0.0)
+    if mav <= 0.0:
+        return None
+    mav_strength = exp.get("base", {}).get("maverick_social_mask", 0.2)
+    rng = np.random.RandomState(cfg.seed)
+    return np.where(rng.rand(cfg.n_agents) < mav, mav_strength, 1.0)
+
+
+def run_single(cfg: SimpleConfig, social_mask: np.ndarray | None = None) -> dict:
+    out = run_simple(cfg, social_mask_per_agent=social_mask)
     return {
         "final_mean_qB": float(out["mean_qB"][-1]),
         "final_occ_B": float(out["occ_B"][-1]),
@@ -115,7 +125,8 @@ def main():
     for sp in sweep_grid:
         for seed in seeds:
             cfg = _build_simple_config(exp["base"], sp, seed)
-            result = run_single(cfg)
+            social_mask = _build_social_mask(cfg, exp)
+            result = run_single(cfg, social_mask)
             result["sweep"] = sp
             result["seed"] = seed
             results.append(result)
