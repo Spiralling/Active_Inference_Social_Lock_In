@@ -14,7 +14,9 @@ The codebase contains three model substrates:
 
 2. **Categorical POMDP scaffold** (`src/pomdp/step.py`, `agent_pop.py`, `gen_model.py`) — fixed-state epistemic POMDP with per-paradigm likelihoods, belief-utility in the EFE policy, and softmax-precision social coupling. Phase-1 complete (28 tests pass). Discovered the martingale wall: belief-utility in the policy cannot flip the inference basin.
 
-3. **Simplified theory-laden model** (`src/pomdp/simple_step.py`) — drops the POMDP action loop. Adds a latent context variable c in {normal_science, crisis} to the joint state (theta, c). Context carried forward through a proper transition model B_c with paradigm-inertia parameters (`eps_crisis`, `eps_resolve`). Lock-in emerges from the dynamics: committed agents see uninformative data, reinforcing normal-science context, further insulating beliefs. This is the active experimental substrate for E1-E3.
+3. **Simplified theory-laden model** (`src/pomdp/simple_step.py`) — drops the POMDP action loop. Adds a latent context variable c in {normal_science, crisis} to the joint state (theta, c). Context carried forward through a proper transition model B_c. Used for E1-E3.
+
+4. **Continuous-lambda model** (`src/pomdp/cont_step.py`) — direct multi-agent lift of Hyland & Albarracin (2025) Eq. 13: `q*(theta) ∝ prior(theta) · p(o|theta)^(1/lambda)`. Per-agent lambda tempers the likelihood; lambda evolves from KL cost of previous update (large changes → more conservative). Optional resource coupling gates exploration via trust-derived patronage. This is the active experimental substrate for E4-E6.
 
 ## Layout
 
@@ -22,7 +24,7 @@ The codebase contains three model substrates:
 src/              Core simulation modules
   pomdp/          Categorical POMDP scaffold + simplified model
 experiments/      YAML configs (E1-E3) + sweep runner
-tests/            Tiered test suite (46 tests)
+tests/            Tiered test suite (60 tests)
 notebooks/        Exploratory + figure generation (NB15-17 are active)
   _v1_archive/    Old continuous-substrate notebooks
 notes/            Design docs, theory brief, architecture review
@@ -53,14 +55,18 @@ python -m experiments.run_experiment experiments/configs/E1_stationary.yaml
 
 ## Experiments
 
-| ID | Environment | Sweep | What it tests |
-|----|-------------|-------|---------------|
-| E1 | Stationary, no social | eps_resolve x eps_crisis | Individual-level theory-ladenness effect (baseline) |
-| E2 | Discrete shift at t=100 | q_reliability x eps_resolve | **(q_reliability, eps_resolve) phase diagram** — the headline result |
-| E3 | Slow ramp over 200 steps | q_reliability x eps_resolve | Hysteresis under drift |
+| ID | Model | Environment | Sweep | What it tests |
+|----|-------|-------------|-------|---------------|
+| E1 | simple | Stationary, no social | eps_resolve x eps_crisis | Individual-level theory-ladenness (baseline) |
+| E2 | simple | Discrete shift at t=100 | q_reliability x eps_resolve | Binary-context phase diagram |
+| E3 | simple | Slow ramp over 200 steps | q_reliability x eps_resolve | Hysteresis under drift |
+| E4 | cont | Discrete shift at t=100 | q_reliability x lambda_init | **Continuous-lambda phase diagram (Fig 3)** |
+| E5 | cont | Discrete shift at t=100 | q_reliability x lambda_init | Continuous-lambda + resources |
+| E6 | cont | Discrete shift at t=100 | lambda_init x resource ON/OFF | **Resource ablation (Fig 4)** |
 
-Configs live in `experiments/configs/`. Results saved to `experiments/results/`.
-Detailed results and interpretation: `notes/experiment_results_2026_05_27.md`.
+Configs in `experiments/configs/`. Results in `experiments/results/`.
+Detailed results: `notes/experiment_results_2026_05_27.md` (E1-E3),
+`notes/experiment_results_2026_05_28.md` (E4, E6).
 
 ## Building the paper
 
