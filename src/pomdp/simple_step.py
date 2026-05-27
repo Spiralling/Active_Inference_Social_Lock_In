@@ -58,6 +58,12 @@ class SimpleConfig:
     # initial context prior
     D_c_normal: float = 0.9      # initial P(c=0) — starts in normal science
 
+    # partial theory-ladenness: how much c=0 averages away discriminability
+    alpha_tl: float = 1.0        # 1.0=fully averaged (current), 0.0=no averaging
+
+    # paradigm leak: small drift of theta belief toward uniform each step
+    eps_theta: float = 0.0       # 0.0=absorbing (B_theta=identity), >0=leaky
+
     n_context: int = 2
     obs_x_index: int = 2
 
@@ -71,6 +77,13 @@ class SimpleConfig:
     rewiring_p: float = 0.1
 
     social_mask: float = 1.0
+
+    # trust learning
+    trust_learning: bool = False
+    trust_rho: float = 0.95      # forgetting rate for Gamma hyperparameters
+    trust_alpha0: float = 1.0    # initial Gamma shape
+    trust_beta0: float = 1.0     # initial Gamma rate
+
     seed: int = 0
 
 
@@ -78,10 +91,13 @@ class SimpleConfig:
 # Joint generative-model builders (called once per run)
 # ------------------------------------------------------------------
 
-def build_joint_A_world(A_world: jnp.ndarray, K: int, C: int = 2) -> jnp.ndarray:
+def build_joint_A_world(A_world: jnp.ndarray, K: int, C: int = 2,
+                        alpha: float = 1.0) -> jnp.ndarray:
     """Joint likelihood A_joint[o, theta*C + c, a].
 
-    c=0 columns: paradigm-averaged (identical across theta — uninformative).
+    c=0 columns: blend of paradigm-specific and average, controlled by alpha.
+      alpha=1.0: fully averaged (identical across theta — uninformative).
+      alpha=0.0: no averaging (c=0 same as c=1 — no theory-ladenness).
     c=1 columns: original A_world[:, theta, a] (fully discriminating).
     """
     n_o, _K, A = A_world.shape
@@ -90,7 +106,8 @@ def build_joint_A_world(A_world: jnp.ndarray, K: int, C: int = 2) -> jnp.ndarray
 
     A_joint = jnp.empty((n_o, K * C, A))
     for k in range(K):
-        A_joint = A_joint.at[:, k * C + 0, :].set(avg[:, k, :])
+        A_c0 = (1.0 - alpha) * A_world[:, k, :] + alpha * avg[:, k, :]
+        A_joint = A_joint.at[:, k * C + 0, :].set(A_c0)
         A_joint = A_joint.at[:, k * C + 1, :].set(A_world[:, k, :])
 
     A_joint = A_joint / (A_joint.sum(axis=0, keepdims=True) + EPS)
@@ -125,14 +142,18 @@ def build_B_c(eps_crisis: float, eps_resolve: float) -> jnp.ndarray:
 # ------------------------------------------------------------------
 
 def transition_joint(q_joint: jnp.ndarray, B_c: jnp.ndarray,
-                     K: int, C: int = 2) -> jnp.ndarray:
+                     K: int, C: int = 2,
+                     eps_theta: float = 0.0) -> jnp.ndarray:
     """Apply B_theta ⊗ B_c transition to the joint posterior.
 
-    Since B_theta = identity, this applies B_c independently within each
-    theta block: q_prior[theta, c'] = sum_c B_c[c', c] * q_post[theta, c].
+    B_c is applied within each theta block. If eps_theta > 0, a small leak
+    toward uniform over theta is applied first (prevents absorbing commitment).
     """
     N = q_joint.shape[0]
     q = q_joint.reshape(N, K, C)                           # (N, K, C)
+    if eps_theta > 0:
+        uniform_theta = jnp.ones((K,)) / K
+        q = (1.0 - eps_theta) * q + eps_theta * uniform_theta[None, :, None]
     q_new = jnp.einsum('ij,nkj->nki', B_c, q)             # (N, K, C)
     q_flat = q_new.reshape(N, K * C)
     return q_flat / (q_flat.sum(axis=1, keepdims=True) + EPS)
@@ -176,6 +197,39 @@ def sample_observations(A_world_orig: jnp.ndarray, cfg: SimpleConfig,
 
 
 # ------------------------------------------------------------------
+# Trust learning (categorical surprisal + Gamma-conjugate update)
+# ------------------------------------------------------------------
+
+def categorical_surprisal(q_theta: jnp.ndarray, A_world: jnp.ndarray,
+                          o_world: jnp.ndarray, action: int,
+                          adj: jnp.ndarray) -> jnp.ndarray:
+    """Surprisal matrix eps_ij: how well did j's belief predict i's observation?
+
+    eps_ij = -log sum_theta q_j(theta) * A_world[o_i, theta, action]
+
+    q_theta : (N, K), A_world : (n_o, K, A), o_world : (N, n_o) one-hot,
+    adj : (N, N) adjacency + self-loops.
+    Returns (N, N) masked surprisal.
+    """
+    A_a = A_world[:, :, action]                               # (n_o, K)
+    pred_j = q_theta @ A_a.T                                  # (N, n_o): j's predictive
+    log_pred_j = jnp.log(pred_j + EPS)                        # (N, n_o)
+    ll_at_i = jnp.sum(o_world[:, None, :] * log_pred_j[None, :, :], axis=2)  # (N, N)
+    return -ll_at_i * adj
+
+
+def trust_update(alpha_t: jnp.ndarray, beta_t: jnp.ndarray,
+                 epsilon: jnp.ndarray, adj: jnp.ndarray,
+                 rho: float) -> tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
+    """Gamma-conjugate trust update. Returns (alpha_new, beta_new, T_new)."""
+    alpha_new = rho * alpha_t + adj
+    beta_new = rho * beta_t + epsilon
+    gamma = (alpha_new / (beta_new + EPS)) * adj
+    T_new = gamma / (gamma.sum(axis=1, keepdims=True) + EPS)
+    return alpha_new, beta_new, T_new
+
+
+# ------------------------------------------------------------------
 # State
 # ------------------------------------------------------------------
 
@@ -183,6 +237,8 @@ def sample_observations(A_world_orig: jnp.ndarray, cfg: SimpleConfig,
 class SimpleState:
     q_joint: jax.Array    # (N, K*C) joint belief over (paradigm, context)
     key: jax.Array
+    alpha_t: jax.Array | None = None   # (N, N) Gamma shape for trust
+    beta_t: jax.Array | None = None    # (N, N) Gamma rate for trust
 
 
 # ------------------------------------------------------------------
@@ -204,7 +260,15 @@ def init_simple(cfg: SimpleConfig,
         d = d / (d.sum(axis=1, keepdims=True) + EPS)         # (N, K)
         q0_joint = (d[:, :, None] * D_c[None, None, :]).reshape(cfg.n_agents, K * C)
 
-    return SimpleState(q_joint=q0_joint, key=jax.random.PRNGKey(cfg.seed))
+    N = cfg.n_agents
+    alpha0 = None
+    beta0 = None
+    if cfg.trust_learning:
+        alpha0 = jnp.full((N, N), cfg.trust_alpha0)
+        beta0 = jnp.full((N, N), cfg.trust_beta0)
+
+    return SimpleState(q_joint=q0_joint, key=jax.random.PRNGKey(cfg.seed),
+                       alpha_t=alpha0, beta_t=beta0)
 
 
 # ------------------------------------------------------------------
@@ -215,8 +279,11 @@ def simple_step(state: SimpleState,
                 gm_joint: dict,
                 A_world_orig: jnp.ndarray,
                 T: jnp.ndarray,
+                adj: jnp.ndarray,
                 cfg: SimpleConfig,
-                t: int) -> tuple[SimpleState, dict]:
+                social_mask: jnp.ndarray,
+                t: int) -> tuple[SimpleState, jnp.ndarray, dict]:
+    """One step. Returns (new_state, T_new, info)."""
     K = cfg.pomdp.n_paradigms
     C = cfg.n_context
     N = state.q_joint.shape[0]
@@ -224,7 +291,8 @@ def simple_step(state: SimpleState,
 
     # 1. TRANSITION — proper AIF prior via B_joint
     B_c = gm_joint["B_c"]
-    q_prior = transition_joint(state.q_joint, B_c, K, C)     # (N, K*C)
+    q_prior = transition_joint(state.q_joint, B_c, K, C,
+                               eps_theta=cfg.eps_theta)       # (N, K*C)
 
     # 2. OBSERVE
     o_world, theta_star_t = sample_observations(
@@ -237,7 +305,7 @@ def simple_step(state: SimpleState,
 
     # 4. INFER on joint state (theta, c)
     actions = jnp.full((N,), cfg.obs_x_index, dtype=jnp.int32)
-    mask = jnp.broadcast_to(jnp.asarray(cfg.social_mask, dtype=float), (N,))
+    mask = social_mask
 
     q_joint_post = agent_pop.infer_state_batch(
         q_prior,
@@ -249,7 +317,17 @@ def simple_step(state: SimpleState,
         mask,
     )                                                         # (N, K*C)
 
-    new_state = SimpleState(q_joint=q_joint_post, key=key_next)
+    # 5. TRUST LEARNING (optional)
+    alpha_new, beta_new, T_new = state.alpha_t, state.beta_t, T
+    if cfg.trust_learning and state.alpha_t is not None:
+        q_theta_post = marginalize_theta(q_joint_post, K, C)
+        epsilon = categorical_surprisal(
+            q_theta_post, A_world_orig, o_world, cfg.obs_x_index, adj)
+        alpha_new, beta_new, T_new = trust_update(
+            state.alpha_t, state.beta_t, epsilon, adj, cfg.trust_rho)
+
+    new_state = SimpleState(q_joint=q_joint_post, key=key_next,
+                            alpha_t=alpha_new, beta_t=beta_new)
 
     q_theta_post = marginalize_theta(q_joint_post, K, C)
     q_c_post = marginalize_context(q_joint_post, K, C)
@@ -258,7 +336,7 @@ def simple_step(state: SimpleState,
         "mean_q_c": np.asarray(q_c_post.mean(axis=0)),
         "theta_star_t": theta_star_t,
     }
-    return new_state, info
+    return new_state, T_new, info
 
 
 # ------------------------------------------------------------------
@@ -266,7 +344,8 @@ def simple_step(state: SimpleState,
 # ------------------------------------------------------------------
 
 def run_simple(cfg: SimpleConfig,
-               D_per_agent: np.ndarray | None = None) -> dict:
+               D_per_agent: np.ndarray | None = None,
+               social_mask_per_agent: np.ndarray | None = None) -> dict:
     K = cfg.pomdp.n_paradigms
     C = cfg.n_context
 
@@ -274,7 +353,7 @@ def run_simple(cfg: SimpleConfig,
     A_world_orig = gm_orig["A_world"]
 
     gm_joint = {
-        "A_world_joint": build_joint_A_world(A_world_orig, K, C),
+        "A_world_joint": build_joint_A_world(A_world_orig, K, C, cfg.alpha_tl),
         "A_social_joint": build_joint_A_social(gm_orig["A_social"], K, C),
         "B_c": build_B_c(cfg.eps_crisis, cfg.eps_resolve),
     }
@@ -282,7 +361,13 @@ def run_simple(cfg: SimpleConfig,
     T = build_trust(cfg.pomdp, cfg.n_agents, mean_degree=cfg.mean_degree,
                     kind=cfg.graph_kind, rewiring_p=cfg.rewiring_p,
                     seed=cfg.seed)
+    adj = (T > 0).astype(float)                               # adjacency + self-loops
     state = init_simple(cfg, D_per_agent)
+
+    if social_mask_per_agent is not None:
+        s_mask = jnp.asarray(social_mask_per_agent, dtype=float)
+    else:
+        s_mask = jnp.full((cfg.n_agents,), cfg.social_mask, dtype=float)
 
     true_paradigm_idx = cfg.pomdp.true_paradigm
     mean_qB = np.empty(cfg.n_steps)
@@ -292,7 +377,8 @@ def run_simple(cfg: SimpleConfig,
     infos: list[dict] = []
 
     for t in range(cfg.n_steps):
-        state, info = simple_step(state, gm_joint, A_world_orig, T, cfg, t)
+        state, T, info = simple_step(
+            state, gm_joint, A_world_orig, T, adj, cfg, s_mask, t)
         q_theta = np.asarray(marginalize_theta(state.q_joint, K, C))
         mean_qB[t] = info["mean_q"][true_paradigm_idx]
         occ_B[t] = float(np.mean(q_theta[:, true_paradigm_idx] > 0.5))
