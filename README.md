@@ -55,11 +55,12 @@ python -m experiments.run_experiment experiments/configs/E1_stationary.yaml
 
 | ID | Environment | Sweep | What it tests |
 |----|-------------|-------|---------------|
-| E1 | Stationary | eps_resolve x q_reliability | Convergence vs capture regime map |
-| E2 | Discrete shift at t=150 | eps_resolve | Adaptation lag under paradigm inertia |
-| E3 | Slow ramp over 200 steps | eps_resolve x social_mask | Hysteresis under drift |
+| E1 | Stationary, no social | eps_resolve x eps_crisis | Individual-level theory-ladenness effect (baseline) |
+| E2 | Discrete shift at t=100 | q_reliability x eps_resolve | **(q_reliability, eps_resolve) phase diagram** — the headline result |
+| E3 | Slow ramp over 200 steps | q_reliability x eps_resolve | Hysteresis under drift |
 
-Configs live in `experiments/configs/`. Results are saved as JSON to `experiments/results/`.
+Configs live in `experiments/configs/`. Results saved to `experiments/results/`.
+Detailed results and interpretation: `notes/experiment_results_2026_05_27.md`.
 
 ## Building the paper
 
