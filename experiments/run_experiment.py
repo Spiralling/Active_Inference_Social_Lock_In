@@ -1,8 +1,12 @@
-"""Experiment runner: loads YAML config, expands sweep grid, runs SimpleConfig.
+"""Experiment runner: loads YAML config, expands sweep grid, runs experiments.
+
+Supports two model types (set via model_type field in YAML):
+  "simple"  — SimpleConfig / run_simple (hierarchical context model)
+  "cont"    — ContConfig / run_cont (continuous lambda model)
 
 Usage:
     python -m experiments.run_experiment experiments/configs/E1_stationary.yaml
-    python -m experiments.run_experiment experiments/configs/E1_stationary.yaml --dry-run
+    python -m experiments.run_experiment experiments/configs/E4_cont_lambda.yaml --dry-run
 """
 
 from __future__ import annotations
@@ -19,6 +23,7 @@ import yaml
 from src.config import WorldConfig
 from src.pomdp.gen_model import PomdpConfig
 from src.pomdp.simple_step import SimpleConfig, run_simple
+from src.pomdp.cont_step import ContConfig, run_cont
 
 
 def _build_world_config(d: dict) -> WorldConfig:
@@ -65,6 +70,27 @@ def _build_simple_config(base: dict, overrides: dict, seed: int) -> SimpleConfig
     return SimpleConfig(**simple_kw)
 
 
+def _build_cont_config(base: dict, overrides: dict, seed: int) -> ContConfig:
+    pomdp_d = dict(base.get("pomdp", {}))
+    cont_kw = {}
+
+    for k, v in base.items():
+        if k == "pomdp":
+            continue
+        if k in ContConfig.__dataclass_fields__:
+            cont_kw[k] = v
+
+    for k, v in overrides.items():
+        if k in PomdpConfig.__dataclass_fields__ or k == "world":
+            pomdp_d[k] = v
+        elif k in ContConfig.__dataclass_fields__:
+            cont_kw[k] = v
+
+    cont_kw["pomdp"] = _build_pomdp_config(pomdp_d)
+    cont_kw["seed"] = seed
+    return ContConfig(**cont_kw)
+
+
 def expand_sweep(sweep: dict) -> list[dict]:
     if not sweep:
         return [{}]
@@ -84,7 +110,16 @@ def _build_social_mask(cfg: SimpleConfig, exp: dict) -> np.ndarray | None:
     return np.where(rng.rand(cfg.n_agents) < mav, mav_strength, 1.0)
 
 
-def run_single(cfg: SimpleConfig, social_mask: np.ndarray | None = None) -> dict:
+def _build_social_mask_generic(cfg, exp: dict) -> np.ndarray | None:
+    mav = exp.get("base", {}).get("maverick_fraction", 0.0)
+    if mav <= 0.0:
+        return None
+    mav_strength = exp.get("base", {}).get("maverick_social_mask", 0.2)
+    rng = np.random.RandomState(cfg.seed)
+    return np.where(rng.rand(cfg.n_agents) < mav, mav_strength, 1.0)
+
+
+def run_single_simple(cfg: SimpleConfig, social_mask: np.ndarray | None = None) -> dict:
     out = run_simple(cfg, social_mask_per_agent=social_mask)
     return {
         "final_mean_qB": float(out["mean_qB"][-1]),
@@ -92,6 +127,20 @@ def run_single(cfg: SimpleConfig, social_mask: np.ndarray | None = None) -> dict
         "mean_qB_trajectory": out["mean_qB"].tolist(),
         "theta_star_trace": out["theta_star_trace"].tolist(),
     }
+
+
+def run_single_cont(cfg: ContConfig, social_mask: np.ndarray | None = None) -> dict:
+    out = run_cont(cfg, social_mask_per_agent=social_mask)
+    result = {
+        "final_mean_qB": float(out["mean_qB"][-1]),
+        "final_occ_B": float(out["occ_B"][-1]),
+        "final_mean_lambda": float(out["mean_lambda"][-1]),
+        "mean_qB_trajectory": out["mean_qB"].tolist(),
+        "theta_star_trace": out["theta_star_trace"].tolist(),
+    }
+    if "mean_r" in out:
+        result["final_mean_r"] = float(out["mean_r"][-1])
+    return result
 
 
 def main():
@@ -107,8 +156,9 @@ def main():
     sweep_grid = expand_sweep(exp.get("sweep", {}))
     seeds = exp.get("seeds", [0])
     name = exp.get("experiment", {}).get("name", "unnamed")
+    model_type = exp.get("model_type", "simple")
 
-    print(f"Experiment: {name}")
+    print(f"Experiment: {name} (model: {model_type})")
     print(f"Sweep points: {len(sweep_grid)}, seeds: {len(seeds)}, "
           f"total runs: {len(sweep_grid) * len(seeds)}")
 
@@ -124,9 +174,14 @@ def main():
 
     for sp in sweep_grid:
         for seed in seeds:
-            cfg = _build_simple_config(exp["base"], sp, seed)
-            social_mask = _build_social_mask(cfg, exp)
-            result = run_single(cfg, social_mask)
+            if model_type == "cont":
+                cfg = _build_cont_config(exp["base"], sp, seed)
+                social_mask = _build_social_mask_generic(cfg, exp)
+                result = run_single_cont(cfg, social_mask)
+            else:
+                cfg = _build_simple_config(exp["base"], sp, seed)
+                social_mask = _build_social_mask(cfg, exp)
+                result = run_single_simple(cfg, social_mask)
             result["sweep"] = sp
             result["seed"] = seed
             results.append(result)
