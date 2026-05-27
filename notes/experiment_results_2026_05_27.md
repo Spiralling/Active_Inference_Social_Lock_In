@@ -95,7 +95,43 @@ or whether gradual evidence accumulation can break the social barrier.
 **Config:** N=40, T=400 steps, ramp from t=50 to t=250, eps_crisis=0.20,
 D_c_normal=0.9. Sweep: q_reliability × eps_resolve, 10 seeds each.
 
-*Results to be added when run completes.*
+**Result — phase diagram** (mean final belief in TRUE paradigm, averaged over seeds):
+
+```
+              er=0.01   er=0.05   er=0.1    er=0.2    er=0.3    er=0.5    er=0.7
+qr=0.500      0.970     0.941     0.928     0.928     0.927     0.919     0.908
+qr=0.505      0.927     0.851     0.787     0.714     0.624     0.406     0.226
+qr=0.510      0.801     0.540     0.367     0.169     0.056     0.005     0.001
+qr=0.515      0.488     0.161     0.048     0.006     0.001     0.000     0.000
+qr=0.520      0.201     0.015     0.003     0.000     0.000     0.000     0.000
+qr=0.525      0.040     0.001     0.000     0.000     0.000     0.000     0.000
+qr=0.530      0.002     0.000     0.000     0.000     0.000     0.000     0.000
+qr=0.540      0.000     0.000     0.000     0.000     0.000     0.000     0.000
+qr=0.550      0.000     0.000     0.000     0.000     0.000     0.000     0.000
+qr=0.600      0.000     0.000     0.000     0.000     0.000     0.000     0.000
+```
+
+**Key findings:**
+
+1. **Same phase boundary as E2.** The critical transition sits at qr ≈ 0.505–0.525,
+   confirming the boundary is robust to whether the environment shifts discretely or
+   drifts slowly.
+
+2. **Slow drift does not help escape lock-in.** Gradual evidence accumulation does
+   not erode the social barrier. If the community is above the critical coupling
+   threshold, they remain locked in even as the environment drifts away from their
+   paradigm over 200 steps.
+
+3. **Richer gradient at low qr.** Compared to E2, the slow drift shows more gradation
+   in the transition zone (e.g., qr=0.505 ranges from 0.93 to 0.23 across eps_resolve).
+   This is because agents commit more gradually during the ramp, so there is more
+   variation in how deeply entrenched they become.
+
+4. **Hysteresis implied.** The population commits to paradigm 0 during t=0–50 (before
+   the ramp starts), then the environment drifts toward paradigm 1. The asymmetry
+   between initial commitment (fast, under consistent evidence) and later adaptation
+   (slow, against social pressure) IS the hysteresis. The phase diagram quantifies
+   which parameter combinations produce it.
 
 ---
 
