@@ -38,7 +38,8 @@ import numpy as np
 from src.pomdp import agent_pop
 from src.pomdp.gen_model import PomdpConfig, build_generative_model
 from src.pomdp.step import build_trust, readout_trust_mixture
-from src.world import theta_schedule
+from src.resource import flow_from_trust, inflow_share, flow_step
+from src.world import theta_schedule, h1
 
 EPS = 1e-12
 
@@ -84,6 +85,16 @@ class SimpleConfig:
     trust_alpha0: float = 1.0    # initial Gamma shape
     trust_beta0: float = 1.0     # initial Gamma rate
 
+    # resource coupling
+    resource_coupling: bool = False
+    r_init: float = 1.0
+    R_in: float = 0.1
+    alpha_flow: float = 0.3
+    delta_decay: float = 0.05
+    c0: float = 0.1
+    r_min: float = 0.1
+    budget_fraction: float = 0.5
+
     seed: int = 0
 
 
@@ -93,22 +104,26 @@ class SimpleConfig:
 
 def build_joint_A_world(A_world: jnp.ndarray, K: int, C: int = 2,
                         alpha: float = 1.0) -> jnp.ndarray:
-    """Joint likelihood A_joint[o, theta*C + c, a].
+    """Joint likelihood A_joint[o, theta*C + c, a] with C context levels.
 
-    c=0 columns: blend of paradigm-specific and average, controlled by alpha.
-      alpha=1.0: fully averaged (identical across theta — uninformative).
-      alpha=0.0: no averaging (c=0 same as c=1 — no theory-ladenness).
-    c=1 columns: original A_world[:, theta, a] (fully discriminating).
+    Each context level c has a graded blend of paradigm-specific and average:
+      alpha_c = alpha * (1 - c/(C-1))
+        c=0:   alpha_c = alpha  (most averaged, deepest normal science)
+        c=C-1: alpha_c = 0      (no averaging, full crisis — discriminating)
+
+    For C=2: c=0 is averaged (alpha), c=1 is original. Backward compatible.
+    For C>2: graded ladder of commitment depth (Jonas's richer belief network).
     """
     n_o, _K, A = A_world.shape
     avg = jnp.mean(A_world, axis=1, keepdims=True)          # (n_o, 1, A)
     avg = jnp.broadcast_to(avg, (n_o, K, A))                # (n_o, K, A)
 
     A_joint = jnp.empty((n_o, K * C, A))
-    for k in range(K):
-        A_c0 = (1.0 - alpha) * A_world[:, k, :] + alpha * avg[:, k, :]
-        A_joint = A_joint.at[:, k * C + 0, :].set(A_c0)
-        A_joint = A_joint.at[:, k * C + 1, :].set(A_world[:, k, :])
+    for c in range(C):
+        alpha_c = alpha * (1.0 - c / max(C - 1, 1))
+        for k in range(K):
+            blended = (1.0 - alpha_c) * A_world[:, k, :] + alpha_c * avg[:, k, :]
+            A_joint = A_joint.at[:, k * C + c, :].set(blended)
 
     A_joint = A_joint / (A_joint.sum(axis=0, keepdims=True) + EPS)
     return A_joint
@@ -127,14 +142,32 @@ def build_joint_A_social(A_social: jnp.ndarray, K: int, C: int = 2) -> jnp.ndarr
     return A_joint
 
 
-def build_B_c(eps_crisis: float, eps_resolve: float) -> jnp.ndarray:
+def build_B_c(eps_crisis: float, eps_resolve: float,
+              C: int = 2) -> jnp.ndarray:
     """Context transition matrix B_c[c', c] (columns are source state).
 
-    B_c[:, 0] = [1-eps_crisis, eps_crisis]     — from normal science
-    B_c[:, 1] = [eps_resolve,  1-eps_resolve]  — from crisis
+    For C=2: original binary transition.
+    For C>2: tridiagonal — agent can move ±1 level per step.
+      eps_crisis:  P(c' = c+1 | c) — move toward crisis (higher c)
+      eps_resolve: P(c' = c-1 | c) — move toward normal science (lower c)
+      diagonal:    1 - eps_crisis - eps_resolve (stay)
+    Boundary: c=0 can't go lower, c=C-1 can't go higher.
     """
-    return jnp.array([[1.0 - eps_crisis, eps_resolve],
-                       [eps_crisis, 1.0 - eps_resolve]])
+    if C == 2:
+        return jnp.array([[1.0 - eps_crisis, eps_resolve],
+                           [eps_crisis, 1.0 - eps_resolve]])
+
+    B = jnp.zeros((C, C))
+    for c in range(C):
+        up = eps_crisis if c < C - 1 else 0.0
+        down = eps_resolve if c > 0 else 0.0
+        stay = 1.0 - up - down
+        B = B.at[c, c].set(stay)
+        if c < C - 1:
+            B = B.at[c + 1, c].set(up)
+        if c > 0:
+            B = B.at[c - 1, c].set(down)
+    return B
 
 
 # ------------------------------------------------------------------
@@ -197,6 +230,23 @@ def sample_observations(A_world_orig: jnp.ndarray, cfg: SimpleConfig,
 
 
 # ------------------------------------------------------------------
+# Resource-gated experiment selection
+# ------------------------------------------------------------------
+
+def affordable_experiment(r: jnp.ndarray, x_grid: tuple,
+                          cfg: SimpleConfig) -> jnp.ndarray:
+    """Per-agent experiment index: highest x the agent can afford."""
+    x = jnp.array(x_grid)
+    h1_vals = h1(x, cfg.pomdp.world)
+    fisher = h1_vals ** 2 / (cfg.pomdp.world.sigma ** 2)
+    cost_per_x = cfg.c0 * fisher / (r[:, None] - cfg.r_min + EPS)
+    budget = r * cfg.budget_fraction
+    affordable = cost_per_x < budget[:, None]
+    indices = jnp.where(affordable, jnp.arange(len(x))[None, :], -1)
+    return jnp.maximum(indices.max(axis=1), 0)
+
+
+# ------------------------------------------------------------------
 # Trust learning (categorical surprisal + Gamma-conjugate update)
 # ------------------------------------------------------------------
 
@@ -239,6 +289,7 @@ class SimpleState:
     key: jax.Array
     alpha_t: jax.Array | None = None   # (N, N) Gamma shape for trust
     beta_t: jax.Array | None = None    # (N, N) Gamma rate for trust
+    r: jax.Array | None = None         # (N,) per-agent resource
 
 
 # ------------------------------------------------------------------
@@ -249,7 +300,15 @@ def init_simple(cfg: SimpleConfig,
                 D_per_agent: np.ndarray | None = None) -> SimpleState:
     gm = build_generative_model(cfg.pomdp)
     K, C = cfg.pomdp.n_paradigms, cfg.n_context
-    D_c = jnp.array([cfg.D_c_normal, 1.0 - cfg.D_c_normal])
+    if C == 2:
+        D_c = jnp.array([cfg.D_c_normal, 1.0 - cfg.D_c_normal])
+    else:
+        # concentrate initial mass on c=0 (deepest normal science)
+        D_c = jnp.zeros(C)
+        D_c = D_c.at[0].set(cfg.D_c_normal)
+        remaining = (1.0 - cfg.D_c_normal) / max(C - 1, 1)
+        for c in range(1, C):
+            D_c = D_c.at[c].set(remaining)
 
     if D_per_agent is None:
         D_theta = gm["D"]                                    # (K,)
@@ -267,8 +326,10 @@ def init_simple(cfg: SimpleConfig,
         alpha0 = jnp.full((N, N), cfg.trust_alpha0)
         beta0 = jnp.full((N, N), cfg.trust_beta0)
 
+    r0 = jnp.full((N,), cfg.r_init) if cfg.resource_coupling else None
+
     return SimpleState(q_joint=q0_joint, key=jax.random.PRNGKey(cfg.seed),
-                       alpha_t=alpha0, beta_t=beta0)
+                       alpha_t=alpha0, beta_t=beta0, r=r0)
 
 
 # ------------------------------------------------------------------
@@ -294,17 +355,22 @@ def simple_step(state: SimpleState,
     q_prior = transition_joint(state.q_joint, B_c, K, C,
                                eps_theta=cfg.eps_theta)       # (N, K*C)
 
-    # 2. OBSERVE
+    # 2. CHOOSE EXPERIMENT (resource-gated or fixed)
+    if cfg.resource_coupling and state.r is not None:
+        actions = affordable_experiment(state.r, cfg.pomdp.x_grid, cfg)
+    else:
+        actions = jnp.full((N,), cfg.obs_x_index, dtype=jnp.int32)
+
+    # 3. OBSERVE
     o_world, theta_star_t = sample_observations(
         A_world_orig, cfg, t, key_obs, N)
 
-    # 3. EMIT + ROUTE (emit marginal q(theta) for social channel)
+    # 4. EMIT + ROUTE (emit marginal q(theta) for social channel)
     q_theta = marginalize_theta(q_prior, K, C)                # (N, K)
     emissions = q_theta
     o_social = readout_trust_mixture(emissions, T)            # (N, K)
 
-    # 4. INFER on joint state (theta, c)
-    actions = jnp.full((N,), cfg.obs_x_index, dtype=jnp.int32)
+    # 5. INFER on joint state (theta, c)
     mask = social_mask
 
     q_joint_post = agent_pop.infer_state_batch(
@@ -317,7 +383,7 @@ def simple_step(state: SimpleState,
         mask,
     )                                                         # (N, K*C)
 
-    # 5. TRUST LEARNING (optional)
+    # 6. TRUST LEARNING (optional)
     alpha_new, beta_new, T_new = state.alpha_t, state.beta_t, T
     if cfg.trust_learning and state.alpha_t is not None:
         q_theta_post = marginalize_theta(q_joint_post, K, C)
@@ -326,8 +392,22 @@ def simple_step(state: SimpleState,
         alpha_new, beta_new, T_new = trust_update(
             state.alpha_t, state.beta_t, epsilon, adj, cfg.trust_rho)
 
+    # 7. RESOURCE FLOW (optional)
+    r_new = state.r
+    if cfg.resource_coupling and state.r is not None:
+        W = jnp.asarray(flow_from_trust(np.asarray(T)))
+        eta = jnp.asarray(inflow_share(np.asarray(T)))
+        x_chosen = jnp.array(cfg.pomdp.x_grid)[actions]
+        h1_vals = h1(x_chosen, cfg.pomdp.world)
+        fisher = h1_vals ** 2 / (cfg.pomdp.world.sigma ** 2)
+        c_x = cfg.c0 * fisher / (state.r - cfg.r_min + EPS)
+        r_new = jnp.asarray(flow_step(
+            np.asarray(state.r), np.asarray(W), np.asarray(eta),
+            np.asarray(c_x), cfg.R_in, cfg.alpha_flow, cfg.delta_decay))
+        r_new = jnp.maximum(r_new, cfg.r_min)
+
     new_state = SimpleState(q_joint=q_joint_post, key=key_next,
-                            alpha_t=alpha_new, beta_t=beta_new)
+                            alpha_t=alpha_new, beta_t=beta_new, r=r_new)
 
     q_theta_post = marginalize_theta(q_joint_post, K, C)
     q_c_post = marginalize_context(q_joint_post, K, C)
@@ -336,6 +416,8 @@ def simple_step(state: SimpleState,
         "mean_q_c": np.asarray(q_c_post.mean(axis=0)),
         "theta_star_t": theta_star_t,
     }
+    if r_new is not None:
+        info["mean_r"] = float(np.asarray(r_new).mean())
     return new_state, T_new, info
 
 
@@ -355,7 +437,7 @@ def run_simple(cfg: SimpleConfig,
     gm_joint = {
         "A_world_joint": build_joint_A_world(A_world_orig, K, C, cfg.alpha_tl),
         "A_social_joint": build_joint_A_social(gm_orig["A_social"], K, C),
-        "B_c": build_B_c(cfg.eps_crisis, cfg.eps_resolve),
+        "B_c": build_B_c(cfg.eps_crisis, cfg.eps_resolve, C),
     }
 
     T = build_trust(cfg.pomdp, cfg.n_agents, mean_degree=cfg.mean_degree,
