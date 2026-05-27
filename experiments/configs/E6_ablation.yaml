@@ -1,9 +1,9 @@
 experiment:
   name: E6_ablation
   description: >
-    Ablation: fixed q_reliability=0.75, sweep lambda_init.
-    Compare resource_coupling ON vs OFF (run both configs).
-    The gap between E4 and E5 at the same social coupling is Fig 4.
+    Ablation: fixed q_reliability=0.75 with eps_theta=0.02, 20% mavericks.
+    Sweep lambda_init × resource_coupling. Without resources, lambda
+    controls adaptation; with resources, total lock-in regardless of lambda.
 
 model_type: cont
 
@@ -20,6 +20,7 @@ base:
       theta_star_pre: 0.0
       theta_star_post: 1.0
       schedule_t_shift: 100
+  eps_theta: 0.02
   eta_lambda: 0.1
   kl_target: 0.05
   obs_x_index: 4

@@ -62,6 +62,9 @@ class ContConfig:
     eta_lambda: float = 0.1
     kl_target: float = 0.05
 
+    # paradigm leak: prevents absorbing prior after extended commitment
+    eps_theta: float = 0.0       # 0.0=absorbing, >0=leak toward uniform
+
     obs_x_index: int = 4
 
     n_agents: int = 80
@@ -278,27 +281,33 @@ def cont_step(state: ContState,
     # 2. OBSERVE
     o_world, theta_star_t = sample_observations(A_world, cfg, actions, t, key_obs, N)
 
-    # 3. EMIT + ROUTE
-    o_social = readout_trust_mixture(state.q, T)
+    # 3. PRIOR LEAK (prevent absorbing commitment)
+    q_prior = state.q
+    if cfg.eps_theta > 0:
+        uniform = jnp.ones(K) / K
+        q_prior = (1.0 - cfg.eps_theta) * q_prior + cfg.eps_theta * uniform
 
-    # 4. INFER (tempered)
+    # 4. EMIT + ROUTE
+    o_social = readout_trust_mixture(q_prior, T)
+
+    # 5. INFER (tempered)
     q_new = tempered_infer_batch(
-        state.q, A_world, o_world, actions,
+        q_prior, A_world, o_world, actions,
         A_social, o_social, social_mask, state.lam)
 
-    # 5. UPDATE LAMBDA
+    # 6. UPDATE LAMBDA
     lam_new = update_lambda(
-        state.lam, q_new, state.q,
+        state.lam, q_new, q_prior,
         cfg.eta_lambda, cfg.kl_target, cfg.lambda_min, cfg.lambda_max)
 
-    # 6. TRUST UPDATE
+    # 7. TRUST UPDATE
     alpha_new, beta_new, T_new = state.alpha_t, state.beta_t, T
     if cfg.trust_learning and state.alpha_t is not None:
         epsilon = categorical_surprisal(q_new, A_world, o_world, cfg.obs_x_index, adj)
         alpha_new, beta_new, T_new = trust_update(
             state.alpha_t, state.beta_t, epsilon, adj, cfg.trust_rho)
 
-    # 7. RESOURCE FLOW
+    # 8. RESOURCE FLOW
     r_new = state.r
     if cfg.resource_coupling and state.r is not None:
         W = jnp.asarray(flow_from_trust(np.asarray(T)))
