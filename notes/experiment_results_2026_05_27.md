@@ -148,14 +148,68 @@ qr=0.600      0.000     0.000     0.000     0.000     0.000     0.000     0.000
 
 ---
 
+## E2 Definitive: all three fixes (eps_theta + mavericks + trust learning)
+
+**Config:** eps_theta=0.05, 20% mavericks (social_mask=0.2), trust_learning=true
+(rho=0.90), eps_crisis=0.20, D_c_normal=0.9, N=40, T=300 steps, shift at t=100.
+Sweep: q_reliability × eps_resolve, 10 seeds each.
+
+**Result — phase diagram** (mean final belief in TRUE paradigm, averaged over seeds):
+
+```
+          er=0.01   er=0.05   er=0.1    er=0.2    er=0.3    er=0.5    er=0.7
+qr=0.55    0.808     0.808     0.805     0.794     0.781     0.757     0.734
+qr=0.60    0.868     0.871     0.871     0.867     0.862     0.852     0.843
+qr=0.65    0.904     0.907     0.907     0.906     0.904     0.641     0.461
+qr=0.70    0.927     0.929     0.930     0.878     0.650     0.324     0.202
+qr=0.75    0.944     0.945     0.883     0.637     0.343     0.174     0.094
+qr=0.80    0.915     0.813     0.556     0.285     0.186     0.071     0.063
+qr=0.85    0.733     0.466     0.286     0.155     0.055     0.047     0.043
+qr=0.90    0.304     0.170     0.083     0.037     0.034     0.031     0.030
+```
+
+**Key findings:**
+
+1. **Diagonal boundary at realistic social coupling.** The transition from
+   adaptation (~0.9) to lock-in (~0.1) runs diagonally from (qr=0.65, er=0.5)
+   to (qr=0.90, er=0.01). Both axes contribute: stronger social coupling AND
+   more paradigm inertia push toward lock-in.
+
+2. **Graded transition, not binary.** Unlike the baseline phase diagram (sharp
+   0→1 at qr≈0.51), the three-fix model shows a smooth gradient across the
+   boundary. This is more realistic: real paradigm shifts involve gradual
+   erosion, not a binary switch.
+
+3. **The boundary is in the realistic range (qr ≈ 0.70–0.85).** Scientific
+   communities typically have moderate-to-high trust in peers. The model now
+   predicts paradigm shifts CAN happen at realistic coupling — they require
+   mavericks + trust erosion + accumulated anomalous evidence.
+
+4. **eps_resolve matters.** At qr=0.70, the model transitions from 0.93
+   (er=0.01, crises persist) to 0.20 (er=0.70, high inertia). Theory-ladenness
+   (paradigm inertia) is now a meaningful parameter, not just noise — it
+   determines WHERE on the boundary a community sits.
+
+5. **Residual lock-in floor at ~0.03.** Even at (qr=0.90, er=0.70), mean_qB
+   doesn't reach 0.0 — some mavericks partially shift. This is the "peripheral
+   scientists" who see the anomalies but can't drag the community.
+
+---
+
 ## For the Wednesday call
 
-The E2 phase diagram is the headline figure. It shows:
-- Paradigm lock-in is a **collective** phenomenon — it requires social coupling above
-  a critical threshold, not just individual stubbornness.
-- The boundary is **sharp** (phase-transition-like), not gradual.
-- Theory-ladenness (eps_resolve) modulates WHERE the boundary falls but doesn't
-  change its character.
-- This maps directly onto the abstract's claim: "beliefs on which much else depends
-  become correspondingly harder to revise" — here, the "much else" is the social
-  network's mutual reinforcement.
+The definitive E2 phase diagram is the headline figure. It shows:
+- Paradigm lock-in is a **collective** phenomenon with a diagonal boundary
+  in (social coupling, paradigm inertia) space.
+- The boundary is at **realistic** social coupling (qr ≈ 0.70–0.85), not the
+  unrealistic qr ≈ 0.51 of the baseline model.
+- The transition is **graded**, matching the empirical signature of paradigm
+  change: gradual erosion, peripheral scientists shifting first, eventual
+  tipping cascade.
+- Three principled AIF mechanisms combine: paradigm leak (B_theta),
+  heterogeneous social sensitivity (mavericks), and evidence-coupled trust
+  (Gamma-conjugate learning).
+- This maps onto the abstract: "beliefs on which much else depends become
+  correspondingly harder to revise" — the "much else" is now formally
+  decomposed into social coupling strength (q_reliability) and epistemic
+  inertia (eps_resolve).
