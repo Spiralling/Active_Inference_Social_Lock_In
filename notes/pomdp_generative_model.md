@@ -248,3 +248,85 @@ src/pomdp/
 
 **Hard stop.** Phases 1–4 (scaffold, phase diagram, resource/trust re-graft +
 Azoulay falsifier, paper rewrite) require human sign-off per the approved plan.
+
+---
+
+## 9. Simplified theory-laden model (2026-05-27)
+
+**Status: BUILT AND TESTED.** Per David Hyland's suggestion (2026-05-26), a
+simplified model drops the full POMDP action loop for initial experiments. Theory-
+ladenness is implemented as a principled hierarchical context model.
+
+### What changed
+
+The full POMDP scaffold (§3 emit→route→act→infer) hit the **martingale wall**:
+belief-utility in the policy cannot flip the inference basin. David suggested:
+"even just a latent state + observations + message passing + motivated reasoning
+should be enough." The team agreed on **Option 1 (theory-ladenness)** from
+`where_we_are_2026_05_21.tex` §6.
+
+### The context model
+
+A latent context variable `c ∈ {0, 1}` is added to the joint state `(θ, c)`:
+
+| Context | Interpretation | A_world columns |
+|---------|---------------|----------------|
+| c=0 ("normal science") | Data does not discriminate paradigms | Paradigm-averaged (identical across θ) |
+| c=1 ("crisis/anomaly") | Data fully discriminates paradigms | Original `A_world[:, θ, x]` |
+
+The agent infers the **joint** posterior `q(θ, c)` via standard Bayes on a
+`K×C`-dimensional state. The joint posterior is carried forward through a proper
+transition model `B = B_θ ⊗ B_c`, where `B_θ = identity` and:
+
+```
+B_c = [[1 - eps_crisis,   eps_resolve  ],
+       [    eps_crisis,  1 - eps_resolve]]
+```
+
+- `eps_crisis`: P(c'=crisis | c=normal) — spontaneous anomaly detection rate
+- `eps_resolve`: P(c'=normal | c=crisis) — crisis resolution rate (paradigm inertia)
+
+After inference, the marginal `q(θ) = Σ_c q(θ, c)` is emitted for social coupling.
+Lock-in emerges from the dynamics: committed agents see uninformative data (c=0),
+reinforcing c=0 via B_c, further insulating beliefs from discriminating evidence.
+
+### Why this is principled AIF
+
+- The context prior is **not reset** each step — the joint posterior carries forward
+  through B_c, so the agent accumulates evidence about whether it is in normal
+  science or crisis.
+- `eps_crisis` and `eps_resolve` are transition model parameters (part of B), not
+  hand-tuned observation weights.
+- The existing `agent_pop.infer_state` is reused unchanged — it works on any state
+  dimension S; setting S = K*C with the joint matrices requires no modifications.
+- Social observations are the marginal q(θ); `A_social_joint` maps the K-dimensional
+  social obs to the K*C-dimensional state (context-independent).
+
+### Module: `src/pomdp/simple_step.py`
+
+```
+SimpleConfig       — wraps PomdpConfig + context transition params
+SimpleState        — carries q_joint (N, K*C) between steps
+build_joint_A_world, build_joint_A_social, build_B_c  — called once per run
+transition_joint   — applies B_c within each θ block (efficient, no K*C × K*C matrix)
+simple_step        — transition → observe → emit → route → infer
+run_simple         — thin Python loop, returns trajectories + context diagnostics
+```
+
+### Test results (18 tests in `tests/test_simple_step.py`)
+
+- Joint model algebra: normalized columns, c=0 paradigm-independent, c=1 matches original
+- Transition: preserves normalization, converges to stationary, identity at trivial B
+- Context learns from evidence: agents shift from c=0 toward c=1 under anomalous data
+- Capture/escape pair: high eps_resolve → capture; high eps_crisis + low eps_resolve → escape
+- Environment drift wired via `theta_schedule`
+
+### Experiment configs (E1–E3)
+
+```
+experiments/configs/E1_stationary.yaml     — sweep eps_resolve × q_reliability
+experiments/configs/E2_discrete_shift.yaml — paradigm shift at t=150, sweep eps_resolve
+experiments/configs/E3_slow_drift.yaml     — ramp schedule, sweep eps_resolve × social_mask
+```
+
+Runner: `python -m experiments.run_experiment <config.yaml> [--dry-run]`

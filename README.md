@@ -4,24 +4,31 @@ Multi-agent active-inference simulation accompanying the IWAI 2026 paper *Variat
 
 ## What
 
-Extension of Hyland & Albarracin (2025), *On the Variational Costs of Changing Our Minds* (arXiv:2509.17957), from single-agent belief revision to a coupled multi-agent setting on a small-world network. Demonstrates Kuhnian paradigm-shift dynamics: communities lag behind environmental drift, with hysteretic phase transitions in their adaptation, dissociating from Bayesian rule-induction accounts (Oldenburg & Zhi-Xuan 2024).
+Extension of Hyland & Albarracin (2025), *On the Variational Costs of Changing Our Minds* (arXiv:2509.17957), from single-agent belief revision to a coupled multi-agent setting on a small-world network. Demonstrates Kuhnian paradigm-shift dynamics: communities lag behind environmental drift, with hysteretic phase transitions in their adaptation.
 
-Three intended results:
+## Model substrates
 
-1. Multi-agent extension of the variational cost of mind-change.
-2. (λ, environment-drift-rate) phase diagram + hysteresis under slow drift.
-3. Clean dissociation from a Bayesian rule-induction baseline.
+The codebase contains three model substrates:
+
+1. **Continuous Gaussian substrate** (`src/*.py`) — the original v2 implementation. Agents hold Gaussian beliefs over a continuous parameter; trust is Gamma-conjugate edge learning. Proven monostable via Jacobian analysis (NB14). Retained as a regression baseline.
+
+2. **Categorical POMDP scaffold** (`src/pomdp/step.py`, `agent_pop.py`, `gen_model.py`) — fixed-state epistemic POMDP with per-paradigm likelihoods, belief-utility in the EFE policy, and softmax-precision social coupling. Phase-1 complete (28 tests pass). Discovered the martingale wall: belief-utility in the policy cannot flip the inference basin.
+
+3. **Simplified theory-laden model** (`src/pomdp/simple_step.py`) — drops the POMDP action loop. Adds a latent context variable c in {normal_science, crisis} to the joint state (theta, c). Context carried forward through a proper transition model B_c with paradigm-inertia parameters (`eps_crisis`, `eps_resolve`). Lock-in emerges from the dynamics: committed agents see uninformative data, reinforcing normal-science context, further insulating beliefs. This is the active experimental substrate for E1-E3.
 
 ## Layout
 
 ```
-paper/         LNCS submission target (anonymized; do NOT commit authors-deanon.tex)
-lit-review/    Topical lit reviews (markdown, organising prior reading)
-archive/       Frozen v02 norms-as-shared-precision-priors draft
-src/           Multi-agent coupling layer on top of pymdp
-experiments/   Configs + run_experiment entrypoint
-results/       Output (gitignored if large)
-notebooks/     Exploratory + figure generation
+src/              Core simulation modules
+  pomdp/          Categorical POMDP scaffold + simplified model
+experiments/      YAML configs (E1-E3) + sweep runner
+tests/            Tiered test suite (46 tests)
+notebooks/        Exploratory + figure generation (NB15-17 are active)
+  _v1_archive/    Old continuous-substrate notebooks
+notes/            Design docs, theory brief, architecture review
+paper/            LNCS submission (anonymized; do NOT commit authors-deanon.tex)
+lit-review/       Topical lit reviews (markdown)
+archive/          Frozen v02 norms-as-shared-precision-priors draft
 ```
 
 ## Running
@@ -35,9 +42,24 @@ pip install -r requirements.txt
 # Smoke test
 python -c "import pymdp; import jax; print('pymdp + jax OK')"
 
-# Run an experiment (after src/ is implemented)
-python experiments/run_experiment.py --config experiments/configs/E1_baseline.yaml
+# Tests
+pytest tests/                              # full suite (46 tests)
+pytest tests/test_simple_step.py -v        # simplified model only
+
+# Experiments (simplified model)
+python -m experiments.run_experiment experiments/configs/E1_stationary.yaml --dry-run
+python -m experiments.run_experiment experiments/configs/E1_stationary.yaml
 ```
+
+## Experiments
+
+| ID | Environment | Sweep | What it tests |
+|----|-------------|-------|---------------|
+| E1 | Stationary | eps_resolve x q_reliability | Convergence vs capture regime map |
+| E2 | Discrete shift at t=150 | eps_resolve | Adaptation lag under paradigm inertia |
+| E3 | Slow ramp over 200 steps | eps_resolve x social_mask | Hysteresis under drift |
+
+Configs live in `experiments/configs/`. Results are saved as JSON to `experiments/results/`.
 
 ## Building the paper
 
@@ -63,9 +85,5 @@ Submission is **double-blind**. The paper compiles with `\author{Anonymous}` by 
 
 ## Deadlines
 
-- 2026-05-24: 250-word abstract registration
+- 2026-05-24: 250-word abstract registration (done)
 - 2026-06-07: 12-page LNCS full paper
-
-## Plan
-
-Detailed implementation plan: `C:\Users\Jonas\.claude\plans\wobbly-squishing-widget.md`
