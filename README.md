@@ -62,11 +62,14 @@ python -m experiments.run_experiment experiments/configs/E1_stationary.yaml
 | E3 | simple | Slow ramp over 200 steps | q_reliability x eps_resolve | Hysteresis under drift |
 | E4 | cont | Discrete shift at t=100 | q_reliability x lambda_init | **Continuous-lambda phase diagram (Fig 3)** |
 | E5 | cont | Discrete shift at t=100 | q_reliability x lambda_init | Continuous-lambda + resources |
-| E6 | cont | Discrete shift at t=100 | lambda_init x resource ON/OFF | **Resource ablation (Fig 4)** |
+| E6 | cont | Discrete shift at t=100 | lambda_init x resource ON/OFF | Resource ablation (heuristic) |
+| E7 | simple (C=5) | Discrete shift at t=100 | q_reliability x eps_resolve | **Principled phase diagram (Fig 3)** |
+| E8 | simple (C=5) | Discrete shift at t=100 | eps_resolve x resource ON/OFF | **Principled resource ablation (Fig 4)** |
 
 Configs in `experiments/configs/`. Results in `experiments/results/`.
 Detailed results: `notes/experiment_results_2026_05_27.md` (E1-E3),
-`notes/experiment_results_2026_05_28.md` (E4, E6).
+`notes/experiment_results_2026_05_28.md` (E4, E6),
+`notes/experiment_results_2026_05_28_principled.md` (E7, E8).
 
 ## Building the paper
 
