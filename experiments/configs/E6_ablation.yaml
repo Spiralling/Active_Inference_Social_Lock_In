@@ -1,0 +1,50 @@
+experiment:
+  name: E6_ablation
+  description: >
+    Ablation: fixed q_reliability=0.75 with eps_theta=0.02, 20% mavericks.
+    Sweep lambda_init × resource_coupling. Without resources, lambda
+    controls adaptation; with resources, total lock-in regardless of lambda.
+
+model_type: cont
+
+base:
+  pomdp:
+    n_paradigms: 2
+    theta_vals: [0.0, 1.0]
+    true_paradigm: 1
+    x_grid: [0.1, 0.3, 0.5, 0.8, 1.0]
+    n_o: 5
+    q_reliability: 0.75
+    world:
+      schedule: step
+      theta_star_pre: 0.0
+      theta_star_post: 1.0
+      schedule_t_shift: 100
+  eps_theta: 0.02
+  eta_lambda: 0.1
+  kl_target: 0.05
+  obs_x_index: 4
+  n_agents: 40
+  n_steps: 300
+  use_theta_schedule: true
+  graph_kind: watts_strogatz
+  mean_degree: 4
+  social_mask: 1.0
+  trust_learning: false
+  r_init: 1.0
+  R_in: 0.1
+  alpha_flow: 0.3
+  delta_decay: 0.05
+  c0: 0.1
+  r_min: 0.1
+  maverick_fraction: 0.20
+  maverick_social_mask: 0.2
+
+sweep:
+  lambda_init: [1.0, 1.25, 1.5, 1.75, 2.0, 2.5, 3.0, 4.0]
+  resource_coupling: [false, true]
+
+seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+outputs:
+  dir: experiments/results/E6

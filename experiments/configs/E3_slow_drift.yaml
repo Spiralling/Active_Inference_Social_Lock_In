@@ -1,0 +1,40 @@
+experiment:
+  name: E3_slow_drift
+  description: >
+    Slow ramp from paradigm 0 to 1. Phase diagram: (q_reliability, eps_resolve)
+    for the hysteresis story. Without social coupling, eps_resolve controls
+    tracking speed; with social coupling, a sharp boundary separates tracking
+    from total lock-in.
+
+base:
+  pomdp:
+    n_paradigms: 2
+    theta_vals: [0.0, 1.0]
+    true_paradigm: 1
+    x_grid: [0.1, 0.3, 0.5, 0.8, 1.0]
+    n_o: 5
+    q_reliability: 0.52
+    world:
+      schedule: ramp
+      theta_star_pre: 0.0
+      theta_star_post: 1.0
+      schedule_t_shift: 50
+      schedule_ramp_T: 200
+  eps_crisis: 0.20
+  D_c_normal: 0.9
+  obs_x_index: 4
+  n_agents: 40
+  n_steps: 400
+  use_theta_schedule: true
+  graph_kind: watts_strogatz
+  mean_degree: 4
+  social_mask: 1.0
+
+sweep:
+  q_reliability: [0.50, 0.505, 0.51, 0.515, 0.52, 0.525, 0.53, 0.54, 0.55, 0.60]
+  eps_resolve: [0.01, 0.05, 0.10, 0.20, 0.30, 0.50, 0.70]
+
+seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+outputs:
+  dir: experiments/results/E3
