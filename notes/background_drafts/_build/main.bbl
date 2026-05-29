@@ -1,4 +1,4 @@
-\begin{thebibliography}{62}
+﻿\begin{thebibliography}{62}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -9,7 +9,7 @@
 Emmanuel Ajdari.
 \newblock Argumentative exchange in science: How social epistemology brings
   longino back down to earth.
-\newblock \emph{KRITERION – Journal of Philosophy}, 2023.
+\newblock \emph{KRITERION â€“ Journal of Philosophy}, 2023.
 \newblock \doi{10.1515/krt-2022-0024}.
 \newblock URL
   \url{https://www.degruyter.com/document/doi/10.1515/krt-2022-0024/pdf}.
@@ -43,8 +43,8 @@ Venkatesh Bala and S.~Goyal.
 \bibitem[Boantza(2008)]{Boantza2008_4}
 Victor~D. Boantza.
 \newblock The phlogistic role of heat in the chemical revolution and the
-  origins of kirwan's ‘ingenious modifications… into the theory of
-  phlogiston’.
+  origins of kirwan's â€˜ingenious modificationsâ€¦ into the theory of
+  phlogistonâ€™.
 \newblock \emph{Annals of Science}, 2008.
 \newblock \doi{10.1080/00033790802049772}.
 \newblock URL
@@ -108,7 +108,7 @@ Hasok Chang.
 \bibitem[Clinkenbeard(2025)]{Clinkenbeard2025_4}
 Cayla Clinkenbeard.
 \newblock Nihilistic distrust: the problem with echo chambers.
-\newblock \emph{Philosophy & Technology}, 2025.
+\newblock \emph{Philosophy \& Technology}, 2025.
 \newblock \doi{10.1007/s13347-025-01001-4}.
 \newblock URL
   \url{https://www.semanticscholar.org/paper/07c291d654951053cfdfc136c0d4c679fb563b7d}.
@@ -171,8 +171,8 @@ Karl~J. Friston, Thomas Parr, and P.~Zeidman.
   \url{https://www.semanticscholar.org/paper/8f13e5676e5e035dc657a76250a90d94634e4dda}.
 \newblock Citations: 94.
 
-\bibitem[Glüer-Pagin and Spectre(2024)]{Gluer-Pagin2024_11}
-Kathrin Glüer-Pagin and Levi Spectre.
+\bibitem[GlÃ¼er-Pagin and Spectre(2024)]{Gluer-Pagin2024_11}
+Kathrin GlÃ¼er-Pagin and Levi Spectre.
 \newblock Where is the motivation in motivated numeracy?
 \newblock \emph{Review of Philosophy and Psychology}, 2024.
 \newblock \doi{10.1007/s13164-024-00737-w}.
@@ -264,7 +264,7 @@ D.~Kahan, E.~Peters, E.~Dawson, and P.~Slovic.
 
 \bibitem[Kruglanski(2020)]{Kruglanski2020_10}
 A.~Kruglanski.
-\newblock All thinking is wishful thinking 1 all thinking is “ wishful ”
+\newblock All thinking is wishful thinking 1 all thinking is â€œ wishful â€
   thinking.
 \newblock 2020.
 \newblock URL
@@ -284,7 +284,7 @@ Jan Kulveit, Raymond Douglas, and Nora Ammann.
 \newblock Verify exact preprint id.
 
 \bibitem[Lewowicz(2011)]{Lewowicz2011_2}
-Lucía Lewowicz.
+LucÃ­a Lewowicz.
 \newblock Phlogiston, lavoisier and the purloined referent.
 \newblock \emph{Studies in History and Philosophy of Science}, 2011.
 \newblock \doi{10.1016/J.SHPSA.2011.02.002}.
@@ -359,8 +359,8 @@ M.~Berk Mirza, Rick~A Adams, Karl~J. Friston, and Thomas Parr.
 \newblock Citations: 65.
 
 \bibitem[Montijano et~al.(2017)Montijano, Montijano, and
-  Sagüés]{Montijano2017_11}
-E.~Montijano, J.~I. Montijano, and C.~Sagüés.
+  SagÃ¼Ã©s]{Montijano2017_11}
+E.~Montijano, J.~I. Montijano, and C.~SagÃ¼Ã©s.
 \newblock Fast distributed algebraic connectivity estimation in large scale
   networks.
 \newblock \emph{Journal of the Franklin Institute}, 2017.
@@ -369,9 +369,9 @@ E.~Montijano, J.~I. Montijano, and C.~Sagüés.
   \url{https://www.semanticscholar.org/paper/6cb243288c7410b943196381d55ef9720033c2f7}.
 \newblock Citations: 9.
 
-\bibitem[Müürsepp et~al.(2019)Müürsepp, Nurysheva, Syrgakbayeva, and
+\bibitem[MÃ¼Ã¼rsepp et~al.(2019)MÃ¼Ã¼rsepp, Nurysheva, Syrgakbayeva, and
   Sartayeva]{Muursepp2019_7}
-P.~Müürsepp, Gulzhikhan Nurysheva, Akmaral Syrgakbayeva, and R.~Sartayeva.
+P.~MÃ¼Ã¼rsepp, Gulzhikhan Nurysheva, Akmaral Syrgakbayeva, and R.~Sartayeva.
 \newblock Critical contextual empiricism as a version of pluralist realism.
 \newblock \emph{Acta Baltica Historiae et Philosophiae Scientiarum}, 2019.
 \newblock \doi{10.11590/abhps.2019.3.01}.
@@ -385,8 +385,8 @@ C.~Nguyen.
 \newblock URL \url{https://philpapers.org/archive/NGUECA.pdf}.
 \newblock Citations: 702.
 
-\bibitem[Novaes and Çağlar Dede(2025)]{Novaes2025_1}
-Catarina~Dutilh Novaes and Çağlar Dede.
+\bibitem[Novaes and Ã‡aÄŸlar Dede(2025)]{Novaes2025_1}
+Catarina~Dutilh Novaes and Ã‡aÄŸlar Dede.
 \newblock Critical contextual empiricism for busy people: Scientific
   argumentation as epistemic exchange.
 \newblock \emph{Topoi}, 2025.
@@ -398,7 +398,7 @@ Catarina~Dutilh Novaes and Çağlar Dede.
 \bibitem[Ostapiuk(2025)]{Ostapiuk2025_11}
 Aleksander Ostapiuk.
 \newblock The unchanging soul of neoclassical economics. lakatosian perspective
-  on becker’s economic approach.
+  on beckerâ€™s economic approach.
 \newblock \emph{Panoeconomicus}, 2025.
 \newblock \doi{10.2298/pan240403015o}.
 \newblock URL \url{https://doi.org/10.2298/pan240403015o}.
@@ -530,7 +530,7 @@ C.~Turner.
 
 \bibitem[Wahyudi et~al.(2026)Wahyudi, Arkhano, and Panjaitan]{Wahyudi2026_2}
 I.~Wahyudi, Rachmanda~Aquila Arkhano, and Gladwin Panjaitan.
-\newblock The nature of scientific justification: W.v.o quine’s coherentism
+\newblock The nature of scientific justification: W.v.o quineâ€™s coherentism
   perspective.
 \newblock \emph{Jurnal Filsafat}, 2026.
 \newblock \doi{10.22146/jf.107506}.
