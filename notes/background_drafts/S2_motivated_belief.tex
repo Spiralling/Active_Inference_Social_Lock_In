@@ -1,0 +1,114 @@
+% Section: §2 Motivated Belief at the Single-Agent Level
+% PDF context: bridge section locating the paper in the empirical motivated-reasoning lineage (Kunda, Kahan, directional vs accuracy goals) and the active-inference formalisation of belief-revision cost (Hyland & Albarracin); closes by naming the single-agent --> multi-agent generalisation as the paper's open question.
+% Drawing from: cluster_C1_motivated_reasoning (Kunda/Kahan lineage), cluster_C2_variational_cost (variational + bounded-cognition), and master refs.bib (hylandAlbarracin2025MindChange).
+% Entries cited: 11
+% Full-text papers consulted: Kahan2015_12 (Mousavi/Funder commentary surrounding Kahan's expressive-rationality piece) and Glüer-Pagin2024_11 (close philosophical reading of Kahan's identity-protective-cognition thesis).
+% Key renaming TODOs:
+%   Kahan2017_2     -> kahanPetersDawson2017MotivatedNumeracy   % Anchor: motivated-numeracy / PMRP design
+%   Kahan2007_1     -> kahanEtAl2007WhiteMaleEffect             % Anchor: cultural cognition + white-male-effect (763 citations)
+%   Kahan2017_4     -> kahan2017IdentityProtective              % Anchor: identity-protective cognition canonical statement
+%   Kahan2015_12    -> kahan2015ExpressiveRationality           % Anchor: expressive-rationality framing
+%   Glüer-Pagin2024_11 -> gluerSpectre2024MotivationInNumeracy  % Critical reconstruction of Kahan's mechanism
+%   Bolsen2019_7    -> bolsenPalm2019MotivatedReasoning         % Field review; useful pointer to directional/accuracy distinction
+%   Little2020_13   -> littleSchnakenbergTurner2021MotivatedAccountability % Formal model of directional vs accuracy
+%   Savolainen2022_3 -> savolainen2022HealthMisinformation       % Motivated reasoning applied to misinformation
+%   Kruglanski2020_10 -> kruglanski2020AllThinkingWishful        % Bridge from social psych to a generalised "directional cognition" claim
+%   Hopkins2016_8   -> hopkins2016FreeEnergyDreaming             % Free-energy / fictive-prior gloss, used only as auxiliary AIF pointer
+%   Friston2023_7   -> fristonEtAl2023FederatedInference         % Belief-sharing under FEP -- used here as the bridge into §3
+% TODO refs.bib additions (foundational anchors that neither cluster surfaced):
+%   kunda1990MotivatedReasoning   -- Kunda, "The case for motivated reasoning", Psych. Bull. 108(3), 1990
+%   nickerson1998ConfirmationBias -- Nickerson, "Confirmation bias: a ubiquitous phenomenon", Rev. Gen. Psych. 2(2), 1998
+%   lordRossLepper1979BiasedAssimilation -- Lord, Ross & Lepper, JPSP 37(11), 1979 (classic biased-assimilation experiment)
+
+\section{Motivated Belief at the Single-Agent Level}
+\label{sec:motivatedbelief}
+
+\paragraph{Empirical motivated reasoning.}
+The cognitive-psychological case that belief revision is shaped by
+goals other than accuracy is long-standing and converged. The
+canonical statement is Kunda's argument that reasoning is steered by
+\emph{directional} as well as accuracy goals: subjects construct the
+sequence of inferential steps that licenses the conclusion they would
+prefer to reach, subject to the constraint that the construction
+remain plausible to themselves \citep{kunda1990MotivatedReasoning}.
+This framing absorbed two earlier empirical findings as special
+cases: the biased-assimilation experiments of
+\citet{lordRossLepper1979BiasedAssimilation}, in which the same
+mixed evidence about a contested policy strengthened the prior
+commitments of partisans on \emph{both} sides; and confirmation-bias
+phenomena more broadly catalogued by \citet{nickerson1998ConfirmationBias}.
+The empirical literature has since accumulated in two directions.
+The first is Kahan's cultural-cognition programme, in which the
+directional goal is identified specifically as \emph{identity
+protection}: subjects process risk-relevant evidence in whatever way
+preserves their standing in the affinity groups they belong to
+\citep{Kahan2007_1, Kahan2017_4}. The signature empirical finding is
+that the gap between cultural sub-populations \emph{widens} with
+numerical and scientific sophistication rather than narrowing
+\citep{Kahan2017_2}; Kahan reads this as evidence that the more
+capable reasoners are more effective at the selective evaluation of
+identity-incongruent evidence, a behaviour he characterises as
+\emph{expressive rationality} --- rational relative to the agent's
+practical stakes in group membership, irrational relative to truth
+\citep{Kahan2015_12}. The mechanism remains contested:
+\citet{Glüer-Pagin2024_11} argue that what Kahan's experiments
+isolate is motivation \emph{to reason} rather than motivated reasoning
+in the strict sense, and the broader political-science literature now
+distinguishes carefully between directional and accuracy regimes and
+the conditions under which one or the other dominates
+\citep{Bolsen2019_7, Little2020_13, Savolainen2022_3}. For our
+purposes the contested points do not matter: the robust observation
+is that human belief revision exhibits a systematic, content-sensitive
+asymmetry in its receptivity to evidence, and that this asymmetry is
+not adequately captured by treating the agent as an unbiased Bayesian
+updater.
+
+\paragraph{Variational formalisation.}
+The active-inference community has begun to give this asymmetry a
+principled mathematical form. The starting point is the variational
+free-energy functional, in which an agent's update from prior to
+posterior incurs a complexity cost proportional to the
+Kullback--Leibler divergence between the candidate posterior and the
+prior \citep{Costa2020_4}. \citet{hylandAlbarracin2025MindChange}
+re-foreground this complexity term as a \emph{motivational} quantity:
+the cost of changing one's mind is the KL divergence from the current
+belief to the candidate revision, weighted by an affective utility
+that reflects how much the agent cares about retaining the prior.
+Because that divergence is asymmetric, belief revision is
+path-dependent: evidence that would update a neutral prior into a
+particular posterior need not, played in reverse, undo a revision
+already made. This is the formal counterpart of the
+biased-assimilation and identity-protection findings: preferred
+beliefs are not merely held more confidently, they are protected by a
+mathematically explicit revision cost that contrary evidence must
+overcome. \citet{Kruglanski2020_10} reaches a sympathetic conclusion
+from the social-psychological side, arguing that there is no sharp
+boundary between motivated and non-motivated cognition because
+\emph{all} inference is directional in the sense that it is steered
+by what the agent values; the variational reading makes this claim
+precise by locating the directional weight in the affective utility
+that multiplies the complexity term. Adjacent strands of the
+active-inference literature provide the surrounding machinery on
+which the multi-agent extension will draw, including federated
+inference under shared world models \citep{Friston2023_7} and the
+free-energy account of belief-revision dynamics more generally
+\citep{Hopkins2016_8}.
+
+\paragraph{Open question.}
+The single-agent picture is now reasonably well developed, both
+empirically and formally. What it does not yet capture is the
+phenomenon Kuhn observed at the community scale: that scientific
+sub-fields exhibit collective motivated belief, sustained across
+generations, with the directional goal residing not in any individual
+ego but in the institutional and social structures that bind the
+community together. The active-inference treatment so far has been
+single-agent --- the cost of mind-change is borne by one mind, against
+its own prior. The empirical motivated-reasoning literature is in
+practice multi-agent --- the identity being protected is a group
+identity --- but its formalisation has remained at the level of
+within-individual mechanism. The question this paper takes up is how
+the variational cost of belief revision generalises to a population
+of coupled inferential agents in a way that recovers what Kuhn
+observed: paradigm-level persistence that is sociologically generated,
+asymmetric in time, and not reducible to the directional preferences
+of any single agent.

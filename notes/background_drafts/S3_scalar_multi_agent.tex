@@ -1,0 +1,116 @@
+% Section: §3 From Single-Agent to Multi-Agent: The Scalar Treatment
+% PDF context: scalar paradigm representation, tempered-Bayesian update inherited from
+%   single-agent Hyland--Albarracin, trust-precision weighted communication, analytical and
+%   simulation programme over conservatism, topology, and affective utility.
+% Drawing from: cluster_C4_social_network_epistemology (intro subset)
+% Entries cited: 6 from C4 + 3 from master refs.bib
+% Full-text papers consulted: 3
+%   - Friedkin-Johnsen_..._Boundary-Value_Formulation (Boudourides2026_7)
+%   - Cascade-driven_opinion_dynamics_on_social_networks (Biondi2025_10)
+%   - Opinion_Dynamics_in_Social_Networks_With_Hostile_Camps (Proskurnikov2015_6, header only)
+% Forward reference: Zollman cited once to set up §6 (per agent contract).
+% Key renaming TODOs (Semantic Scholar auto-keys; promote before merging into refs.bib):
+%   Bala1998_1        -> balaGoyal1998LearningNeighbours   % ANCHOR: multi-armed bandit on a graph
+%   Bala2001_3        -> balaGoyal2001Conformism           % conformism/diversity under social learning
+%   Boudourides2026_7 -> boudourides2026FJBoundaryValue    % FJ as boundary-value problem; influenceability
+%   Proskurnikov2015_6-> proskurnikovMatveevCao2015Hostile % FJ-on-signed-graphs / hostile camps
+%   Biondi2025_10     -> biondiEtAl2025CascadeFJ           % cascade-driven FJ, asynchronous exposure
+%   Ren2020_13        -> ren2020DeGrootCommunities         % DeGroot consensus + community structure
+% ANCHORS used with auto-keys (flag for hand-curation):
+%   - Bala-Goyal 1998 (Bala1998_1)              [multi-armed bandit foundations]
+%   - DeGroot 1974                              [cited inside Boudourides2026_7; no standalone entry in C4]
+%   - Hegselmann-Krause 2002                    [not in C4 bib; cite via Albarracin? -> omitted, no entry]
+%   - Friedkin-Johnsen 1990                     [cited inside Boudourides2026_7; no standalone entry in C4]
+% Note: DeGroot 1974 and Friedkin--Johnsen 1990 are the canonical primitives but the C4 bib
+% only contains *analyses of* these models (Boudourides2026_7, Proskurnikov2015_6, Ren2020_13,
+% Biondi2025_10), not the originals. We cite the contemporary analyses, which themselves
+% explicitly recapitulate the primitives, and flag this in the TODO above.
+
+\section{From Single-Agent to Multi-Agent: The Scalar Treatment}
+\label{sec:scalar-multiagent}
+
+\paragraph{Scalar Bayesian updating on a graph.}
+The scalar multi-agent setting we adopt sits inside a well-developed
+tradition that treats opinion change as a linear, convex-combination
+update on a weighted directed graph. The canonical primitive is the
+DeGroot averaging model \citep{Boudourides2026_7}, in which each
+agent's opinion at the next step is a row-stochastic mixture of its
+neighbours' current opinions; under mild connectivity assumptions this
+contracts to consensus. The Friedkin--Johnsen extension breaks that
+asymptotic consensus by allowing each agent to retain weight on its
+initial belief through a susceptibility coefficient
+$s_i \in [0,1]$, so that the long-run opinion vector is an
+affine-resolvent functional of the boundary of stubborn agents
+\citep{Boudourides2026_7}. The conservatism parameter in our setup
+plays the same formal role as the Friedkin--Johnsen susceptibility,
+read off the variational free-energy decomposition rather than
+postulated: the cost-of-mind-change term in the tempered-Bayesian
+update of \citet{hylandAlbarracin2025MindChange} is precisely an
+asymmetric KL penalty on revising one's posterior, and at the linear
+limit its scalar weight maps to $1 - s_i$. The literature has worked
+out a great deal of structural detail on this family: closed-form
+steady states via resolvent / Green-function representations,
+quantitative convergence rates controlled by the spectral radius of
+the susceptibility-weighted influence matrix, and explicit sensitivity
+of the steady state to perturbations of either the influence matrix or
+the susceptibility profile \citep{Boudourides2026_7}. Signed
+generalisations recover polarisation as a stable attractor when the
+underlying graph admits a structural-balance decomposition into
+hostile camps \citep{Proskurnikov2015_6}, and community-detection
+methods exploit the same consensus dynamics to read off hierarchical
+group structure from opinion trajectories \citep{Ren2020_13}. We
+inherit this machinery and re-read it in active-inference terms: the
+influence matrix is a learned channel precision rather than a fixed
+social-tie weight, and the susceptibility / conservatism is a
+free-energy quantity rather than a phenomenological parameter.
+
+\paragraph{Multi-armed bandit framing of theory choice.}
+The complementary tradition treats the agent's problem not as
+averaging an opinion but as choosing which arm of a multi-armed
+bandit to pull next given its neighbours' payoffs, which we draw on
+explicitly when the scalar opinion is read as a paradigm \emph{choice}
+rather than a continuous belief. \citet{Bala1998_1} introduce the
+canonical model: each agent repeatedly chooses among a finite set of
+risky actions, observes its own and its neighbours' payoffs, and
+updates a Bayesian posterior over which action is best. They prove
+that on connected networks the population converges to consensus on a
+single action almost surely, but the consensus action need not be the
+optimal one --- early random fluctuations get locked in by social
+imitation, generating a long tail of pathological lock-ins on
+inferior arms. Their follow-up \citep{Bala2001_3} sharpens this into
+a quantitative tradeoff between conformism and diversity that
+prefigures the network-epistemology framing later picked up by
+\citet{zollman2007CommunicationStructure}, whose paradoxical-stubbornness and
+communication-structure results we treat as derived consequences of
+the same primitives and develop in
+Section~\ref{sec:structured-results}. The Bala--Goyal lineage is the
+right reference frame for our §3 simulations because it is the
+minimal model in which (i) the agent has a well-defined Bayesian
+posterior over a finite paradigm set, (ii) communication enters
+through observed payoffs rather than through opinion averaging, and
+(iii) the timescale-separation between learning and convergence
+generates path-dependent population outcomes --- the three features
+the scalar paradigm experiments are designed to exhibit.
+
+\paragraph{Active-inference coupling.}
+Bringing the two strands together in an active-inference register is
+the contribution of \citet{albarracin2022EpistemicCommunities}, who
+couple variational-Bayesian agents through shared observations and
+characterise echo-chamber bifurcation as a function of the
+inter-agent precision. Their construction is the immediate ancestor
+of our §3 setup, with two refinements. First, the inter-agent
+precision is itself learned, not fixed, so the trust matrix is the
+only Bayesian-learned relational object in the model and the
+``susceptibility profile'' of the Friedkin--Johnsen analysis becomes
+endogenous to the dynamics. Second, the tempered-Bayesian update of
+\citet{hylandAlbarracin2025MindChange} contributes an asymmetric
+cost-of-mind-change term that does not appear in the symmetric
+linear-averaging tradition but that is necessary to recover Kuhnian
+path-dependence at the population level: even a homogeneous network
+with isotropic trust will, with non-zero conservatism, lock onto its
+initial-condition basin in a way that pure DeGroot or Bala--Goyal
+dynamics cannot. The scalar experiments that follow probe how this
+conservatism parameter interacts with the trust-precision topology
+and with the affective utility on paradigm values to produce the
+population behaviours we will then re-read, in §4, as the structural
+limits of a scalar treatment.

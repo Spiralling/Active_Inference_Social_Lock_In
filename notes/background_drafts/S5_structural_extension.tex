@@ -1,0 +1,132 @@
+% Section: §5 Structural Extension --- Bayes Nets and Bayesian Model Reduction
+% PDF context: main technical section. Each agent's paradigm becomes a Bayesian
+% network with a core/belt partition (Lakatos), structural revisions are scored
+% by Bayesian model reduction (Friston-Penny 2011; Friston-Parr-Zeidman 2018),
+% and observation is recast as a precision-budget allocation over belt nodes
+% governed by expected free energy (Mirza, Parr-Friston).
+% Drawing from: cluster_C3_bmr_lakatos (BMR + Lakatos + Thagard/Quine ancestry),
+% cluster_C7_attention_precision (active sampling under EFE), and master refs.bib
+% for the active-inference scaffolding.
+% Entries cited: 11
+% Full-text papers consulted:
+%   Friston2018_2  -- Friston, Parr, Zeidman, "Bayesian model reduction" (technical anchor for reduced free energy + Dirichlet/Gaussian cases)
+%   Mirza2019_2    -- Mirza, Adams, Friston, Parr, "Bayesian model of selective attention" (closing precision-allocation move)
+% Key renaming TODOs (Semantic Scholar auto-keys -> hand-curated):
+%   Friston2018_2     -> fristonParrZeidman2018BMR             % Anchor: BMR technical review (reduced free energy across exponential family)
+%   Thagard1989_1     -> thagard1989ExplanatoryCoherence       % Anchor: ECHO / explanatory coherence canonical statement (BBS target article)
+%   Thagard1988_4     -> thagardNowak1988ContinentalDrift      % Anchor: ECHO applied to a Kuhnian paradigm shift
+%   Ranney1988_3      -> ranneyThagard1988NaivePhysics         % Connectionist belief-revision precedent
+%   Markovi'c2023_1   -> markovicFristonKiebel2024BMRSparsify  % BMR applied to deep-network sparsification (modern follow-up)
+%   Heijdra1986_6     -> heijdraLowenberg1986DuhemQuineLakatos % Duhem-Quine + Lakatos joint reading
+%   Wahyudi2026_2     -> wahyudi2026QuineWebOfBelief           % Quine web-of-belief as coherentist justification
+%   Mirza2019_2       -> mirzaAdamsFristonParr2019SelectiveAtt % Anchor: precision-as-attention in MDP active inference
+% TODO refs.bib additions (foundational anchors that neither cluster surfaced):
+%   lakatos1970FalsificationMethodology -- Lakatos, "Falsification and the methodology of scientific research programmes", in Lakatos & Musgrave (eds.), 1970 (the core/belt locus classicus)
+%   quine1951TwoDogmas                  -- Quine, "Two dogmas of empiricism", Philosophical Review 60(1), 1951 (web-of-belief / underdetermination)
+%   fristonPenny2011PostHocBMS          -- Friston & Penny, "Post hoc Bayesian model selection", NeuroImage 56(4), 2011 (variational-Laplace BMR derivation; PDF cites this as the technical foundation)
+%   thagardVerbeurgt1998CoherenceConstraint -- Thagard & Verbeurgt, "Coherence as constraint satisfaction", Cognitive Science 22(1), 1998 (formal ECHO algorithm)
+
+\section{Structural Extension: Bayes Nets and Bayesian Model Reduction}
+\label{sec:structural}
+
+The scalar treatment of \S\ref{sec:scalar} sufficed to expose
+asymmetric belief-revision dynamics, but it cannot speak to what
+practising scientists actually argue about: which commitments are
+foundational, which are negotiable, and which channel of observation
+to spend a finite attentional budget on next. The structured extension
+recovers all three by promoting each agent's paradigm from a point in
+$\Theta$ to a Bayesian network whose nodes carry theoretical
+commitments and whose edges encode inferential dependencies.
+
+\paragraph{Structural belief representation.}
+The conceptual ancestry of paradigms-as-networks predates active
+inference by half a century. \citet{Wahyudi2026_2}, reconstructing
+Quine's coherentism, summarises the web-of-belief picture in which no
+proposition confronts experience in isolation: revisions propagate
+along inferential links, and the choice of which link to cut is
+underdetermined by data alone. Lakatos's methodology of scientific
+research programmes sharpens this into a topology with a designated
+\emph{hard core} of commitments shielded by a flexible
+\emph{protective belt} of auxiliary hypotheses
+\citep{Heijdra1986_6,Ostapiuk2025_11}; the belt absorbs anomalies so
+that the core remains in force, and a programme degenerates only when
+belt-patching ceases to predict novel facts. Thagard's ECHO programme
+operationalises Quinean coherence as a connectionist constraint
+network and demonstrates, on the continental-drift case study, that
+the same machinery can reconstruct a historical paradigm shift as a
+re-equilibration of explanatory links
+\citep{Thagard1989_1,Thagard1988_4}; \citet{Ranney1988_3} extend the
+account to belief revision in naive physics. None of these accounts
+furnishes a generative model, but each picks out the same structural
+object: a graph of commitments whose densely-connected interior is
+held rigid while its periphery negotiates with observation. We adopt
+this object verbatim, identifying core nodes with the parameters
+under tight prior precision and belt nodes with those under broad
+prior precision in the agent's generative model.
+
+\paragraph{Bayesian model reduction.}
+Promoting the core/belt distinction to a piece of formal machinery
+requires a principled treatment of \emph{structural} inference --- the
+problem of scoring alternative graphs, not just alternative parameter
+values, against the same data. \citet{Friston2018_2}, extending the
+post-hoc model selection scheme of Friston \& Penny (2011), provide
+precisely this in the form of Bayesian model reduction (BMR). The
+construction is straightforward in variational Bayes: once the full
+model has been inverted, the evidence and posterior of any
+\emph{reduced} model --- one differing only in its priors --- can be
+computed analytically from the full posterior and the ratio of priors,
+generalising the Savage--Dickey density ratio. Concretely, switching
+off a candidate edge corresponds to collapsing the prior variance on
+the associated parameter to zero; the resulting change in variational
+free energy is the (log) Bayes factor for that structural revision.
+For the Dirichlet posteriors that govern categorical likelihood
+mappings in discrete state-space models --- the natural form for
+theory--observation links --- the reduced free energy has a closed
+form in terms of multivariate beta functions. \citet{Friston2018_2}
+showcase BMR as both a data-analytic tool and a metaphor for
+neurobiological abductive reasoning: the same equations that prune
+redundant DCM connections describe the synaptic elimination an agent
+performs when ``thinking off-line'' simplifies its model of a
+contingency. \citet{Markovi'c2023_1} extend the scheme to deep-network
+sparsification, evidencing that the reduction is general across
+parameter spaces. We invoke BMR as the engine of paradigm dynamics:
+candidate revisions to an agent's network --- adding a belt link,
+demoting a core node, accepting a rival auxiliary --- are scored by
+their reduced free energy, with the structural affective utility
+inherited from \S\ref{sec:motivatedbelief} entering as a contribution
+to the cost of admitting each revision. Path-dependence in the scalar
+model thus refines into something graph-theoretic: revisions that
+touch the core are more expensive because more of the posterior has
+to be re-balanced.
+
+\paragraph{Active sampling and precision allocation.}
+The structural representation closes the loop with action selection in
+a way the scalar model could not. Observation in the structured model
+is not exogenous arrival of evidence but an active sampling decision:
+the agent allocates a finite precision budget across belt nodes,
+sampling some channels with high precision and others with low.
+\citet{friston2015ActiveInferenceEpistemic} establishes the
+underlying primitive --- expected free energy decomposes into
+extrinsic (utility) and epistemic (information-gain) value ---
+and \citet{millidge2021EFE} surveys the equivalent decompositions.
+\citet{Mirza2019_2} show, in an MDP formulation of Yarbus's classic
+visual-search paradigm, that selective attention is just
+context-dependent modulation of the likelihood precisions $\zeta$:
+raising $\zeta$ on task-relevant channels and lowering it on
+task-irrelevant ones reweights expected information gain so that the
+agent saccades to evidence that distinguishes hypotheses it actually
+entertains. The same construction underwrites
+\citet{feldmanFriston2010Attention}, \citet{parrFriston2017Attention},
+and the precision-control account of
+\citet{parrFriston2019AdvancedAtt}; \citet{limanowskiFriston2018Dark}
+fills in the failure mode where mis-allocated precision dampens
+exploration. Transposed to the paradigm setting, precision allocation
+\emph{is} the paradigm-dependence of observation: an agent inhabiting
+a Newtonian network attends to mass-and-force belt nodes with high
+precision and assigns negligible precision to channels whose only
+hidden cause lies in a rival network. The result is a structured
+analogue of theory-laden perception
+(\S\ref{sec:theoryladen})~\citep{hylandAlbarracin2025MindChange},
+now derived rather than stipulated: what counts as a salient
+observation is what the agent's current network has bandwidth to
+believe.

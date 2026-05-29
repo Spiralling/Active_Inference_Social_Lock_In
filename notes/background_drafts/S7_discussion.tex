@@ -1,0 +1,64 @@
+% =====================================================================
+% §7 Discussion — background draft (paragraph-level gesture)
+% Target: third open question — external curation of attention
+% Length: ~400 words (target band 300–500)
+% Generated: 2026-05-29
+% Style anchor: paper/sections/06_discussion.tex
+%
+% Cited from master refs.bib (citeable as-is):
+%   - kulveit2025GradualDisempowerment
+%   - critchKrueger2020ARCHES
+%
+% Cited from cluster_C8_algorithmic_curation.bib (AUTO-KEYS — RENAME BEFORE MERGE):
+%   - D2025_2          TODO: rename to tkach2025EthicsPersonalization
+%   - Lin2026_1        TODO: rename to lin2026AlgorithmicBiasRecommender
+%   - Zhao2020_3       TODO: rename to zhao2020InformationCocoons
+%
+% NB: cluster has 0 cached PDFs; prose is built from bib abstracts/titles
+% only. This is deliberate — the section is a forward pointer, not a
+% review.
+% =====================================================================
+
+\paragraph{External attentional curation.}
+The third open question is the most consequential for the model's empirical
+domain of validity, and it remains open. Throughout
+Sections~\ref{sec:model}--\ref{sec:experiments} an agent's policy over which
+neighbours, papers, and observations to attend to is treated as endogenous: it
+is selected by expected free energy under the agent's own generative model and
+affective utility. In contemporary scientific practice this assumption is
+already strained. Citation recommenders, search-engine ranking, social-media
+amplification, and journal-level visibility filters increasingly mediate which
+findings an individual scientist ever encounters, and the same logic operates a
+fortiori in adjacent epistemic communities --- policy analysis, public
+discourse around scientific results, the training corpora of large models that
+themselves now participate in summarisation and triage. The literature on
+algorithmic curation documents that such systems do not merely accelerate
+access to a fixed information environment but actively reshape exposure
+through popularity bias, preference reinforcement, and the formation of
+``information cocoons'' that insulate users from disconfirming evidence
+\citep{Lin2026_1, Zhao2020_3}, and that the boundary between helpful
+personalisation and manipulation is structurally hard to draw once the
+recommender's objective is decoupled from the user's epistemic interest
+\citep{D2025_2}.
+
+For the present construction the consequence is precise but unresolved. The
+attentional policy $\pi$ no longer factorises through a single agent's
+generative model: a curator $\mathcal{C}$ --- algorithmic, institutional, or
+both --- intervenes between the latent paradigm field and the per-agent
+observation channel, with its own objective that is in general not aligned
+with predictive accuracy on the underlying scientific question. The
+trust matrix $\trustmat$ then learns precisions over a doubly-mediated
+signal, and the resource-flow readouts of Eqs.~\eqref{eq:flow-from-trust}--\eqref{eq:inflow-share}
+acquire a third upstream lever beyond $\inflowrate$ and $\trustmat^{(0)}$:
+the curator's policy itself. Whether this collapses to a renormalisation of
+the existing trust dynamics, or whether it introduces qualitatively new
+attractors --- in particular, attractors that survive the corrective force
+of cross-surprisal because the disconfirming observations are never sampled ---
+is the model's natural next question. It is also the point at which the
+construction makes contact with broader concerns about AI systems gradually
+displacing human epistemic agency \citep{kulveit2025GradualDisempowerment} and
+about the multi-principal coordination problems that arise when curators,
+scientists, and institutions optimise different objectives over a shared
+information substrate \citep{critchKrueger2020ARCHES}. We flag this as the
+open direction the framework most naturally extends into, and the one we
+take to be most urgent.

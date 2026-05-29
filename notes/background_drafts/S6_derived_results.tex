@@ -1,0 +1,130 @@
+% =====================================================================
+% S6 background-prose draft — Derived Consequences of the Structured Model
+% Working structure: IWAI 2026, Hallgren & Hyland, 2026-05-29
+% Author of draft: Claude sub-agent (one of 7 parallel §-drafts)
+% Target length: 500–800 words
+% Clusters drawn on: C4 social_network_epistemology (derived-results subset);
+%                    C5 echo_chambers (Nguyen bubble-vs-chamber distinction)
+% Overlap note: §3 author handles the *primitives* (Bala–Goyal, DeGroot, MAB).
+% This draft handles the *derived consequences* — Zollman tradeoff, Kitcher–
+% Strevens DoCL + paradoxical stubbornness, Nguyen bubble vs chamber.
+% --------------------------------------------------------------------
+% TODO hand-rename anchors before merging the cluster bibs into refs.bib:
+%   - Zollman 2007 (network epistemology / less-is-more) — anchor MISSING from
+%     cluster_C4; rec key zollman2007NetworkEpistemology;
+%     and Zollman 2010 (transient diversity) — anchor MISSING; rec key
+%     zollman2010TransientDiversity. Both cited below as
+%     \citep{zollman2007NetworkEpistemology, zollman2010TransientDiversity};
+%     need to be added to refs.bib (not yet present).
+%   - Kitcher 1990 "The Division of Cognitive Labor" — anchor MISSING from
+%     cluster_C4 (referenced in-text by Romero2017_2); rec key
+%     kitcher1990DivisionCognitiveLabor.
+%   - Strevens 2003 "The Role of the Priority Rule in Science" — anchor
+%     MISSING; rec key strevens2003PriorityRule.
+%   - Muldoon & Weisberg 2011 "Robustness and Idealization in Models of
+%     Cognitive Labor" — anchor MISSING from cluster_C4 (cited inside
+%     Romero2017_2's references); rec key muldoonWeisberg2011Robustness.
+%   - Nguyen 2018 (Episteme, cluster key Nguyen2018_1) — rec key
+%     nguyen2020EchoChambers (the 2020 reprint is the canonical citation).
+%   - Longino 1990 "Science as Social Knowledge" (Longino1990_10 in cluster) —
+%     rec key longino1990ScienceSocialKnowledge; this is the CCE / four-norm
+%     anchor.
+%   - Romero 2017 (cluster key Romero2017_2) — rec key
+%     romero2017NoveltyReplicability; needed for the priority-rule /
+%     replicability vice.
+%   - Pollock 2024 (cluster key Pollock2024_3) and Turner 2023 (cluster key
+%     Turner2023_2) follow Nguyen's distinction; cite from C5 as written.
+% Style reference: paper/sections/02_related_work.tex (Bourdieu-style
+% \paragraph blocks, \citep / \citet, our internal macros).
+% =====================================================================
+
+\section{Derived Consequences of the Structured Model}
+\label{sec:derived-results}
+
+The structural extension developed in Section~\ref{sec:experiments} is
+not introduced for its own sake. It earns its place because three
+otherwise-disparate results in network epistemology --- the Zollman
+tradeoff between consensus speed and asymptotic accuracy, the
+paradoxical-stubbornness finding from the division-of-cognitive-labor
+literature, and Nguyen's distinction between epistemic bubbles and
+echo chambers --- recover as derived consequences of one mechanism: a
+trust-precision network propagating candidate \emph{structural}
+revisions rather than scalar opinions. We position each result in turn
+and indicate which observable in our simulations it indexes.
+
+\paragraph{The Zollman tradeoff and the value of inefficiency.}
+\citet{zollman2007NetworkEpistemology, zollman2010TransientDiversity}
+showed, in a multi-armed-bandit network of Bayesian scientists, that
+\emph{denser} communication graphs converge faster but more often
+lock onto the worse arm; sparser graphs sustain transient diversity
+long enough for the inferior hypothesis to be discarded, and so reach
+higher asymptotic accuracy. The mechanism is now well understood as a
+spectral one: the rate at which beliefs synchronise on a graph is set
+by its algebraic connectivity (the Fiedler value $\lambda_2$ of the
+graph Laplacian)
+\citep{Griparic2021_7, Montijano2017_11, Tan2008_14}, so larger
+$\lambda_2$ compresses the transient phase during which dissent can
+falsify a leading hypothesis. The structured model inherits this
+argument unchanged at the topological level, but reroutes its
+substantive content: the channels carry \emph{precision-weighted
+candidate revisions} of the generative model, not scalar credences,
+so the speed–accuracy tradeoff applies to structural revision events
+themselves. This vindicates the Feyerabendian-pluralist intuition
+\citep{Müürsepp2019_7} in mechanistic form --- a measured inefficiency
+in the trust-precision network is the substrate condition for the
+critical-discursive uptake that
+\citet{longino1990ScienceSocialKnowledge} requires of an epistemically
+healthy community --- and supplies the formal claim Longino's
+critical contextual empiricism has been criticised for leaving
+underspecified \citep{Novaes2025_1, Ajdari2023_6, Borgerson2011_5}.
+
+\paragraph{Division of cognitive labour and paradoxical stubbornness.}
+\citet{kitcher1990DivisionCognitiveLabor} and
+\citet{strevens2003PriorityRule} argued that the priority rule
+incentivises credit-driven scientists to spread across research
+programmes, producing a community-level distribution of effort closer
+to the social optimum than truth-driven scientists would individually
+choose. \citet{muldoonWeisberg2011Robustness} relaxed the
+god's-eye information assumption: in their local-information variant,
+agents that appear \emph{paradoxically stubborn} --- unwilling to
+abandon a low-success-probability programme --- in fact regularise
+the system, preventing premature convergence on whichever programme
+happened to lead first. \citet{romero2017NoveltyReplicability}
+qualifies the optimistic Kitcher--Strevens reading by noting that the
+priority rule rewards novelty regardless of replicability and so
+\emph{disincentivises} the very direct-replication work that would
+discipline structural revisions. In the structured model these
+findings appear as a single statement: an agent's resistance to a
+structural revision is proportional to the precision of its current
+generative model, so agents with strong structural utility on their
+incumbent paradigm act as protective elements against premature
+structural collapse. They are not uniquely irrational; their
+structural commitments simply require correspondingly stronger
+cross-channel evidence to revise. The Muldoon--Weisberg paradox and
+the Romero replication-vice fall out as two readings of the same
+asymmetry --- one casting it as virtue (transient diversity
+preserved), the other as vice (replication suppressed) --- and the
+model exposes the parameter that interpolates between them.
+
+\paragraph{Bubbles versus chambers: failure modes of cross-agent channels.}
+\citet{nguyen2020EchoChambers} draws a distinction that, in our
+framework, is structural rather than rhetorical. An
+\emph{epistemic bubble} is a failure of \emph{trust topology}:
+relevant voices are omitted, so the cross-agent channel is sparse or
+disconnected, and the bubble pops on simple exposure. An
+\emph{echo chamber} is a failure of \emph{trust precision}: the
+discrediting beliefs assigned to outsiders pre-emptively downweight
+incoming cross-surprisals, so the chamber survives exposure and can
+even use it for reinforcement
+\citep{Pollock2024_3, Turner2023_2, Clinkenbeard2025_4}. In the
+scalar-opinion setting this distinction must be argued for
+philosophically; in the structured-belief setting it is recovered as
+the formal separation between sparsity of $\trustmat$ and the
+precision weights it carries on its non-zero entries. Crucially,
+because the channels now carry candidate \emph{structural} revisions
+rather than scalar opinions, the bubble--chamber distinction becomes
+more honest: a bubble withholds candidate revisions; a chamber
+admits them and then assigns them zero precision. The two failure
+modes call for different repairs --- coverage versus
+precision-recalibration --- and the model makes the repair
+prescription mechanistic rather than virtue-theoretic.

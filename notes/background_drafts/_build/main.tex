@@ -1,0 +1,42 @@
+% Standalone compile wrapper for ../background.tex
+% Uses article class to avoid LNCS dependencies; full preamble of paper/main.tex
+% not needed since the background is prose + citations only.
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage[round,authoryear]{natbib}
+\usepackage{hyperref}
+\usepackage[margin=1in]{geometry}
+\usepackage{microtype}
+
+\hypersetup{colorlinks=true, linkcolor=black, citecolor=blue, urlcolor=blue}
+
+% Stub the only paper macro the background draft uses.
+\providecommand{\trustmat}{\mathbf{T}}
+
+\title{Background --- Draft\\[2pt]
+       \large IWAI 2026: Paradigm Dynamics in Multi-Agent Motivated Belief}
+\author{Hallgren \& Hyland}
+\date{2026-05-29 (combined draft, pre-curation)}
+
+\begin{document}
+\maketitle
+
+\noindent\textit{This is a working compile of the 7-section background draft
+generated 2026-05-29. Citations marked with ``??'' are foundational anchors
+flagged in the source TODO header for hand-addition to \texttt{refs.bib}
+(Kunda 1990, Lakatos 1970, Zollman 2007/2010, Kitcher 1990, Strevens 2003,
+Muldoon \& Weisberg 2011, Nguyen 2020, etc.); 62 of 73 cite keys resolve
+against the concatenated cluster bibs + master \texttt{refs.bib}.}
+
+\bigskip
+
+\input{background_compile}
+
+\bibliographystyle{plainnat}
+\bibliography{refs}
+
+\end{document}

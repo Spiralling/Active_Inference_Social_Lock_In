@@ -1,0 +1,69 @@
+This is BibTeX, Version 0.99d
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: main.aux
+Reallocating 'name_of_file' (item size: 1) to 9 items.
+The style file: plainnat.bst
+Reallocating 'name_of_file' (item size: 1) to 5 items.
+Database file #1: refs.bib
+Warning--I didn't find a database entry for "kunda1990MotivatedReasoning"
+Warning--I didn't find a database entry for "lordRossLepper1979BiasedAssimilation"
+Warning--I didn't find a database entry for "nickerson1998ConfirmationBias"
+Warning--I didn't find a database entry for "zollman2007NetworkEpistemology"
+Warning--I didn't find a database entry for "zollman2010TransientDiversity"
+Warning--I didn't find a database entry for "longino1990ScienceSocialKnowledge"
+Warning--I didn't find a database entry for "kitcher1990DivisionCognitiveLabor"
+Warning--I didn't find a database entry for "strevens2003PriorityRule"
+Warning--I didn't find a database entry for "muldoonWeisberg2011Robustness"
+Warning--I didn't find a database entry for "romero2017NoveltyReplicability"
+Warning--I didn't find a database entry for "nguyen2020EchoChambers"
+Warning--empty journal in Brewer2010_14
+Warning--empty journal in Carrier2002_4
+Warning--empty journal in Chang2012_9
+Warning--empty journal in Halloun2016_8
+Warning--empty journal in Kruglanski2020_10
+Warning--empty journal in Mcevoy1989_7
+Warning--empty journal in Ranney1988_3
+Warning--empty journal in Shimony1976_10
+Warning--empty journal in Siegel1987_15
+You've used 62 entries,
+            2773 wiz_defined-function locations,
+            1080 strings with 20663 characters,
+and the built_in function-call counts, 25140 in all, are:
+= -- 2359
+> -- 1381
+< -- 43
++ -- 479
+- -- 417
+* -- 1829
+:= -- 4174
+add.period$ -- 334
+call.type$ -- 62
+change.case$ -- 324
+chr.to.int$ -- 62
+cite$ -- 133
+duplicate$ -- 1212
+empty$ -- 1944
+format.name$ -- 509
+if$ -- 5181
+int.to.chr$ -- 1
+int.to.str$ -- 1
+missing$ -- 63
+newline$ -- 466
+num.names$ -- 248
+pop$ -- 545
+preamble$ -- 1
+purify$ -- 263
+quote$ -- 0
+skip$ -- 914
+stack$ -- 0
+substring$ -- 214
+swap$ -- 55
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 677
+warning$ -- 9
+while$ -- 195
+width$ -- 0
+write$ -- 1045
+(There were 20 warnings)
