@@ -1,730 +1,866 @@
 % =====================================================================
-% background.tex --- combined background draft for IWAI 2026 paper
-% "Paradigm Dynamics in Multi-Agent Motivated Belief" (Hallgren & Hyland)
+% background.tex --- IWAI 2026, Hallgren & Hyland
+% STRUCTURAL model walkthrough (2026-05-30 rewrite).
 %
-% Generated 2026-05-29 by combining 7 sub-agent drafts (S1_*.tex...S7_*.tex)
-% in the same directory. Each \section corresponds to a section of the
-% working-structure PDF (IWAI_26_Paradigm (1).pdf, 2026-05-29).
+% Object: the paradigm is itself a precision-weighted Bayes net of
+% interdependent commitments (core/belt). Conservatism is DERIVED from
+% structural position; paradigm change is carry-over by message-passing;
+% structural inference is Bayesian model reduction over a continuous
+% precision space; the population signature is a continuous structural
+% phase transition (graded belt-first/core-last reorganisation), NOT a
+% damped oscillation to scalar consensus.
 %
-% Cross-references between sections have been normalised:
-%   - sec:scalar-multiagent   (was sec:scalar in S5)
-%   - sec:derived-results     (was sec:structured-results in S3)
+% Register: declarative strawman (no open-questions section). The scalar
+% model is the baseline it departs from; it survives only as Fig 5's red
+% curve.
 %
-% =====================================================================
-% CONSOLIDATED KEY-HANDLING TODO (collected from all 7 drafts)
-% =====================================================================
+% Figures: six TikZ blocks reused near-verbatim from figures_old.tex.
+% Palette + tikz libraries live in the _build/main.tex wrapper.
 %
-% A. Auto-keys to hand-rename before merging cluster bibs into refs.bib
-% --------------------------------------------------------------------
-% §1 + §4 (cluster_C6_theory_laden):
-%   Chang2012_9         -> chang2012WaterChemRev                 % ANCHOR (Lavoisier/water)
-%   Carrier2002_4       -> carrier2002IncommensPhlogiston
-%   Malone1993_5        -> malone1993IncommensNoRelativism
-%   Shimony1976_10      -> shimony1976KuhnTheses
-%   Siegel1987_15       -> siegel1987KuhnInspired
-%   Brewer2010_14       -> brewerLoschky2010TopDown
-%   Lewowicz2011_2      -> lewowicz2011PurloinedReferent
-%   Boantza2008_4       -> boantza2008PhlogisticHeat
-%   Halloun2016_8       -> halloun2016ModelLadenInquiry
-%   Mcevoy1989_7        -> mcevoy1989LavoisierLinguistic
-%   Perrin1988_5        -> perrin1988ResearchTraditions
+% Predecessors archived in this directory: background_scalar_walkthrough.tex
+% (the scalar walkthrough), background_litreview.tex (the survey).
 %
-% §2 (cluster_C1_motivated_reasoning + cluster_C2_variational_cost):
-%   Kahan2007_1         -> kahanEtAl2007WhiteMaleEffect          % ANCHOR
-%   Kahan2017_4         -> kahan2017IdentityProtective           % ANCHOR
-%   Kahan2017_2         -> kahanPetersDawson2017MotivatedNumeracy
-%   Kahan2015_12        -> kahan2015ExpressiveRationality
-%   Glüer-Pagin2024_11  -> gluerSpectre2024MotivationInNumeracy
-%   Bolsen2019_7        -> bolsenPalm2019MotivatedReasoning
-%   Little2020_13       -> littleSchnakenbergTurner2021MotivatedAccountability
-%   Savolainen2022_3    -> savolainen2022HealthMisinformation
-%   Kruglanski2020_10   -> kruglanski2020AllThinkingWishful
-%   Hopkins2016_8       -> hopkins2016FreeEnergyDreaming
-%   Friston2023_7       -> fristonEtAl2023FederatedInference
-%   Costa2020_4         -> daCosta2020ActiveInferenceDiscrete
-%
-% §3 (cluster_C4_social_network_epistemology, intro subset):
-%   Bala1998_1          -> balaGoyal1998LearningNeighbours        % ANCHOR
-%   Bala2001_3          -> balaGoyal2001Conformism
-%   Boudourides2026_7   -> boudourides2026FJBoundaryValue
-%   Proskurnikov2015_6  -> proskurnikovMatveevCao2015Hostile
-%   Ren2020_13          -> ren2020DeGrootCommunities
-%
-% §4 (cluster_C5_echo_chambers):
-%   Nguyen2018_1        -> nguyen2020EchoChambers                  % ANCHOR
-%   Pollock2024_3       -> pollock2024ContextualDiscordance
-%   Clinkenbeard2025_4  -> clinkenbeard2025NihilisticDistrust
-%
-% §5 (cluster_C3_bmr_lakatos + cluster_C7_attention_precision):
-%   Friston2018_2       -> fristonParrZeidman2018BMR              % ANCHOR
-%   Thagard1989_1       -> thagard1989ExplanatoryCoherence        % ANCHOR
-%   Thagard1988_4       -> thagardNowak1988ContinentalDrift
-%   Ranney1988_3        -> ranneyThagard1988NaivePhysics
-%   Markovi'c2023_1     -> markovicFristonKiebel2024BMRSparsify
-%   Heijdra1986_6       -> heijdraLowenberg1986DuhemQuineLakatos
-%   Wahyudi2026_2       -> wahyudi2026QuineWebOfBelief
-%   Ostapiuk2025_11     -> ostapiuk2025LakatosResearchProgrammes
-%   Mirza2019_2         -> mirzaAdamsFristonParr2019SelectiveAtt  % ANCHOR
-%
-% §6 (cluster_C4 derived-results subset + cluster_C5):
-%   Griparic2021_7      -> griparicEtAl2021AlgebraicConnectivity
-%   Montijano2017_11    -> montijano2017ConsensusSpectral
-%   Tan2008_14          -> tan2008FiedlerOpinion
-%   Müürsepp2019_7      -> muursepp2019FeyerabendPluralism
-%   Novaes2025_1        -> novaes2025LonginoCritique
-%   Ajdari2023_6        -> ajdari2023LonginoCritique
-%   Borgerson2011_5     -> borgerson2011LonginoCritique
-%   Longino1990_10      -> longino1990ScienceSocialKnowledge      % ANCHOR
-%   Romero2017_2        -> romero2017NoveltyReplicability
-%   Turner2023_2        -> turner2023ChamberTrust
-%
-% §7 (cluster_C8_algorithmic_curation):
-%   D2025_2             -> tkach2025EthicsPersonalization
-%   Lin2026_1           -> lin2026AlgorithmicBiasRecommender
-%   Zhao2020_3          -> zhao2020InformationCocoons
-%
-% B. Foundational anchors MISSING from all clusters --- hand-add to refs.bib
-% -------------------------------------------------------------------------
-% §2:
-%   kunda1990MotivatedReasoning           Kunda, Psych. Bull. 108(3), 1990
-%   nickerson1998ConfirmationBias         Nickerson, Rev. Gen. Psych. 2(2), 1998
-%   lordRossLepper1979BiasedAssimilation  Lord, Ross & Lepper, JPSP 37(11), 1979
-% §5:
-%   lakatos1970FalsificationMethodology   Lakatos, in Lakatos & Musgrave (eds.), 1970
-%   quine1951TwoDogmas                    Quine, Phil. Review 60(1), 1951
-%   fristonPenny2011PostHocBMS            Friston & Penny, NeuroImage 56(4), 2011
-%   thagardVerbeurgt1998CoherenceConstraint  Thagard & Verbeurgt, Cog. Sci. 22(1), 1998
-% §6:
-%   zollman2007NetworkEpistemology        Zollman, Phil. Sci. 74(5), 2007
-%   zollman2010TransientDiversity         Zollman, Erkenntnis 72, 2010
-%   kitcher1990DivisionCognitiveLabor     Kitcher, J. Phil. 87(1), 1990
-%   strevens2003PriorityRule              Strevens, J. Phil. 100(2), 2003
-%   muldoonWeisberg2011Robustness         Muldoon & Weisberg, Phil. Stud. 152(2), 2011
-%
+% Citation keys: hand-curated keys resolve against paper/refs.bib;
+% Author20XX_n keys are Semantic Scholar auto-keys from the cluster bibs.
+% % TODO ADD marks foundational anchors still to be hand-added to refs.bib.
 % =====================================================================
 
-
 % =====================================================================
-\section{Theory-Laden Perception}
-\label{sec:theoryladen}
-% =====================================================================
-
-\paragraph{Kuhn's three faces.}
-The central phenomenological commitment of this paper is the
-Kuhnian observation that the paradigm a scientist holds shapes what
-she is even capable of perceiving \citep{kuhn1962Structure}. This is
-not a methodological lapse to be corrected by more careful
-experimental design but a structural feature of scientific cognition,
-and it has three interconnected faces that we will treat as
-expressions of a single underlying phenomenon. The first face is
-what a scientist sees in incoming data: the same observation is read
-differently from inside different paradigms, with the assignment of
-\emph{anomaly} versus \emph{nuisance} itself being paradigm-dependent
-\citep{Brewer2010_14, Shimony1976_10}. The second face is what
-experiments she chooses to run: the paradigm shapes the space of
-investigations she finds worth undertaking, which in turn shapes
-what evidence the community as a whole produces
-\citep{Halloun2016_8}. The third face is what theoretical
-alternatives she even considers: rival frameworks are not so much
-rejected as never seriously entertained, with the candidate set of
-live revisions itself being structured by the prevailing framework
-\citep{Carrier2002_4, Malone1993_5}.
-
-\paragraph{Theory-ladenness as structural feature, not bias.}
-The contemporary literature has substantially clarified what was, in
-Kuhn's original framing, sometimes left ambiguous. \citet{Siegel1987_15}
-and \citet{Malone1993_5} reconstruct incommensurability as a
-condition on referential and inferential overlap between frameworks
-rather than as a relativist denial of cross-paradigm rationality, and
-\citet{Carrier2002_4} demonstrates on the phlogiston case that
-\emph{empirical comparability} between rival paradigms is possible
-without their being intertranslatable term-by-term. Cognitive
-psychology has independently corroborated the perceptual layer of the
-claim: \citet{Brewer2010_14} review top-down and bottom-up
-contributions to scientific observation and find that the prior model
-substantively conditions what counts as a datum, in line with the
-phenomenology Kuhn was describing. The resulting picture is
-deflationary in one direction --- theory-ladenness is not the
-collapse of objectivity --- and inflationary in another: the
-influence of the prevailing framework reaches further into the
-cognitive pipeline than an additive bias term would suggest, touching
-attention, salience, the felt space of alternatives, and the
-allocation of experimental effort.
-
-\paragraph{The Chemical Revolution as a worked case.}
-The Chemical Revolution is the canonical historical demonstration of
-all three faces operating jointly. \citet{Chang2012_9} argues that
-phlogiston theory was not a failed predecessor refuted by Lavoisier's
-data but a research programme with its own coherent set of
-observables, anomalies, and live revisions; its replacement was less
-a victory of evidence over confusion than a reallocation of what
-counted as a phenomenon to be explained.
-\citet{Lewowicz2011_2} and \citet{Boantza2008_4} reinforce this
-reading from inside the chemistry: the phlogiston framework had
-resources --- including a treatment of heat
-\citep{Boantza2008_4} --- whose referents were not so much falsified
-as relocated under the oxygen framework, exactly the kind of move
-that the third Kuhnian face predicts. This historical record matters
-for our model because it shows that the three faces are not
-independent variables to be added: shifts in what is observed, what
-is investigated, and what is entertained co-vary, and they co-vary
-on the timescale of community-wide reorganisation rather than
-individual reasoning.
-
-\paragraph{Methodological commitment.}
-We take this as the empirical commitment that licenses the model's
-complexity. An accumulated-checklist alternative --- enumerate
-biases in perception, biases in experiment choice, and biases in
-hypothesis generation, then sum them --- would be both more
-defensive and less informative, because it would treat the three
-faces as separable failure modes rather than as expressions of a
-single structural fact about how a community-held framework
-conditions cognition. The stronger rhetorical position, and the one
-this paper takes, is that a single underlying mechanism is
-responsible for all three faces, and that the model must therefore
-couple perception, action, and hypothesis-space in a way that an
-additive bias account cannot. The remainder of the paper develops
-that mechanism. In our setting, the
-shared framework is encoded in the joint structure of agents'
-generative models and the channel of inter-agent precision that
-binds them; the three faces will reappear, respectively, as the
-likelihood-weighting in inference, as the experiment-selection
-policy, and as the support of the prior over theories. The case
-for treating them together, rather than enumerating them
-separately, rests on the phenomenological commitment defended
-here.
-
-
-% =====================================================================
-\section{Motivated Belief at the Single-Agent Level}
-\label{sec:motivatedbelief}
+\section{The Phenomenon}
+\label{sec:phenomenon}
 % =====================================================================
 
-\paragraph{Empirical motivated reasoning.}
-The cognitive-psychological case that belief revision is shaped by
-goals other than accuracy is long-standing and converged. The
-canonical statement is Kunda's argument that reasoning is steered by
-\emph{directional} as well as accuracy goals: subjects construct the
-sequence of inferential steps that licenses the conclusion they would
-prefer to reach, subject to the constraint that the construction
-remain plausible to themselves \citep{kunda1990MotivatedReasoning}.
-This framing absorbed two earlier empirical findings as special
-cases: the biased-assimilation experiments of
-\citet{lordRossLepper1979BiasedAssimilation}, in which the same
-mixed evidence about a contested policy strengthened the prior
-commitments of partisans on \emph{both} sides; and confirmation-bias
-phenomena more broadly catalogued by \citet{nickerson1998ConfirmationBias}.
-The empirical literature has since accumulated in two directions.
-The first is Kahan's cultural-cognition programme, in which the
-directional goal is identified specifically as \emph{identity
-protection}: subjects process risk-relevant evidence in whatever way
-preserves their standing in the affinity groups they belong to
-\citep{Kahan2007_1, Kahan2017_4}. The signature empirical finding is
-that the gap between cultural sub-populations \emph{widens} with
-numerical and scientific sophistication rather than narrowing
-\citep{Kahan2017_2}; Kahan reads this as evidence that the more
-capable reasoners are more effective at the selective evaluation of
-identity-incongruent evidence, a behaviour he characterises as
-\emph{expressive rationality} --- rational relative to the agent's
-practical stakes in group membership, irrational relative to truth
-\citep{Kahan2015_12}. The mechanism remains contested:
-\citet{Glüer-Pagin2024_11} argue that what Kahan's experiments
-isolate is motivation \emph{to reason} rather than motivated reasoning
-in the strict sense, and the broader political-science literature now
-distinguishes carefully between directional and accuracy regimes and
-the conditions under which one or the other dominates
-\citep{Bolsen2019_7, Little2020_13, Savolainen2022_3}. For our
-purposes the contested points do not matter: the robust observation
-is that human belief revision exhibits a systematic, content-sensitive
-asymmetry in its receptivity to evidence, and that this asymmetry is
-not adequately captured by treating the agent as an unbiased Bayesian
-updater.
-
-\paragraph{Variational formalisation.}
-The active-inference community has begun to give this asymmetry a
-principled mathematical form. The starting point is the variational
-free-energy functional, in which an agent's update from prior to
-posterior incurs a complexity cost proportional to the
-Kullback--Leibler divergence between the candidate posterior and the
-prior \citep{Costa2020_4}. \citet{hylandAlbarracin2025MindChange}
-re-foreground this complexity term as a \emph{motivational} quantity:
-the cost of changing one's mind is the KL divergence from the current
-belief to the candidate revision, weighted by an affective utility
-that reflects how much the agent cares about retaining the prior.
-Because that divergence is asymmetric, belief revision is
-path-dependent: evidence that would update a neutral prior into a
-particular posterior need not, played in reverse, undo a revision
-already made. This is the formal counterpart of the
-biased-assimilation and identity-protection findings: preferred
-beliefs are not merely held more confidently, they are protected by a
-mathematically explicit revision cost that contrary evidence must
-overcome. \citet{Kruglanski2020_10} reaches a sympathetic conclusion
-from the social-psychological side, arguing that there is no sharp
-boundary between motivated and non-motivated cognition because
-\emph{all} inference is directional in the sense that it is steered
-by what the agent values; the variational reading makes this claim
-precise by locating the directional weight in the affective utility
-that multiplies the complexity term. Adjacent strands of the
-active-inference literature provide the surrounding machinery on
-which the multi-agent extension will draw, including federated
-inference under shared world models \citep{Friston2023_7} and the
-free-energy account of belief-revision dynamics more generally
-\citep{Hopkins2016_8}.
-
-\paragraph{Open question.}
-The single-agent picture is now reasonably well developed, both
-empirically and formally. What it does not yet capture is the
-phenomenon Kuhn observed at the community scale: that scientific
-sub-fields exhibit collective motivated belief, sustained across
-generations, with the directional goal residing not in any individual
-ego but in the institutional and social structures that bind the
-community together. The active-inference treatment so far has been
-single-agent --- the cost of mind-change is borne by one mind, against
-its own prior. The empirical motivated-reasoning literature is in
-practice multi-agent --- the identity being protected is a group
-identity --- but its formalisation has remained at the level of
-within-individual mechanism. The question this paper takes up is how
-the variational cost of belief revision generalises to a population
-of coupled inferential agents in a way that recovers what Kuhn
-observed: paradigm-level persistence that is sociologically generated,
-asymmetric in time, and not reducible to the directional preferences
-of any single agent.
-
+Scientific communities revise their theoretical commitments more slowly
+than the evidence alone would dictate, and when they move they move
+abruptly and path-dependently \citep{kuhn1962Structure}. Kuhn's deepest
+observation is that the paradigm shapes what a scientist can perceive,
+what she chooses to investigate, and what alternatives she will
+entertain --- three faces of one structural fact. The scalar reading of
+this phenomenon --- a single categorical commitment $\theta$ revised
+under a conservatism dial --- can reproduce the lag, but it represents
+the paradigm as a point. A paradigm is not a point. It is a structured
+web of interdependent commitments, and the cost of changing it is the
+cost of re-reading every commitment that depends on the one that moved.
+This document builds the model that takes that structure literally. Each
+step introduces the formal object that answers the question its
+predecessor leaves open.
 
 % =====================================================================
-\section{From Single-Agent to Multi-Agent: The Scalar Treatment}
-\label{sec:scalar-multiagent}
+\section*{Desiderata}
+\addcontentsline{toc}{section}{Desiderata}
+\label{sec:desiderata}
 % =====================================================================
 
-\paragraph{Scalar Bayesian updating on a graph.}
-The scalar multi-agent setting we adopt sits inside a well-developed
-tradition that treats opinion change as a linear, convex-combination
-update on a weighted directed graph. The canonical primitive is the
-DeGroot averaging model \citep{Boudourides2026_7}, in which each
-agent's opinion at the next step is a row-stochastic mixture of its
-neighbours' current opinions; under mild connectivity assumptions this
-contracts to consensus. The Friedkin--Johnsen extension breaks that
-asymptotic consensus by allowing each agent to retain weight on its
-initial belief through a susceptibility coefficient
-$s_i \in [0,1]$, so that the long-run opinion vector is an
-affine-resolvent functional of the boundary of stubborn agents
-\citep{Boudourides2026_7}. The conservatism parameter in our setup
-plays the same formal role as the Friedkin--Johnsen susceptibility,
-read off the variational free-energy decomposition rather than
-postulated: the cost-of-mind-change term in the tempered-Bayesian
-update of \citet{hylandAlbarracin2025MindChange} is precisely an
-asymmetric KL penalty on revising one's posterior, and at the linear
-limit its scalar weight maps to $1 - s_i$. The literature has worked
-out a great deal of structural detail on this family: closed-form
-steady states via resolvent / Green-function representations,
-quantitative convergence rates controlled by the spectral radius of
-the susceptibility-weighted influence matrix, and explicit sensitivity
-of the steady state to perturbations of either the influence matrix or
-the susceptibility profile \citep{Boudourides2026_7}. Signed
-generalisations recover polarisation as a stable attractor when the
-underlying graph admits a structural-balance decomposition into
-hostile camps \citep{Proskurnikov2015_6}, and community-detection
-methods exploit the same consensus dynamics to read off hierarchical
-group structure from opinion trajectories \citep{Ren2020_13}. We
-inherit this machinery and re-read it in active-inference terms: the
-influence matrix is a learned channel precision rather than a fixed
-social-tie weight, and the susceptibility / conservatism is a
-free-energy quantity rather than a phenomenological parameter.
-
-\paragraph{Multi-armed bandit framing of theory choice.}
-The complementary tradition treats the agent's problem not as
-averaging an opinion but as choosing which arm of a multi-armed
-bandit to pull next given its neighbours' payoffs, which we draw on
-explicitly when the scalar opinion is read as a paradigm \emph{choice}
-rather than a continuous belief. \citet{Bala1998_1} introduce the
-canonical model: each agent repeatedly chooses among a finite set of
-risky actions, observes its own and its neighbours' payoffs, and
-updates a Bayesian posterior over which action is best. They prove
-that on connected networks the population converges to consensus on a
-single action almost surely, but the consensus action need not be the
-optimal one --- early random fluctuations get locked in by social
-imitation, generating a long tail of pathological lock-ins on
-inferior arms. Their follow-up \citep{Bala2001_3} sharpens this into
-a quantitative tradeoff between conformism and diversity that
-prefigures the network-epistemology framing later picked up by
-\citet{zollman2007NetworkEpistemology}, whose paradoxical-stubbornness and
-communication-structure results we treat as derived consequences of
-the same primitives and develop in
-Section~\ref{sec:derived-results}. The Bala--Goyal lineage is the
-right reference frame for our §3 simulations because it is the
-minimal model in which (i) the agent has a well-defined Bayesian
-posterior over a finite paradigm set, (ii) communication enters
-through observed payoffs rather than through opinion averaging, and
-(iii) the timescale-separation between learning and convergence
-generates path-dependent population outcomes --- the three features
-the scalar paradigm experiments are designed to exhibit.
-
-\paragraph{Active-inference coupling.}
-Bringing the two strands together in an active-inference register is
-the contribution of \citet{albarracin2022EpistemicCommunities}, who
-couple variational-Bayesian agents through shared observations and
-characterise echo-chamber bifurcation as a function of the
-inter-agent precision. Their construction is the immediate ancestor
-of our §3 setup, with two refinements. First, the inter-agent
-precision is itself learned, not fixed, so the trust matrix is the
-only Bayesian-learned relational object in the model and the
-``susceptibility profile'' of the Friedkin--Johnsen analysis becomes
-endogenous to the dynamics. Second, the tempered-Bayesian update of
-\citet{hylandAlbarracin2025MindChange} contributes an asymmetric
-cost-of-mind-change term that does not appear in the symmetric
-linear-averaging tradition but that is necessary to recover Kuhnian
-path-dependence at the population level: even a homogeneous network
-with isotropic trust will, with non-zero conservatism, lock onto its
-initial-condition basin in a way that pure DeGroot or Bala--Goyal
-dynamics cannot. The scalar experiments that follow probe how this
-conservatism parameter interacts with the trust-precision topology
-and with the affective utility on paradigm values to produce the
-population behaviours we will then re-read, in §4, as the structural
-limits of a scalar treatment.
-
+\noindent\fbox{\parbox{0.97\textwidth}{%
+The construction must satisfy the following:
+\begin{enumerate}\setlength{\itemsep}{2pt}\setlength{\topsep}{2pt}
+\item \textbf{The paradigm is a structured object.} A paradigm is a
+  Bayes net of interdependent commitments with a densely-connected core
+  and a sparse belt in contact with observation --- not a categorical
+  index.
+\item \textbf{Carry-over.} Revising a commitment forces re-reading of
+  everything that depends on it; the cost of paradigm change is the
+  aggregate of these induced revisions, propagated through the network.
+\item \textbf{Conservatism is derived, not assigned.} The resistance of
+  each commitment to revision falls out of its structural position
+  (core vs belt), rather than being parameterised by a global dial.
+\item \textbf{Structural inference is principled.} Choosing among
+  network structures is Bayesian model reduction over a continuous
+  precision space whose corners are the discrete topologies.
+\item \textbf{The population signature is a graded reorganisation.} The
+  community does not flip a single variable at a threshold; it
+  reorganises its joint network belt-first, core-last, producing a
+  measurable graded order parameter --- the signature the scalar
+  treatment cannot produce.
+\item \textbf{Active-inference machinery, unmodified.} Variational and
+  expected free energy \citep{friston2015ActiveInferenceEpistemic,
+  millidge2021EFE} enter in standard form; structural utility extends
+  \citet{hylandAlbarracin2025MindChange} from values to topology.
+\end{enumerate}}}
 
 % =====================================================================
-\section{What the Scalar Treatment Cannot Capture}
-\label{sec:scalar-limits}
+\section{Building the Model}
+\label{sec:walkthrough}
 % =====================================================================
 
-\paragraph{What the scalar treatment recovers.}
-Before locating its limits, it is worth being explicit about what the
-scalar treatment of paradigm commitment already captures. A
-temperature-modulated update on a single belief variable produces an
-asymmetric assimilation: the same datum is integrated by an agent who
-sits near one attractor with a different effective Bayes factor than by
-an agent who sits near another, so that observers in different
-paradigms reach different posteriors from a shared
-observation~\citep{kuhn1962Structure}. This is not a degenerate
-re-description of confirmation bias; it is a principled consequence of
-the cost of mind-change, and it does some of the work that Kuhn's first
-face of theory-ladenness demands. To that extent, the scalar treatment
-is doing real explanatory labour, and we resist the temptation to throw
-it away in order to motivate what follows. The point of this section is
-to mark where its explanatory reach ends.
+\subsection{Step 1: The paradigm is a structured object}
+\label{ssec:structured}
 
-\paragraph{Structural reorganisation: the Lavoisian case.}
-The clearest pressure on a scalar treatment comes from the Chemical
-Revolution. \citet{Chang2012_9} argues that the disagreement between
-Lavoisier and the late phlogistonians cannot be cashed out as a
-disagreement over the probability assigned to a shared proposition.
-What counted as combustion, what counted as a substance, what
-counted as the conservation of something, and what an experimental
-yield was even evidence \emph{for}, all shifted together; the very
-referents of the disputants' terms drift across the
-transition~\citep{Lewowicz2011_2}. \citet{Carrier2002_4} makes the
-related point that intertheoretic comparison across the phlogiston/
-oxygen divide requires reconstructing each side's network of
-inferential commitments rather than aligning a common variable; the
-incommensurability at stake is between generative models, not between
-parameter settings within one. Historical work on the linguistic and
-institutional reorganisation of Lavoisian
-chemistry~\citep{Mcevoy1989_7,Perrin1988_5,Boantza2008_4} reinforces
-this: the revolution was a re-tooling of which questions could be
-posed, not a re-weighting of answers to fixed questions. A scalar
-order parameter cannot, by construction, carry this information,
-because the cardinality of admissible nodes and edges is exactly what
-is changing. Even philosophers sympathetic to a deflationary reading
-of incommensurability concede that the residue which resists
-deflation is structural rather than
-quantitative~\citep{Malone1993_5}. The scalar treatment is therefore
-silent on what the historians take to be the substantive content of
-the revolution.
+\noindent\textit{What does the agent represent?} Not a categorical
+$\theta$, but a paradigm network $G = (V, E, \Pi)$: nodes $v \in V$
+carry theoretical commitments $x_v$; directed edges $(u\!\to\!v) \in E$
+carry inferential dependencies; each edge has a coupling precision
+$\pi_{uv} \in \Pi$ measuring how tightly the commitment at $v$ is bound
+to the one at $u$. The internal coherence of the paradigm is a
+precision-weighted graphical model,
+\begin{equation}
+p(x \mid G) \;\propto\;
+\prod_{(u \to v) \in E} \psi_{uv}(x_u, x_v)^{\,\pi_{uv}},
+\label{eq:net}
+\end{equation}
+so that strongly-coupled commitments (high $\pi$) must move together.
+The \emph{core} is the densely-connected, high-precision interior; the
+\emph{belt} $B \subset V$ is the sparse periphery in contact with
+observation \citep{Heijdra1986_6, Ostapiuk2025_11, Wahyudi2026_2}. The
+full generative model carries a fast world state $s_t$ with real
+dynamics and the slow paradigm structure that conditions how the world
+is read,
+\begin{equation}
+p(o_{1:T}, s_{1:T}, x, G)
+= p(G)\,p(x \mid G)\!\prod_t p(o_t \mid s_t, x_B, G)\,
+   p(s_t \mid s_{t-1}, a_{t-1}).
+\label{eq:gen}
+\end{equation}
+Figure~\ref{fig:structured} contrasts the object the paper is about
+with the scalar treatment it replaces.
 
-\paragraph{Failure modes the scalar treatment cannot diagnose.}
-A second pressure comes from a different direction. Even if one set
-aside the question of structural reorganisation and asked only after
-the social pathologies a multi-agent paradigm model ought to recover,
-the scalar treatment runs into a distinction it cannot draw.
-\citet{Nguyen2018_1} argues that two pathologies of collective
-inference -- routinely conflated in popular usage -- have entirely
-different mechanisms and admit entirely different remedies. An
-\emph{epistemic bubble} is a failure of \emph{informational
-topology}: relevant voices are omitted from the network, coverage is
-incomplete, and exposure to those voices is sufficient to dissolve
-the pathology. An \emph{echo chamber} is a failure of \emph{trust
-calibration}: outside voices are not absent but actively discredited,
-so that exposure to them, if anything, reinforces the chamber. The
-two failure modes can co-occur, but they are not the same object;
-follow-up work emphasises that they decouple in
-practice~\citep{Pollock2024_3} and that the trust-calibration variant
-can become self-stabilising in ways that omission alone cannot
-explain~\citep{Clinkenbeard2025_4}. A scalar belief variable updated
-under socially-weighted observations registers both pathologies as
-the same kind of thing -- a population whose marginal has collapsed
-onto one attractor -- and so cannot, on its own resources,
-distinguish a community that has merely failed to encounter an
-alternative from one that has built the discrediting of alternatives
-into its updating rule. The two patients present with the same
-symptom, but they have different diseases, and the scalar model has
-no diagnostic on which to separate them.
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[scale=0.95]
+  % ---------- LEFT PANEL: scalar paradigm ----------
+  \begin{scope}[xshift=0cm]
+    \node[font=\small\itshape, anchor=north] at (1.5, 4.5) {scalar treatment};
+    \draw[thick, coreblue, fill=softblue, rounded corners=3pt] (0.5, 2) rectangle (2.5, 3);
+    \node at (1.5, 2.5) {$\theta \in \{1, 2, \ldots, K\}$};
+    \node[font=\small] at (1.5, 1.4) {takes values:};
+    \foreach \x/\v in {0.4/$1$, 1/$2$, 1.6/$3$, 2.2/$\cdots$, 2.8/$K$} {
+      \draw[coreblue, fill=softblue] (\x, 0.6) circle (3.5pt);
+      \node[font=\footnotesize] at (\x, 0.6) {\v};
+    }
+    \node[font=\footnotesize\itshape, anchor=north, text width=3.5cm, align=center, text=darkgrey]
+      at (1.5, -0.1) {one categorical variable;\\ no internal structure};
+  \end{scope}
+  \draw[thick, dashed, notegrey] (4, -0.5) -- (4, 4.7);
+  % ---------- RIGHT PANEL: structured paradigm ----------
+  \begin{scope}[xshift=4.5cm]
+    \node[font=\small\itshape, anchor=north] at (4, 4.5) {structural treatment};
+    \node[circle, draw=coredeep, thick, fill=softblue, minimum size=12mm, font=\small] (A) at (3, 3.2) {$A$};
+    \node[circle, draw=coredeep, thick, fill=softblue, minimum size=12mm, font=\small] (B) at (5, 3.2) {$B$};
+    \node[circle, draw=coredeep, thick, fill=softblue, minimum size=12mm, font=\small] (C) at (3, 1.8) {$C$};
+    \node[circle, draw=coredeep, thick, fill=softblue, minimum size=12mm, font=\small] (D) at (5, 1.8) {$D$};
+    \draw[thick, coreblue] (A) -- (B);
+    \draw[thick, coreblue] (A) -- (C);
+    \draw[thick, coreblue] (A) -- (D);
+    \draw[thick, coreblue] (B) -- (C);
+    \draw[thick, coreblue] (B) -- (D);
+    \draw[thick, coreblue] (C) -- (D);
+    \node[circle, draw=coreblue!60, fill=softblue!50, minimum size=7mm, font=\footnotesize] (b1) at (1.6, 4.0) {};
+    \node[circle, draw=coreblue!60, fill=softblue!50, minimum size=7mm, font=\footnotesize] (b2) at (6.4, 4.0) {};
+    \node[circle, draw=coreblue!60, fill=softblue!50, minimum size=7mm, font=\footnotesize] (b3) at (1.6, 1.0) {};
+    \node[circle, draw=coreblue!60, fill=softblue!50, minimum size=7mm, font=\footnotesize] (b4) at (6.4, 1.0) {};
+    \node[circle, draw=coreblue!60, fill=softblue!50, minimum size=7mm, font=\footnotesize] (b5) at (3, 0.4) {};
+    \node[circle, draw=coreblue!60, fill=softblue!50, minimum size=7mm, font=\footnotesize] (b6) at (5, 0.4) {};
+    \node[circle, draw=coreblue!60, fill=softblue!50, minimum size=7mm, font=\footnotesize] (b7) at (3, 4.6) {};
+    \node[circle, draw=coreblue!60, fill=softblue!50, minimum size=7mm, font=\footnotesize] (b8) at (5, 4.6) {};
+    \draw[coreblue!60] (b1) -- (A);
+    \draw[coreblue!60] (b2) -- (B);
+    \draw[coreblue!60] (b3) -- (C);
+    \draw[coreblue!60] (b4) -- (D);
+    \draw[coreblue!60] (b5) -- (C);
+    \draw[coreblue!60] (b6) -- (D);
+    \draw[coreblue!60] (b7) -- (A);
+    \draw[coreblue!60] (b8) -- (B);
+    \draw[decorate, decoration={brace, amplitude=4pt, mirror}, thick, coredeep]
+      (2.2, 1.2) -- (5.8, 1.2);
+    \node[font=\footnotesize, anchor=north] at (4, 0.9) {core};
+    \node[font=\footnotesize, anchor=west, text=coreblue!80] at (6.7, 4.0) {belt};
+  \end{scope}
+\end{tikzpicture}
+\caption{The paradigm is not a scalar. Left: the scalar treatment ---
+one categorical variable, no internal structure. Right: the structural
+object the paper is about --- a Bayes net of commitments with a
+densely-connected core and a sparse belt in contact with observation.
+The right-hand panel carries inferential dependency the left cannot
+represent.}
+\label{fig:structured}
+\end{figure}
 
-\paragraph{Locating the gap.}
-The Lavoisian case and the bubble/chamber distinction press from
-opposite ends on the same point. From the philosophy-of-science side,
-the object being reorganised in a paradigm shift is the inferential
-web, and a scalar carries none of the relevant structure. From the
-social-epistemology side, the pathologies a multi-agent treatment
-ought to distinguish are differentiated by their structural
-locus -- topology versus trust -- and a scalar cannot mark which
-locus is failing. These are not arguments against the scalar
-treatment as such; they are arguments that something has to be added
-to it. What that something is, and how it can be added without giving
-up the dynamical traction the scalar treatment already buys, is the
-business of the next section.
+\subsection{Step 2: Theory-laden perception through the belt}
+\label{ssec:perception}
 
+\noindent\textit{What makes the network a \emph{paradigm}?} The belt is
+where the network meets the world: the observation likelihood in
+Eq.~\eqref{eq:gen} is conditioned on the belt-node values $x_B$, which
+are themselves downstream --- through the edges of
+Eq.~\eqref{eq:net} --- of the core. Perception is therefore filtered
+through the whole network. Two agents whose cores differ read the same
+world state $s_t$ into different predicted observations, because the
+core propagates to different belt activations and hence to different
+likelihoods $p(o_t \mid s_t, x_B, G)$. This is theory-laden perception
+made structural: the residue that resists deflation of incommensurability
+is the difference between two generative \emph{networks}, not two values
+of one variable \citep{Chang2012_9, Carrier2002_4, Malone1993_5}. What
+counts as an anomaly versus a nuisance is the assignment the current
+core forces on its belt.
+
+\subsection{Step 3: Structural utility and the carry-over property}
+\label{ssec:carryover}
+
+\noindent\textit{Why is paradigm change expensive?} Not because a dial
+is set high. \citet{hylandAlbarracin2025MindChange} give belief revision
+a cost: a candidate update maximises a belief-utility net of a
+complexity penalty, $q' = \arg\max_q \{ U[q] + \alpha\,\mathbb{E}_q[\log
+L] - \lambda\,\mathrm{KL}[q \,\|\, q_0]\}$, with $\lambda$ a conservatism
+on a scalar belief. In the structural model the object being revised is a
+node value $x_v$ embedded in $G$, and a revision cannot stay local.
+Setting $x_v \to x_v'$ emits precision-weighted messages along the edges
+of Eq.~\eqref{eq:net}; each dependent node must re-equilibrate to restore
+coherence; those re-equilibrations emit their own messages. The cost of
+the revision is the aggregate of this propagation,
+\begin{equation}
+C(v) \;=\; \mathrm{KL}\!\left[q'(x_v) \,\|\, q(x_v)\right]
+\;+\!\!\sum_{(v \to w) \in E}\!\! \pi_{vw}\,
+   \mathbb{E}\!\left[\,\mathrm{KL}\!\left[q'(x_w) \,\|\, q(x_w)\right]\right]
+\;+\;\cdots,
+\label{eq:carryover}
+\end{equation}
+the local divergence plus the precision-weighted divergences of every
+induced downstream revision, summed over the cascade. This is the
+\emph{carry-over property}: the phlogistonian who becomes a Lavoisian
+must revise combustion, calcination, mass conservation, and gas pressure
+together, because they are literally connected. Carry-over is the
+structural counterpart of Kuhnian incommensurability, made literal as
+message propagation (Figure~\ref{fig:carryover}). The scalar conservatism
+$\lambda$ is the degenerate single-node limit of
+Eq.~\eqref{eq:carryover}, recovered when $E = \varnothing$. The
+\emph{structural utility} extends \citet{hylandAlbarracin2025MindChange}
+from values to topology,
+\begin{equation}
+U(G) \;=\; \sum_{(u \to v) \in E} u_{uv}\,\pi_{uv},
+\label{eq:structutil}
+\end{equation}
+a preference over which edges are held at which precision --- a value
+attached to keeping the core intact --- entering the revision score as a
+term that resists precision changes lowering $U$.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[scale=0.9]
+  \foreach \tx/\tlab/\activeA/\activeB/\activeC/\activeD/\activeBelt in {
+    0/$t_0$: a core revision/1/0/0/0/0,
+    5.5/$t_1$: propagation begins/1/1/1/0/0,
+    11/$t_2$: cascade complete/1/1/1/1/1
+  } {
+    \begin{scope}[xshift=\tx cm]
+      \node[font=\small\itshape, anchor=north] at (2, 5.2) {\tlab};
+      \ifnum\activeA=1
+        \node[circle, draw=paradigmA, very thick, fill=softA, minimum size=10mm, font=\small] (A) at (1.5, 3.4) {$A$};
+      \else
+        \node[circle, draw=coredeep, thick, fill=softblue, minimum size=10mm, font=\small] (A) at (1.5, 3.4) {$A$};
+      \fi
+      \ifnum\activeB=1
+        \node[circle, draw=paradigmA, very thick, fill=softA, minimum size=10mm, font=\small] (B) at (3, 3.4) {$B$};
+      \else
+        \node[circle, draw=coredeep, thick, fill=softblue, minimum size=10mm, font=\small] (B) at (3, 3.4) {$B$};
+      \fi
+      \ifnum\activeC=1
+        \node[circle, draw=paradigmA, very thick, fill=softA, minimum size=10mm, font=\small] (C) at (1.5, 2.1) {$C$};
+      \else
+        \node[circle, draw=coredeep, thick, fill=softblue, minimum size=10mm, font=\small] (C) at (1.5, 2.1) {$C$};
+      \fi
+      \ifnum\activeD=1
+        \node[circle, draw=paradigmA, very thick, fill=softA, minimum size=10mm, font=\small] (D) at (3, 2.1) {$D$};
+      \else
+        \node[circle, draw=coredeep, thick, fill=softblue, minimum size=10mm, font=\small] (D) at (3, 2.1) {$D$};
+      \fi
+      \draw[thick, coreblue] (A) -- (B);
+      \draw[thick, coreblue] (A) -- (C);
+      \draw[thick, coreblue] (A) -- (D);
+      \draw[thick, coreblue] (B) -- (C);
+      \draw[thick, coreblue] (B) -- (D);
+      \draw[thick, coreblue] (C) -- (D);
+      \ifnum\activeBelt=1
+        \def\beltcolour{paradigmA}
+        \def\beltfill{softA}
+      \else
+        \def\beltcolour{coreblue!60}
+        \def\beltfill{softblue!50}
+      \fi
+      \node[circle, draw=\beltcolour, fill=\beltfill, minimum size=6mm, font=\footnotesize] (b1) at (0.3, 4.2) {};
+      \node[circle, draw=\beltcolour, fill=\beltfill, minimum size=6mm, font=\footnotesize] (b2) at (4.2, 4.2) {};
+      \node[circle, draw=\beltcolour, fill=\beltfill, minimum size=6mm, font=\footnotesize] (b3) at (0.3, 1.3) {};
+      \node[circle, draw=\beltcolour, fill=\beltfill, minimum size=6mm, font=\footnotesize] (b4) at (4.2, 1.3) {};
+      \node[circle, draw=\beltcolour, fill=\beltfill, minimum size=6mm, font=\footnotesize] (b5) at (1.5, 0.7) {};
+      \node[circle, draw=\beltcolour, fill=\beltfill, minimum size=6mm, font=\footnotesize] (b6) at (3, 0.7) {};
+      \draw[\beltcolour] (b1) -- (A);
+      \draw[\beltcolour] (b2) -- (B);
+      \draw[\beltcolour] (b3) -- (C);
+      \draw[\beltcolour] (b4) -- (D);
+      \draw[\beltcolour] (b5) -- (C);
+      \draw[\beltcolour] (b6) -- (D);
+    \end{scope}
+  }
+  \draw[->, very thick, paradigmA, >=Stealth] (4.8, 2.8) -- (5.7, 2.8)
+    node[midway, above, font=\footnotesize\itshape] {force};
+  \draw[->, very thick, paradigmA, >=Stealth] (10.3, 2.8) -- (11.2, 2.8)
+    node[midway, above, font=\footnotesize\itshape] {force};
+\end{tikzpicture}
+\caption{The carry-over property. A value change at the core (red)
+propagates outward along the inferential edges, forcing re-reading of
+every dependent commitment. The propagation is not a choice but a
+consequence of the structural commitments (arrows: ``force''); its
+integrated cost is Eq.~\eqref{eq:carryover}. This is the move the scalar
+treatment cannot represent.}
+\label{fig:carryover}
+\end{figure}
+
+\subsection{Step 4: Conservatism falls out of structure}
+\label{ssec:conservatism}
+
+\noindent\textit{Where does the conservatism gradient come from?} From
+the graph, not from assignment. Reading Eq.~\eqref{eq:carryover} as a
+per-node quantity, the conservatism of node $i$ is the precision-weighted
+cost of moving it through the message-passing,
+\begin{equation}
+\lambda_i \;=\;\!\! \sum_{w \in \mathrm{desc}(i)}\!\! \pi_{i \rightsquigarrow w},
+\label{eq:lambda}
+\end{equation}
+the sum over $i$'s descendants of the precision along the path
+connecting them. A core node has many high-precision descendants and is
+therefore expensive to revise; a belt node has few and is cheap. No
+$\lambda$ is assigned: the gradient of Figure~\ref{fig:conservatism} is
+the connectivity of the network, read off directly. The intermediate
+shell $M_i$ makes the gradient continuous rather than binary --- which
+is what the continuous structural inference of the next step requires.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[scale=0.95]
+  \node[circle, draw=coredeep, very thick, fill=coredeep!85, minimum size=13mm, font=\small, text=white] (A) at (3, 3.4) {$A$};
+  \node[circle, draw=coredeep, very thick, fill=coredeep!85, minimum size=13mm, font=\small, text=white] (B) at (5, 3.4) {$B$};
+  \node[circle, draw=coredeep, very thick, fill=coredeep!75, minimum size=13mm, font=\small, text=white] (C) at (3, 2.0) {$C$};
+  \node[circle, draw=coredeep, very thick, fill=coredeep!75, minimum size=13mm, font=\small, text=white] (D) at (5, 2.0) {$D$};
+  \draw[thick, coreblue] (A) -- (B);
+  \draw[thick, coreblue] (A) -- (C);
+  \draw[thick, coreblue] (A) -- (D);
+  \draw[thick, coreblue] (B) -- (C);
+  \draw[thick, coreblue] (B) -- (D);
+  \draw[thick, coreblue] (C) -- (D);
+  \node[circle, draw=coreblue!80, thick, fill=coredeep!40, minimum size=10mm, font=\footnotesize] (m1) at (1.6, 4.2) {$M_1$};
+  \node[circle, draw=coreblue!80, thick, fill=coredeep!40, minimum size=10mm, font=\footnotesize] (m2) at (6.4, 4.2) {$M_2$};
+  \node[circle, draw=coreblue!80, thick, fill=coredeep!40, minimum size=10mm, font=\footnotesize] (m3) at (1.6, 1.2) {$M_3$};
+  \node[circle, draw=coreblue!80, thick, fill=coredeep!40, minimum size=10mm, font=\footnotesize] (m4) at (6.4, 1.2) {$M_4$};
+  \node[circle, draw=coreblue!50, fill=coredeep!10, minimum size=7mm, font=\tiny] (b1) at (0.3, 4.7) {$b_1$};
+  \node[circle, draw=coreblue!50, fill=coredeep!10, minimum size=7mm, font=\tiny] (b2) at (7.7, 4.7) {$b_2$};
+  \node[circle, draw=coreblue!50, fill=coredeep!10, minimum size=7mm, font=\tiny] (b3) at (0.3, 0.7) {$b_3$};
+  \node[circle, draw=coreblue!50, fill=coredeep!10, minimum size=7mm, font=\tiny] (b4) at (7.7, 0.7) {$b_4$};
+  \node[circle, draw=coreblue!50, fill=coredeep!10, minimum size=7mm, font=\tiny] (b5) at (3, 0.2) {$b_5$};
+  \node[circle, draw=coreblue!50, fill=coredeep!10, minimum size=7mm, font=\tiny] (b6) at (5, 0.2) {$b_6$};
+  \node[circle, draw=coreblue!50, fill=coredeep!10, minimum size=7mm, font=\tiny] (b7) at (3, 5.2) {$b_7$};
+  \node[circle, draw=coreblue!50, fill=coredeep!10, minimum size=7mm, font=\tiny] (b8) at (5, 5.2) {$b_8$};
+  \draw[coreblue!70] (b1) -- (m1);
+  \draw[coreblue!70] (b2) -- (m2);
+  \draw[coreblue!70] (b3) -- (m3);
+  \draw[coreblue!70] (b4) -- (m4);
+  \draw[coreblue!50] (b5) -- (C);
+  \draw[coreblue!50] (b6) -- (D);
+  \draw[coreblue!50] (b7) -- (A);
+  \draw[coreblue!50] (b8) -- (B);
+  \draw[coreblue!70] (m1) -- (A);
+  \draw[coreblue!70] (m2) -- (B);
+  \draw[coreblue!70] (m3) -- (C);
+  \draw[coreblue!70] (m4) -- (D);
+  \begin{scope}[xshift=10cm, yshift=0.5cm]
+    \foreach \y/\op in {0/10, 0.5/20, 1/30, 1.5/40, 2/50, 2.5/60, 3/75, 3.5/85} {
+      \fill[coredeep, opacity=0.01*\op] (0, \y) rectangle (0.6, \y+0.5);
+    }
+    \draw[thick] (0, 0) rectangle (0.6, 4);
+    \node[font=\footnotesize, anchor=west] at (0.7, 4) {high $\lambda_i$};
+    \node[font=\footnotesize, anchor=west] at (0.7, 2) {(core)};
+    \node[font=\footnotesize, anchor=west] at (0.7, 0) {low $\lambda_i$ (belt)};
+    \node[font=\small\itshape, anchor=south, rotate=90] at (-0.2, 2) {conservatism};
+  \end{scope}
+\end{tikzpicture}
+\caption{Conservatism is derived, not assigned. Colour saturation
+encodes $\lambda_i$ (Eq.~\ref{eq:lambda}): high in the core, which has
+many high-precision descendants; low in the belt, which has few. The
+intermediate shell $M_i$ makes the gradient continuous.}
+\label{fig:conservatism}
+\end{figure}
+
+\subsection{Step 5: BMR as precision-corner navigation}
+\label{ssec:bmr}
+
+\noindent\textit{How does the agent choose among network structures?}
+Structural inference --- scoring alternative graphs, not just alternative
+values --- is Bayesian model reduction \citep{Friston2018_2,
+fristonPenny2011PostHocBMS}.% TODO ADD fristonPenny2011PostHocBMS
+Once the full model is inverted, the evidence of any reduced model
+differing only in its priors is available in closed form from the full
+posterior and the prior ratio, generalising the Savage--Dickey density
+ratio. Pruning edge $e$ corresponds to tightening the prior precision
+$\lambda_e$ on its parameter toward infinity (the parameter is pinned,
+the edge vanishes); freeing it corresponds to $\lambda_e \to 0$. The
+change in variational free energy,
+\begin{equation}
+\Delta F_e \;=\; \ln \frac{\tilde p(o)}{p(o)}
+\;-\; \Delta U(G),
+\label{eq:bmr}
+\end{equation}
+is the log Bayes factor for the structural revision, net of the
+structural-utility change from Eq.~\eqref{eq:structutil}; the agent
+accepts the revision when $\Delta F_e > 0$. The discrete topologies are
+the corners of a continuous precision space, and the interior is the
+relaxation: partial edges, soft structural commitments. A structural
+revision is a \emph{trajectory through the interior}
+(Figure~\ref{fig:bmr}), never a discrete jump --- and that continuity is
+exactly what produces the graded population dynamics of
+Section~\ref{sec:result}.\footnote{The BMR prior precision $\lambda_e$
+on an edge parameter (high $\Rightarrow$ edge pruned) runs opposite to
+the coupling precision $\pi_{uv}$ of Eq.~\eqref{eq:net} (high
+$\Rightarrow$ edge strong); a strongly coupled edge is one BMR keeps. It
+is distinct again from the node conservatism $\lambda_i$ of
+Eq.~\eqref{eq:lambda}.}
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[scale=0.95]
+  \draw[thick, coreblue, fill=softblue!50] (0, 0) -- (8, 0) -- (10, 2) -- (2, 2) -- cycle;
+  \begin{scope}[xshift=-0.3cm, yshift=-1.8cm]
+    \node[circle, draw=coredeep, thick, fill=softblue, minimum size=5mm, font=\tiny] (a1) at (0, 0) {};
+    \node[circle, draw=coredeep, thick, fill=softblue, minimum size=5mm, font=\tiny] (a2) at (0.7, 0) {};
+    \draw[line width=1.5pt] (a1) -- (a2);
+    \node[font=\tiny, anchor=north] at (0.35, -0.3) {$\lambda_e \to 0$};
+    \node[font=\tiny, anchor=north] at (0.35, -0.6) {edge present};
+  \end{scope}
+  \begin{scope}[xshift=7.5cm, yshift=-1.8cm]
+    \node[circle, draw=coredeep, thick, fill=softblue, minimum size=5mm, font=\tiny] (a3) at (0, 0) {};
+    \node[circle, draw=coredeep, thick, fill=softblue, minimum size=5mm, font=\tiny] (a4) at (0.7, 0) {};
+    \node[font=\tiny, anchor=north] at (0.35, -0.3) {$\lambda_e \to \infty$};
+    \node[font=\tiny, anchor=north] at (0.35, -0.6) {edge absent};
+  \end{scope}
+  \begin{scope}[xshift=1.7cm, yshift=2.4cm]
+    \node[circle, draw=coredeep, thick, fill=softblue, minimum size=5mm, font=\tiny] (a5) at (0, 0) {};
+    \node[circle, draw=coredeep, very thick, fill=softA, minimum size=7mm, font=\tiny] (a6) at (0.8, 0) {};
+    \draw[line width=1.2pt] (a5) -- (a6);
+    \node[font=\tiny, anchor=south] at (0.4, 0.5) {prominent};
+  \end{scope}
+  \begin{scope}[xshift=9.7cm, yshift=2.4cm]
+    \node[circle, draw=coredeep, thick, fill=softblue, minimum size=5mm, font=\tiny] (a7) at (0, 0) {};
+    \node[circle, draw=coredeep, dashed, fill=softblue!30, minimum size=5mm, font=\tiny] (a8) at (0.8, 0) {};
+    \node[font=\tiny, anchor=south] at (0.4, 0.5) {pruned};
+  \end{scope}
+  \fill[paradigmA] (0, 0) circle (3pt);
+  \fill[paradigmA] (8, 0) circle (3pt);
+  \fill[paradigmA] (2, 2) circle (3pt);
+  \fill[paradigmA] (10, 2) circle (3pt);
+  \node[font=\small\itshape, anchor=north] at (4, -2.4) {$\lambda_e$ on a specific edge $\to$};
+  \node[font=\small\itshape, anchor=east, rotate=18] at (-0.5, 1) {$\lambda$ on a specific node};
+  \draw[->, very thick, accentamber, >=Stealth]
+    (0.8, 0.3) .. controls (2, 1.4) and (6, 0.6) .. (8.4, 1.5);
+  \fill[accentamber] (0.8, 0.3) circle (3pt);
+  \node[font=\footnotesize, accentamber, anchor=west] at (0.9, 0.2) {start};
+  \fill[accentamber] (8.4, 1.5) circle (3pt);
+  \node[font=\footnotesize, accentamber, anchor=west] at (8.6, 1.4) {end};
+  \node[font=\footnotesize\itshape, accentamber] at (4.5, 1.6) {a structural revision};
+  \foreach \x in {2, 4, 6} {
+    \draw[coreblue!30, thin] (\x, 0) -- (\x+2, 2);
+  }
+  \draw[coreblue!30, thin] (1, 1) -- (9, 1);
+\end{tikzpicture}
+\vspace{1.4cm}
+\caption{BMR as navigation through a continuous precision space. The
+corners are discrete Bayes-net topologies (edges present at
+$\lambda_e\!\to\!0$, absent at $\lambda_e\!\to\!\infty$); the interior is
+partial edges and soft structural commitments. A structural revision
+(amber) is a trajectory through the interior, scored by
+Eq.~\eqref{eq:bmr} --- never a discrete jump. The continuity is what
+enables the graded transition of Figure~\ref{fig:transition}.}
+\label{fig:bmr}
+\end{figure}
+
+\noindent Appendix~\ref{app:abc} walks this reduction through concretely
+for three competing paradigms $A$, $B$, $C$, with the carry-over of
+Step~3 supplying the cost of the structural edit.
+
+\subsection{Step 6: Active sampling under expected free energy}
+\label{ssec:efe}
+
+\noindent\textit{Which experiments does the agent run?} Observation is
+an active decision: the agent allocates a finite precision budget across
+belt nodes, selecting actions by expected free energy
+\citep{friston2015ActiveInferenceEpistemic, millidge2021EFE, Mirza2019_2},
+$G(a) = -\,\mathbb{E}[\log p(o \mid C)] + \mathbb{E}[\mathrm{KL}[q(\cdot
+\mid o, a)\,\|\,q(\cdot)]]$, where the epistemic term now scores how much
+an observation could license a \emph{structural} revision --- a change
+of edge or node the agent actually entertains. The structural utility of
+Eq.~\eqref{eq:structutil} tilts the planning belief, so experiments that
+would force expensive core revisions appear risky and are under-sampled
+\citep{feldmanFriston2010Attention, parrFriston2017Attention,
+parrFriston2019AdvancedAtt, limanowskiFriston2018Dark}. The three
+Kuhnian faces are now one construction: perception is the belt
+likelihood (Step~2); experimentation is this EFE policy; the reachable
+hypothesis space is bounded by the carry-over cost (Steps~3--4), which
+makes deep revisions nominally available but practically unreachable. No
+face is an added bias term.
+
+\subsection{Step 7: Multi-agent coupling of structured beliefs}
+\label{ssec:multiagent}
+
+\noindent\textit{What does a peer transmit?} Not a scalar opinion: a
+candidate \emph{structural revision}. Each agent carries its own network
+$G_a$; communication emits candidate edge- and node-revisions, and the
+receiver imports them weighted by the trust-channel precision $\pi_s$ on
+that link (Figure~\ref{fig:multiagent}). The scalar trust matrix $T$
+mixing scalar beliefs is replaced by precision-weighted structural
+exchange. The distinction the scalar model could only assert now falls
+out of the representation: a \emph{bubble} is a missing channel
+(topological absence --- exposure dissolves it); a \emph{chamber} is a
+channel present but with $\pi_s \approx 0$ (precision suppression ---
+exposure reinforces it) \citep{Nguyen2018_1, Pollock2024_3, Turner2023_2}.
+Structural utility reappears at population scale: agents valuing their
+current core assign low $\pi_s$ to channels carrying revisions to it ---
+the network-level analogue of individual motivated attention
+\citep{albarracin2022EpistemicCommunities}.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[scale=0.8]
+  % AGENT i - top left
+  \begin{scope}[xshift=0cm, yshift=4cm]
+    \draw[thick, coreblue, dashed, rounded corners=10pt] (-1.6, -1.6) rectangle (2.6, 1.6);
+    \node[font=\small, coreblue, anchor=south] at (0.5, 1.65) {agent $i$};
+    \node[circle, draw=coredeep, thick, fill=softblue, minimum size=6mm, font=\tiny] (i1) at (0, 0.7) {$A$};
+    \node[circle, draw=coredeep, thick, fill=softblue, minimum size=6mm, font=\tiny] (i2) at (1, 0.7) {$B$};
+    \node[circle, draw=coredeep, thick, fill=softblue, minimum size=6mm, font=\tiny] (i3) at (0, -0.3) {$C$};
+    \node[circle, draw=coredeep, thick, fill=softblue, minimum size=6mm, font=\tiny] (i4) at (1, -0.3) {$D$};
+    \draw[coreblue] (i1) -- (i2);
+    \draw[coreblue] (i1) -- (i3);
+    \draw[coreblue] (i2) -- (i4);
+    \draw[coreblue] (i3) -- (i4);
+    \draw[coreblue] (i1) -- (i4);
+    \draw[coreblue] (i2) -- (i3);
+    \node[circle, draw=coreblue!50, fill=softblue!50, minimum size=4mm] at (-1, 1) {};
+    \node[circle, draw=coreblue!50, fill=softblue!50, minimum size=4mm] at (2, 1) {};
+    \node[circle, draw=coreblue!50, fill=softblue!50, minimum size=4mm] at (-1, -0.6) {};
+    \node[circle, draw=coreblue!50, fill=softblue!50, minimum size=4mm] at (2, -0.6) {};
+  \end{scope}
+  % AGENT j - top right
+  \begin{scope}[xshift=10cm, yshift=4cm]
+    \draw[thick, paradigmB, dashed, rounded corners=10pt] (-1.6, -1.6) rectangle (2.6, 1.6);
+    \node[font=\small, paradigmB, anchor=south] at (0.5, 1.65) {agent $j$};
+    \node[circle, draw=paradigmB!80!black, thick, fill=softB, minimum size=6mm, font=\tiny] (j1) at (0, 0.7) {$A$};
+    \node[circle, draw=paradigmB!80!black, thick, fill=softB, minimum size=6mm, font=\tiny] (j2) at (1, 0.7) {$B'$};
+    \node[circle, draw=paradigmB!80!black, thick, fill=softB, minimum size=6mm, font=\tiny] (j3) at (0, -0.3) {$C$};
+    \node[circle, draw=paradigmB!80!black, thick, fill=softB, minimum size=6mm, font=\tiny] (j4) at (1, -0.3) {$D'$};
+    \draw[paradigmB] (j1) -- (j2);
+    \draw[paradigmB] (j1) -- (j3);
+    \draw[paradigmB] (j2) -- (j4);
+    \draw[paradigmB] (j3) -- (j4);
+    \draw[paradigmB, dashed] (j2) -- (j3);
+    \node[circle, draw=paradigmB!50, fill=softB!50, minimum size=4mm] at (-1, 1) {};
+    \node[circle, draw=paradigmB!50, fill=softB!50, minimum size=4mm] at (2, 1) {};
+    \node[circle, draw=paradigmB!50, fill=softB!50, minimum size=4mm] at (-1, -0.6) {};
+    \node[circle, draw=paradigmB!50, fill=softB!50, minimum size=4mm] at (2, -0.6) {};
+  \end{scope}
+  % AGENT k - bottom centre
+  \begin{scope}[xshift=5cm, yshift=-0.5cm]
+    \draw[thick, accentpurple, dashed, rounded corners=10pt] (-1.6, -1.6) rectangle (2.6, 1.6);
+    \node[font=\small, accentpurple, anchor=south] at (0.5, 1.65) {agent $k$};
+    \node[circle, draw=accentpurple!80!black, thick, fill=softpurple, minimum size=6mm, font=\tiny] (k1) at (0, 0.7) {$A$};
+    \node[circle, draw=accentpurple!80!black, thick, fill=softpurple, minimum size=6mm, font=\tiny] (k2) at (1, 0.7) {$B$};
+    \node[circle, draw=accentpurple!80!black, thick, fill=softpurple, minimum size=6mm, font=\tiny] (k3) at (0, -0.3) {$C$};
+    \node[circle, draw=accentpurple!80!black, thick, fill=softpurple, minimum size=6mm, font=\tiny] (k4) at (1, -0.3) {$D$};
+    \draw[accentpurple] (k1) -- (k2);
+    \draw[accentpurple] (k1) -- (k3);
+    \draw[accentpurple] (k2) -- (k4);
+    \draw[accentpurple] (k3) -- (k4);
+    \node[circle, draw=accentpurple!50, fill=softpurple!50, minimum size=4mm] at (-1, 1) {};
+    \node[circle, draw=accentpurple!50, fill=softpurple!50, minimum size=4mm] at (2, 1) {};
+    \node[circle, draw=accentpurple!50, fill=softpurple!50, minimum size=4mm] at (-1, -0.6) {};
+    \node[circle, draw=accentpurple!50, fill=softpurple!50, minimum size=4mm] at (2, -0.6) {};
+  \end{scope}
+  \draw[->, line width=2.5pt, accentamber, >=Stealth, opacity=0.7]
+    (2.6, 4) to[bend left=10] node[midway, above, font=\footnotesize, sloped] {high $\pi_s$} (8.4, 4);
+  \draw[<-, line width=2.5pt, accentamber, >=Stealth, opacity=0.7]
+    (2.6, 3.7) to[bend right=10] (8.4, 3.7);
+  \draw[->, line width=0.5pt, accentamber, >=Stealth, opacity=0.6]
+    (1.8, 2.7) to[bend right=10] node[midway, left, font=\footnotesize] {low $\pi_s$} (5, 1.2);
+  \draw[<-, line width=0.5pt, accentamber, >=Stealth, opacity=0.6]
+    (2.1, 2.5) to[bend left=10] (5.3, 1.0);
+  \draw[->, line width=1.5pt, accentamber, >=Stealth, opacity=0.7]
+    (9, 2.7) to[bend left=10] node[midway, right, font=\footnotesize] {mid $\pi_s$} (5.7, 1.2);
+  \draw[<-, line width=1.5pt, accentamber, >=Stealth, opacity=0.7]
+    (8.8, 2.5) to[bend right=10] (5.4, 1.0);
+\end{tikzpicture}
+\caption{Multi-agent coupling with structured beliefs. Each agent
+carries a full paradigm network; $i$ and $k$ share a structure, $j$
+differs (primed nodes $B'$, $D'$ and a different $B'$--$C$ edge). Trust
+precision $\pi_s$ on each channel (line thickness) sets how much weight a
+receiver gives to candidate structural revisions from a neighbour. A
+missing channel is a bubble; a present channel with $\pi_s\!\approx\!0$
+is a chamber.}
+\label{fig:multiagent}
+\end{figure}
 
 % =====================================================================
-\section{Structural Extension: Bayes Nets and Bayesian Model Reduction}
-\label{sec:structural}
+\section{The Central Result: Scalar Cascade versus Structural Reorganisation}
+\label{sec:result}
 % =====================================================================
 
-The scalar treatment of \S\ref{sec:scalar-multiagent} sufficed to expose
-asymmetric belief-revision dynamics, but it cannot speak to what
-practising scientists actually argue about: which commitments are
-foundational, which are negotiable, and which channel of observation
-to spend a finite attentional budget on next. The structured extension
-recovers all three by promoting each agent's paradigm from a point in
-$\Theta$ to a Bayesian network whose nodes carry theoretical
-commitments and whose edges encode inferential dependencies.
+\noindent\textit{What does the population do?} Define the order parameter
+\begin{equation}
+m(t) \;=\; \frac{1}{N}\sum_{a=1}^{N}
+   \frac{\sum_{e \in E_a} \pi_e\,\mathbb{1}[\,e \text{ re-equilibrated to rival}\,]}
+        {\sum_{e \in E_a} \pi_e},
+\label{eq:order}
+\end{equation}
+the population-mean precision-weighted fraction of each agent's network
+that has reorganised to the rival paradigm. The scalar model predicts a
+single sharp cascade: there is one variable to flip, so $m(t)$ has one
+inflection at threshold. The structural model predicts a graded
+reorganisation: cheap belt revisions (low $\lambda_i$,
+Eq.~\ref{eq:lambda}) happen first, the densely-connected core (high
+$\lambda_i$) moves last, and $m(t)$ approaches its limit through a
+sequence of smaller transitions whose internal structure is empirically
+measurable (Figure~\ref{fig:transition}). The continuity of the precision
+space (Step~5) is what makes the structural curve a graded approach
+rather than a jump. This is the signature the scalar treatment cannot
+produce.
 
-\paragraph{Structural belief representation.}
-The conceptual ancestry of paradigms-as-networks predates active
-inference by half a century. \citet{Wahyudi2026_2}, reconstructing
-Quine's coherentism, summarises the web-of-belief picture in which no
-proposition confronts experience in isolation: revisions propagate
-along inferential links, and the choice of which link to cut is
-underdetermined by data alone. Lakatos's methodology of scientific
-research programmes sharpens this into a topology with a designated
-\emph{hard core} of commitments shielded by a flexible
-\emph{protective belt} of auxiliary hypotheses
-\citep{Heijdra1986_6,Ostapiuk2025_11}; the belt absorbs anomalies so
-that the core remains in force, and a programme degenerates only when
-belt-patching ceases to predict novel facts. Thagard's ECHO programme
-operationalises Quinean coherence as a connectionist constraint
-network and demonstrates, on the continental-drift case study, that
-the same machinery can reconstruct a historical paradigm shift as a
-re-equilibration of explanatory links
-\citep{Thagard1989_1,Thagard1988_4}; \citet{Ranney1988_3} extend the
-account to belief revision in naive physics. None of these accounts
-furnishes a generative model, but each picks out the same structural
-object: a graph of commitments whose densely-connected interior is
-held rigid while its periphery negotiates with observation. We adopt
-this object verbatim, identifying core nodes with the parameters
-under tight prior precision and belt nodes with those under broad
-prior precision in the agent's generative model.
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  width=12cm, height=6.6cm,
+  xlabel={time / evidence accumulated},
+  ylabel={order parameter $m(t)$},
+  xmin=0, xmax=10, ymin=-0.05, ymax=1.05,
+  xtick={0, 2, 4, 6, 8, 10},
+  ytick={0, 0.25, 0.5, 0.75, 1},
+  grid=major,
+  grid style={gray!20, very thin},
+  legend pos=south east,
+  legend style={font=\small, draw=none, fill=white, fill opacity=0.85},
+  axis lines=left,
+  every axis plot/.append style={very thick},
+]
+  \addplot[paradigmA, smooth, samples=200, domain=0:10]
+    {1/(1+exp(-3*(x-6)))};
+  \addlegendentry{scalar: sharp cascade}
+  \addplot[paradigmB, smooth, samples=400, domain=0:10]
+    {0.1/(1+exp(-4*(x-3.0))) +
+     0.15/(1+exp(-4*(x-4.2))) +
+     0.2/(1+exp(-4*(x-5.4))) +
+     0.25/(1+exp(-4*(x-6.6))) +
+     0.3/(1+exp(-4*(x-7.8)))};
+  \addlegendentry{structural: graded reorganisation}
+  \node[font=\footnotesize, paradigmA, anchor=west] at (axis cs:6.5, 0.5) {single cascade};
+  \node[font=\footnotesize, paradigmB, anchor=east] at (axis cs:5.2, 0.18) {first belt revisions};
+  \node[font=\footnotesize, paradigmB, anchor=east] at (axis cs:8.5, 0.78) {core finally moves};
+\end{axis}
+\end{tikzpicture}
+\caption{The central empirical contrast (schematic; to be replaced with
+simulation output). Both curves reach unity; the difference is the shape
+of the approach. The scalar order parameter has one inflection ---
+nothing to reorganise, one variable to flip. The structural order
+parameter (Eq.~\ref{eq:order}) is a graded staircase: belt revisions are
+cheap and early, the core is expensive and late. The internal structure
+of the green curve is the measurable signature the structural extension
+exists to produce.}
+\label{fig:transition}
+\end{figure}
 
-\paragraph{Bayesian model reduction.}
-Promoting the core/belt distinction to a piece of formal machinery
-requires a principled treatment of \emph{structural} inference --- the
-problem of scoring alternative graphs, not just alternative parameter
-values, against the same data. \citet{Friston2018_2}, extending the
-post-hoc model selection scheme of Friston \& Penny (2011), provide
-precisely this in the form of Bayesian model reduction (BMR). The
-construction is straightforward in variational Bayes: once the full
-model has been inverted, the evidence and posterior of any
-\emph{reduced} model --- one differing only in its priors --- can be
-computed analytically from the full posterior and the ratio of priors,
-generalising the Savage--Dickey density ratio. Concretely, switching
-off a candidate edge corresponds to collapsing the prior variance on
-the associated parameter to zero; the resulting change in variational
-free energy is the (log) Bayes factor for that structural revision.
-For the Dirichlet posteriors that govern categorical likelihood
-mappings in discrete state-space models --- the natural form for
-theory--observation links --- the reduced free energy has a closed
-form in terms of multivariate beta functions. \citet{Friston2018_2}
-showcase BMR as both a data-analytic tool and a metaphor for
-neurobiological abductive reasoning: the same equations that prune
-redundant DCM connections describe the synaptic elimination an agent
-performs when ``thinking off-line'' simplifies its model of a
-contingency. \citet{Markovi'c2023_1} extend the scheme to deep-network
-sparsification, evidencing that the reduction is general across
-parameter spaces. We invoke BMR as the engine of paradigm dynamics:
-candidate revisions to an agent's network --- adding a belt link,
-demoting a core node, accepting a rival auxiliary --- are scored by
-their reduced free energy, with the structural affective utility
-inherited from \S\ref{sec:motivatedbelief} entering as a contribution
-to the cost of admitting each revision. Path-dependence in the scalar
-model thus refines into something graph-theoretic: revisions that
-touch the core are more expensive because more of the posterior has
-to be re-balanced.
-
-\paragraph{Active sampling and precision allocation.}
-The structural representation closes the loop with action selection in
-a way the scalar model could not. Observation in the structured model
-is not exogenous arrival of evidence but an active sampling decision:
-the agent allocates a finite precision budget across belt nodes,
-sampling some channels with high precision and others with low.
-\citet{friston2015ActiveInferenceEpistemic} establishes the
-underlying primitive --- expected free energy decomposes into
-extrinsic (utility) and epistemic (information-gain) value ---
-and \citet{millidge2021EFE} surveys the equivalent decompositions.
-\citet{Mirza2019_2} show, in an MDP formulation of Yarbus's classic
-visual-search paradigm, that selective attention is just
-context-dependent modulation of the likelihood precisions $\zeta$:
-raising $\zeta$ on task-relevant channels and lowering it on
-task-irrelevant ones reweights expected information gain so that the
-agent saccades to evidence that distinguishes hypotheses it actually
-entertains. The same construction underwrites
-\citet{feldmanFriston2010Attention}, \citet{parrFriston2017Attention},
-and the precision-control account of
-\citet{parrFriston2019AdvancedAtt}; \citet{limanowskiFriston2018Dark}
-fills in the failure mode where mis-allocated precision dampens
-exploration. Transposed to the paradigm setting, precision allocation
-\emph{is} the paradigm-dependence of observation: an agent inhabiting
-a Newtonian network attends to mass-and-force belt nodes with high
-precision and assigns negligible precision to channels whose only
-hidden cause lies in a rival network. The result is a structured
-analogue of theory-laden perception
-(\S\ref{sec:theoryladen})~\citep{hylandAlbarracin2025MindChange},
-now derived rather than stipulated: what counts as a salient
-observation is what the agent's current network has bandwidth to
-believe.
-
-
-% =====================================================================
-\section{Derived Consequences of the Structured Model}
-\label{sec:derived-results}
-% =====================================================================
-
-The structural extension developed in Section~\ref{sec:structural} is
-not introduced for its own sake. It earns its place because three
-otherwise-disparate results in network epistemology --- the Zollman
-tradeoff between consensus speed and asymptotic accuracy, the
-paradoxical-stubbornness finding from the division-of-cognitive-labor
-literature, and Nguyen's distinction between epistemic bubbles and
-echo chambers --- recover as derived consequences of one mechanism: a
-trust-precision network propagating candidate \emph{structural}
-revisions rather than scalar opinions. We position each result in turn
-and indicate which observable in our simulations it indexes.
-
-\paragraph{The Zollman tradeoff and the value of inefficiency.}
-\citet{zollman2007NetworkEpistemology, zollman2010TransientDiversity}
-showed, in a multi-armed-bandit network of Bayesian scientists, that
-\emph{denser} communication graphs converge faster but more often
-lock onto the worse arm; sparser graphs sustain transient diversity
-long enough for the inferior hypothesis to be discarded, and so reach
-higher asymptotic accuracy. The mechanism is now well understood as a
-spectral one: the rate at which beliefs synchronise on a graph is set
-by its algebraic connectivity (the Fiedler value $\lambda_2$ of the
-graph Laplacian)
-\citep{Griparic2021_7, Montijano2017_11, Tan2008_14}, so larger
-$\lambda_2$ compresses the transient phase during which dissent can
-falsify a leading hypothesis. The structured model inherits this
-argument unchanged at the topological level, but reroutes its
-substantive content: the channels carry \emph{precision-weighted
-candidate revisions} of the generative model, not scalar credences,
-so the speed--accuracy tradeoff applies to structural revision events
-themselves. This vindicates the Feyerabendian-pluralist intuition
-\citep{Müürsepp2019_7} in mechanistic form --- a measured inefficiency
-in the trust-precision network is the substrate condition for the
-critical-discursive uptake that
-\citet{longino1990ScienceSocialKnowledge} requires of an epistemically
-healthy community --- and supplies the formal claim Longino's
-critical contextual empiricism has been criticised for leaving
-underspecified \citep{Novaes2025_1, Ajdari2023_6, Borgerson2011_5}.
-
-\paragraph{Division of cognitive labour and paradoxical stubbornness.}
-\citet{kitcher1990DivisionCognitiveLabor} and
-\citet{strevens2003PriorityRule} argued that the priority rule
-incentivises credit-driven scientists to spread across research
-programmes, producing a community-level distribution of effort closer
-to the social optimum than truth-driven scientists would individually
-choose. \citet{muldoonWeisberg2011Robustness} relaxed the
-god's-eye information assumption: in their local-information variant,
-agents that appear \emph{paradoxically stubborn} --- unwilling to
-abandon a low-success-probability programme --- in fact regularise
-the system, preventing premature convergence on whichever programme
-happened to lead first. \citet{romero2017NoveltyReplicability}
-qualifies the optimistic Kitcher--Strevens reading by noting that the
-priority rule rewards novelty regardless of replicability and so
-\emph{disincentivises} the very direct-replication work that would
-discipline structural revisions. In the structured model these
-findings appear as a single statement: an agent's resistance to a
-structural revision is proportional to the precision of its current
-generative model, so agents with strong structural utility on their
-incumbent paradigm act as protective elements against premature
-structural collapse. They are not uniquely irrational; their
-structural commitments simply require correspondingly stronger
-cross-channel evidence to revise. The Muldoon--Weisberg paradox and
-the Romero replication-vice fall out as two readings of the same
-asymmetry --- one casting it as virtue (transient diversity
-preserved), the other as vice (replication suppressed) --- and the
-model exposes the parameter that interpolates between them.
-
-\paragraph{Bubbles versus chambers: failure modes of cross-agent channels.}
-\citet{nguyen2020EchoChambers} draws a distinction that, in our
-framework, is structural rather than rhetorical. An
-\emph{epistemic bubble} is a failure of \emph{trust topology}:
-relevant voices are omitted, so the cross-agent channel is sparse or
-disconnected, and the bubble pops on simple exposure. An
-\emph{echo chamber} is a failure of \emph{trust precision}: the
-discrediting beliefs assigned to outsiders pre-emptively downweight
-incoming cross-surprisals, so the chamber survives exposure and can
-even use it for reinforcement
-\citep{Pollock2024_3, Turner2023_2, Clinkenbeard2025_4}. In the
-scalar-opinion setting this distinction must be argued for
-philosophically; in the structured-belief setting it is recovered as
-the formal separation between sparsity of $\trustmat$ and the
-precision weights it carries on its non-zero entries. Crucially,
-because the channels now carry candidate \emph{structural} revisions
-rather than scalar opinions, the bubble--chamber distinction becomes
-more honest: a bubble withholds candidate revisions; a chamber
-admits them and then assigns them zero precision. The two failure
-modes call for different repairs --- coverage versus
-precision-recalibration --- and the model makes the repair
-prescription mechanistic rather than virtue-theoretic.
-
+The results the network-epistemology literature has accumulated as
+separate findings recover from this one mechanism. The Zollman
+speed--accuracy tradeoff% TODO ADD zollman2007NetworkEpistemology
+is the topological statement of how the algebraic connectivity of the
+trust graph governs the transient: denser graphs run the reorganisation
+faster but lose the transient structural diversity that protects against
+locking onto the worse paradigm. Paradoxical stubbornness --- the
+regularising effect of high-$\lambda_i$ agents --- is the same fact read
+at the agent level. The bubble-versus-chamber distinction
+\citep{Nguyen2018_1} is the formal separation between sparsity of the
+trust channels and the precision $\pi_s$ they carry. The structural model
+does not stipulate these phenomena; it produces them.
 
 % =====================================================================
 \section{Discussion}
-\label{sec:discussion-background}
+\label{sec:discussion}
 % =====================================================================
-% Background prose for §7 of the working-structure PDF. Currently only
-% the third open question (external attentional curation) is drafted;
-% other open-question paragraphs are still authors' work.
 
-\paragraph{External attentional curation.}
-The third open question is the most consequential for the model's empirical
-domain of validity, and it remains open. Throughout
-Sections~\ref{sec:structural}--\ref{sec:derived-results} an agent's policy
-over which neighbours, papers, and observations to attend to is treated as
-endogenous: it is selected by expected free energy under the agent's own
-generative model and affective utility. In contemporary scientific practice
-this assumption is already strained. Citation recommenders, search-engine
-ranking, social-media amplification, and journal-level visibility filters
-increasingly mediate which findings an individual scientist ever encounters,
-and the same logic operates a fortiori in adjacent epistemic communities ---
-policy analysis, public discourse around scientific results, the training
-corpora of large models that themselves now participate in summarisation and
-triage. The literature on algorithmic curation documents that such systems
-do not merely accelerate access to a fixed information environment but
-actively reshape exposure through popularity bias, preference reinforcement,
-and the formation of ``information cocoons'' that insulate users from
-disconfirming evidence \citep{Lin2026_1, Zhao2020_3}, and that the boundary
-between helpful personalisation and manipulation is structurally hard to
-draw once the recommender's objective is decoupled from the user's epistemic
-interest \citep{D2025_2}.
+The structural object buys what the scalar dial cannot: a paradigm whose
+internal dependencies are explicit, a conservatism gradient that is
+derived rather than assigned, a cost of paradigm change that is the
+literal re-reading of dependent commitments, and a population signature
+--- the graded reorganisation of Figure~\ref{fig:transition} --- that is
+distinct from a damped oscillation to consensus and is the measurable
+prediction the model exists to make. The scalar treatment is the
+baseline: it is the degenerate single-node limit recovered when the
+paradigm has no internal structure.
 
-For the present construction the consequence is precise but unresolved. The
-attentional policy $\pi$ no longer factorises through a single agent's
-generative model: a curator $\mathcal{C}$ --- algorithmic, institutional, or
-both --- intervenes between the latent paradigm field and the per-agent
-observation channel, with its own objective that is in general not aligned
-with predictive accuracy on the underlying scientific question. The
-trust matrix $\trustmat$ then learns precisions over a doubly-mediated
-signal, and the resource-flow readouts acquire a third upstream lever beyond
-the exogenous inflow rate and initial trust configuration:
-the curator's policy itself. Whether this collapses to a renormalisation of
-the existing trust dynamics, or whether it introduces qualitatively new
-attractors --- in particular, attractors that survive the corrective force
-of cross-surprisal because the disconfirming observations are never sampled ---
-is the model's natural next question. It is also the point at which the
-construction makes contact with broader concerns about AI systems gradually
-displacing human epistemic agency \citep{kulveit2025GradualDisempowerment} and
-about the multi-principal coordination problems that arise when curators,
-scientists, and institutions optimise different objectives over a shared
-information substrate \citep{critchKrueger2020ARCHES}. We flag this as the
-open direction the framework most naturally extends into, and the one we
-take to be most urgent.
+One extension is immediate. Throughout, the agent's policy over which
+structural revisions it ever encounters is endogenous. In contemporary
+practice it is not: citation recommenders, ranking, and institutional
+visibility filters increasingly mediate which candidate revisions reach
+a scientist at all \citep{kulveit2025GradualDisempowerment,
+critchKrueger2020ARCHES}. A curator intervening on the trust channels
+supplies a third lever on $\pi_s$ beyond the agent and its neighbours,
+and the structural model is the natural setting in which to ask whether
+that curation merely renormalises the existing dynamics or installs new
+attractors that survive cross-surprisal because the disconfirming
+revisions are never sampled.
+
+\appendix
+% =====================================================================
+\section{Bayesian Model Reduction at Work: Three Candidate Paradigms}
+\label{app:abc}
+% =====================================================================
+
+Step~5 asserts that structural inference is Bayesian model reduction over
+a precision space. Here is that claim made concrete: three competing
+paradigms for a single observed regularity, walked through the reduction
+machinery, with the carry-over of Step~3 doing the work.
+
+\paragraph{The three paradigms.} Two theoretical commitments $x_1$ and
+$x_2$ are observed to co-vary. Three paradigms explain the co-variation
+differently (Figure~\ref{fig:abc-nets}):
+\begin{itemize}\setlength{\itemsep}{1pt}
+\item \textbf{$A$ --- common cause.} A core hidden commitment $b$ that
+both depend on; given $b$, $x_1$ and $x_2$ are independent. The
+correlation is the shadow of a shared cause (the Lavoisian reading: a
+hidden \emph{principle} behind two surface regularities).
+\item \textbf{$B$ --- direct law.} No hidden cause; $x_1$ and $x_2$ are
+directly, lawfully coupled (a phenomenological correlation, posited as
+brute).
+\item \textbf{$C$ --- coincidence.} $x_1$ and $x_2$ are independent; the
+co-variation is noise.
+\end{itemize}
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[scale=0.92]
+% A: common cause (star)
+\begin{scope}
+  \node[font=\small\itshape,notegrey] at (1,2.0) {$A$: common cause};
+  \node[circle,draw=coreblue,thick,fill=softblue,minimum size=7mm,font=\small](a1) at (0,1){$x_1$};
+  \node[circle,draw=coreblue,thick,fill=softblue,minimum size=7mm,font=\small](a2) at (2,1){$x_2$};
+  \node[circle,draw=coredeep,very thick,fill=softblue,minimum size=8mm,font=\small](ab) at (1,-0.3){$b$};
+  \draw[coreblue,thick](a1)--(ab); \draw[coreblue,thick](a2)--(ab);
+\end{scope}
+% B: direct law
+\begin{scope}[xshift=4.6cm]
+  \node[font=\small\itshape,notegrey] at (1,2.0) {$B$: direct law};
+  \node[circle,draw=paradigmB,thick,fill=softB,minimum size=7mm,font=\small](b1) at (0,0.35){$x_1$};
+  \node[circle,draw=paradigmB,thick,fill=softB,minimum size=7mm,font=\small](b2) at (2,0.35){$x_2$};
+  \draw[paradigmB,very thick](b1)--(b2) node[midway,above,font=\scriptsize]{$-0.5$};
+\end{scope}
+% C: coincidence
+\begin{scope}[xshift=9.2cm]
+  \node[font=\small\itshape,notegrey] at (1,2.0) {$C$: coincidence};
+  \node[circle,draw=darkgrey,thick,fill=white,minimum size=7mm,font=\small](c1) at (0,0.35){$x_1$};
+  \node[circle,draw=darkgrey,thick,fill=white,minimum size=7mm,font=\small](c2) at (2,0.35){$x_2$};
+\end{scope}
+\end{tikzpicture}
+\caption{Three candidate paradigms for one observed regularity between
+$x_1$ and $x_2$: a hidden common cause ($A$), a direct law ($B$), or
+coincidence ($C$). $B$ is exactly $A$ with the hidden cause marginalized
+out --- its $-0.5$ edge is $A$'s carry-over.}
+\label{fig:abc-nets}
+\end{figure}
+
+\paragraph{$A\to B$ is the carry-over (Schur complement).} Write $A$'s
+precision in the ordering $(x_1,x_2,b)$, with unit couplings to the hub:
+\begin{equation}
+\Pi_A=\begin{pmatrix}2&0&1\\0&2&1\\1&1&2\end{pmatrix}.
+\end{equation}
+The hub is hidden, so to compare $A$ with the others on what is observed
+we integrate it out. The effective precision over $(x_1,x_2)$ is the
+Schur complement,
+\begin{equation}
+\Pi_A^{\mathrm{marg}}
+=\begin{pmatrix}2&0\\0&2\end{pmatrix}
+-\tfrac12\begin{pmatrix}1\\1\end{pmatrix}\begin{pmatrix}1&1\end{pmatrix}
+=\begin{pmatrix}\,1.5&-0.5\,\\[1pt]\,-0.5&1.5\,\end{pmatrix}.
+\end{equation}
+A direct $-0.5$ coupling is \emph{born} between $x_1$ and $x_2$ where $A$
+had none, and each self-precision falls $2\to1.5$. But that matrix is
+exactly what paradigm $B$ posits as its direct law. So \textbf{$B$ is $A$
+with the hidden cause marginalized away}: the carry-over edge of $A$ is
+the law of $B$. The chain $A\to B$ is one Schur step.
+
+\paragraph{Underdetermination: $A$ and $B$ are observationally
+equivalent.} Because $B$ \emph{is} the marginal of $A$ over $(x_1,x_2)$,
+the two assign identical evidence to any data about $x_1$ and $x_2$
+alone. No amount of watching the two commitments can separate a common
+cause from a direct law --- the reduced free energy
+$\Delta F_{A\to B}=0$ on this marginal. To break the tie the hidden cause
+must have \emph{its own} observable consequences: extra channels that $b$
+predicts and a bare $x_1$--$x_2$ law does not. This is the role of a
+heavily-connected core node --- the kind one stars as ``important'' and
+wires to additional observations: those extra edges are precisely what
+make $A$ falsifiable against $B$. Sample them and $A$'s evidence either
+pulls ahead, if the common-cause structure is real, or it does not, in
+which case parsimony keeps $B$.
+
+\paragraph{$B\to C$ is BMR pruning.} Paradigm $C$ is $B$ with the $-0.5$
+edge pruned --- its prior precision tightened to a spike at zero,
+$\Pi_C=\mathrm{diag}(1.5,1.5)$. Now the reduced free energy of Step~5,
+$\Delta F=\ln[\tilde p(o)/p(o)]-\Delta U$ (Eq.~\ref{eq:bmr}), is not zero:
+the edge carries evidence whenever the correlation is real, so pruning it
+costs evidence ($\Delta F<0$) and $B$ is kept; but if $x_1,x_2$ are in
+fact uncorrelated, the posterior over the coupling has collapsed to zero
+on its own, pruning refunds the edge's complexity cost ($\Delta F>0$),
+and $C$ wins by Occam. (In the paper's categorical setting this
+$\Delta F$ is the Dirichlet/Beta form of \citet{Friston2018_2}; the
+Gaussian numbers here are for visibility.)
+
+\paragraph{The dynamics: which paradigm leads, and when.} Put the three
+running log-evidences on one axis (Figure~\ref{fig:abc-dyn}). Early, with
+little data, $C$ leads: it spends no complexity on a coupling the data
+have not yet demanded (Occam). As correlation data accumulate the $-0.5$
+coupling earns its keep and $B$ overtakes $C$. $A$ tracks $B$ exactly ---
+they are observationally equivalent --- until the hidden cause's extra
+consequences are sampled, at which point $A$ overtakes $B$ if the common
+cause is real. And if the world changes --- the hidden cause switches
+off, leaving only a residual direct coupling --- $B$ retakes the lead
+from $A$: a paradigm shift, read straight off the crossing of the
+evidence curves.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}
+\begin{axis}[width=12.5cm,height=6cm,
+  xlabel={time / evidence accumulated $t$},
+  ylabel={log-evidence $\log p(o\mid M)$},
+  xmin=0,xmax=10,ymin=0,ymax=8,xtick={0,2,4,6,8,10},ytick=\empty,
+  axis lines=left,grid=major,grid style={notegrey!18,very thin},
+  legend pos=north west,legend style={font=\small,draw=none,fill=white,fill opacity=0.85},
+  every axis plot/.append style={very thick}]
+% C: leads early (Occam), then flattens
+\addplot[darkgrey,domain=0:10,samples=120]{0.7*x-0.45*max(0,x-2)};
+\addlegendentry{$C$: coincidence}
+% B: direct law
+\addplot[paradigmB,domain=0:10,samples=120]{0.5*x};
+\addlegendentry{$B$: direct law}
+% A: tracks B until t=6, then pulls ahead
+\addplot[coreblue,domain=0:10,samples=120]{0.5*x+0.6*max(0,x-6)};
+\addlegendentry{$A$: common cause}
+% crossings
+\fill[black] (axis cs:3.6,1.8) circle (2pt);
+\fill[black] (axis cs:6,3.0) circle (2pt);
+\node[font=\scriptsize,darkgrey,anchor=south west] at (axis cs:0.15,0.95) {Occam: simplest leads};
+\node[font=\scriptsize,paradigmB,anchor=north west] at (axis cs:3.7,1.7) {coupling earns its keep};
+\node[font=\scriptsize,coreblue,anchor=south east] at (axis cs:8.6,4.6) {hidden cause's};
+\node[font=\scriptsize,coreblue,anchor=north east] at (axis cs:8.6,4.55) {consequence sampled};
+\end{axis}
+\end{tikzpicture}
+\caption{The three candidate paradigms as drifting log-evidences
+(schematic). $C$ leads early by parsimony; $B$ overtakes once the
+correlation is established; $A$ tracks $B$ until the hidden cause's extra
+consequences are sampled, then overtakes if the common cause is real.
+Each crossing (dots) is a model-selection paradigm shift.}
+\label{fig:abc-dyn}
+\end{figure}
+
+\paragraph{Reading it back onto precision-corner navigation.} The chain
+$A\to B\to C$ is a single trajectory through the precision space of
+Figure~\ref{fig:bmr}: $A$ in the higher-dimensional interior (hub
+present), $B$ at the face where the hub is marginalized (the carry-over
+edge live), $C$ at the corner where that edge is pruned to zero. BMR is
+the agent walking that trajectory, and the carry-over is why the walk is
+not free: marginalizing the hub does not delete it, it deposits the
+$-0.5$ law that $C$ must then pay evidence to remove. The three Kuhnian
+readings of one regularity --- deep cause, brute law, coincidence ---
+are three stations on that walk, and the data decide where the agent
+stops.

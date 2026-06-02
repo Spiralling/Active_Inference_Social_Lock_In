@@ -75,14 +75,23 @@ def infer_state(prior_q: jax.Array,
 # ----------------------------------------------------------------------
 
 def efe_terms(q: jax.Array, A_world: jax.Array, C: jax.Array, U: jax.Array,
-              beta_U: float, bu_mode: str = "confirm") -> dict:
+              beta_U: float, bu_mode: str = "confirm",
+              cost: jax.Array | None = None) -> dict:
     """Per-action EFE decomposition. Returns dict of (A,) arrays.
 
     Qo(o|a)        = sum_theta q(theta) A_world[o, theta, a]
     post(theta|o,a) propto q(theta) A_world[o, theta, a]
     epistemic(a)   = sum_o Qo(o|a) sum_theta post log(post / q)        (salience)
     pragmatic(a)   = sum_o Qo(o|a) C(o)                                (preference)
-    neg_efe(a)     = epistemic + pragmatic + beta_U * belief_utility(a)
+    cost(a)        = per-experiment effort cost (the pragmatic action term)
+    neg_efe(a)     = epistemic + pragmatic + beta_U * belief_utility(a) - cost(a)
+
+    ``cost`` is the (A,) effort vector from ``gen_model.build_cost`` (or None ->
+    zeros). It is the load-bearing term for epistemic self-censorship: a
+    confident agent assigns a low EIG to the experiment that would refute it, so
+    a positive cost makes that decisive-but-expensive experiment net-negative for
+    confident agents only. ``cost = None`` (or all-zero) recovers the pure
+    epistemic+pragmatic EFE -- the regression contract.
 
     Belief-utility (``bu_mode``):
       * ``"confirm"`` (default) — motivated reasoning, the **non-vacuous** form:
@@ -106,6 +115,9 @@ def efe_terms(q: jax.Array, A_world: jax.Array, C: jax.Array, U: jax.Array,
 
     All modes reduce to pure (epistemic + pragmatic) EFE when beta_U = 0 or U flat.
     """
+    n_actions = A_world.shape[2]
+    cost_v = jnp.zeros((n_actions,)) if cost is None else jnp.asarray(cost)
+
     if bu_mode == "plan_tilt":
         q_plan = _softmax(_safe_log(q) + beta_U * U)
         joint = q_plan[None, :, None] * A_world
@@ -120,7 +132,8 @@ def efe_terms(q: jax.Array, A_world: jax.Array, C: jax.Array, U: jax.Array,
             "epistemic": epistemic,
             "pragmatic": pragmatic,
             "belief_utility": jnp.broadcast_to(tilt, epistemic.shape),
-            "neg_efe": epistemic + pragmatic,
+            "cost": cost_v,
+            "neg_efe": epistemic + pragmatic - cost_v,
             "q_theta_given_a": q_theta_given_a,
         }
 
@@ -148,11 +161,12 @@ def efe_terms(q: jax.Array, A_world: jax.Array, C: jax.Array, U: jax.Array,
     else:
         raise ValueError(f"unknown bu_mode {bu_mode!r}")
 
-    neg_efe = epistemic + pragmatic + beta_U * bu
+    neg_efe = epistemic + pragmatic + beta_U * bu - cost_v
     return {
         "epistemic": epistemic,
         "pragmatic": pragmatic,
         "belief_utility": bu,
+        "cost": cost_v,
         "neg_efe": neg_efe,
         "q_theta_given_a": q_theta_given_a,
     }
@@ -160,16 +174,25 @@ def efe_terms(q: jax.Array, A_world: jax.Array, C: jax.Array, U: jax.Array,
 
 def policy_posterior(q: jax.Array, A_world: jax.Array, C: jax.Array,
                      U: jax.Array, beta_U: float, gamma_policy: float,
-                     bu_mode: str = "confirm") -> tuple[jax.Array, dict]:
+                     bu_mode: str = "confirm",
+                     cost: jax.Array | None = None) -> tuple[jax.Array, dict]:
     """q_pi over experiments = softmax(gamma_policy * neg_efe). Returns (q_pi, terms)."""
-    terms = efe_terms(q, A_world, C, U, beta_U, bu_mode=bu_mode)
+    terms = efe_terms(q, A_world, C, U, beta_U, bu_mode=bu_mode, cost=cost)
     q_pi = _softmax(gamma_policy * terms["neg_efe"])
     return q_pi, terms
 
 
-def sample_action(q_pi: jax.Array, key: jax.Array) -> jax.Array:
-    """Sample an experiment index from the policy posterior."""
-    return jax.random.categorical(key, _safe_log(q_pi))
+def sample_action(q_pi: jax.Array, key: jax.Array,
+                  greedy: bool = False) -> jax.Array:
+    """Pick an experiment index from the policy posterior.
+
+    ``greedy=False`` (default): sample ~ q_pi (the active-inference policy is a
+    distribution). ``greedy=True``: argmax -- the gamma_policy -> infinity limit,
+    used to demonstrate *genuinely permanent* lock-in (the self-censored
+    experiment is selected with probability exactly zero, so no refuting datum is
+    ever gathered, vs. finite-gamma lock-in that merely lasts a long horizon)."""
+    return jnp.where(greedy, jnp.argmax(q_pi),
+                     jax.random.categorical(key, _safe_log(q_pi)))
 
 
 # ----------------------------------------------------------------------
@@ -187,9 +210,10 @@ def infer_state_batch(prior_q, A_world, o_world, action, A_social, o_social,
 
 
 def policy_posterior_batch(q, A_world, C, U, beta_U, gamma_policy,
-                           bu_mode: str = "confirm"):
+                           bu_mode: str = "confirm", cost=None):
     """vmap of policy_posterior over agents. q (N,K), U (N,K) per-agent
-    belief-utility (heterogeneity = the symmetry-breaking field)."""
+    belief-utility (heterogeneity = the symmetry-breaking field). ``cost`` (A,)
+    is the shared per-experiment effort vector (closed over, not vmapped)."""
     f = lambda qi, Ui: policy_posterior(qi, A_world, C, Ui, beta_U, gamma_policy,
-                                        bu_mode=bu_mode)
+                                        bu_mode=bu_mode, cost=cost)
     return jax.vmap(f)(q, U)

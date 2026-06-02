@@ -72,6 +72,61 @@ def experiment_discriminability_chosen(info: dict, d: np.ndarray) -> float:
 
 
 # ----------------------------------------------------------------------
+# 2b. Self-censorship (the emergent-experiment-avoidance order parameter)
+# ----------------------------------------------------------------------
+
+def discriminating_experiment_index(d: np.ndarray) -> int:
+    """Index of the single most theory-separating experiment (argmax d)."""
+    return int(np.argmax(np.asarray(d)))
+
+
+def prob_on_experiment(info: dict, a_index: int) -> float:
+    """Mean policy mass q(pi) on a specific experiment index across agents."""
+    return float(np.asarray(info["q_pi"])[:, a_index].mean())
+
+
+def prob_discriminating(info: dict, d: np.ndarray) -> float:
+    """Mean policy mass on the most-discriminating experiment.
+
+    This is the *derived* self-censorship readout: in the EFE model a confident
+    agent assigns a low expected information gain to the decisive experiment, so
+    once the experiment carries a cost this probability collapses — no gate is
+    imposed. Compare across confident vs uncertain agents to see the avoidance
+    emerge from belief alone.
+    """
+    return prob_on_experiment(info, discriminating_experiment_index(d))
+
+
+# ----------------------------------------------------------------------
+# 4b. Lock-in (did a confidently-wrong agent stay wrong?)
+# ----------------------------------------------------------------------
+
+def lockin_summary(run_out: dict, true_paradigm: int,
+                   wrong_thresh: float = 0.5, tail: int = 1) -> dict:
+    """Classify a single-bloc / population run for permanent lock-in.
+
+    Reads the mean-belief trajectory in the TRUE paradigm:
+      final_belief_true : mean q(true) over the last ``tail`` steps.
+      locked_wrong      : final belief in the truth stayed below ``wrong_thresh``
+                          (the population never crossed to the truth) — the
+                          permanent-lock-in signature when the start was wrong.
+      converged_truth   : final belief above (1 - wrong_thresh).
+      crossed_at        : first step the mean belief crosses wrong_thresh upward,
+                          or None if it never does (None = shift prevented).
+    """
+    m = np.asarray(run_out["mean_qB"])
+    final = float(m[-tail:].mean())
+    up = np.where(np.diff((m > wrong_thresh).astype(int)) > 0)[0]
+    crossed_at = int(up[0]) + 1 if up.size else None
+    return {
+        "final_belief_true": final,
+        "locked_wrong": bool(final < wrong_thresh),
+        "converged_truth": bool(final > 1.0 - wrong_thresh),
+        "crossed_at": crossed_at,
+    }
+
+
+# ----------------------------------------------------------------------
 # 3. Polarization / bimodality
 # ----------------------------------------------------------------------
 

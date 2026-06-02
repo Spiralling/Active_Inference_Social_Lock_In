@@ -12,18 +12,30 @@ results/*.npz
 results/*.csv
 results/*.pkl
 
-# LaTeX build artifacts
-paper/*.aux
-paper/*.bbl
-paper/*.blg
-paper/*.log
-paper/*.out
-paper/*.toc
-paper/*.fdb_latexmk
-paper/*.fls
-paper/*.synctex.gz
+# One-off dev-script output dumps (generators live in scripts/)
+nb_extract.txt
+audit_output.txt
+output.log
+pipeline.log
+cluster_smoke.png
+
+# LaTeX build artifacts (repo-wide — these are regenerable from .tex sources)
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.toc
+*.nav
+*.snm
+*.vrb
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+# Regenerable compile-output PDFs (the live builds). Dated PDFs under any
+# */_archive/ or notes/archive/ are an intentional record and stay tracked.
 paper/main.pdf
-paper/sections/*.aux
+notes/background_drafts/_build/main.pdf
 
 # DOUBLE-BLIND: real author block must never be committed
 paper/authors-deanon.tex

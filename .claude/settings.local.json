@@ -16,7 +16,11 @@
       "Bash(echo \"EXIT: $?\")",
       "Read(//tmp/**)",
       "Bash(pdflatex -interaction=nonstopmode pomdp_paradigm_model.tex)",
-      "Bash(echo \"exit: $?\")"
+      "Bash(echo \"exit: $?\")",
+      "PowerShell(pdflatex *)",
+      "Bash(grep -o 'frac[^$]*' notebooks/19_biased_experiment_lockin.ipynb)",
+      "Bash(.venv/Scripts/python.exe -c ' *)",
+      "Bash(awk '{print $6,$7,$8,$9}')"
     ]
   }
 }

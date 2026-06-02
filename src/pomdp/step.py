@@ -110,11 +110,19 @@ def init_state(cfg: PomdpConfig, n_agents: int,
 def step(state: PopulationState, gm: dict, T: jax.Array, cfg: PomdpConfig,
          social_mask: jax.Array | float = 1.0,
          bu_mode: str = "plan_tilt",
-         readout=readout_trust_mixture) -> tuple[PopulationState, dict]:
+         readout=readout_trust_mixture,
+         greedy: bool = False) -> tuple[PopulationState, dict]:
     """One inter-agent round. Returns (new_state, step_info).
 
     social_mask : per-agent (N,) or scalar trust-precision down-weight in [0,1].
     bu_mode     : belief-utility mechanism (see agent_pop.efe_terms).
+    greedy      : if True, experiments are chosen by argmax of the policy
+                  (the gamma->infinity limit) -- used for the permanent-lock-in
+                  demonstration. Default False = sample from the EFE policy.
+
+    The EFE now carries the per-experiment effort cost ``gm["cost"]`` (see
+    agent_pop.efe_terms); with ``cfg.cost_scale == 0`` it is zero and the policy
+    is the pure epistemic+pragmatic one.
     """
     N = state.q.shape[0]
     key_act, key_obs, key_next = jax.random.split(state.key, 3)
@@ -126,13 +134,17 @@ def step(state: PopulationState, gm: dict, T: jax.Array, cfg: PomdpConfig,
     # 2. ROUTE: trust-weighted social observation per agent.
     o_social = readout(emissions, T)                        # (N, K)
 
-    # 3. ACT: EFE policy posterior (with belief-utility) -> sample experiment.
+    # 3. ACT: EFE policy posterior (epistemic + pragmatic + belief-utility
+    #    - experiment cost) -> select experiment. The cost term is what lets a
+    #    confident agent rationally decline the decisive (costly, low-EIG-to-it)
+    #    experiment -- emergent self-censorship, no imposed gate.
     q_pi, terms = agent_pop.policy_posterior_batch(
         state.q, gm["A_world"], gm["C"], state.U,
-        cfg.beta_U, cfg.gamma_policy, bu_mode=bu_mode,
+        cfg.beta_U, cfg.gamma_policy, bu_mode=bu_mode, cost=gm["cost"],
     )                                                       # q_pi (N, A)
     act_keys = jax.random.split(key_act, N)
-    actions = jax.vmap(agent_pop.sample_action)(q_pi, act_keys)   # (N,)
+    actions = jax.vmap(lambda p, k: agent_pop.sample_action(p, k, greedy))(
+        q_pi, act_keys)                                     # (N,)
 
     # 4a. ENVIRONMENT: sample outcome from the TRUE paradigm theta*.
     A_world = gm["A_world"]                                  # (n_o, K, A)
@@ -147,6 +159,14 @@ def step(state: PopulationState, gm: dict, T: jax.Array, cfg: PomdpConfig,
     )                                                       # (N, K)
 
     new_state = PopulationState(q=q_new, U=state.U, key=key_next)
+
+    # self-censorship diagnostics: how much policy mass sits on the single most
+    # decisive experiment (argmax discriminability), and the mean discriminability
+    # of the experiments actually chosen. Both falling = the population is
+    # steering away from the experiments that could refute it.
+    a_star = int(np.argmax(np.asarray(gm["d"])))
+    p_discrim = float(np.asarray(q_pi)[:, a_star].mean())
+    chosen_d = float(np.asarray(gm["d"])[np.asarray(actions)].mean())
     info = {
         "q_pi": np.asarray(q_pi),
         "actions": np.asarray(actions),
@@ -154,9 +174,84 @@ def step(state: PopulationState, gm: dict, T: jax.Array, cfg: PomdpConfig,
         "neg_efe": np.asarray(terms["neg_efe"]),
         "epistemic": np.asarray(terms["epistemic"]),
         "belief_utility": np.asarray(terms["belief_utility"]),
+        "cost": np.asarray(terms["cost"]),
         "mean_q": np.asarray(q_new.mean(axis=0)),
+        "p_discrim": p_discrim,            # policy mass on the decisive experiment
+        "chosen_d": chosen_d,              # mean discriminability of chosen experiments
+        "a_star": a_star,
     }
     return new_state, info
+
+
+def run_fast(cfg: PomdpConfig, n_agents: int, n_steps: int,
+             D_per_agent: np.ndarray | None = None,
+             U_per_agent: np.ndarray | None = None,
+             social_mask: float = 1.0,
+             bu_mode: str = "plan_tilt",
+             greedy: bool = False,
+             graph_kwargs: dict | None = None,
+             seed: int = 0) -> dict:
+    """Compiled (``jax.lax.scan``) rollout — the fast equivalent of ``run``'s
+    Python loop for long horizons and parameter sweeps.
+
+    Computes the *identical* dynamics as ``run`` (same EFE policy with the
+    experiment-cost term, same greedy/sampled selection, same exact-Bayes update
+    with the social channel) but as one compiled scan that syncs to host once,
+    instead of a Python loop with a host transfer every step. Returns the
+    light-weight trajectories needed by the sweeps:
+
+      ``mean_qB``   : population mean belief in the true paradigm, per step.
+      ``occ_B``     : fraction whose MAP is the true paradigm, per step.
+      ``p_discrim`` : mean policy mass on the most-discriminating experiment.
+      ``chosen_d``  : mean discriminability of the experiments actually chosen.
+      ``final_q``   : final per-agent belief (N, K).
+
+    The per-step ``infos`` dicts of ``run`` are not materialised (that is the
+    point — no per-step host sync); use ``run`` when you need them.
+    """
+    gm = build_generative_model(cfg)
+    T = build_trust(cfg, n_agents, seed=seed, **(graph_kwargs or {}))
+    state = init_state(cfg, n_agents, U_per_agent, D_per_agent, seed=seed)
+
+    A_world, A_social, C, cost = gm["A_world"], gm["A_social"], gm["C"], gm["cost"]
+    d = gm["d"]
+    a_star = jnp.argmax(d)
+    mask = jnp.broadcast_to(jnp.asarray(social_mask, dtype=float), (n_agents,))
+    true_p = cfg.true_paradigm
+
+    def body(carry, _):
+        q, U, key = carry
+        key_act, key_obs, key_next = jax.random.split(key, 3)
+
+        o_social = readout_trust_mixture(q, T)                  # ROUTE
+        q_pi, _ = agent_pop.policy_posterior_batch(             # ACT (EFE+cost)
+            q, A_world, C, U, cfg.beta_U, cfg.gamma_policy,
+            bu_mode=bu_mode, cost=cost)
+        act_keys = jax.random.split(key_act, n_agents)
+        actions = jax.vmap(lambda p, k: agent_pop.sample_action(p, k, greedy))(
+            q_pi, act_keys)
+        p_o = A_world[:, true_p, actions].T                     # ENVIRONMENT (truth)
+        obs_keys = jax.random.split(key_obs, n_agents)
+        o_idx = jax.vmap(lambda k, p: jax.random.categorical(k, jnp.log(p + EPS)))(
+            obs_keys, p_o)
+        o_world = jax.nn.one_hot(o_idx, cfg.n_o)
+        q_new = agent_pop.infer_state_batch(                    # INFER (exact Bayes)
+            q, A_world, o_world, actions, A_social, o_social, mask)
+
+        rec = (q_new[:, true_p].mean(),                         # mean_qB
+               (q_new[:, true_p] > 0.5).mean(),                 # occ_B
+               q_pi[:, a_star].mean(),                          # p_discrim
+               d[actions].mean())                               # chosen_d
+        return (q_new, U, key_next), rec
+
+    (q_fin, _, _), recs = jax.lax.scan(
+        body, (state.q, state.U, state.key), None, length=n_steps)
+    mean_qB, occ_B, p_discrim, chosen_d = (np.asarray(r) for r in recs)
+    return {
+        "mean_qB": mean_qB, "occ_B": occ_B,
+        "p_discrim": p_discrim, "chosen_d": chosen_d,
+        "final_q": np.asarray(q_fin), "T": np.asarray(T),
+    }
 
 
 def run(cfg: PomdpConfig, n_agents: int, n_steps: int,
@@ -165,25 +260,36 @@ def run(cfg: PomdpConfig, n_agents: int, n_steps: int,
         social_mask: jax.Array | float = 1.0,
         bu_mode: str = "plan_tilt",
         graph_kwargs: dict | None = None,
+        greedy: bool = False,
         seed: int = 0) -> dict:
     """Run the population for n_steps. Returns trajectories of mean belief and
     the per-step info (occupancy, EFE terms). Thin Python loop — fine for the
-    Phase-1 scaffold; ``jax.lax.scan`` is an easy later optimisation."""
+    Phase-1 scaffold; ``jax.lax.scan`` is an easy later optimisation.
+
+    ``greedy`` selects experiments by argmax of the policy (the gamma->infinity
+    limit) -- the permanent-lock-in demonstration. The per-experiment effort
+    cost is carried by ``cfg.cost_scale`` through ``gm["cost"]``."""
     gm = build_generative_model(cfg)
     T = build_trust(cfg, n_agents, seed=seed, **(graph_kwargs or {}))
     state = init_state(cfg, n_agents, U_per_agent, D_per_agent, seed=seed)
 
     mean_qB = np.empty(n_steps)
     occ_B = np.empty(n_steps)
+    p_discrim = np.empty(n_steps)
+    chosen_d = np.empty(n_steps)
     infos = []
     for t in range(n_steps):
-        state, info = step(state, gm, T, cfg, social_mask, bu_mode)
+        state, info = step(state, gm, T, cfg, social_mask, bu_mode, greedy=greedy)
         mean_qB[t] = info["mean_q"][cfg.true_paradigm]
         occ_B[t] = float(np.mean(np.asarray(state.q)[:, cfg.true_paradigm] > 0.5))
+        p_discrim[t] = info["p_discrim"]
+        chosen_d[t] = info["chosen_d"]
         infos.append(info)
     return {
         "mean_qB": mean_qB,        # population mean belief in the TRUE paradigm
         "occ_B": occ_B,            # fraction whose MAP = true paradigm
+        "p_discrim": p_discrim,    # policy mass on the decisive experiment over time
+        "chosen_d": chosen_d,      # mean discriminability of chosen experiments over time
         "final_q": np.asarray(state.q),
         "infos": infos,
         "T": np.asarray(T),

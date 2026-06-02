@@ -1,0 +1,730 @@
+% =====================================================================
+% background.tex --- combined background draft for IWAI 2026 paper
+% "Paradigm Dynamics in Multi-Agent Motivated Belief" (Hallgren & Hyland)
+%
+% Generated 2026-05-29 by combining 7 sub-agent drafts (S1_*.tex...S7_*.tex)
+% in the same directory. Each \section corresponds to a section of the
+% working-structure PDF (IWAI_26_Paradigm (1).pdf, 2026-05-29).
+%
+% Cross-references between sections have been normalised:
+%   - sec:scalar-multiagent   (was sec:scalar in S5)
+%   - sec:derived-results     (was sec:structured-results in S3)
+%
+% =====================================================================
+% CONSOLIDATED KEY-HANDLING TODO (collected from all 7 drafts)
+% =====================================================================
+%
+% A. Auto-keys to hand-rename before merging cluster bibs into refs.bib
+% --------------------------------------------------------------------
+% §1 + §4 (cluster_C6_theory_laden):
+%   Chang2012_9         -> chang2012WaterChemRev                 % ANCHOR (Lavoisier/water)
+%   Carrier2002_4       -> carrier2002IncommensPhlogiston
+%   Malone1993_5        -> malone1993IncommensNoRelativism
+%   Shimony1976_10      -> shimony1976KuhnTheses
+%   Siegel1987_15       -> siegel1987KuhnInspired
+%   Brewer2010_14       -> brewerLoschky2010TopDown
+%   Lewowicz2011_2      -> lewowicz2011PurloinedReferent
+%   Boantza2008_4       -> boantza2008PhlogisticHeat
+%   Halloun2016_8       -> halloun2016ModelLadenInquiry
+%   Mcevoy1989_7        -> mcevoy1989LavoisierLinguistic
+%   Perrin1988_5        -> perrin1988ResearchTraditions
+%
+% §2 (cluster_C1_motivated_reasoning + cluster_C2_variational_cost):
+%   Kahan2007_1         -> kahanEtAl2007WhiteMaleEffect          % ANCHOR
+%   Kahan2017_4         -> kahan2017IdentityProtective           % ANCHOR
+%   Kahan2017_2         -> kahanPetersDawson2017MotivatedNumeracy
+%   Kahan2015_12        -> kahan2015ExpressiveRationality
+%   Glüer-Pagin2024_11  -> gluerSpectre2024MotivationInNumeracy
+%   Bolsen2019_7        -> bolsenPalm2019MotivatedReasoning
+%   Little2020_13       -> littleSchnakenbergTurner2021MotivatedAccountability
+%   Savolainen2022_3    -> savolainen2022HealthMisinformation
+%   Kruglanski2020_10   -> kruglanski2020AllThinkingWishful
+%   Hopkins2016_8       -> hopkins2016FreeEnergyDreaming
+%   Friston2023_7       -> fristonEtAl2023FederatedInference
+%   Costa2020_4         -> daCosta2020ActiveInferenceDiscrete
+%
+% §3 (cluster_C4_social_network_epistemology, intro subset):
+%   Bala1998_1          -> balaGoyal1998LearningNeighbours        % ANCHOR
+%   Bala2001_3          -> balaGoyal2001Conformism
+%   Boudourides2026_7   -> boudourides2026FJBoundaryValue
+%   Proskurnikov2015_6  -> proskurnikovMatveevCao2015Hostile
+%   Ren2020_13          -> ren2020DeGrootCommunities
+%
+% §4 (cluster_C5_echo_chambers):
+%   Nguyen2018_1        -> nguyen2020EchoChambers                  % ANCHOR
+%   Pollock2024_3       -> pollock2024ContextualDiscordance
+%   Clinkenbeard2025_4  -> clinkenbeard2025NihilisticDistrust
+%
+% §5 (cluster_C3_bmr_lakatos + cluster_C7_attention_precision):
+%   Friston2018_2       -> fristonParrZeidman2018BMR              % ANCHOR
+%   Thagard1989_1       -> thagard1989ExplanatoryCoherence        % ANCHOR
+%   Thagard1988_4       -> thagardNowak1988ContinentalDrift
+%   Ranney1988_3        -> ranneyThagard1988NaivePhysics
+%   Markovi'c2023_1     -> markovicFristonKiebel2024BMRSparsify
+%   Heijdra1986_6       -> heijdraLowenberg1986DuhemQuineLakatos
+%   Wahyudi2026_2       -> wahyudi2026QuineWebOfBelief
+%   Ostapiuk2025_11     -> ostapiuk2025LakatosResearchProgrammes
+%   Mirza2019_2         -> mirzaAdamsFristonParr2019SelectiveAtt  % ANCHOR
+%
+% §6 (cluster_C4 derived-results subset + cluster_C5):
+%   Griparic2021_7      -> griparicEtAl2021AlgebraicConnectivity
+%   Montijano2017_11    -> montijano2017ConsensusSpectral
+%   Tan2008_14          -> tan2008FiedlerOpinion
+%   Müürsepp2019_7      -> muursepp2019FeyerabendPluralism
+%   Novaes2025_1        -> novaes2025LonginoCritique
+%   Ajdari2023_6        -> ajdari2023LonginoCritique
+%   Borgerson2011_5     -> borgerson2011LonginoCritique
+%   Longino1990_10      -> longino1990ScienceSocialKnowledge      % ANCHOR
+%   Romero2017_2        -> romero2017NoveltyReplicability
+%   Turner2023_2        -> turner2023ChamberTrust
+%
+% §7 (cluster_C8_algorithmic_curation):
+%   D2025_2             -> tkach2025EthicsPersonalization
+%   Lin2026_1           -> lin2026AlgorithmicBiasRecommender
+%   Zhao2020_3          -> zhao2020InformationCocoons
+%
+% B. Foundational anchors MISSING from all clusters --- hand-add to refs.bib
+% -------------------------------------------------------------------------
+% §2:
+%   kunda1990MotivatedReasoning           Kunda, Psych. Bull. 108(3), 1990
+%   nickerson1998ConfirmationBias         Nickerson, Rev. Gen. Psych. 2(2), 1998
+%   lordRossLepper1979BiasedAssimilation  Lord, Ross & Lepper, JPSP 37(11), 1979
+% §5:
+%   lakatos1970FalsificationMethodology   Lakatos, in Lakatos & Musgrave (eds.), 1970
+%   quine1951TwoDogmas                    Quine, Phil. Review 60(1), 1951
+%   fristonPenny2011PostHocBMS            Friston & Penny, NeuroImage 56(4), 2011
+%   thagardVerbeurgt1998CoherenceConstraint  Thagard & Verbeurgt, Cog. Sci. 22(1), 1998
+% §6:
+%   zollman2007NetworkEpistemology        Zollman, Phil. Sci. 74(5), 2007
+%   zollman2010TransientDiversity         Zollman, Erkenntnis 72, 2010
+%   kitcher1990DivisionCognitiveLabor     Kitcher, J. Phil. 87(1), 1990
+%   strevens2003PriorityRule              Strevens, J. Phil. 100(2), 2003
+%   muldoonWeisberg2011Robustness         Muldoon & Weisberg, Phil. Stud. 152(2), 2011
+%
+% =====================================================================
+
+
+% =====================================================================
+\section{Theory-Laden Perception}
+\label{sec:theoryladen}
+% =====================================================================
+
+\paragraph{Kuhn's three faces.}
+The central phenomenological commitment of this paper is the
+Kuhnian observation that the paradigm a scientist holds shapes what
+she is even capable of perceiving \citep{kuhn1962Structure}. This is
+not a methodological lapse to be corrected by more careful
+experimental design but a structural feature of scientific cognition,
+and it has three interconnected faces that we will treat as
+expressions of a single underlying phenomenon. The first face is
+what a scientist sees in incoming data: the same observation is read
+differently from inside different paradigms, with the assignment of
+\emph{anomaly} versus \emph{nuisance} itself being paradigm-dependent
+\citep{Brewer2010_14, Shimony1976_10}. The second face is what
+experiments she chooses to run: the paradigm shapes the space of
+investigations she finds worth undertaking, which in turn shapes
+what evidence the community as a whole produces
+\citep{Halloun2016_8}. The third face is what theoretical
+alternatives she even considers: rival frameworks are not so much
+rejected as never seriously entertained, with the candidate set of
+live revisions itself being structured by the prevailing framework
+\citep{Carrier2002_4, Malone1993_5}.
+
+\paragraph{Theory-ladenness as structural feature, not bias.}
+The contemporary literature has substantially clarified what was, in
+Kuhn's original framing, sometimes left ambiguous. \citet{Siegel1987_15}
+and \citet{Malone1993_5} reconstruct incommensurability as a
+condition on referential and inferential overlap between frameworks
+rather than as a relativist denial of cross-paradigm rationality, and
+\citet{Carrier2002_4} demonstrates on the phlogiston case that
+\emph{empirical comparability} between rival paradigms is possible
+without their being intertranslatable term-by-term. Cognitive
+psychology has independently corroborated the perceptual layer of the
+claim: \citet{Brewer2010_14} review top-down and bottom-up
+contributions to scientific observation and find that the prior model
+substantively conditions what counts as a datum, in line with the
+phenomenology Kuhn was describing. The resulting picture is
+deflationary in one direction --- theory-ladenness is not the
+collapse of objectivity --- and inflationary in another: the
+influence of the prevailing framework reaches further into the
+cognitive pipeline than an additive bias term would suggest, touching
+attention, salience, the felt space of alternatives, and the
+allocation of experimental effort.
+
+\paragraph{The Chemical Revolution as a worked case.}
+The Chemical Revolution is the canonical historical demonstration of
+all three faces operating jointly. \citet{Chang2012_9} argues that
+phlogiston theory was not a failed predecessor refuted by Lavoisier's
+data but a research programme with its own coherent set of
+observables, anomalies, and live revisions; its replacement was less
+a victory of evidence over confusion than a reallocation of what
+counted as a phenomenon to be explained.
+\citet{Lewowicz2011_2} and \citet{Boantza2008_4} reinforce this
+reading from inside the chemistry: the phlogiston framework had
+resources --- including a treatment of heat
+\citep{Boantza2008_4} --- whose referents were not so much falsified
+as relocated under the oxygen framework, exactly the kind of move
+that the third Kuhnian face predicts. This historical record matters
+for our model because it shows that the three faces are not
+independent variables to be added: shifts in what is observed, what
+is investigated, and what is entertained co-vary, and they co-vary
+on the timescale of community-wide reorganisation rather than
+individual reasoning.
+
+\paragraph{Methodological commitment.}
+We take this as the empirical commitment that licenses the model's
+complexity. An accumulated-checklist alternative --- enumerate
+biases in perception, biases in experiment choice, and biases in
+hypothesis generation, then sum them --- would be both more
+defensive and less informative, because it would treat the three
+faces as separable failure modes rather than as expressions of a
+single structural fact about how a community-held framework
+conditions cognition. The stronger rhetorical position, and the one
+this paper takes, is that a single underlying mechanism is
+responsible for all three faces, and that the model must therefore
+couple perception, action, and hypothesis-space in a way that an
+additive bias account cannot. The remainder of the paper develops
+that mechanism. In our setting, the
+shared framework is encoded in the joint structure of agents'
+generative models and the channel of inter-agent precision that
+binds them; the three faces will reappear, respectively, as the
+likelihood-weighting in inference, as the experiment-selection
+policy, and as the support of the prior over theories. The case
+for treating them together, rather than enumerating them
+separately, rests on the phenomenological commitment defended
+here.
+
+
+% =====================================================================
+\section{Motivated Belief at the Single-Agent Level}
+\label{sec:motivatedbelief}
+% =====================================================================
+
+\paragraph{Empirical motivated reasoning.}
+The cognitive-psychological case that belief revision is shaped by
+goals other than accuracy is long-standing and converged. The
+canonical statement is Kunda's argument that reasoning is steered by
+\emph{directional} as well as accuracy goals: subjects construct the
+sequence of inferential steps that licenses the conclusion they would
+prefer to reach, subject to the constraint that the construction
+remain plausible to themselves \citep{kunda1990MotivatedReasoning}.
+This framing absorbed two earlier empirical findings as special
+cases: the biased-assimilation experiments of
+\citet{lordRossLepper1979BiasedAssimilation}, in which the same
+mixed evidence about a contested policy strengthened the prior
+commitments of partisans on \emph{both} sides; and confirmation-bias
+phenomena more broadly catalogued by \citet{nickerson1998ConfirmationBias}.
+The empirical literature has since accumulated in two directions.
+The first is Kahan's cultural-cognition programme, in which the
+directional goal is identified specifically as \emph{identity
+protection}: subjects process risk-relevant evidence in whatever way
+preserves their standing in the affinity groups they belong to
+\citep{Kahan2007_1, Kahan2017_4}. The signature empirical finding is
+that the gap between cultural sub-populations \emph{widens} with
+numerical and scientific sophistication rather than narrowing
+\citep{Kahan2017_2}; Kahan reads this as evidence that the more
+capable reasoners are more effective at the selective evaluation of
+identity-incongruent evidence, a behaviour he characterises as
+\emph{expressive rationality} --- rational relative to the agent's
+practical stakes in group membership, irrational relative to truth
+\citep{Kahan2015_12}. The mechanism remains contested:
+\citet{Glüer-Pagin2024_11} argue that what Kahan's experiments
+isolate is motivation \emph{to reason} rather than motivated reasoning
+in the strict sense, and the broader political-science literature now
+distinguishes carefully between directional and accuracy regimes and
+the conditions under which one or the other dominates
+\citep{Bolsen2019_7, Little2020_13, Savolainen2022_3}. For our
+purposes the contested points do not matter: the robust observation
+is that human belief revision exhibits a systematic, content-sensitive
+asymmetry in its receptivity to evidence, and that this asymmetry is
+not adequately captured by treating the agent as an unbiased Bayesian
+updater.
+
+\paragraph{Variational formalisation.}
+The active-inference community has begun to give this asymmetry a
+principled mathematical form. The starting point is the variational
+free-energy functional, in which an agent's update from prior to
+posterior incurs a complexity cost proportional to the
+Kullback--Leibler divergence between the candidate posterior and the
+prior \citep{Costa2020_4}. \citet{hylandAlbarracin2025MindChange}
+re-foreground this complexity term as a \emph{motivational} quantity:
+the cost of changing one's mind is the KL divergence from the current
+belief to the candidate revision, weighted by an affective utility
+that reflects how much the agent cares about retaining the prior.
+Because that divergence is asymmetric, belief revision is
+path-dependent: evidence that would update a neutral prior into a
+particular posterior need not, played in reverse, undo a revision
+already made. This is the formal counterpart of the
+biased-assimilation and identity-protection findings: preferred
+beliefs are not merely held more confidently, they are protected by a
+mathematically explicit revision cost that contrary evidence must
+overcome. \citet{Kruglanski2020_10} reaches a sympathetic conclusion
+from the social-psychological side, arguing that there is no sharp
+boundary between motivated and non-motivated cognition because
+\emph{all} inference is directional in the sense that it is steered
+by what the agent values; the variational reading makes this claim
+precise by locating the directional weight in the affective utility
+that multiplies the complexity term. Adjacent strands of the
+active-inference literature provide the surrounding machinery on
+which the multi-agent extension will draw, including federated
+inference under shared world models \citep{Friston2023_7} and the
+free-energy account of belief-revision dynamics more generally
+\citep{Hopkins2016_8}.
+
+\paragraph{Open question.}
+The single-agent picture is now reasonably well developed, both
+empirically and formally. What it does not yet capture is the
+phenomenon Kuhn observed at the community scale: that scientific
+sub-fields exhibit collective motivated belief, sustained across
+generations, with the directional goal residing not in any individual
+ego but in the institutional and social structures that bind the
+community together. The active-inference treatment so far has been
+single-agent --- the cost of mind-change is borne by one mind, against
+its own prior. The empirical motivated-reasoning literature is in
+practice multi-agent --- the identity being protected is a group
+identity --- but its formalisation has remained at the level of
+within-individual mechanism. The question this paper takes up is how
+the variational cost of belief revision generalises to a population
+of coupled inferential agents in a way that recovers what Kuhn
+observed: paradigm-level persistence that is sociologically generated,
+asymmetric in time, and not reducible to the directional preferences
+of any single agent.
+
+
+% =====================================================================
+\section{From Single-Agent to Multi-Agent: The Scalar Treatment}
+\label{sec:scalar-multiagent}
+% =====================================================================
+
+\paragraph{Scalar Bayesian updating on a graph.}
+The scalar multi-agent setting we adopt sits inside a well-developed
+tradition that treats opinion change as a linear, convex-combination
+update on a weighted directed graph. The canonical primitive is the
+DeGroot averaging model \citep{Boudourides2026_7}, in which each
+agent's opinion at the next step is a row-stochastic mixture of its
+neighbours' current opinions; under mild connectivity assumptions this
+contracts to consensus. The Friedkin--Johnsen extension breaks that
+asymptotic consensus by allowing each agent to retain weight on its
+initial belief through a susceptibility coefficient
+$s_i \in [0,1]$, so that the long-run opinion vector is an
+affine-resolvent functional of the boundary of stubborn agents
+\citep{Boudourides2026_7}. The conservatism parameter in our setup
+plays the same formal role as the Friedkin--Johnsen susceptibility,
+read off the variational free-energy decomposition rather than
+postulated: the cost-of-mind-change term in the tempered-Bayesian
+update of \citet{hylandAlbarracin2025MindChange} is precisely an
+asymmetric KL penalty on revising one's posterior, and at the linear
+limit its scalar weight maps to $1 - s_i$. The literature has worked
+out a great deal of structural detail on this family: closed-form
+steady states via resolvent / Green-function representations,
+quantitative convergence rates controlled by the spectral radius of
+the susceptibility-weighted influence matrix, and explicit sensitivity
+of the steady state to perturbations of either the influence matrix or
+the susceptibility profile \citep{Boudourides2026_7}. Signed
+generalisations recover polarisation as a stable attractor when the
+underlying graph admits a structural-balance decomposition into
+hostile camps \citep{Proskurnikov2015_6}, and community-detection
+methods exploit the same consensus dynamics to read off hierarchical
+group structure from opinion trajectories \citep{Ren2020_13}. We
+inherit this machinery and re-read it in active-inference terms: the
+influence matrix is a learned channel precision rather than a fixed
+social-tie weight, and the susceptibility / conservatism is a
+free-energy quantity rather than a phenomenological parameter.
+
+\paragraph{Multi-armed bandit framing of theory choice.}
+The complementary tradition treats the agent's problem not as
+averaging an opinion but as choosing which arm of a multi-armed
+bandit to pull next given its neighbours' payoffs, which we draw on
+explicitly when the scalar opinion is read as a paradigm \emph{choice}
+rather than a continuous belief. \citet{Bala1998_1} introduce the
+canonical model: each agent repeatedly chooses among a finite set of
+risky actions, observes its own and its neighbours' payoffs, and
+updates a Bayesian posterior over which action is best. They prove
+that on connected networks the population converges to consensus on a
+single action almost surely, but the consensus action need not be the
+optimal one --- early random fluctuations get locked in by social
+imitation, generating a long tail of pathological lock-ins on
+inferior arms. Their follow-up \citep{Bala2001_3} sharpens this into
+a quantitative tradeoff between conformism and diversity that
+prefigures the network-epistemology framing later picked up by
+\citet{zollman2007NetworkEpistemology}, whose paradoxical-stubbornness and
+communication-structure results we treat as derived consequences of
+the same primitives and develop in
+Section~\ref{sec:derived-results}. The Bala--Goyal lineage is the
+right reference frame for our §3 simulations because it is the
+minimal model in which (i) the agent has a well-defined Bayesian
+posterior over a finite paradigm set, (ii) communication enters
+through observed payoffs rather than through opinion averaging, and
+(iii) the timescale-separation between learning and convergence
+generates path-dependent population outcomes --- the three features
+the scalar paradigm experiments are designed to exhibit.
+
+\paragraph{Active-inference coupling.}
+Bringing the two strands together in an active-inference register is
+the contribution of \citet{albarracin2022EpistemicCommunities}, who
+couple variational-Bayesian agents through shared observations and
+characterise echo-chamber bifurcation as a function of the
+inter-agent precision. Their construction is the immediate ancestor
+of our §3 setup, with two refinements. First, the inter-agent
+precision is itself learned, not fixed, so the trust matrix is the
+only Bayesian-learned relational object in the model and the
+``susceptibility profile'' of the Friedkin--Johnsen analysis becomes
+endogenous to the dynamics. Second, the tempered-Bayesian update of
+\citet{hylandAlbarracin2025MindChange} contributes an asymmetric
+cost-of-mind-change term that does not appear in the symmetric
+linear-averaging tradition but that is necessary to recover Kuhnian
+path-dependence at the population level: even a homogeneous network
+with isotropic trust will, with non-zero conservatism, lock onto its
+initial-condition basin in a way that pure DeGroot or Bala--Goyal
+dynamics cannot. The scalar experiments that follow probe how this
+conservatism parameter interacts with the trust-precision topology
+and with the affective utility on paradigm values to produce the
+population behaviours we will then re-read, in §4, as the structural
+limits of a scalar treatment.
+
+
+% =====================================================================
+\section{What the Scalar Treatment Cannot Capture}
+\label{sec:scalar-limits}
+% =====================================================================
+
+\paragraph{What the scalar treatment recovers.}
+Before locating its limits, it is worth being explicit about what the
+scalar treatment of paradigm commitment already captures. A
+temperature-modulated update on a single belief variable produces an
+asymmetric assimilation: the same datum is integrated by an agent who
+sits near one attractor with a different effective Bayes factor than by
+an agent who sits near another, so that observers in different
+paradigms reach different posteriors from a shared
+observation~\citep{kuhn1962Structure}. This is not a degenerate
+re-description of confirmation bias; it is a principled consequence of
+the cost of mind-change, and it does some of the work that Kuhn's first
+face of theory-ladenness demands. To that extent, the scalar treatment
+is doing real explanatory labour, and we resist the temptation to throw
+it away in order to motivate what follows. The point of this section is
+to mark where its explanatory reach ends.
+
+\paragraph{Structural reorganisation: the Lavoisian case.}
+The clearest pressure on a scalar treatment comes from the Chemical
+Revolution. \citet{Chang2012_9} argues that the disagreement between
+Lavoisier and the late phlogistonians cannot be cashed out as a
+disagreement over the probability assigned to a shared proposition.
+What counted as combustion, what counted as a substance, what
+counted as the conservation of something, and what an experimental
+yield was even evidence \emph{for}, all shifted together; the very
+referents of the disputants' terms drift across the
+transition~\citep{Lewowicz2011_2}. \citet{Carrier2002_4} makes the
+related point that intertheoretic comparison across the phlogiston/
+oxygen divide requires reconstructing each side's network of
+inferential commitments rather than aligning a common variable; the
+incommensurability at stake is between generative models, not between
+parameter settings within one. Historical work on the linguistic and
+institutional reorganisation of Lavoisian
+chemistry~\citep{Mcevoy1989_7,Perrin1988_5,Boantza2008_4} reinforces
+this: the revolution was a re-tooling of which questions could be
+posed, not a re-weighting of answers to fixed questions. A scalar
+order parameter cannot, by construction, carry this information,
+because the cardinality of admissible nodes and edges is exactly what
+is changing. Even philosophers sympathetic to a deflationary reading
+of incommensurability concede that the residue which resists
+deflation is structural rather than
+quantitative~\citep{Malone1993_5}. The scalar treatment is therefore
+silent on what the historians take to be the substantive content of
+the revolution.
+
+\paragraph{Failure modes the scalar treatment cannot diagnose.}
+A second pressure comes from a different direction. Even if one set
+aside the question of structural reorganisation and asked only after
+the social pathologies a multi-agent paradigm model ought to recover,
+the scalar treatment runs into a distinction it cannot draw.
+\citet{Nguyen2018_1} argues that two pathologies of collective
+inference -- routinely conflated in popular usage -- have entirely
+different mechanisms and admit entirely different remedies. An
+\emph{epistemic bubble} is a failure of \emph{informational
+topology}: relevant voices are omitted from the network, coverage is
+incomplete, and exposure to those voices is sufficient to dissolve
+the pathology. An \emph{echo chamber} is a failure of \emph{trust
+calibration}: outside voices are not absent but actively discredited,
+so that exposure to them, if anything, reinforces the chamber. The
+two failure modes can co-occur, but they are not the same object;
+follow-up work emphasises that they decouple in
+practice~\citep{Pollock2024_3} and that the trust-calibration variant
+can become self-stabilising in ways that omission alone cannot
+explain~\citep{Clinkenbeard2025_4}. A scalar belief variable updated
+under socially-weighted observations registers both pathologies as
+the same kind of thing -- a population whose marginal has collapsed
+onto one attractor -- and so cannot, on its own resources,
+distinguish a community that has merely failed to encounter an
+alternative from one that has built the discrediting of alternatives
+into its updating rule. The two patients present with the same
+symptom, but they have different diseases, and the scalar model has
+no diagnostic on which to separate them.
+
+\paragraph{Locating the gap.}
+The Lavoisian case and the bubble/chamber distinction press from
+opposite ends on the same point. From the philosophy-of-science side,
+the object being reorganised in a paradigm shift is the inferential
+web, and a scalar carries none of the relevant structure. From the
+social-epistemology side, the pathologies a multi-agent treatment
+ought to distinguish are differentiated by their structural
+locus -- topology versus trust -- and a scalar cannot mark which
+locus is failing. These are not arguments against the scalar
+treatment as such; they are arguments that something has to be added
+to it. What that something is, and how it can be added without giving
+up the dynamical traction the scalar treatment already buys, is the
+business of the next section.
+
+
+% =====================================================================
+\section{Structural Extension: Bayes Nets and Bayesian Model Reduction}
+\label{sec:structural}
+% =====================================================================
+
+The scalar treatment of \S\ref{sec:scalar-multiagent} sufficed to expose
+asymmetric belief-revision dynamics, but it cannot speak to what
+practising scientists actually argue about: which commitments are
+foundational, which are negotiable, and which channel of observation
+to spend a finite attentional budget on next. The structured extension
+recovers all three by promoting each agent's paradigm from a point in
+$\Theta$ to a Bayesian network whose nodes carry theoretical
+commitments and whose edges encode inferential dependencies.
+
+\paragraph{Structural belief representation.}
+The conceptual ancestry of paradigms-as-networks predates active
+inference by half a century. \citet{Wahyudi2026_2}, reconstructing
+Quine's coherentism, summarises the web-of-belief picture in which no
+proposition confronts experience in isolation: revisions propagate
+along inferential links, and the choice of which link to cut is
+underdetermined by data alone. Lakatos's methodology of scientific
+research programmes sharpens this into a topology with a designated
+\emph{hard core} of commitments shielded by a flexible
+\emph{protective belt} of auxiliary hypotheses
+\citep{Heijdra1986_6,Ostapiuk2025_11}; the belt absorbs anomalies so
+that the core remains in force, and a programme degenerates only when
+belt-patching ceases to predict novel facts. Thagard's ECHO programme
+operationalises Quinean coherence as a connectionist constraint
+network and demonstrates, on the continental-drift case study, that
+the same machinery can reconstruct a historical paradigm shift as a
+re-equilibration of explanatory links
+\citep{Thagard1989_1,Thagard1988_4}; \citet{Ranney1988_3} extend the
+account to belief revision in naive physics. None of these accounts
+furnishes a generative model, but each picks out the same structural
+object: a graph of commitments whose densely-connected interior is
+held rigid while its periphery negotiates with observation. We adopt
+this object verbatim, identifying core nodes with the parameters
+under tight prior precision and belt nodes with those under broad
+prior precision in the agent's generative model.
+
+\paragraph{Bayesian model reduction.}
+Promoting the core/belt distinction to a piece of formal machinery
+requires a principled treatment of \emph{structural} inference --- the
+problem of scoring alternative graphs, not just alternative parameter
+values, against the same data. \citet{Friston2018_2}, extending the
+post-hoc model selection scheme of Friston \& Penny (2011), provide
+precisely this in the form of Bayesian model reduction (BMR). The
+construction is straightforward in variational Bayes: once the full
+model has been inverted, the evidence and posterior of any
+\emph{reduced} model --- one differing only in its priors --- can be
+computed analytically from the full posterior and the ratio of priors,
+generalising the Savage--Dickey density ratio. Concretely, switching
+off a candidate edge corresponds to collapsing the prior variance on
+the associated parameter to zero; the resulting change in variational
+free energy is the (log) Bayes factor for that structural revision.
+For the Dirichlet posteriors that govern categorical likelihood
+mappings in discrete state-space models --- the natural form for
+theory--observation links --- the reduced free energy has a closed
+form in terms of multivariate beta functions. \citet{Friston2018_2}
+showcase BMR as both a data-analytic tool and a metaphor for
+neurobiological abductive reasoning: the same equations that prune
+redundant DCM connections describe the synaptic elimination an agent
+performs when ``thinking off-line'' simplifies its model of a
+contingency. \citet{Markovi'c2023_1} extend the scheme to deep-network
+sparsification, evidencing that the reduction is general across
+parameter spaces. We invoke BMR as the engine of paradigm dynamics:
+candidate revisions to an agent's network --- adding a belt link,
+demoting a core node, accepting a rival auxiliary --- are scored by
+their reduced free energy, with the structural affective utility
+inherited from \S\ref{sec:motivatedbelief} entering as a contribution
+to the cost of admitting each revision. Path-dependence in the scalar
+model thus refines into something graph-theoretic: revisions that
+touch the core are more expensive because more of the posterior has
+to be re-balanced.
+
+\paragraph{Active sampling and precision allocation.}
+The structural representation closes the loop with action selection in
+a way the scalar model could not. Observation in the structured model
+is not exogenous arrival of evidence but an active sampling decision:
+the agent allocates a finite precision budget across belt nodes,
+sampling some channels with high precision and others with low.
+\citet{friston2015ActiveInferenceEpistemic} establishes the
+underlying primitive --- expected free energy decomposes into
+extrinsic (utility) and epistemic (information-gain) value ---
+and \citet{millidge2021EFE} surveys the equivalent decompositions.
+\citet{Mirza2019_2} show, in an MDP formulation of Yarbus's classic
+visual-search paradigm, that selective attention is just
+context-dependent modulation of the likelihood precisions $\zeta$:
+raising $\zeta$ on task-relevant channels and lowering it on
+task-irrelevant ones reweights expected information gain so that the
+agent saccades to evidence that distinguishes hypotheses it actually
+entertains. The same construction underwrites
+\citet{feldmanFriston2010Attention}, \citet{parrFriston2017Attention},
+and the precision-control account of
+\citet{parrFriston2019AdvancedAtt}; \citet{limanowskiFriston2018Dark}
+fills in the failure mode where mis-allocated precision dampens
+exploration. Transposed to the paradigm setting, precision allocation
+\emph{is} the paradigm-dependence of observation: an agent inhabiting
+a Newtonian network attends to mass-and-force belt nodes with high
+precision and assigns negligible precision to channels whose only
+hidden cause lies in a rival network. The result is a structured
+analogue of theory-laden perception
+(\S\ref{sec:theoryladen})~\citep{hylandAlbarracin2025MindChange},
+now derived rather than stipulated: what counts as a salient
+observation is what the agent's current network has bandwidth to
+believe.
+
+
+% =====================================================================
+\section{Derived Consequences of the Structured Model}
+\label{sec:derived-results}
+% =====================================================================
+
+The structural extension developed in Section~\ref{sec:structural} is
+not introduced for its own sake. It earns its place because three
+otherwise-disparate results in network epistemology --- the Zollman
+tradeoff between consensus speed and asymptotic accuracy, the
+paradoxical-stubbornness finding from the division-of-cognitive-labor
+literature, and Nguyen's distinction between epistemic bubbles and
+echo chambers --- recover as derived consequences of one mechanism: a
+trust-precision network propagating candidate \emph{structural}
+revisions rather than scalar opinions. We position each result in turn
+and indicate which observable in our simulations it indexes.
+
+\paragraph{The Zollman tradeoff and the value of inefficiency.}
+\citet{zollman2007NetworkEpistemology, zollman2010TransientDiversity}
+showed, in a multi-armed-bandit network of Bayesian scientists, that
+\emph{denser} communication graphs converge faster but more often
+lock onto the worse arm; sparser graphs sustain transient diversity
+long enough for the inferior hypothesis to be discarded, and so reach
+higher asymptotic accuracy. The mechanism is now well understood as a
+spectral one: the rate at which beliefs synchronise on a graph is set
+by its algebraic connectivity (the Fiedler value $\lambda_2$ of the
+graph Laplacian)
+\citep{Griparic2021_7, Montijano2017_11, Tan2008_14}, so larger
+$\lambda_2$ compresses the transient phase during which dissent can
+falsify a leading hypothesis. The structured model inherits this
+argument unchanged at the topological level, but reroutes its
+substantive content: the channels carry \emph{precision-weighted
+candidate revisions} of the generative model, not scalar credences,
+so the speed--accuracy tradeoff applies to structural revision events
+themselves. This vindicates the Feyerabendian-pluralist intuition
+\citep{Müürsepp2019_7} in mechanistic form --- a measured inefficiency
+in the trust-precision network is the substrate condition for the
+critical-discursive uptake that
+\citet{longino1990ScienceSocialKnowledge} requires of an epistemically
+healthy community --- and supplies the formal claim Longino's
+critical contextual empiricism has been criticised for leaving
+underspecified \citep{Novaes2025_1, Ajdari2023_6, Borgerson2011_5}.
+
+\paragraph{Division of cognitive labour and paradoxical stubbornness.}
+\citet{kitcher1990DivisionCognitiveLabor} and
+\citet{strevens2003PriorityRule} argued that the priority rule
+incentivises credit-driven scientists to spread across research
+programmes, producing a community-level distribution of effort closer
+to the social optimum than truth-driven scientists would individually
+choose. \citet{muldoonWeisberg2011Robustness} relaxed the
+god's-eye information assumption: in their local-information variant,
+agents that appear \emph{paradoxically stubborn} --- unwilling to
+abandon a low-success-probability programme --- in fact regularise
+the system, preventing premature convergence on whichever programme
+happened to lead first. \citet{romero2017NoveltyReplicability}
+qualifies the optimistic Kitcher--Strevens reading by noting that the
+priority rule rewards novelty regardless of replicability and so
+\emph{disincentivises} the very direct-replication work that would
+discipline structural revisions. In the structured model these
+findings appear as a single statement: an agent's resistance to a
+structural revision is proportional to the precision of its current
+generative model, so agents with strong structural utility on their
+incumbent paradigm act as protective elements against premature
+structural collapse. They are not uniquely irrational; their
+structural commitments simply require correspondingly stronger
+cross-channel evidence to revise. The Muldoon--Weisberg paradox and
+the Romero replication-vice fall out as two readings of the same
+asymmetry --- one casting it as virtue (transient diversity
+preserved), the other as vice (replication suppressed) --- and the
+model exposes the parameter that interpolates between them.
+
+\paragraph{Bubbles versus chambers: failure modes of cross-agent channels.}
+\citet{nguyen2020EchoChambers} draws a distinction that, in our
+framework, is structural rather than rhetorical. An
+\emph{epistemic bubble} is a failure of \emph{trust topology}:
+relevant voices are omitted, so the cross-agent channel is sparse or
+disconnected, and the bubble pops on simple exposure. An
+\emph{echo chamber} is a failure of \emph{trust precision}: the
+discrediting beliefs assigned to outsiders pre-emptively downweight
+incoming cross-surprisals, so the chamber survives exposure and can
+even use it for reinforcement
+\citep{Pollock2024_3, Turner2023_2, Clinkenbeard2025_4}. In the
+scalar-opinion setting this distinction must be argued for
+philosophically; in the structured-belief setting it is recovered as
+the formal separation between sparsity of $\trustmat$ and the
+precision weights it carries on its non-zero entries. Crucially,
+because the channels now carry candidate \emph{structural} revisions
+rather than scalar opinions, the bubble--chamber distinction becomes
+more honest: a bubble withholds candidate revisions; a chamber
+admits them and then assigns them zero precision. The two failure
+modes call for different repairs --- coverage versus
+precision-recalibration --- and the model makes the repair
+prescription mechanistic rather than virtue-theoretic.
+
+
+% =====================================================================
+\section{Discussion}
+\label{sec:discussion-background}
+% =====================================================================
+% Background prose for §7 of the working-structure PDF. Currently only
+% the third open question (external attentional curation) is drafted;
+% other open-question paragraphs are still authors' work.
+
+\paragraph{External attentional curation.}
+The third open question is the most consequential for the model's empirical
+domain of validity, and it remains open. Throughout
+Sections~\ref{sec:structural}--\ref{sec:derived-results} an agent's policy
+over which neighbours, papers, and observations to attend to is treated as
+endogenous: it is selected by expected free energy under the agent's own
+generative model and affective utility. In contemporary scientific practice
+this assumption is already strained. Citation recommenders, search-engine
+ranking, social-media amplification, and journal-level visibility filters
+increasingly mediate which findings an individual scientist ever encounters,
+and the same logic operates a fortiori in adjacent epistemic communities ---
+policy analysis, public discourse around scientific results, the training
+corpora of large models that themselves now participate in summarisation and
+triage. The literature on algorithmic curation documents that such systems
+do not merely accelerate access to a fixed information environment but
+actively reshape exposure through popularity bias, preference reinforcement,
+and the formation of ``information cocoons'' that insulate users from
+disconfirming evidence \citep{Lin2026_1, Zhao2020_3}, and that the boundary
+between helpful personalisation and manipulation is structurally hard to
+draw once the recommender's objective is decoupled from the user's epistemic
+interest \citep{D2025_2}.
+
+For the present construction the consequence is precise but unresolved. The
+attentional policy $\pi$ no longer factorises through a single agent's
+generative model: a curator $\mathcal{C}$ --- algorithmic, institutional, or
+both --- intervenes between the latent paradigm field and the per-agent
+observation channel, with its own objective that is in general not aligned
+with predictive accuracy on the underlying scientific question. The
+trust matrix $\trustmat$ then learns precisions over a doubly-mediated
+signal, and the resource-flow readouts acquire a third upstream lever beyond
+the exogenous inflow rate and initial trust configuration:
+the curator's policy itself. Whether this collapses to a renormalisation of
+the existing trust dynamics, or whether it introduces qualitatively new
+attractors --- in particular, attractors that survive the corrective force
+of cross-surprisal because the disconfirming observations are never sampled ---
+is the model's natural next question. It is also the point at which the
+construction makes contact with broader concerns about AI systems gradually
+displacing human epistemic agency \citep{kulveit2025GradualDisempowerment} and
+about the multi-principal coordination problems that arise when curators,
+scientists, and institutions optimise different objectives over a shared
+information substrate \citep{critchKrueger2020ARCHES}. We flag this as the
+open direction the framework most naturally extends into, and the one we
+take to be most urgent.

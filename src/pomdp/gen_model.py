@@ -73,6 +73,19 @@ class PomdpConfig:
     beta_U: float = 1.0                  # weight of the belief-utility term in EFE
     gamma_policy: float = 1.0            # policy precision (softmax temperature on EFE)
 
+    # --- experiment cost (the pragmatic effort term in EFE; paper §4) ---
+    # The canonical EFE has a cost-of-action term; here it is the cost of
+    # *running* an experiment. It is load-bearing for the lock-in mechanism:
+    # a confident agent assigns a low EIG to the experiment that would refute it
+    # (it predicts the outcome under its own paradigm), so a positive cost makes
+    # that decisive-but-expensive experiment net-negative for confident agents
+    # ONLY -- the self-censorship is derived, not gated. ``cost_scale = 0``
+    # recovers the pure epistemic+pragmatic EFE (regression-safe default).
+    cost_scale: float = 0.0
+    cost_kind: str = "discriminability"  # "discriminability" | "power" | "vector"
+    cost_power_k: float = 1.0            # cost ~ (x / max x)^k for cost_kind="power"
+    experiment_cost: tuple[float, ...] | None = None  # explicit (cost_kind="vector")
+
     # --- social channel ---
     q_reliability: float = 0.80          # trust-as-precision reliability for A_social
 
@@ -84,6 +97,9 @@ class PomdpConfig:
             raise ValueError("theta_vals must have length n_paradigms")
         if len(self.belief_utility) != self.n_paradigms:
             raise ValueError("belief_utility must have length n_paradigms")
+        if self.cost_kind == "vector" and self.experiment_cost is not None \
+                and len(self.experiment_cost) != len(self.x_grid):
+            raise ValueError("experiment_cost must have length len(x_grid)")
 
 
 # ----------------------------------------------------------------------
@@ -207,14 +223,62 @@ def discriminability(cfg: PomdpConfig, A_world: jnp.ndarray | None = None
     return out
 
 
+def build_cost(cfg: PomdpConfig, A_world: jnp.ndarray | None = None
+               ) -> jnp.ndarray:
+    """Per-experiment effort cost vector ``cost[a]`` (the pragmatic action term).
+
+    Three shapes, all scaled by ``cost_scale``:
+
+      * ``"discriminability"`` (default): ``cost = cost_scale * d_a``. The cost of
+        an experiment is proportional to how sharply it separates the paradigms
+        -- a decisive apparatus (high Fisher information) is expensive to build
+        and run. This is the load-bearing default: it makes cost and
+        EIG-when-uncertain co-vary, so the *only* thing that flips an experiment
+        from worth-it to not-worth-it is the agent's confidence (which shrinks
+        EIG without shrinking cost).
+      * ``"power"`` : ``cost = cost_scale * (x / max x)^k`` -- effort grows with
+        the experiment's magnitude independent of discriminability.
+      * ``"vector"``: explicit ``cost_scale * experiment_cost``.
+
+    ``cost_scale = 0`` returns zeros (pure epistemic+pragmatic EFE).
+
+    Scale note: the ``"discriminability"`` base is normalised to its own max, so
+    the most decisive experiment has unit base cost and ``cost_scale`` reads
+    directly in EFE units (the epistemic term is a mutual information bounded by
+    ``log K``). This is what makes *confidence* — not raw cost magnitude — the
+    variable that flips an experiment from worth-it to not: an uncertain agent's
+    EIG on the decisive experiment (~log K) exceeds a modest ``cost_scale`` while
+    a confident agent's shrunken EIG no longer does.
+    """
+    A = build_A_world(cfg) if A_world is None else A_world
+    n_actions = A.shape[2]
+    if cfg.cost_scale == 0.0:
+        return jnp.zeros((n_actions,))
+    if cfg.cost_kind == "discriminability":
+        d = jnp.asarray(discriminability(cfg, A))
+        base = d / (jnp.max(d) + EPS)          # normalise: decisive exp -> unit cost
+    elif cfg.cost_kind == "power":
+        x = jnp.asarray(cfg.x_grid)
+        base = (x / (jnp.max(x) + EPS)) ** cfg.cost_power_k
+    elif cfg.cost_kind == "vector":
+        if cfg.experiment_cost is None:
+            raise ValueError("cost_kind='vector' requires experiment_cost")
+        base = jnp.asarray(cfg.experiment_cost)
+    else:
+        raise ValueError(f"unknown cost_kind {cfg.cost_kind!r}")
+    return cfg.cost_scale * base
+
+
 def build_generative_model(cfg: PomdpConfig) -> dict:
     """Assemble all generative-model arrays into one dict (the agent's model)."""
+    A_world = build_A_world(cfg)
     return {
-        "A_world": build_A_world(cfg),     # (n_o, K, A)
+        "A_world": A_world,                # (n_o, K, A)
         "A_social": build_A_social(cfg),   # (K, K)
         "B": build_B(cfg),                 # (K, K) identity
         "C": build_C(cfg),                 # (n_o,)
         "D": build_D(cfg),                 # (K,)
         "U": build_U(cfg),                 # (K,)
-        "d": jnp.asarray(discriminability(cfg)),  # (A,)
+        "d": jnp.asarray(discriminability(cfg, A_world)),  # (A,)
+        "cost": build_cost(cfg, A_world),  # (A,) experiment effort cost
     }

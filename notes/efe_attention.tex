@@ -1,0 +1,118 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\title{Attention as expected free energy:\\
+sampling driven by prediction error in the structural paradigm model}
+\author{}
+\date{}
+
+\newcommand{\Pib}{\boldsymbol{\Pi}}
+\newcommand{\Sib}{\boldsymbol{\Sigma}}
+
+\begin{document}
+\maketitle
+
+\noindent
+This note derives the rule that sets each agent's per-channel evidential precision
+$\rho_k$ (the weights fed to \texttt{world.fisher\_deposit\_weighted}) as the policy that
+minimises \emph{expected free energy}. The aim is to replace the three reduced-form
+\texttt{precision\_mode}s (\texttt{heuristic}, \texttt{derived}, \texttt{derived\_live}) --
+all of which only ever \emph{suppress} channels -- with a single uniform functional that also
+contains an \emph{epistemic} drive, so that ``where to look'' is read off the belief net
+rather than imposed. The executable spec is \texttt{src/structural/efe.py}; the hand-checked
+numbers are \texttt{tests/test\_efe.py}.
+
+\section{Setup}
+Each agent $i$ carries a Gaussian belief over commitments $\phi\in\mathbb{R}^d$ in
+information form, $p_i(\phi)\propto\exp(-\tfrac12\phi^\top\Pib_i\phi+h_i^\top\phi)$, with
+mean $\mu_i=\Pib_i^{-1}h_i$. A round consists of \textsc{fuse} (trust-weighted precision
+addition, $\Pib_i\!\leftarrow\!\sum_j W_{ij}\Pib_j$) then \textsc{observe}: the agent runs a
+set of experiments, channel $k$ measuring node $v(k)$ with evidential precision $\rho_k$,
+depositing Fisher information $\sum_k \rho_k\, e_{v(k)}e_{v(k)}^\top$. The question is how to
+choose $\rho$.
+
+\section{Attention is the policy that minimises expected free energy}
+The expected free energy of a sampling policy decomposes into a pragmatic (preference) term
+and an \emph{epistemic} (information-gain) term. For a linear-Gaussian likelihood the epistemic
+value of measuring node $v$ at precision $\rho$ is closed form,
+\begin{equation}
+\mathrm{EIG}_v \;=\; \tfrac12\log\det\!\big(\mathbf I+\rho\,\Sib\, e_v e_v^\top\big)
+\;=\;\tfrac12\log\!\big(1+\rho\,\Sib_{vv}\big),
+\label{eq:eig}
+\end{equation}
+a \emph{uniform} functional of the whole net (every $v$ scored by the same rule; the structure
+enters through $\Sib=\Pib^{-1}$). Monotone in the marginal variance $\Sib_{vv}$: look where you
+are uncertain.
+
+\paragraph{Robust reading (conditional, not marginal).} The incumbent (phlogiston) prior is an
+\emph{improper} common-cause net -- indefinite -- so $\Pib^{-1}$ need not be a proper covariance
+and \eqref{eq:eig} can be ill-posed. We therefore read uncertainty from the precision diagonal,
+$\Sib^{\mathrm{cond}}_{vv}=1/\Pib_{vv}$, the variance of $v$ \emph{conditional} on the rest of
+the net. It is non-negative whenever $\Pib_{vv}>0$, needs no inverse (cheap inside the jitted
+scan), and answers the apt question -- what would measuring $v$ tell me, holding my other beliefs
+fixed. Means $\mu=\mathrm{solve}(\Pib,h)$ as elsewhere in the code.
+
+\section{The two prediction errors}
+Free energy is precision-weighted prediction error. The salience that draws precision to a
+channel is the \emph{expected} prediction error there, and it has two sources, identical in form
+but differing in the ``other'' model whose prediction yours is differenced against.
+
+\paragraph{(1) Agent $\leftrightarrow$ world.}
+\begin{equation}
+\mathrm{PE}^{\mathrm{self}}_{i,k}\;=\;\frac{1}{\Pib_{i,\,v(k)v(k)}}.
+\end{equation}
+You expect to be surprised in proportion to how loosely you hold $v$. As evidence accumulates
+$\Pib_{vv}$ grows and this term decays: a confident agent predicts no error, so it stops
+sampling. \textbf{Self-sealing is emergent}, requiring no gate.
+
+\paragraph{(2) Agent $\leftrightarrow$ neighbour} (the structural \texttt{surprisal\_matrix}).
+\begin{equation}
+\mathrm{PE}^{\mathrm{soc}}_{i,k}\;=\;\sum_j W_{ij}\,\Pib_{j,\,v(k)v(k)}\,
+\big(\mu_{j,v(k)}-\mu_{i,v(k)}\big)^2 .
+\label{eq:soc}
+\end{equation}
+The trust-weighted ($W_{ij}$), confidence-weighted ($\Pib_{j,vv}$) squared discrepancy between a
+neighbour's prediction of $v$ and yours. Crucially \eqref{eq:soc} \textbf{does not depend on the
+agent's own precision} $\Pib_{i,vv}$: it can fire on a node $i$ has stopped sampling. This is the
+formal content of ``a trusted peer points at the node you nailed shut.''
+
+\section{The allocation, and the reduction to existing code}
+Let the pragmatic baseline be the paradigm's suppressive gain
+$\rho^{\mathrm{base}}_k=\rho_{\max}/(1+g\,C_{v(k)})$, where $C_v$ is the core-coupling cost of
+\texttt{precision.core\_coupling} and $g=$\texttt{core\_governance} (this is exactly
+\texttt{precision\_mode='derived'}). The epistemic drive is added on top and clipped:
+\begin{equation}
+\rho_{i,k}\;=\;\min\!\Big(\rho_{\max},\;\;\rho^{\mathrm{base}}_k
+\;+\;\rho_{\max}\big[\,\beta_{\mathrm e}\,s(\mathrm{PE}^{\mathrm{self}}_{i,k})
++\beta_{\mathrm s}\,s(\mathrm{PE}^{\mathrm{soc}}_{i,k})\,\big]\Big),
+\qquad s(x)=\tfrac{x}{1+x}.
+\label{eq:rho}
+\end{equation}
+With $\beta_{\mathrm e}=\beta_{\mathrm s}=0$ the drive vanishes and, since
+$\rho^{\mathrm{base}}_k\le\rho_{\max}$, $\rho=\rho^{\mathrm{base}}$ exactly -- byte-identical to
+\texttt{derived} (the back-compat anchor; \texttt{tests/test\_efe.py}). The drive is
+\emph{additive}: it can only push a suppressed channel \emph{back up} toward the ceiling, never
+past it. The social term $\beta_{\mathrm s}$ is precisely the knob that re-opens a self-sealed
+channel.
+
+\section{The claim to test}
+Because $\mathrm{PE}^{\mathrm{self}}$ self-extinguishes but $\mathrm{PE}^{\mathrm{soc}}$ does not,
+the model makes a sharp, falsifiable prediction: \emph{an individually self-sealed belief is
+robust to the world but not to a trusted peer who has looked.} Concretely, seed a ``vanguard''
+sub-population from the \emph{oxygen} prior (\texttt{phlogiston.oxygen\_prior}; agents who have
+already measured, hence disagree on the anomaly node). Then:
+\begin{itemize}
+\item with $\beta_{\mathrm s}=0$, a self-sealed incumbent bloc ($g$ large) never re-opens the
+gravimetric channel; the BMR refutation $\Delta F$ flatlines and the paradigm shift is prevented;
+\item with $\beta_{\mathrm s}>0$, the vanguard's disagreement \eqref{eq:soc} lifts $\rho$ on the
+anomaly channel back open, the agents collect the refuting data themselves, $\Delta F$
+un-flattens, and adoption spreads through the trust graph.
+\end{itemize}
+If instead adoption fails to spread even with $\beta_{\mathrm s}>0$ -- e.g.\ because absorbing the
+vanguard's belief sharpens $\Pib_{vv}$ and re-closes the channel -- the honest reading is that the
+social term alone is insufficient and the substrate additionally needs forgetting (a precision
+leak) to keep $\Sib_{vv}$ from collapsing. Either outcome is a result. The experiments live in
+\texttt{notebooks/21\_efe\_attention.ipynb}.
+
+\end{document}

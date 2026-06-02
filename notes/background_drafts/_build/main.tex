@@ -1,36 +1,79 @@
-% Standalone compile wrapper for ../background.tex
-% Uses article class to avoid LNCS dependencies; full preamble of paper/main.tex
-% not needed since the background is prose + citations only.
+% Standalone compile wrapper for ../background.tex (2026-05-30 STRUCTURAL rewrite).
+% Compiles the structural-model walkthrough: six TikZ figures reused from
+% figures_old.tex (paradigm-as-net, carry-over, derived conservatism, BMR
+% precision-corner navigation, scalar-vs-structural headline, multi-agent),
+% so the palette + tikz libraries below are figures_old.tex's, not the
+% scalar pomdp_paradigm_model.tex's.
 \documentclass[11pt,a4paper]{article}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[english]{babel}
 \usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{amsfonts}
 \usepackage[round,authoryear]{natbib}
 \usepackage{hyperref}
 \usepackage[margin=1in]{geometry}
 \usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usetikzlibrary{
+  arrows.meta,
+  positioning,
+  decorations.pathmorphing,
+  decorations.pathreplacing,
+  decorations.markings,
+  decorations.text,
+  shapes.geometric,
+  shapes.misc,
+  fit,
+  backgrounds,
+  calc,
+  patterns,
+  intersections
+}
 
 \hypersetup{colorlinks=true, linkcolor=black, citecolor=blue, urlcolor=blue}
 
-% Stub the only paper macro the background draft uses.
-\providecommand{\trustmat}{\mathbf{T}}
+% --- Colour palette imported verbatim from figures_old.tex
+\definecolor{coreblue}{RGB}{40, 70, 130}
+\definecolor{coredeep}{RGB}{25, 50, 100}
+\definecolor{paradigmA}{RGB}{170, 60, 60}
+\definecolor{paradigmB}{RGB}{60, 130, 90}
+\definecolor{softA}{RGB}{240, 215, 215}
+\definecolor{softB}{RGB}{215, 235, 225}
+\definecolor{softblue}{RGB}{215, 225, 240}
+\definecolor{accentamber}{RGB}{200, 145, 50}
+\definecolor{accentpurple}{RGB}{120, 80, 150}
+\definecolor{softpurple}{RGB}{230, 220, 240}
+\definecolor{softamber}{RGB}{245, 230, 200}
+\definecolor{notegrey}{RGB}{95, 95, 110}
+\definecolor{darkgrey}{RGB}{60, 60, 70}
 
-\title{Background --- Draft\\[2pt]
+% --- Math macros used by the walkthrough prose
+\providecommand{\KL}[2]{D_{\mathrm{KL}}\!\left[#1\,\|\,#2\right]}
+\providecommand{\E}[1]{\mathbb{E}\!\left[#1\right]}
+
+\title{Background --- The Structural Paradigm Model\\[2pt]
        \large IWAI 2026: Paradigm Dynamics in Multi-Agent Motivated Belief}
 \author{Hallgren \& Hyland}
-\date{2026-05-29 (combined draft, pre-curation)}
+\date{2026-05-30 (structural rewrite; scalar walkthrough archived as
+      background\_scalar\_walkthrough.tex)}
 
 \begin{document}
 \maketitle
 
-\noindent\textit{This is a working compile of the 7-section background draft
-generated 2026-05-29. Citations marked with ``??'' are foundational anchors
-flagged in the source TODO header for hand-addition to \texttt{refs.bib}
-(Kunda 1990, Lakatos 1970, Zollman 2007/2010, Kitcher 1990, Strevens 2003,
-Muldoon \& Weisberg 2011, Nguyen 2020, etc.); 62 of 73 cite keys resolve
-against the concatenated cluster bibs + master \texttt{refs.bib}.}
+\noindent\textit{Step-by-step construction of the structural paradigm
+model. A paradigm is a precision-weighted Bayes net of interdependent
+commitments; conservatism is derived from structural position; paradigm
+change is carry-over by message propagation; structural inference is
+Bayesian model reduction over a continuous precision space; the
+population signature is a graded structural reorganisation. The scalar
+model is the baseline it departs from. Figures reused from
+\texttt{figures\_old.tex}; the prior scalar and lit-review drafts are
+preserved in this directory.}
 
 \bigskip
 
