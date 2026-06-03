@@ -42,10 +42,10 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 
-from src.network import build_adjacency
-from src.structural import belief, bmr, world, step
+from src.structural import belief, bmr, world, step, graphs
 from src.structural import phlogiston as ph
 from src.structural.belief import GaussianBeliefNet
+from src.structural.graphs import Graph
 from src.structural.phlogiston import StructuralConfig
 
 
@@ -185,17 +185,29 @@ class Agent(eqx.Module):
 # ----------------------------------------------------------------------
 
 class Network(eqx.Module):
-    """The social graph: a *stack* of ``Agent`` on a shared basis, plus the
-    row-stochastic trust/fusion weights ``W`` and the PRNG key.
+    """A population on a social graph: a first-class :class:`graphs.Graph` (the
+    *topology*), a *stack* of ``Agent`` on a shared basis (the *beliefs*), the
+    row-stochastic fusion weights ``W`` (the graph's closed-neighbourhood
+    normalisation, ``graph.trust_W()``), and the PRNG key.
 
-    ``init`` builds the graph host-side (the user's "initialise the graph"); the
-    ``run_*`` methods are the compiled rollout (the user's "then compile"). The
-    per-round dynamics -- FUSE the trusted neighbourhood, then weighted-OBSERVE --
-    are reused verbatim from ``step`` (``step._transition``); ``Network`` only adds
-    the ``eqx.filter_jit`` wrapper and the object surface.
+    **Topology is decoupled from beliefs.** ``init`` takes the belief ``groups``
+    (who believes what) and, optionally, an explicit ``graph`` (who talks to whom)
+    *separately*. Pass any ``graphs.*`` constructor -- ``erdos_renyi``,
+    ``scale_free``, ``watts_strogatz``, ``community``, ``ring``, ``lattice``,
+    ``complete`` -- or omit it to build one from ``cfg.network``. Because the graph
+    is stored (not discarded as a throwaway adjacency), ``isolated`` and the timed
+    ``run_bridge`` are now *graph operations* (``graph.isolated()`` /
+    ``graph.with_bridge(inter)``) reading membership from the graph, not re-derived
+    from the belief groups.
+
+    ``init`` is host-side setup; the ``run_*`` methods are the compiled rollout.
+    The per-round dynamics -- FUSE the trusted neighbourhood, then weighted-OBSERVE
+    -- are reused verbatim from ``step`` (``step._transition``); ``Network`` only
+    adds the ``eqx.filter_jit`` wrapper and the object surface.
     """
 
     cfg: StructuralConfig = eqx.field(static=True)
+    graph: Graph = eqx.field(static=True)   # topology (host-side numpy adjacency)
     agents: Agent                 # stacked: Pi (N, d, d), h (N, d)
     W: jax.Array                  # (N, N) row-stochastic trust/fusion weights
     key: jax.Array
@@ -204,15 +216,42 @@ class Network(eqx.Module):
 
     @classmethod
     def init(cls, cfg: StructuralConfig, key: jax.Array,
-             groups: list[dict] | None = None) -> "Network":
-        """Build the graph and hand each agent its model. Reuses
-        ``step.init_state`` (networkx adjacency via ``src.network.build_adjacency``,
-        homogeneous or heterogeneous ``groups`` priors, ``trust_weights``), then
-        re-wraps the stacked ``(Pi, h)`` as an ``Agent`` pytree. All host-side --
-        this is setup, deliberately outside the JIT boundary."""
-        state = step.init_state(cfg, key, groups)
+             groups: list[dict] | None = None,
+             graph: Graph | None = None) -> "Network":
+        """Build the population and hand each agent its model.
+
+        ``groups`` (beliefs): the homogeneous / heterogeneous prior spec, exactly
+        as before (``None`` => every agent holds the same phlogiston prior).
+
+        ``graph`` (topology, NEW): an explicit :class:`graphs.Graph`. Omit it to
+        build the graph from ``cfg.network`` (the default path, byte-identical to
+        the old behaviour -- including ``planted_sbm`` membership derived from the
+        belief ``groups``). Pass one to put any belief population on any topology,
+        independent of the groups.
+
+        The prior math is reused verbatim from ``step.init_state``; only the source
+        of the fusion matrix ``W`` differs (the stored graph)."""
+        if graph is None:
+            graph = cls._graph_from_cfg(cfg, groups)
+        W = graph.trust_W()
+        state = step.init_state(cfg, key, groups, W_override=W)
         agents = Agent(Pi=state.Pi, h=state.h, names=state.names)
-        return cls(cfg=cfg, agents=agents, W=state.W, key=state.key)
+        return cls(cfg=cfg, graph=graph, agents=agents, W=W, key=state.key)
+
+    @staticmethod
+    def _graph_from_cfg(cfg: StructuralConfig,
+                        groups: list[dict] | None) -> Graph:
+        """The default-path topology: a :class:`graphs.Graph` built from
+        ``cfg.network``. For ``planted_sbm`` the community membership is derived
+        from the belief ``groups`` (the legacy entanglement, preserved only on this
+        implicit path -- use an explicit ``graphs.community(sizes, ...)`` to break
+        it)."""
+        membership = None
+        if cfg.network.kind == "planted_sbm" and groups is not None:
+            membership = [gi for gi, g in enumerate(groups)
+                          for _ in range(g["count"])]
+        return graphs.graph_from_config(cfg.network, cfg.n_agents, cfg.seed,
+                                        membership)
 
     @property
     def n_agents(self) -> int:
@@ -266,6 +305,18 @@ class Network(eqx.Module):
         decomposition needs no python loop."""
         return np.asarray(_run_trace_index_jit(self))
 
+    def run_trace_net(self) -> tuple[np.ndarray, np.ndarray]:
+        """Full per-agent ``(Pi, h)`` trajectory ``(n_steps, N, d, d)`` /
+        ``(n_steps, N, d)`` in one compiled ``scan`` -- the "open the box" trace.
+        Where ``run_trace`` / ``run_trace_index`` collapse each step to a scalar,
+        this keeps the *whole* belief net so the joint and conditional (hub-
+        marginalized) coupling structure can be derived host-side in numpy
+        (``bmr.schur_marginalize``, ``observables.carryover_mass``). Heavy
+        (``O(n_steps*N*d^2)``); the device->host transfer happens ONCE here.
+        Subsample the returned frames for long horizons / large populations."""
+        Pi_t, h_t = _run_trace_net_jit(self)
+        return np.asarray(Pi_t), np.asarray(h_t)
+
     def run_trace_bmr(self) -> tuple[np.ndarray, np.ndarray]:
         """Per-step ``(m_t, deltaF_t)`` in one compiled ``scan``: the population
         order parameter and the population-mean BMR Bayes factor for phlogiston's
@@ -276,61 +327,80 @@ class Network(eqx.Module):
 
     # -- timed-bridge rollout (Model B: enablement by a split) ---------
 
-    def _coupled_W(self, inter_prob: float, groups: list[dict]) -> jax.Array:
-        """Rebuild the trust weights ``W`` for the *same* agents with the
-        communities bridged at density ``inter_prob`` (host-side; same seed and
-        ``intra_prob`` as ``init``, so the within-community structure is unchanged
-        and only the cross-community edges are added). ``groups`` carries the
-        community membership."""
-        membership = [gi for gi, g in enumerate(groups) for _ in range(g["count"])]
-        nc = self.cfg.network
-        A = build_adjacency(
-            n_agents=self.n_agents, mean_degree=nc.mean_degree,
-            rewiring_p=nc.rewiring_p, seed=self.cfg.seed, kind="planted_sbm",
-            society_membership=membership, intra_prob=nc.intra_prob,
-            inter_prob=inter_prob)
-        A_self = jnp.asarray(A) + jnp.eye(self.n_agents)
-        return step.trust_weights(A_self)
+    def _coupled_W(self, inter_prob: float) -> jax.Array:
+        """The fusion weights ``W`` for the *same* agents with this graph's
+        communities bridged at cross-density ``inter_prob``
+        (``graph.with_bridge(inter_prob).trust_W()`` -- same seed and within-block
+        ``intra`` as ``init``, only the cross-block edges added). The membership now
+        travels with the stored graph, so this no longer needs the belief
+        ``groups`` (the old entanglement). Requires a community graph."""
+        return self._coupled_graph(inter_prob).trust_W()
 
-    def _bridge_W_seq(self, t_incubate: int, inter_prob: float,
-                      groups: list[dict]) -> jax.Array:
+    def _coupled_graph(self, inter_prob: float) -> Graph:
+        if self.graph.membership is None:
+            raise ValueError(
+                "run_bridge / _coupled_W need a community graph (block "
+                "membership). Build the Network with a graphs.community(...) graph "
+                "or cfg.network.kind='planted_sbm' + groups.")
+        return self.graph.with_bridge(inter_prob)
+
+    def _bridge_W_seq(self, t_incubate: int, inter_prob: float) -> jax.Array:
         """The per-step fusion schedule for a timed bridge: the network's current
         (split) ``W`` for the first ``t_incubate`` steps, then the coupled ``W`` for
         the rest of the horizon. ``(n_steps, N, N)``."""
         T = self.cfg.n_steps
         t_inc = max(0, min(int(t_incubate), T))
-        W_coupled = self._coupled_W(inter_prob, groups)
+        W_coupled = self._coupled_W(inter_prob)
         return jnp.stack([self.W] * t_inc + [W_coupled] * (T - t_inc))
 
     def run_bridge(self, t_incubate: int, inter_prob: float,
-                   groups: list[dict]) -> tuple[np.ndarray, np.ndarray]:
+                   groups: list[dict] | None = None
+                   ) -> tuple[np.ndarray, np.ndarray]:
         """Model B rollout: the population fuses inside its disconnected communities
         (the network's current split ``W``, from an ``inter_prob=0`` init) for
         ``t_incubate`` steps of *protected incubation*, then a bridge of density
-        ``inter_prob`` opens and stays open for the rest of the horizon. ``groups``
-        is the same society spec used at ``init`` (it carries the membership needed
-        to rebuild the coupled graph). Returns ``(m_t, grav_t)`` like ``run_trace``;
-        ``t_incubate=0`` is identical to an always-coupled run."""
-        W_seq = self._bridge_W_seq(t_incubate, inter_prob, groups)
+        ``inter_prob`` opens and stays open for the rest of the horizon. Returns
+        ``(m_t, grav_t)`` like ``run_trace``; ``t_incubate=0`` is identical to an
+        always-coupled run. (``groups`` is accepted for backward compatibility but
+        ignored -- the community membership now lives on the stored graph.)"""
+        W_seq = self._bridge_W_seq(t_incubate, inter_prob)
         ms, gws = _run_trace_schedule_jit(self, W_seq)
         return np.asarray(ms), np.asarray(gws)
 
     def run_bridge_index(self, t_incubate: int, inter_prob: float,
-                         groups: list[dict]) -> np.ndarray:
+                         groups: list[dict] | None = None) -> np.ndarray:
         """Per-agent oxygen-index trajectory ``(n_steps, N)`` for the timed bridge
         (the index sibling of ``run_bridge``): reads each community's conviction
         *through* the moment the bridge opens. The population curve is
         ``.mean(axis=1)``; a per-community curve is the mean over that community's
-        agent columns."""
-        W_seq = self._bridge_W_seq(t_incubate, inter_prob, groups)
+        agent columns. (``groups`` accepted but ignored -- see ``run_bridge``.)"""
+        W_seq = self._bridge_W_seq(t_incubate, inter_prob)
         return np.asarray(_run_trace_index_schedule_jit(self, W_seq))
 
+    def run_bridge_net(self, t_incubate: int, inter_prob: float,
+                       groups: list[dict] | None = None
+                       ) -> tuple[np.ndarray, np.ndarray]:
+        """Full per-agent ``(Pi, h)`` trajectory ``(n_steps, N, d, d)`` /
+        ``(n_steps, N, d)`` for the timed bridge (the "open the box" sibling of
+        ``run_bridge`` / ``run_bridge_index``): the whole belief net of every agent
+        read *through* the incubation window and the moment the bridge opens, so the
+        conditional (hub-marginalized) structure of the clustered challenger and the
+        mainstream can be compared frame by frame. Heavy (``O(n_steps*N*d^2)``); one
+        device->host transfer. (``groups`` accepted but ignored -- see ``run_bridge``.)"""
+        W_seq = self._bridge_W_seq(t_incubate, inter_prob)
+        Pi_t, h_t = _run_trace_net_schedule_jit(self, W_seq)
+        return np.asarray(Pi_t), np.asarray(h_t)
+
     def isolated(self) -> "Network":
-        """A copy with communication switched off: ``W`` replaced by the identity,
-        so each agent only ever sees its own data (the no-fusion baseline). Lets you
-        contrast ``net.run_trace()`` against ``net.isolated().run_trace()``."""
+        """A copy with communication switched off: the graph's edges removed (so
+        ``W`` becomes the identity) and each agent only ever sees its own data (the
+        no-fusion baseline). Now a *graph* operation (``graph.isolated()``): the
+        topology and the fusion matrix stay consistent. Lets you contrast
+        ``net.run_trace()`` against ``net.isolated().run_trace()``."""
         N = self.n_agents
-        return eqx.tree_at(lambda n: n.W, self, jnp.eye(N, dtype=self.W.dtype))
+        return Network(cfg=self.cfg, graph=self.graph.isolated(),
+                       agents=self.agents, W=jnp.eye(N, dtype=self.W.dtype),
+                       key=self.key)
 
     def run_trace_precision(self
                             ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
@@ -343,7 +413,7 @@ class Network(eqx.Module):
     def __repr__(self) -> str:
         N = self.n_agents
         return (f"Network(N={N}, d={len(self.names)}, "
-                f"n_steps={self.cfg.n_steps}, "
+                f"graph={self.graph.kind!r}, n_steps={self.cfg.n_steps}, "
                 f"precision_mode={self.cfg.precision_mode!r})")
 
 
@@ -371,6 +441,11 @@ def _run_trace_index_jit(net: Network) -> jax.Array:
 
 
 @eqx.filter_jit
+def _run_trace_net_jit(net: Network) -> tuple[jax.Array, jax.Array]:
+    return step.run_trace_net(net.cfg, net._state())
+
+
+@eqx.filter_jit
 def _run_trace_bmr_jit(net: Network) -> tuple[jax.Array, jax.Array]:
     return step.run_trace_bmr(net.cfg, net._state())
 
@@ -390,3 +465,9 @@ def _run_trace_schedule_jit(net: Network, W_seq: jax.Array
 @eqx.filter_jit
 def _run_trace_index_schedule_jit(net: Network, W_seq: jax.Array) -> jax.Array:
     return step.run_trace_index_schedule(net.cfg, net._state(), W_seq)
+
+
+@eqx.filter_jit
+def _run_trace_net_schedule_jit(net: Network, W_seq: jax.Array
+                                ) -> tuple[jax.Array, jax.Array]:
+    return step.run_trace_net_schedule(net.cfg, net._state(), W_seq)

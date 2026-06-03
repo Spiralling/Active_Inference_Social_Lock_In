@@ -1,0 +1,10 @@
+jax
+jaxlib
+equinox
+jaxtyping
+numpy
+scipy
+networkx
+matplotlib
+pyyaml
+pytest

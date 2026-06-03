@@ -37,6 +37,7 @@ import jax.numpy as jnp
 from src.structural.belief import GaussianBeliefNet, combine, vague_prior
 from src.structural.bmr import schur_marginalize
 from src.structural import precision as P
+from src.structural.bayesnet import LinearGaussianBN, relational_operator
 from src.config import NetworkConfig
 
 
@@ -331,6 +332,92 @@ def attention_weights(oxy_index: jnp.ndarray, cfg: StructuralConfig
 def candidate_priors(cfg: StructuralConfig) -> dict[str, GaussianBeliefNet]:
     """The two candidate paradigms keyed by name, for the running-evidence race."""
     return {"phlogiston": phlogiston_prior(cfg), "oxygen": oxygen_prior(cfg)}
+
+
+# ----------------------------------------------------------------------
+# The phlogiston paradigm as a WELL-DEFINED Bayes net (explicit CPDs).
+#
+# The same scenario as ``phlogiston_prior`` but built the right way: a directed
+# common-cause DAG whose every node carries a named conditional distribution
+# p(node | parents), instead of hand-poking entries of a joint precision matrix.
+# See ``src/structural/bayesnet.py`` and ``notebooks/29_*``.
+# ----------------------------------------------------------------------
+
+def phlogiston_bn(cfg: StructuralConfig, conviction: float = 1.0
+                  ) -> LinearGaussianBN:
+    """The phlogiston paradigm as a Linear-Gaussian Bayes net (CPDs).
+
+    Structure (a DAG in ``NODE_NAMES`` order, which is already parents-before-
+    children):
+
+      * the hidden hub ``phlogiston`` is the *root common cause*: it is a parent of
+        every combustion / calcination / mass commitment (``HUB_NEIGHBOURS``), with
+        CPD weight ``cfg.hub_coupling`` -- this is what makes the surface phenomena
+        co-vary, expressed as genuine conditionals rather than a dense ``Pi`` block.
+      * a *belt mass-balance*: the anomaly ``calx_heavier_than_metal`` is a child of
+        the mass-law nodes ``mass_change_sign`` and ``gas_consumed`` (weight
+        ``cfg.mass_coupling``) -- the edge a gravimetric (relational) experiment can
+        actually move.
+
+    Prior means reproduce the paradigm's empirical content exactly: the intercepts
+    are set ``b = (I - B) mu*`` so the marginal means equal ``mu*`` (agreement nodes
+    ``mu_agree``; the disagreement / anomaly nodes the *wrong* ``mu_phlog_mass`` ==
+    "calx lighter"). ``conviction`` sets the inverse residual variance (stiffness):
+    larger => tighter CPDs => a more entrenched paradigm (the lock-in knob, the CPD
+    analogue of ``hub_self_prec`` / ``core_governance``).
+    """
+    names = cfg.node_names
+    d = len(names)
+    idx = _idx(cfg)
+
+    B = jnp.zeros((d, d))
+    for n in HUB_NEIGHBOURS:                       # hub -> each neighbour
+        B = B.at[idx[n], idx[HUB]].set(cfg.hub_coupling)
+    anom = idx["calx_heavier_than_metal"]
+    for n in ("mass_change_sign", "gas_consumed"):  # belt mass-balance edges
+        B = B.at[anom, idx[n]].set(cfg.mass_coupling)
+
+    target = jnp.full((d,), cfg.mu_agree)
+    target = target.at[idx[HUB]].set(0.0)          # hidden hub centred at 0
+    for n in DISAGREEMENT_NODES:
+        target = target.at[idx[n]].set(cfg.mu_phlog_mass)
+    b = (jnp.eye(d) - B) @ target                  # => marginal means == target
+
+    s = jnp.full((d,), 1.0 / conviction)
+    s = s.at[idx[HUB]].set(1.0 / (conviction * cfg.hub_self_prec))
+    return LinearGaussianBN(B=B, b=b, s=s, names=names)
+
+
+def gravimetric_H(cfg: StructuralConfig) -> jnp.ndarray:
+    """The relational observation operator for the corrected scenario: rows that
+    read *combinations* of nodes, so the data deposit off-diagonal Fisher
+    information and the belt edges learn over time.
+
+      * a mass-balance row ``calx_heavier_than_metal - mass_change_sign -
+        gas_consumed`` -- the gravimetric experiment that couples the anomaly to the
+        mass law (this is the row that *moves the structure*);
+      * direct rows on the stable agreement phenomena (the combustion commitments),
+        which both paradigms share.
+
+    Contrast ``H_observable`` (one row per node => diagonal Fisher => frozen edges).
+
+    The operator is a strict superset of the direct read: a direct row on every
+    observable node (these carry the regime *level* signal of ``phi_true_at`` -- so
+    a node's marginal mean flips over time) PLUS one relational *mass-balance* row
+    ``calx_heavier_than_metal - mass_change_sign - gas_consumed`` (this carries the
+    *coupling* signal -- so the belt edge weights move over time). The level story
+    and the structure story are both visible in one rollout.
+    """
+    meas = measured_nodes(cfg)
+    rels = [{n: 1.0} for n in meas]                       # direct reads (levels)
+    rels.append({"calx_heavier_than_metal": 1.0,          # mass-balance (coupling)
+                 "mass_change_sign": -1.0, "gas_consumed": -1.0})
+    return relational_operator(cfg.node_names, rels)
+
+
+def gravimetric_rows(cfg: StructuralConfig) -> tuple[str, ...]:
+    """Human-readable labels for the rows of ``gravimetric_H`` (row order)."""
+    return measured_nodes(cfg) + ("mass_balance(calx-mass-gas)",)
 
 
 # ----------------------------------------------------------------------

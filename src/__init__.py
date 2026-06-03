@@ -1,45 +1,14 @@
-"""Multi-agent paradigm-persistence model on a learned trust network (IWAI26 v2)."""
+"""Minimal production exports for the structural branch."""
 
-from src.config import (
-    InferenceConfig,
-    ModelConfig,
-    NetworkConfig,
-    PolicyConfig,
-    ResourceConfig,
-    TrustConfig,
-    UtilityConfig,
-    WorldConfig,
-    build,
-)
-from src.history import History
-from src.population import Population
-from src.viz import (
-    animate_population,
-    cluster_layout,
-    detect_communities,
-    draw_population,
-    fixed_layout,
-    society_layout,
-    static_strip,
-)
+from importlib import import_module
 
-__all__ = [
-    "animate_population",
-    "build",
-    "cluster_layout",
-    "detect_communities",
-    "draw_population",
-    "fixed_layout",
-    "History",
-    "InferenceConfig",
-    "ModelConfig",
-    "NetworkConfig",
-    "PolicyConfig",
-    "Population",
-    "ResourceConfig",
-    "society_layout",
-    "static_strip",
-    "TrustConfig",
-    "UtilityConfig",
-    "WorldConfig",
-]
+from src.config import NetworkConfig
+from src.network import build_adjacency
+
+__all__ = ["NetworkConfig", "build_adjacency", "structural"]
+
+
+def __getattr__(name: str):
+    if name == "structural":
+        return import_module("src.structural")
+    raise AttributeError(f"module 'src' has no attribute {name!r}")

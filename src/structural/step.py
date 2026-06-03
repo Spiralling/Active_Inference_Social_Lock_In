@@ -121,9 +121,19 @@ def _group_prior(cfg: StructuralConfig, paradigm: str, stance: float,
 
 
 def init_state(cfg: StructuralConfig, key: jax.Array,
-               groups: list[dict] | None = None) -> PopulationState:
+               groups: list[dict] | None = None, *,
+               W_override: jax.Array | None = None) -> PopulationState:
     """Initialise N agents on a social graph built by ``src/network.build_adjacency``
     (reused, not duplicated).
+
+    ``W_override`` (keyword-only, default ``None``): supply the row-stochastic
+    fusion matrix directly instead of deriving it from ``cfg.network`` here. The
+    class layer (``kernel.Network.init``) uses this to drive the population from a
+    first-class ``graphs.Graph`` (so the new graph families -- Erdos-Renyi, ring,
+    lattice, complete -- and topology decoupled from the belief ``groups`` work
+    without teaching this legacy builder every kind). ``None`` keeps the original
+    behaviour byte-for-byte: the prior math below is identical either way; only the
+    ``W`` source differs.
 
     ``groups=None`` (default): every agent holds the *same* phlogiston prior --
     the homogeneous baseline.
@@ -193,6 +203,9 @@ def init_state(cfg: StructuralConfig, key: jax.Array,
                     names = p.names
         Pi = jnp.concatenate(Pi_blocks, axis=0).copy()
         h = jnp.concatenate(h_blocks, axis=0).copy()
+
+    if W_override is not None:
+        return PopulationState(Pi=Pi, h=h, names=names, W=W_override, key=key)
 
     nc: NetworkConfig = cfg.network
     if nc.kind == "planted_sbm" and groups is not None:
@@ -420,6 +433,33 @@ def run_trace_index(cfg: StructuralConfig, state: PopulationState) -> jax.Array:
     return oxys                                                 # (T, N)
 
 
+def run_trace_net(cfg: StructuralConfig, state: PopulationState
+                  ) -> tuple[jax.Array, jax.Array]:
+    """Full per-agent ``(Pi, h)`` trajectory via ``jax.lax.scan``: returns
+    ``(Pi_t, h_t)`` of shape ``(n_steps, N, d, d)`` and ``(n_steps, N, d)``.
+
+    The heavyweight sibling of ``run_trace_index`` -- where that one reduces each
+    step's state to a scalar oxygen-index *inside* the scan, this one emits the
+    *whole* belief net per step, so the conditional / joint coupling structure can
+    be read off the host afterwards (``bmr.schur_marginalize`` to condition out the
+    hidden hub, ``observables.carryover_mass`` for the hub's structural importance,
+    etc.). The scan body is the same ``_transition`` as every other rollout, so the
+    trajectory is bit-identical to ``run_trace`` / ``run_final`` -- this just keeps
+    the full state instead of a summary. Static ``W`` (no bridge schedule). Memory
+    is ``O(n_steps * N * d^2)``; subsample the returned frames host-side for long
+    horizons / large populations."""
+    phis = jnp.stack([ph.phi_true_at(cfg, t) for t in range(cfg.n_steps)])  # (T, d)
+    W = state.W
+
+    def body(carry, phi):
+        Pi, h, key = carry
+        Pi, h, key = _transition(Pi, h, W, key, cfg, phi)
+        return (Pi, h, key), (Pi, h)
+
+    _, (Pi_t, h_t) = jax.lax.scan(body, (state.Pi, state.h, state.key), phis)
+    return Pi_t, h_t                                            # (T,N,d,d),(T,N,d)
+
+
 def run_trace_index_schedule(cfg: StructuralConfig, state: PopulationState,
                              W_seq: jax.Array) -> jax.Array:
     """Per-agent oxygen-index trajectory ``(n_steps, N)`` under a *per-step* fusion
@@ -442,6 +482,27 @@ def run_trace_index_schedule(cfg: StructuralConfig, state: PopulationState,
 
     _, oxys = jax.lax.scan(body, (state.Pi, state.h, state.key), (phis, W_seq))
     return oxys                                                 # (T, N)
+
+
+def run_trace_net_schedule(cfg: StructuralConfig, state: PopulationState,
+                           W_seq: jax.Array) -> tuple[jax.Array, jax.Array]:
+    """Full per-agent ``(Pi, h)`` trajectory under a *per-step* fusion schedule
+    ``W_seq`` ``(n_steps, N, N)`` -- the schedule sibling of ``run_trace_net`` (the
+    "open the box" trace), so the conditional / joint structure can be read *through*
+    a network change such as the timed bridge (a clustered challenger incubating in
+    isolation, then a bridge opening into the mainstream). Returns ``(Pi_t, h_t)`` of
+    shape ``(n_steps, N, d, d)`` / ``(n_steps, N, d)``. A constant schedule reproduces
+    ``run_trace_net`` exactly. Memory is ``O(n_steps * N * d^2)``."""
+    phis = jnp.stack([ph.phi_true_at(cfg, t) for t in range(cfg.n_steps)])  # (T, d)
+
+    def body(carry, inp):
+        phi, W = inp
+        Pi, h, key = carry
+        Pi, h, key = _transition(Pi, h, W, key, cfg, phi)
+        return (Pi, h, key), (Pi, h)
+
+    _, (Pi_t, h_t) = jax.lax.scan(body, (state.Pi, state.h, state.key), (phis, W_seq))
+    return Pi_t, h_t                                            # (T,N,d,d),(T,N,d)
 
 
 def run_trace_bmr(cfg: StructuralConfig, state: PopulationState

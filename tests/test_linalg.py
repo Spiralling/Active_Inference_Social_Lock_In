@@ -1,5 +1,8 @@
 """Hand-checked tests for the reusable LA kernel (src/structural/linalg.py).
 
+Layer: structural (THE PAPER OBJECT) · Guards: src/structural/linalg.py ·
+Map: tests/README.md
+
 Pure-array, pencil-and-paper asserts on tiny nets -- these pin the *numbers*, not
 just self-consistency, so they double as a readable spec of the information-form
 identities. (The belief/bmr wrappers are covered separately in test_structural.py;
