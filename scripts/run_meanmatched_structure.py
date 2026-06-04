@@ -149,13 +149,10 @@ def main() -> int:
         conv = "yes" if sweep[-1]["struc"] > 0.6 else "NO"
         print(f"{k:6d} | {sweep[-1]['iso']:9.2f} | {sweep[-1]['struc']:15.2f} | {conv}")
 
-    # disconnected control at k=2 -- the regime where INDIVIDUALS can't classify (iso~0.14) but
-    # connected structure-comms can (~0.94); without pooling it should fall back to ~isolated.
-    Vc = agent_views(2, 0)
-    disc = float(np.mean([run(Vc, Sig, L, comms="structure", connected=False, seed=s)[-30:].mean()
-                          for s in SEEDS]))
-    print(f"\n  disconnected control (k=2, structure-comms, no pooling): on-true={disc:.2f} "
-          f"(expect low -- partial pair-views can't be combined)")
+    # The no-pooling baseline IS the 'isolated' column (comms='none'): at k=2 individuals manage
+    # only ~0.14 while connected structure-comms reaches ~0.94 -- communicating the structure is
+    # what rescues it. (A community graph with inter=0 still pools WITHIN each 30-node block, which
+    # already covers the pairs, so it is not a no-pooling control; the isolated column is.)
 
     # representative trajectory (k=2, connected) for the figure -- the comms-rescue regime
     traj_struc = np.mean([run(agent_views(2, s), Sig, L, comms="structure", connected=True, seed=s)
@@ -175,8 +172,7 @@ def main() -> int:
     a0.set_title("k=2 partial views of a changing structural world")
     ks = [s["k"] for s in sweep]
     a1.plot(ks, [s["struc"] for s in sweep], "o-", color="seagreen", lw=2, label="communicate structure")
-    a1.plot(ks, [s["iso"] for s in sweep], "s-", color="navy", lw=2, label="isolated")
-    a1.scatter([2], [disc], marker="x", s=90, color="crimson", zorder=5, label="disconnected (k=2)")
+    a1.plot(ks, [s["iso"] for s in sweep], "s-", color="navy", lw=2, label="isolated (no comms)")
     a1.axhline(chance, color="crimson", ls="--", lw=1.2, label="λ (means): chance")
     a1.set_xlabel("view size k (nodes seen; 1 = no pair ever observed)")
     a1.set_ylabel("final fraction on true theory"); a1.set_ylim(-0.05, 1.05); a1.legend(fontsize=8)
@@ -190,28 +186,25 @@ def main() -> int:
     assert by_k[6]["struc"] > 0.8, \
         f"full views + structure-comms should converge, got {by_k[6]['struc']:.2f}"
     assert by_k[2]["struc"] > by_k[2]["iso"] + 0.1, \
-        "communicating structure should beat isolated once pairs are visible"
-    assert disc < by_k[2]["struc"] - 0.1, \
-        f"disconnected (k=2) should converge worse than connected ({disc:.2f} vs {by_k[2]['struc']:.2f})"
+        "communicating structure should beat isolated once pairs are visible (comms is essential)"
 
     summary = {"config": {"D": D, "rho": RHO, "N": N, "omega": OMEGA, "view_sizes": list(VIEW_SIZES),
                           "seeds": list(SEEDS), "theories": names, "epochs": [0, T1, T2]},
-               "chance": chance,
-               "sweep": sweep, "disconnected_k3": disc}
+               "chance": chance, "sweep": sweep}
     with (out_dir / "summary.json").open("w", encoding="utf-8") as fh:
         json.dump(summary, fh, indent=2)
     np.savez_compressed(out_dir / "simulation_arrays.npz",
                         view_sizes=np.array(VIEW_SIZES),
                         iso=np.array([s["iso"] for s in sweep]),
                         struc=np.array([s["struc"] for s in sweep]),
-                        disconnected_k3=disc, chance=chance,
-                        traj_struc=traj_struc, traj_iso=traj_iso)
+                        chance=chance, traj_struc=traj_struc, traj_iso=traj_iso)
 
     print(f"\nsaved arrays / figure / summary to {out_dir}")
     print(f"HEADLINE: when the truth is structural, the λ/means thing is blind (chance {chance:.2f}); "
-          f"communicating the Bayes net converges only when partial views see pairs AND can pool "
-          f"(k≥2 connected); with k=1 ({by_k[1]['struc']:.2f}) or disconnected ({disc:.2f}) the "
-          f"population does NOT converge -- imperfect information, no agreement.")
+          f"communicating the Bayes net rescues it ONLY when partial views see pairs and can pool "
+          f"(k=2: isolated {by_k[2]['iso']:.2f} → structure-comms {by_k[2]['struc']:.2f}); with k=1 "
+          f"({by_k[1]['struc']:.2f}, no pair ever seen) the population does NOT converge however it "
+          f"communicates -- imperfect information, no agreement.")
     return 0
 
 
