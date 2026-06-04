@@ -1,0 +1,92 @@
+{
+  "config": {
+    "N": 90,
+    "omega": 0.9,
+    "p_obs": [
+      1.0,
+      0.7,
+      0.5,
+      0.33
+    ],
+    "modes": [
+      "posterior",
+      "bayesnet",
+      "deposit_pool"
+    ],
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "converge_thresh": 0.6
+  },
+  "grid": {
+    "1.0|posterior": {
+      "on_truth": 1.0,
+      "B_disp": 2.919811888565012e-08,
+      "diversity": 0.00023449899163097143
+    },
+    "1.0|bayesnet": {
+      "on_truth": 1.0,
+      "B_disp": 2.4244833104110814e-08,
+      "diversity": 0.00023037375164373466
+    },
+    "1.0|deposit_pool": {
+      "on_truth": 1.0,
+      "B_disp": 5.999269525602813e-09,
+      "diversity": 0.000267491937847808
+    },
+    "0.7|posterior": {
+      "on_truth": 1.0,
+      "B_disp": 0.01448200736194849,
+      "diversity": 11.263585090637207
+    },
+    "0.7|bayesnet": {
+      "on_truth": 1.0,
+      "B_disp": 0.01487634734561046,
+      "diversity": 11.333265940348307
+    },
+    "0.7|deposit_pool": {
+      "on_truth": 1.0,
+      "B_disp": 0.028201086446642876,
+      "diversity": 21.45749855041504
+    },
+    "0.5|posterior": {
+      "on_truth": 1.0,
+      "B_disp": 0.01976247193912665,
+      "diversity": 11.64664618174235
+    },
+    "0.5|bayesnet": {
+      "on_truth": 1.0,
+      "B_disp": 0.02089772994319598,
+      "diversity": 11.618035634358725
+    },
+    "0.5|deposit_pool": {
+      "on_truth": 1.0,
+      "B_disp": 0.03797118862469991,
+      "diversity": 21.393191655476887
+    },
+    "0.33|posterior": {
+      "on_truth": 1.0,
+      "B_disp": 0.024273182575901348,
+      "diversity": 10.995406150817871
+    },
+    "0.33|bayesnet": {
+      "on_truth": 1.0,
+      "B_disp": 0.02605079176525275,
+      "diversity": 10.924529075622559
+    },
+    "0.33|deposit_pool": {
+      "on_truth": 1.0,
+      "B_disp": 0.04775188863277435,
+      "diversity": 19.65930430094401
+    }
+  },
+  "disconnected_control_on_truth": 1.0,
+  "B_disp_full_vs_partial": [
+    2.919811888565012e-08,
+    0.024273182575901348
+  ],
+  "bayesnet_vs_precision_max_delta": 0.0,
+  "n_converged_cells": 12
+}

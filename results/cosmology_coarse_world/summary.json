@@ -1,0 +1,72 @@
+{
+  "config": {
+    "M": 12,
+    "K": 4,
+    "n_steps": 260,
+    "eps": 0.15,
+    "sigma_o": 0.3,
+    "res_grid": [
+      1,
+      2,
+      3,
+      6,
+      12
+    ],
+    "omega_grid": [
+      1.0,
+      0.97,
+      0.93,
+      0.88
+    ],
+    "res_for_omega": 3
+  },
+  "resolution_sweep": [
+    {
+      "res": 1,
+      "t_resolve": 221,
+      "final_err": 0.14194059325876776
+    },
+    {
+      "res": 2,
+      "t_resolve": 209,
+      "final_err": 0.13377069936982805
+    },
+    {
+      "res": 3,
+      "t_resolve": 102,
+      "final_err": 0.07705718737755736
+    },
+    {
+      "res": 6,
+      "t_resolve": 83,
+      "final_err": 0.0629319633352314
+    },
+    {
+      "res": 12,
+      "t_resolve": 58,
+      "final_err": 0.05119546039165575
+    }
+  ],
+  "forgetting_floor": [
+    {
+      "omega": 1.0,
+      "final_err": 0.07705718737755736,
+      "t_resolve": 102
+    },
+    {
+      "omega": 0.97,
+      "final_err": 0.14081435297475275,
+      "t_resolve": 33
+    },
+    {
+      "omega": 0.93,
+      "final_err": 0.19324520526089414,
+      "t_resolve": -1
+    },
+    {
+      "omega": 0.88,
+      "final_err": 0.28000307158020576,
+      "t_resolve": -1
+    }
+  ]
+}

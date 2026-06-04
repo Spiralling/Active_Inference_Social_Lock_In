@@ -1,0 +1,58 @@
+{
+  "config": {
+    "rates": [
+      0.02,
+      0.05,
+      0.1,
+      0.3,
+      1.0
+    ],
+    "n_seeds": 40,
+    "coupling": 1.6,
+    "T2": 120,
+    "n_steps": 180,
+    "hub": "dark_energy"
+  },
+  "by_rate": [
+    {
+      "lambda": 0.02,
+      "wake_fraction": 0.725,
+      "mean_wake": 142.82758620689654,
+      "std_wake": 13.529199495949088,
+      "mean_delay_after_T2": 22.82758620689654
+    },
+    {
+      "lambda": 0.05,
+      "wake_fraction": 0.975,
+      "mean_wake": 136.66666666666666,
+      "std_wake": 10.145943570716867,
+      "mean_delay_after_T2": 16.666666666666657
+    },
+    {
+      "lambda": 0.1,
+      "wake_fraction": 1.0,
+      "mean_wake": 131.95,
+      "std_wake": 8.546783020528835,
+      "mean_delay_after_T2": 11.949999999999989
+    },
+    {
+      "lambda": 0.3,
+      "wake_fraction": 1.0,
+      "mean_wake": 125.9,
+      "std_wake": 3.7336309405188937,
+      "mean_delay_after_T2": 5.900000000000006
+    },
+    {
+      "lambda": 1.0,
+      "wake_fraction": 1.0,
+      "mean_wake": 123.7,
+      "std_wake": 2.6758176320519302,
+      "mean_delay_after_T2": 3.700000000000003
+    }
+  ],
+  "deterministic": {
+    "mean_wake": 127.225,
+    "wake_fraction": 1.0
+  },
+  "null_coupling0_wake_fraction": 0.0
+}

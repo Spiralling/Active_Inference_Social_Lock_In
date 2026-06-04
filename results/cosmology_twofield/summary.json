@@ -1,0 +1,46 @@
+{
+  "kappa": {
+    "general_relativity": 10.501250107884404,
+    "matter_density": 4.367249912798406,
+    "dark_energy": 2.8541249095201504,
+    "friedmann_expansion": 2.852499965429306,
+    "light_bending": 1.899999976158142,
+    "perihelion": 1.899999976158142,
+    "grav_redshift": 1.899999976158142,
+    "cmb_physics": 1.899999976158142,
+    "bbn_physics": 1.899999976158142,
+    "distance_modulus": 1.949999988079071,
+    "supernova_obs": 1.0,
+    "lensing_obs": 1.0,
+    "mercury_obs": 1.0,
+    "clock_obs": 1.0,
+    "cmb_obs": 1.0,
+    "bbn_obs": 1.0,
+    "mond_prediction": 1.0
+  },
+  "U": {
+    "general_relativity": 0.45124998867511756,
+    "matter_density": 0.17224994856119225,
+    "dark_energy": 1.1866249637603765,
+    "friedmann_expansion": 0.9024999773502351,
+    "light_bending": 0.0,
+    "perihelion": 0.0,
+    "grav_redshift": 0.0,
+    "cmb_physics": 0.0,
+    "bbn_physics": 0.0,
+    "distance_modulus": 0.949999988079071,
+    "supernova_obs": 1.0,
+    "lensing_obs": 0.0,
+    "mercury_obs": 0.0,
+    "clock_obs": 0.0,
+    "cmb_obs": 0.0,
+    "bbn_obs": 0.0,
+    "mond_prediction": -0.8
+  },
+  "kappa_GR_over_Lambda": 3.679323940188002,
+  "corr_kappa_U": 0.2479440386009324,
+  "schur": {
+    "prior_corr": -4.4727337922267907e-07,
+    "post_corr": 0.49598753452301025
+  }
+}

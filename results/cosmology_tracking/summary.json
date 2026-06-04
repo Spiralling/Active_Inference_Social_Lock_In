@@ -1,0 +1,113 @@
+{
+  "config": {
+    "N": 150,
+    "n_steps": 180,
+    "T1": 60,
+    "T2": 120,
+    "sigma_o": 0.5,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "conviction_level": 4.0,
+    "inter_connected": 0.08,
+    "homes": [
+      "dark_matter",
+      "modified_gravity",
+      "scale_variant_laws"
+    ],
+    "communities": [
+      "conservative",
+      "moderate",
+      "frontier"
+    ]
+  },
+  "epochs": [
+    "dark_matter",
+    "modified_gravity",
+    "scale_variant_laws"
+  ],
+  "cells": {
+    "neither": {
+      "lambda2": 10.9078724399983,
+      "n_distinct_end_mean": 1.0,
+      "comm0_stuck_frac": 0.0,
+      "reached_final_frac_mean": 1.0,
+      "on_truth_fraction_mean": 0.3333333333333333,
+      "final_disagreement_mean": 0.007270993199199438,
+      "end_theories_rep": [
+        2,
+        2,
+        2
+      ],
+      "dF_finite": true
+    },
+    "disconnection": {
+      "lambda2": -2.3684757858670005e-15,
+      "n_distinct_end_mean": 1.0,
+      "comm0_stuck_frac": 0.0,
+      "reached_final_frac_mean": 1.0,
+      "on_truth_fraction_mean": 0.3333333333333333,
+      "final_disagreement_mean": 3.2528530756632485,
+      "end_theories_rep": [
+        2,
+        2,
+        2
+      ],
+      "dF_finite": true
+    },
+    "conviction": {
+      "lambda2": 10.9078724399983,
+      "n_distinct_end_mean": 1.0,
+      "comm0_stuck_frac": 0.0,
+      "reached_final_frac_mean": 0.0,
+      "on_truth_fraction_mean": 0.2777777777777778,
+      "final_disagreement_mean": 0.007270993199199438,
+      "end_theories_rep": [
+        1,
+        1,
+        1
+      ],
+      "dF_finite": true
+    },
+    "both": {
+      "lambda2": -2.3684757858670005e-15,
+      "n_distinct_end_mean": 3.0,
+      "comm0_stuck_frac": 1.0,
+      "reached_final_frac_mean": 0.3333333333333333,
+      "on_truth_fraction_mean": 0.35185185185185186,
+      "final_disagreement_mean": 3.2528530756632485,
+      "end_theories_rep": [
+        0,
+        1,
+        2
+      ],
+      "dF_finite": true
+    }
+  },
+  "controls": {
+    "no_shift_max_held": 0,
+    "single_epoch_max_held": 0,
+    "conviction_inf_final_held": [
+      0,
+      0,
+      0
+    ],
+    "disagreement_disconnected": 3.3195741176605225,
+    "disagreement_connected": 0.0070937140844762325,
+    "dF_finite": true
+  },
+  "structural_caveat": {
+    "learned_offdiag_final": [
+      720.6666870117188,
+      720.5187377929688,
+      720.0008544921875,
+      720.0008544921875,
+      720.0008544921875,
+      720.0008544921875
+    ],
+    "true_offdiag_max": 0.46000000834465027,
+    "note": "relational edges accumulate uniformly (operator-set Fisher); theory identity is in the means, not the learned couplings (see Lens A)."
+  }
+}

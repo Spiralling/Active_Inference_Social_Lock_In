@@ -1,0 +1,104 @@
+{
+  "config": {
+    "N": 60,
+    "betas": [
+      0.0,
+      1.0,
+      3.0,
+      10.0,
+      30.0
+    ],
+    "beta_ctrl": 10.0,
+    "t_shift": 40,
+    "n_steps": 120,
+    "sigma_o": 0.5
+  },
+  "kappa_range": [
+    0.6800000071525574,
+    3.739999771118164
+  ],
+  "sweep": [
+    {
+      "beta": 0.0,
+      "lag": -55.0,
+      "bc": 0.5343134721553914,
+      "t_half": {
+        "belt": 120.0,
+        "mid": 120.0,
+        "core": 65.0
+      },
+      "shell_sizes": {
+        "belt": 3,
+        "mid": 3,
+        "core": 3
+      }
+    },
+    {
+      "beta": 1.0,
+      "lag": -50.0,
+      "bc": 0.5343134721553914,
+      "t_half": {
+        "belt": 120.0,
+        "mid": 120.0,
+        "core": 70.0
+      },
+      "shell_sizes": {
+        "belt": 3,
+        "mid": 3,
+        "core": 3
+      }
+    },
+    {
+      "beta": 3.0,
+      "lag": -45.0,
+      "bc": 0.5343134721553914,
+      "t_half": {
+        "belt": 120.0,
+        "mid": 120.0,
+        "core": 75.0
+      },
+      "shell_sizes": {
+        "belt": 3,
+        "mid": 3,
+        "core": 3
+      }
+    },
+    {
+      "beta": 10.0,
+      "lag": -45.0,
+      "bc": 0.5343134721553914,
+      "t_half": {
+        "belt": 120.0,
+        "mid": 120.0,
+        "core": 75.0
+      },
+      "shell_sizes": {
+        "belt": 3,
+        "mid": 3,
+        "core": 3
+      }
+    },
+    {
+      "beta": 30.0,
+      "lag": -45.0,
+      "bc": 0.5343134721553914,
+      "t_half": {
+        "belt": 120.0,
+        "mid": 120.0,
+        "core": 75.0
+      },
+      "shell_sizes": {
+        "belt": 3,
+        "mid": 3,
+        "core": 3
+      }
+    }
+  ],
+  "controls": {
+    "lag_beta0": -55.0,
+    "lag_gradient": -45.0,
+    "lag_uniform": -45.0,
+    "lag_shuffled": -45.0
+  },
+  "verdict": "NULL: lag is negative (high-kappa nodes reorganize FIRST -- the moving nodes are the high-kappa mass-law disagreement nodes; the low-kappa belt are agreement nodes that never move)"
+}

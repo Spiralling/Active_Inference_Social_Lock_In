@@ -1,0 +1,83 @@
+{
+  "omega": 0.9,
+  "seeds": [
+    0,
+    1
+  ],
+  "E3_connectivity": [
+    {
+      "inter": 0.0,
+      "lambda2": -3.552713678800501e-15,
+      "final_track": 1.0,
+      "final_div": 3.3209351301193237,
+      "t_half": 10.0
+    },
+    {
+      "inter": 0.01,
+      "lambda2": 1.1503930263681887,
+      "final_track": 1.0,
+      "final_div": 2.1264206171035767,
+      "t_half": 10.0
+    },
+    {
+      "inter": 0.03,
+      "lambda2": 4.107277754297538,
+      "final_track": 1.0,
+      "final_div": 1.1394436359405518,
+      "t_half": 10.0
+    },
+    {
+      "inter": 0.08,
+      "lambda2": 10.890696192978256,
+      "final_track": 1.0,
+      "final_div": 0.528152734041214,
+      "t_half": 10.0
+    },
+    {
+      "inter": 0.2,
+      "lambda2": 26.10813835300243,
+      "final_track": 1.0,
+      "final_div": 0.1770852655172348,
+      "t_half": 10.0
+    }
+  ],
+  "E4_conservatism": [
+    {
+      "prec": 0.5,
+      "t_half": 10.0
+    },
+    {
+      "prec": 1.0,
+      "t_half": 10.0
+    },
+    {
+      "prec": 2.0,
+      "t_half": 10.0
+    },
+    {
+      "prec": 4.0,
+      "t_half": 10.0
+    },
+    {
+      "prec": 8.0,
+      "t_half": 10.0
+    }
+  ],
+  "E5_fuse_mode": [
+    {
+      "mode": "posterior",
+      "final_track": 1.0,
+      "final_div": 0.5315702557563782
+    },
+    {
+      "mode": "deposit_pool",
+      "final_track": 1.0,
+      "final_div": 3.3167364597320557
+    },
+    {
+      "mode": "deposit_keep",
+      "final_track": 1.0,
+      "final_div": 3.316748857498169
+    }
+  ]
+}

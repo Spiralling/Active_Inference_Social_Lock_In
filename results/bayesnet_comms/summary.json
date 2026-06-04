@@ -1,0 +1,43 @@
+{
+  "omega": 0.9,
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "modes": [
+    "posterior",
+    "bayesnet"
+  ],
+  "results": {
+    "connected, no conviction | posterior": {
+      "fot_final": 1.0,
+      "final_div": 0.5276607076327006,
+      "n_distinct_end": 1.0
+    },
+    "connected, no conviction | bayesnet": {
+      "fot_final": 1.0,
+      "final_div": 0.5255646308263143,
+      "n_distinct_end": 1.0
+    },
+    "disconnected + conviction | posterior": {
+      "fot_final": 1.0,
+      "final_div": 3.3257013956705728,
+      "n_distinct_end": 1.0
+    },
+    "disconnected + conviction | bayesnet": {
+      "fot_final": 1.0,
+      "final_div": 3.3248113791147866,
+      "n_distinct_end": 1.0
+    }
+  },
+  "delta_connected": {
+    "track": 0.0,
+    "diversity": 0.002096076806386238,
+    "differs": false
+  },
+  "structural_heterogeneity": {
+    "B_disp": 0.0006129784742370248,
+    "mu_disp": 0.04005533456802368
+  }
+}

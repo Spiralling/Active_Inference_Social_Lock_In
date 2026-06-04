@@ -40,6 +40,7 @@ from src.structural.bmr import schur_marginalize
 from src.structural import precision as P
 from src.structural.bayesnet import LinearGaussianBN, relational_operator
 from src.structural.dual_field import PrecisionUtilityNet
+from src.structural.dual_field import conviction_field as _conviction_field
 from src.config import NetworkConfig
 
 
@@ -590,18 +591,12 @@ def conviction_u(cfg: StructuralConfig, toward: str | None = None) -> jnp.ndarra
 
 def conviction_field(Pi: jnp.ndarray, h: jnp.ndarray, names: tuple[str, ...],
                      u: jnp.ndarray, alpha: float = 0.5) -> jnp.ndarray:
-    """The conviction field ``U = T u`` for a stack of belief nets, reusing
-    ``dual_field.PrecisionUtilityNet.effective_utility`` (solves ``(I - alpha W) u_eff = u``
-    with ``W`` the row-stochastic propagation operator read off each net's off-diagonal
-    precision). ``Pi`` (N, d, d), ``h`` (N, d), ``u`` (d,). Returns ``(N, d)`` -- the
-    per-agent value field, value propagated along that agent's *current* couplings (so it
-    rides the structure as the relational substrate reshapes it). Well-defined for any
-    ``alpha < 1`` regardless of ``Pi`` definiteness (``W`` is row-stochastic), so it is safe
-    on the improper hub prior."""
-    def one(Pi_i, h_i):
-        net = PrecisionUtilityNet(names=names, Pi=Pi_i, h=h_i, u=u, alpha=alpha)
-        return net.effective_utility()
-    return jax.vmap(one)(Pi, h)
+    """The conviction field ``U = T u`` for a stack of belief nets -- a thin re-export of the
+    now-general :func:`dual_field.conviction_field` (its natural home: it just wraps
+    ``PrecisionUtilityNet.effective_utility``). Kept here under the original name so existing
+    callers (``step._transition`` and the test suite) are byte-identical. ``Pi`` (N, d, d),
+    ``h`` (N, d), ``u`` ``(d,)`` (broadcast) or ``(N, d)`` (per-agent). Returns ``(N, d)``."""
+    return _conviction_field(Pi, h, names, u, alpha)
 
 
 def balanced_lambda(cfg: StructuralConfig, toward: str | None = None) -> float:

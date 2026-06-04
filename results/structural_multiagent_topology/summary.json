@@ -1,0 +1,122 @@
+{
+  "config": {
+    "N": 60,
+    "conviction_rest": 0.2,
+    "lambda_vanguard": 0.05,
+    "n_vanguard": 6,
+    "gamma_rest": 1.0,
+    "sigma_o": 0.5,
+    "t_shift": 40,
+    "n_steps": 120,
+    "snapshot_every": 5,
+    "seed": 0
+  },
+  "substrate": {
+    "n_edges": 14,
+    "belt_edges": [
+      [
+        "mass_change_sign",
+        "calx_heavier_than_metal"
+      ],
+      [
+        "gas_consumed",
+        "calx_heavier_than_metal"
+      ]
+    ],
+    "v_e_belt": [
+      3.280205488204956,
+      3.257232666015625
+    ],
+    "lstar": 2.7499752044677734
+  },
+  "F1_topology": [
+    {
+      "graph": "isolated",
+      "lambda2": 0.0,
+      "mean_degree": 0.0,
+      "revolted": 0.1
+    },
+    {
+      "graph": "ring",
+      "lambda2": 0.010956209263452992,
+      "mean_degree": 2.0,
+      "revolted": 0.2
+    },
+    {
+      "graph": "erdos_renyi",
+      "lambda2": 0.6229700703375742,
+      "mean_degree": 4.733333110809326,
+      "revolted": 0.9833333333333333
+    },
+    {
+      "graph": "watts_strogatz",
+      "lambda2": 0.13451046800514377,
+      "mean_degree": 4.0,
+      "revolted": 0.6
+    },
+    {
+      "graph": "community+bridge",
+      "lambda2": 1.2450856448406247,
+      "mean_degree": 9.866666793823242,
+      "revolted": 1.0
+    },
+    {
+      "graph": "complete",
+      "lambda2": 59.9999999999999,
+      "mean_degree": 59.0,
+      "revolted": 1.0
+    }
+  ],
+  "F2_bridge": [
+    {
+      "inter": 0.0,
+      "lambda2": -1.4511207573706297e-16,
+      "revolted": 0.3333333333333333
+    },
+    {
+      "inter": 0.005,
+      "lambda2": 0.27347465917772806,
+      "revolted": 0.3333333333333333
+    },
+    {
+      "inter": 0.01,
+      "lambda2": 0.44175748297223816,
+      "revolted": 0.3333333333333333
+    },
+    {
+      "inter": 0.02,
+      "lambda2": 0.42604379858043384,
+      "revolted": 0.3333333333333333
+    },
+    {
+      "inter": 0.04,
+      "lambda2": 1.6311114781187774,
+      "revolted": 0.5166666666666667
+    },
+    {
+      "inter": 0.08,
+      "lambda2": 3.4121367453776994,
+      "revolted": 0.65
+    }
+  ],
+  "F3_placement": {
+    "central": 1.0,
+    "peripheral": 0.25
+  },
+  "F5_fuse_mode": {
+    "posterior": 0.43333333333333335,
+    "deposit_pool": 0.3333333333333333,
+    "deposit_keep": 0.3
+  },
+  "controls": {
+    "isolated_revolted": 0.1,
+    "isolated_expected": 0.1,
+    "complete_revolted": 1.0,
+    "conviction0_revolted": 1.0,
+    "convictionInf_revolted": 0.0,
+    "gamma0_isolated": 0.9833333333333333,
+    "gamma0_complete": 1.0,
+    "null_revolted": 0.0,
+    "dF_finite": true
+  }
+}

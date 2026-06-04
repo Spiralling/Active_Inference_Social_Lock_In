@@ -95,7 +95,8 @@ class CauseSpec:
 
 
 def scheduled_world(cfg: StructuralConfig, t: int, causes: tuple[CauseSpec, ...],
-                    latent_var: float = 1.0, world_var: float = 1.0) -> LinearGaussianBN:
+                    latent_var: float = 1.0, world_var: float = 1.0,
+                    *, phi_fn=ph.phi_true_at) -> LinearGaussianBN:
     """A NON-STATIONARY true world: the measured commitments (independent roots at their regime
     values) plus one hidden node PER CAUSE that has switched on by step ``t`` (``activate <= t``),
     each driving its own ``drives`` set. The true structural STATE changes as causes activate, so
@@ -103,7 +104,12 @@ def scheduled_world(cfg: StructuralConfig, t: int, causes: tuple[CauseSpec, ...]
     asks whether structure learning *tracks a changing truth* (makes more nodes when the world does).
 
     Disjoint ``drives`` sets keep the causes separately identifiable. ``t`` only gates which causes
-    are present; means/couplings are the cause specs. Latents are appended in cause order."""
+    are present; means/couplings are the cause specs. Latents are appended in cause order.
+
+    ``phi_fn(cfg, t) -> (d,)`` (default ``phlogiston.phi_true_at``) is the per-step truth of the
+    *base* commitments -- override it (with ``cfg.node_names`` set to that basis) to run this on a
+    different world, e.g. the cosmology basis (Lens A, ``scripts/run_cosmology_regrowth.py``). The
+    default keeps every phlogiston caller byte-identical."""
     active = [c for c in causes if c.activate <= t]
     names = cfg.node_names + tuple(c.name for c in active)
     d = len(cfg.node_names)
@@ -113,33 +119,42 @@ def scheduled_world(cfg: StructuralConfig, t: int, causes: tuple[CauseSpec, ...]
     for li, c in enumerate(active):
         for n in c.drives:
             B = B.at[idx[n], d + li].set(c.coupling)
-    phi = np.asarray(ph.phi_true_at(cfg, t))
+    phi = np.asarray(phi_fn(cfg, t))
     b = jnp.asarray(np.concatenate([phi, [c.mean for c in active]]))
     s = jnp.asarray(np.concatenate([np.full(d, world_var), np.full(len(active), latent_var)]))
     return LinearGaussianBN(B=B, b=b, s=s, names=names)
 
 
 def agnostic_prior(cfg: StructuralConfig, lw: LatentWorldConfig,
-                   t: int = 0, prec: float = 1.0) -> GaussianBeliefNet:
+                   t: int = 0, prec: float = 1.0, *, phi_fn=ph.phi_true_at
+                   ) -> GaussianBeliefNet:
     """The agent's belief: the measured commitments held INDEPENDENT at their regime means -- a model
     that simply lacks the hidden cause (the cleanest "unconceived dimension" setup). ``Pi = prec·I``,
-    means ``phi_true_at(cfg, t)``. Used as both the agent's initial net and the parent ``net_prior``
+    means ``phi_fn(cfg, t)``. Used as both the agent's initial net and the parent ``net_prior``
     in ``expansion_score``, so recovery is well-posed: the un-woken agent has NO drive coupling, the
-    true world has the latent's, and the wake fills exactly that gap."""
+    true world has the latent's, and the wake fills exactly that gap.
+
+    ``phi_fn(cfg, t) -> (d,)`` (default ``phlogiston.phi_true_at``) supplies the regime means;
+    override it (with ``cfg.node_names`` set to that basis) for a different world. Default is
+    byte-identical to before."""
     d = len(cfg.node_names)
     Pi = prec * jnp.eye(d)
-    mu = jnp.asarray(np.asarray(ph.phi_true_at(cfg, t)))
+    mu = jnp.asarray(np.asarray(phi_fn(cfg, t)))
     return GaussianBeliefNet(Pi=Pi, h=Pi @ mu, names=cfg.node_names)
 
 
 def sample_world(world: LinearGaussianBN, cfg: StructuralConfig,
-                 key: jax.Array) -> jax.Array:
+                 key: jax.Array, *, measured_nodes_fn=ph.measured_nodes) -> jax.Array:
     """One observation of the MEASURED commitments (every node except the hidden ``phlogiston`` hub
-    AND the latent), in ``ph.measured_nodes(cfg)`` row order — i.e. aligned to the rows of
-    ``ph.H_observable(cfg)``. The latent is sampled and its effect carried into the driven nodes,
-    then dropped: the agent sees only the shifted/correlated observables, never the cause."""
+    AND the latent), in ``measured_nodes_fn(cfg)`` row order — i.e. aligned to the rows of the
+    agent's observation operator. The latent is sampled and its effect carried into the driven nodes,
+    then dropped: the agent sees only the shifted/correlated observables, never the cause.
+
+    ``measured_nodes_fn(cfg) -> tuple[str, ...]`` (default ``phlogiston.measured_nodes`` = every
+    node except the hidden hub) selects the observed rows; override it for a different basis (e.g.
+    the cosmology basis, where every node is measured). Default is byte-identical to before."""
     x = world.sample(key, 1)[0]                                    # (d+1,)
-    meas = ph.measured_nodes(cfg)
+    meas = measured_nodes_fn(cfg)
     meas_idx = jnp.asarray([world.names.index(n) for n in meas])
     return x[meas_idx]                                             # (m,)
 

@@ -73,6 +73,38 @@ class PrecisionUtilityNet:
         return jnp.dot(self.effective_utility(), self.mean())
 
 
+def conviction_field(Pi: jax.Array, h: jax.Array, names: tuple[str, ...],
+                     u: jax.Array, alpha: float = 0.5) -> jax.Array:
+    """The conviction field ``U = T u`` for a *stack* of belief nets -- the general
+    primitive (this is its natural home: it just wraps
+    ``PrecisionUtilityNet.effective_utility``, which solves ``(I - alpha W) u_eff = u``
+    with ``W`` the row-stochastic propagation operator read off each net's off-diagonal
+    precision).
+
+    ``Pi`` (N, d, d), ``h`` (N, d). ``u`` is either a single ``(d,)`` utility broadcast to
+    every agent (the homogeneous case -- byte-identical to the original
+    ``phlogiston.conviction_field``) or a per-agent ``(N, d)`` stack (the heterogeneous
+    case: each community tilts toward its *own* favoured theory). Returns ``(N, d)`` -- the
+    value field propagated along each agent's *current* couplings, so it rides the structure
+    as the relational substrate reshapes it. Well-defined for any ``alpha < 1`` regardless of
+    ``Pi`` definiteness (``W`` is row-stochastic), so it is safe on an improper hub prior.
+
+    The motivated (value-tilted) posterior is ``q_lambda(s) prop p(s|o) e^{lambda U(s)}``;
+    for a linear utility on a Gaussian that is one shift of the potential, ``h <- h +
+    lambda U`` applied each step (see ``step._transition`` / ``simulation.run_simulation``)."""
+    u_arr = jnp.asarray(u)
+    if u_arr.ndim == 1:
+        def one(Pi_i, h_i):
+            return PrecisionUtilityNet(names=names, Pi=Pi_i, h=h_i,
+                                       u=u_arr, alpha=alpha).effective_utility()
+        return jax.vmap(one)(Pi, h)
+
+    def one_u(Pi_i, h_i, u_i):
+        return PrecisionUtilityNet(names=names, Pi=Pi_i, h=h_i,
+                                   u=u_i, alpha=alpha).effective_utility()
+    return jax.vmap(one_u)(Pi, h, u_arr)
+
+
 @dataclass(frozen=True)
 class ScoreBreakdown:
     delta_F: jax.Array
