@@ -252,6 +252,15 @@ def _channel_weights(Pi: jax.Array, h: jax.Array, W: jax.Array,
         weights 0 it is byte-identical to ``derived`` (the back-compat anchor).
     """
     n = Pi.shape[0]
+    if cfg.observation_operator == "relational" and cfg.precision_mode == "efe":
+        # The 'efe' drives index measured_nodes and build a base_rho over them, so they
+        # do not yet line up with the relational operator's extra mass-balance row. Loud
+        # guard rather than a cryptic shape error. Supported on the relational substrate:
+        # 'heuristic' (default), 'derived' (paradigm-level gamma), 'derived_live' (the
+        # per-agent adaptive gamma -- entrenchment self-silences via channel_precision_H_stack).
+        raise NotImplementedError(
+            "observation_operator='relational' is not yet wired for "
+            "precision_mode='efe'; use 'heuristic', 'derived', or 'derived_live'.")
     if cfg.precision_mode == "heuristic":
         mass_idx = jnp.asarray([cfg.node_names.index(nm)
                                 for nm in ph.DISAGREEMENT_NODES])
@@ -264,6 +273,10 @@ def _channel_weights(Pi: jax.Array, h: jax.Array, W: jax.Array,
         rho = ph.derived_channel_precision(cfg)                  # (m,) constant
         return jnp.broadcast_to(rho, (n, rho.shape[0]))          # (N, m)
     if cfg.precision_mode == "derived_live":
+        if cfg.observation_operator == "relational":
+            c = cfg.node_names.index(cfg.core_node)
+            return P.channel_precision_H_stack(
+                Pi, c, ph.gravimetric_H(cfg), cfg.core_governance, cfg.rho_max)  # (N, m)
         return P.channel_precision_stack(
             Pi, h, cfg.node_names, cfg.core_node, ph.measured_nodes(cfg),
             cfg.core_governance, cfg.rho_max, cfg.evidential_cost_kind)  # (N, m)
@@ -279,23 +292,14 @@ def _channel_weights(Pi: jax.Array, h: jax.Array, W: jax.Array,
         f"got {cfg.precision_mode!r}")
 
 
-def _transition(Pi: jax.Array, h: jax.Array, W: jax.Array, key: jax.Array,
-                cfg: StructuralConfig, phi: jax.Array
-                ) -> tuple[jax.Array, jax.Array, jax.Array]:
-    """The pure one-round dynamics: FUSE then weighted-OBSERVE, returning the new
-    ``(Pi, h, key)``. Shared by ``step`` (which adds the observable read-out) and
-    ``run_final`` (which scans it). The deposit is always the weighted one; with the
-    default ``precision_mode='heuristic', experiment_bias=0`` the weights are all 1, so
-    it reduces exactly to the plain ``fisher_deposit`` -- one code path, no behavioural
-    change. ``cfg.precision_mode`` selects whether the per-channel gain is the imposed
-    sigmoid gate or the structurally *derived* evidential precision ``rho_k``.
-    """
-    # 1. FUSE: full-communication precision addition over trusted neighbours.
+def _fuse_then_observe(Pi: jax.Array, h: jax.Array, W: jax.Array, key: jax.Array,
+                       cfg: StructuralConfig, phi: jax.Array
+                       ) -> tuple[jax.Array, jax.Array, jax.Array]:
+    """``sharing_mode='posterior'``: peers transmit their *whole* belief net. FUSE
+    (precision-addition over the trust graph) then weighted-OBSERVE. This is the original
+    dynamics -- a conclusion (the full posterior, prior bias included) is what propagates."""
     Pi_f, h_f = fuse(Pi, h, W)
-
-    # 2. Set the per-channel evidential precision rho_k from the agent's fused belief
-    #    (heuristic gate on the held paradigm, or rho_k derived from core coupling).
-    H = ph.H_observable(cfg)
+    H = ph.observation_operator(cfg)
     n = Pi.shape[0]
     key, *subs = jax.random.split(key, n + 1)
     subs = jnp.stack(subs)
@@ -307,6 +311,60 @@ def _transition(Pi: jax.Array, h: jax.Array, W: jax.Array, key: jax.Array,
         return Pi_i + J, h_i + j
 
     Pi_new, h_new = jax.vmap(observe_one)(Pi_f, h_f, subs, Wt)
+    return Pi_new, h_new, key
+
+
+def _observe_pooled(Pi: jax.Array, h: jax.Array, W: jax.Array, key: jax.Array,
+                    cfg: StructuralConfig, phi: jax.Array
+                    ) -> tuple[jax.Array, jax.Array, jax.Array]:
+    """``sharing_mode='observation'``: peers transmit *raw observations* (their per-step
+    Fisher deposits), NOT their belief. Each agent keeps its OWN net (its prior never
+    fuses) and adds the trust-weighted pool of its neighbours' deposits:
+
+        Pi_i <- Pi_i + sum_j W_ij J_j ,    h_i <- h_i + sum_j W_ij j_j .
+
+    Same trust graph ``W`` as the posterior mode (so the two differ ONLY in *what* is
+    shared, not how strongly), but because the prior is never averaged in, a neighbour's
+    prior *bias* does not propagate -- only the signal in its data does. Channel weights are
+    read from each agent's OWN current belief (no fused belief exists here)."""
+    H = ph.observation_operator(cfg)
+    n = Pi.shape[0]
+    key, *subs = jax.random.split(key, n + 1)
+    subs = jnp.stack(subs)
+    Wt = _channel_weights(Pi, h, W, cfg)                         # (N, m) from own belief
+
+    def deposit_one(k, w):
+        o = sample_o(H, phi, cfg.sigma_o, k)
+        return fisher_deposit_weighted(H, o, cfg.sigma_o, w)     # (d,d), (d,)
+
+    Js, js = jax.vmap(deposit_one)(subs, Wt)                     # (N,d,d), (N,d)
+    Js_pool = jnp.einsum("ij,jab->iab", W, Js)                   # trust-weighted obs pool
+    js_pool = W @ js
+    return Pi + Js_pool, h + js_pool, key
+
+
+def _transition(Pi: jax.Array, h: jax.Array, W: jax.Array, key: jax.Array,
+                cfg: StructuralConfig, phi: jax.Array
+                ) -> tuple[jax.Array, jax.Array, jax.Array]:
+    """The pure one-round dynamics, returning the new ``(Pi, h, key)``. Shared by ``step``
+    (which adds the observable read-out) and every ``run_*`` scan. Dispatches host-side on
+    ``cfg.sharing_mode`` (``'posterior'`` = fuse whole beliefs, the DEFAULT and byte-identical
+    to before; ``'observation'`` = pool raw observations, prior bias not transmitted), then
+    applies the conviction tilt. ``cfg.precision_mode`` selects the per-channel gain; the
+    default ``'heuristic', experiment_bias=0`` gives all-ones weights (plain ``fisher_deposit``).
+    """
+    if cfg.sharing_mode == "observation":
+        Pi_new, h_new, key = _observe_pooled(Pi, h, W, key, cfg, phi)
+    else:
+        Pi_new, h_new, key = _fuse_then_observe(Pi, h, W, key, cfg, phi)
+
+    # CONVICTION TILT (the second field): the motivated posterior q_lambda prop
+    # p(s|o) e^{lambda U(s)} with U = T u, i.e. h <- h + lambda U. Guarded host-side on the
+    # frozen-cfg float, so conviction_tilt=0 (DEFAULT) is byte-identical -- no tilt.
+    if cfg.conviction_tilt != 0.0:
+        u = ph.conviction_u(cfg)                                 # (d,)
+        U = ph.conviction_field(Pi_new, h_new, cfg.node_names, u, cfg.conviction_alpha)
+        h_new = h_new + cfg.conviction_tilt * U
     return Pi_new, h_new, key
 
 

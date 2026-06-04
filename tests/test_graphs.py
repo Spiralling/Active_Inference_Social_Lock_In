@@ -184,3 +184,43 @@ def test_trust_W_is_row_stochastic():
               graphs.community([15, 15], intra=0.4, inter=0.05, seed=0)]:
         W = np.asarray(g.trust_W())
         assert np.allclose(W.sum(1), 1.0)
+
+
+# ----------------------------------------------------------------------
+# Algebraic connectivity (Fiedler value) -- the Zollman connectivity axis (P5).
+# ----------------------------------------------------------------------
+
+def test_laplacian_psd_zero_rowsum():
+    L = graphs.laplacian(graphs.watts_strogatz(20, mean_degree=4, seed=0))
+    assert np.allclose(L.sum(axis=1), 0.0)              # rows sum to zero
+    assert np.all(np.linalg.eigvalsh(L) > -1e-9)        # PSD
+
+
+def test_complete_fiedler_equals_n():
+    n = 25
+    assert graphs.algebraic_connectivity(graphs.complete(n)) == pytest.approx(n, abs=1e-4)
+
+
+def test_disconnected_has_zero_fiedler():
+    # an isolated() graph and two fully-separate communities are both disconnected
+    g = graphs.community([15, 15], intra=0.5, inter=0.0, seed=0)
+    assert graphs.algebraic_connectivity(g) == pytest.approx(0.0, abs=1e-6)
+    assert graphs.algebraic_connectivity(
+        graphs.complete(10).isolated()) == pytest.approx(0.0, abs=1e-6)
+
+
+def test_fiedler_rises_with_rewiring_at_fixed_degree():
+    """Watts-Strogatz rewiring raises lambda_2 while holding the mean degree fixed -- the
+    degree-controlled connectivity axis nb34 sweeps."""
+    l2 = [graphs.algebraic_connectivity(
+        graphs.watts_strogatz(60, mean_degree=4, rewiring_p=p, seed=1))
+        for p in (0.0, 0.1, 0.5, 1.0)]
+    assert l2[0] < l2[1] < l2[2] < l2[3]
+
+
+def test_fiedler_rises_with_bridge_density():
+    l2 = [graphs.algebraic_connectivity(
+        graphs.community([30, 30], intra=0.25, inter=inter, seed=1))
+        for inter in (0.0, 0.01, 0.05, 0.2)]
+    assert l2[0] == pytest.approx(0.0, abs=1e-6)
+    assert l2[1] < l2[2] < l2[3]

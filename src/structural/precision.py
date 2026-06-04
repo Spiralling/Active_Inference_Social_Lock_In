@@ -162,6 +162,68 @@ def channel_precision(net: GaussianBeliefNet, core: str,
     return rho
 
 
+def _coupling_from_precision_H(Pi: jax.Array, c: int, H: jax.Array) -> jax.Array:
+    """Relational generalization of ``C_v = Pi[c,v]^2 / Pi[v,v]`` to a channel that
+    reads a *combination* of nodes ``H[k]`` (a row of an arbitrary observation operator):
+
+        C_k = (H[k] . Pi[:, c])^2 / (H[k] . Pi . H[k]).
+
+    For a direct read ``H[k] = e_v`` the numerator is ``Pi[v, c]^2`` and the denominator
+    ``Pi[v, v]``, so it reduces *exactly* to ``_coupling_from_precision`` -- the node and
+    relational operators rank the channels the same way on their shared direct rows.
+    Reads ``Pi`` directly (no inverse), so it is well-defined even for the improper
+    common-cause prior. ``Pi`` (d, d); ``c`` core index; ``H`` (m, d). Returns (m,).
+    """
+    pi_col_c = Pi[:, c]                               # (d,) core column
+    num = (H @ pi_col_c) ** 2                          # (m,) (H[k] . Pi[:,c])^2
+    quad = jnp.einsum("ki,ij,kj->k", H, Pi, H)         # (m,) H[k] Pi H[k]
+    return num / quad
+
+
+def channel_precision_H(net: GaussianBeliefNet, core: str, H: jax.Array,
+                        core_governance: float, rho_max: float = 1.0,
+                        gate_mask: jax.Array | None = None) -> jax.Array:
+    """Derived per-channel evidential precision ``rho_k`` over the rows of an ARBITRARY
+    observation operator ``H`` (m, d) -- the relational generalization of
+    ``channel_precision`` (which assumes one row per node). Composes the relational cost
+    ``_coupling_from_precision_H`` then ``rho_from_cost``; on a node operator (unit rows)
+    it returns the same ``rho`` as ``channel_precision(cost_kind='carryover')``. Reads the
+    precision directly (no inverse), robust to the improper hub prior. Returns ``(m,)``
+    ready to pass as ``weights`` to ``world.fisher_deposit_weighted``.
+
+    ``gate_mask`` (optional ``(m,)`` 0/1): restrict governance to the masked rows
+    (``rho = rho_max`` elsewhere), as in ``channel_precision``.
+    """
+    c = net.index(core)
+    cost = _coupling_from_precision_H(net.Pi, c, jnp.asarray(H))
+    rho = rho_from_cost(cost, core_governance, rho_max)
+    if gate_mask is not None:
+        gate_mask = jnp.asarray(gate_mask)
+        rho = jnp.where(gate_mask > 0, rho, rho_max)
+    return rho
+
+
+def channel_precision_H_stack(Pi: jax.Array, core_idx: int, H: jax.Array,
+                              core_governance: float, rho_max: float = 1.0) -> jax.Array:
+    """Per-agent derived ``rho_k`` over the rows of a relational operator ``H`` (m, d),
+    from a live / fused ``(N, d, d)`` precision stack -- the relational sibling of
+    ``channel_precision_stack`` and the ADAPTIVE (``derived_live``) governance path on the
+    edge-moving substrate. vmaps the H-based cost ``_coupling_from_precision_H`` over
+    agents (reads ``Pi`` directly, no inverse). Returns ``(N, m)``.
+
+    The point of the live form: a more entrenched agent carries a larger precision mass, so
+    its coupling-to-core cost on the disconfirming (mass-balance) row is larger, so its
+    ``rho`` on that row is smaller -- self-silencing tightens with entrenchment *on its own*,
+    which is how a heterogeneous population can lock its core while its belt stays open
+    without any per-agent knob being dialled. Valid once the live belief is proper enough
+    that the row quadratic ``H[k] Pi H[k] > 0`` (true after a few deposits); see the module
+    docstring's PD caveat.
+    """
+    H = jnp.asarray(H)
+    costs = jax.vmap(lambda P: _coupling_from_precision_H(P, core_idx, H))(Pi)   # (N, m)
+    return rho_from_cost(costs, core_governance, rho_max)
+
+
 def channel_precision_stack(Pi: jax.Array, h: jax.Array,
                             names: tuple[str, ...], core: str,
                             measured_nodes: tuple[str, ...],

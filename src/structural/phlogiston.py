@@ -32,12 +32,14 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+import jax
 import jax.numpy as jnp
 
 from src.structural.belief import GaussianBeliefNet, combine, vague_prior
 from src.structural.bmr import schur_marginalize
 from src.structural import precision as P
 from src.structural.bayesnet import LinearGaussianBN, relational_operator
+from src.structural.dual_field import PrecisionUtilityNet
 from src.config import NetworkConfig
 
 
@@ -99,6 +101,13 @@ class StructuralConfig:
 
     # --- world / data-generating process ---
     sigma_o: float = 1.0             # observation noise std
+    observation_operator: str = "node"  # "node" (DEFAULT): H_observable, one row per
+    #   measured node => DIAGONAL Fisher => the prior's edges never move (the legacy
+    #   substrate, so nb18-29 + the test suite stay byte-identical). "relational":
+    #   gravimetric_H, which adds a mass-balance row (calx - mass_change - gas) reading a
+    #   COMBINATION of nodes, so the deposit carries OFF-DIAGONAL Fisher and the belt edge
+    #   weights LEARN over the rollout -- structure learning, the precondition for the
+    #   belt-first/core-last staircase. Host-side static branch (frozen cfg), scan-safe.
 
     # --- biased experiment selection (theory-laden observation) ---
     experiment_bias: float = 0.0     # 0 = unbiased (measure everything equally);
@@ -143,6 +152,28 @@ class StructuralConfig:
     #   gain on the very channel that would refute it. None => bind at hub_coupling (the
     #   "weakly attached" anomaly, realized); 0.0 => leave it unbound (the rival then leaks
     #   through the ungoverned anomaly channel -- self-sealing is incomplete).
+
+    # --- conviction field (the SECOND field, U = T u; see dual_field.py) ---
+    conviction_tilt: float = 0.0     # lambda: the value-tilt strength in the motivated
+    #   posterior q_lambda(s) prop p(s|o) e^{lambda U(s)}. For a linear utility U(s)=U.s on
+    #   a Gaussian this is one shift of the potential, h <- h + lambda U, applied each step.
+    #   0 (DEFAULT) => no tilt => pure-evidence update, byte-identical to before. The
+    #   belief-utility knob is JUST a balance: pick lambda ~ balanced_lambda(cfg) so neither
+    #   the evidence/conservatism field nor the conviction field dominates (nothing more).
+    conviction_toward: str = "phlogiston"   # which paradigm the intrinsic utility u favours
+    #   ("phlogiston" | "oxygen" | "neutral"); see conviction_u. The conviction field U = T u
+    #   propagates this along the net's couplings (the SAME operator T that gives carry-over).
+    conviction_alpha: float = 0.5    # propagation strength of the conviction field (alpha in
+    #   the (I - alpha W) u_eff = u solve of dual_field.effective_utility).
+
+    # --- social sharing channel (what a peer transmits across the trust graph) ---
+    sharing_mode: str = "posterior"  # "posterior" (DEFAULT): peers transmit their WHOLE
+    #   belief net and the receiver fuses by precision addition -- a conclusion propagates,
+    #   prior bias and all (the original dynamics, byte-identical). "observation": peers
+    #   transmit only their RAW per-step observations (Fisher deposits); each agent keeps its
+    #   own prior and pools neighbours' data, so the signal propagates but the bias does not.
+    #   The axis the paper keeps explicit: "sharing conclusions propagates bias along with
+    #   signal."
 
     # --- regime schedule ---
     regime_schedule: str = "step"    # "step" | "reversal" | "ramp"
@@ -299,12 +330,21 @@ def measured_nodes(cfg: StructuralConfig) -> tuple[str, ...]:
 
 
 def disagreement_row_mask(cfg: StructuralConfig) -> jnp.ndarray:
-    """A (m,) 0/1 mask over the ``H_observable`` rows: 1 where the measured node
-    is a disagreement (mass-law) commitment -- the diagnostic experiments a
-    committed paradigm is tempted to skip. Used to build the per-agent attention
-    weights for biased experiment selection."""
-    meas = measured_nodes(cfg)
-    return jnp.asarray([1.0 if n in DISAGREEMENT_NODES else 0.0 for n in meas])
+    """A (m,) 0/1 mask over the rows of the *active* observation operator
+    (``observation_rows(cfg)``): 1 where the row is a disagreement (mass-law)
+    channel -- the diagnostic experiments a committed paradigm is tempted to skip.
+    Used to build the per-agent attention weights for biased experiment selection.
+
+    A row counts as disagreement if its label is a ``DISAGREEMENT_NODE`` (a direct
+    read of a mass-law commitment) OR it is a relational row (a combination, not a
+    bare node -- the gravimetric mass-balance row, which loads on the anomaly). In
+    ``observation_operator='node'`` the rows are exactly ``measured_nodes`` so the
+    second clause never fires and the mask is byte-identical to the legacy one."""
+    rows = observation_rows(cfg)
+    node_set = set(cfg.node_names)
+    return jnp.asarray(
+        [1.0 if (r in DISAGREEMENT_NODES or r not in node_set) else 0.0
+         for r in rows])
 
 
 def attention_weights(oxy_index: jnp.ndarray, cfg: StructuralConfig
@@ -420,6 +460,38 @@ def gravimetric_rows(cfg: StructuralConfig) -> tuple[str, ...]:
     return measured_nodes(cfg) + ("mass_balance(calx-mass-gas)",)
 
 
+def observation_operator(cfg: StructuralConfig) -> jnp.ndarray:
+    """The per-step measurement operator ``H`` selected by ``cfg.observation_operator``:
+
+      * ``"node"`` (default) => ``H_observable`` -- one row per measured node, so the
+        Fisher deposit ``H^T H`` is DIAGONAL and the prior's off-diagonal couplings
+        (the edges) never move. The legacy substrate.
+      * ``"relational"`` => ``gravimetric_H`` -- adds a mass-balance row reading a
+        combination of nodes, so the deposit carries OFF-DIAGONAL Fisher and the belt
+        edges LEARN over the rollout (structure learning).
+
+    Host-side static branch on the frozen-cfg string -- safe inside ``jax.lax.scan``.
+    This is the single point ``step._transition`` calls to pick the substrate, so the
+    whole population loop inherits structure learning by flipping one cfg flag."""
+    if cfg.observation_operator == "relational":
+        return gravimetric_H(cfg)
+    if cfg.observation_operator == "node":
+        return H_observable(cfg)
+    raise ValueError(
+        "observation_operator must be 'node' or 'relational', got "
+        f"{cfg.observation_operator!r}")
+
+
+def observation_rows(cfg: StructuralConfig) -> tuple[str, ...]:
+    """Row labels of ``observation_operator(cfg)`` in row order -- the common
+    length/order anchor for every per-row vector (the ``rho_k`` evidential-precision
+    weights and the disagreement mask), so the node and relational operators stay
+    consistent and the existing rollouts work unchanged in either mode."""
+    if cfg.observation_operator == "relational":
+        return gravimetric_rows(cfg)
+    return measured_nodes(cfg)
+
+
 # ----------------------------------------------------------------------
 # Derived evidential precision (the dual of carry-over; see precision.py).
 # ----------------------------------------------------------------------
@@ -457,16 +529,109 @@ def paradigm_field(cfg: StructuralConfig,
 def derived_channel_precision(cfg: StructuralConfig,
                               net: GaussianBeliefNet | None = None) -> jnp.ndarray:
     """Prior-derived evidential precision ``rho_k`` over the ``H_observable`` rows for the
-    incumbent paradigm. ``net`` defaults to the paradigm field ``paradigm_field(cfg)`` (the
-    incumbent prior with its anomaly bound) -- so ``rho`` is a fixed ``(m,)`` vector
-    computed once from the core coupling (no per-agent re-inversion, no rho<->Sigma
-    feedback). A thin wrapper over ``precision.channel_precision`` using cfg's
-    ``core_node`` / ``core_governance`` / ``rho_max`` / ``evidential_cost_kind``. With
+    incumbent paradigm, over the rows of the *active* observation operator. ``net``
+    defaults to the paradigm field ``paradigm_field(cfg)`` (the incumbent prior with its
+    anomaly bound) -- so ``rho`` is a fixed ``(m,)`` vector computed once from the core
+    coupling (no per-agent re-inversion, no rho<->Sigma feedback). With
     ``core_governance = 0`` this is all ``rho_max`` (== the unbiased deposit when
     ``rho_max = 1``).
+
+    ``observation_operator='node'`` (default): a thin wrapper over
+    ``precision.channel_precision`` over ``measured_nodes`` (byte-identical to before).
+    ``'relational'``: ``precision.channel_precision_H`` over the rows of ``gravimetric_H``
+    -- the relational cost ``(H[k].Pi[:,c])^2/(H[k].Pi.H[k])`` reduces to the node form on
+    the direct rows, so the only new entry is the mass-balance row's gain (the channel the
+    core silences as ``core_governance`` rises -- now the channel that *moves structure*).
     """
     if net is None:
         net = paradigm_field(cfg)
+    if cfg.observation_operator == "relational":
+        return P.channel_precision_H(net, cfg.core_node, gravimetric_H(cfg),
+                                     cfg.core_governance, cfg.rho_max)
     return P.channel_precision(net, cfg.core_node, measured_nodes(cfg),
                                cfg.core_governance, cfg.rho_max,
                                cfg.evidential_cost_kind)
+
+
+# ----------------------------------------------------------------------
+# The conviction field U = T u (the SECOND field; see dual_field.py).
+#
+# The same propagation operator T = (I - alpha W)^{-1} that gives carry-over kappa = T 1
+# carries a second, linearly independent source: the intrinsic utility u, giving the
+# conviction field U = T u. A value-tilted (motivated) posterior is q_lambda prop
+# p(s|o) e^{lambda U(s)}; for a linear utility on a Gaussian it is one shift of the
+# potential, h <- h + lambda U. The "belief-utility vs precision" knob is just the balance
+# lambda at which neither field dominates -- balanced_lambda below.
+# ----------------------------------------------------------------------
+
+def conviction_u(cfg: StructuralConfig, toward: str | None = None) -> jnp.ndarray:
+    """The intrinsic utility vector ``u`` (d,) -- the value the community attaches to
+    commitments, BEFORE propagation. It values the disagreement (mass-law) commitments
+    toward one paradigm's reading:
+
+      * ``"phlogiston"`` (the entrenched community *wants* the calx lighter -- negative u
+        on the mass-law nodes, matching ``mu_phlog_mass < 0``);
+      * ``"oxygen"`` the reverse (+u);
+      * ``"neutral"`` all zero (then U = 0 and there is no tilt to balance).
+
+    ``toward`` defaults to ``cfg.conviction_toward``. The conviction field ``U = T u``
+    (``conviction_field``) then propagates this along the net's couplings."""
+    toward = cfg.conviction_toward if toward is None else toward
+    d = len(cfg.node_names)
+    idx = _idx(cfg)
+    u = jnp.zeros((d,))
+    if toward == "neutral":
+        return u
+    sign = 1.0 if toward == "oxygen" else -1.0
+    for n in DISAGREEMENT_NODES:
+        u = u.at[idx[n]].set(sign)
+    return u
+
+
+def conviction_field(Pi: jnp.ndarray, h: jnp.ndarray, names: tuple[str, ...],
+                     u: jnp.ndarray, alpha: float = 0.5) -> jnp.ndarray:
+    """The conviction field ``U = T u`` for a stack of belief nets, reusing
+    ``dual_field.PrecisionUtilityNet.effective_utility`` (solves ``(I - alpha W) u_eff = u``
+    with ``W`` the row-stochastic propagation operator read off each net's off-diagonal
+    precision). ``Pi`` (N, d, d), ``h`` (N, d), ``u`` (d,). Returns ``(N, d)`` -- the
+    per-agent value field, value propagated along that agent's *current* couplings (so it
+    rides the structure as the relational substrate reshapes it). Well-defined for any
+    ``alpha < 1`` regardless of ``Pi`` definiteness (``W`` is row-stochastic), so it is safe
+    on the improper hub prior."""
+    def one(Pi_i, h_i):
+        net = PrecisionUtilityNet(names=names, Pi=Pi_i, h=h_i, u=u, alpha=alpha)
+        return net.effective_utility()
+    return jax.vmap(one)(Pi, h)
+
+
+def balanced_lambda(cfg: StructuralConfig, toward: str | None = None) -> float:
+    """The tilt ``lambda`` at which the conviction field's contribution to the potential
+    matches a typical single-step evidence deposit -- so neither the evidence/conservatism
+    field nor the conviction field dominates the update. This is *all* the "belief-utility
+    ~ precision" balance asks for -- a reference scale, not a tuned optimum. Closed-form norm
+    ratio (no optimiser), on the **contested (disagreement) subspace** where the two fields
+    actually compete:
+
+        lambda* = || j_typical[dis] || / || U[dis] ||,
+
+    with ``U = T u`` the conviction field on the incumbent prior and ``j_typical = H^T (H
+    phi_ref) / sigma^2`` a representative one-step Fisher potential (``phi_ref`` the oxygen
+    pole), both restricted to the disagreement nodes.
+
+    NOTE (reported, not tuned away): the *dynamical* 50/50 crossover sits BELOW ``lambda*``
+    (empirically ~0.5 lambda*), because the conviction is added coherently every step while
+    the noisy evidence partly cancels -- the value field punches above its per-step norm.
+    ``lambda*`` is the principled scale; nb33 locates the crossover relative to it.
+    ``lambda << lambda*`` evidence-dominated; ``lambda >> lambda*`` conviction-dominated
+    (motivated reasoning that locks the belief by value alone)."""
+    net = phlogiston_prior(cfg)
+    u = conviction_u(cfg, toward)
+    pun = PrecisionUtilityNet(names=cfg.node_names, Pi=net.Pi, h=net.h, u=u,
+                              alpha=cfg.conviction_alpha)
+    U = pun.effective_utility()
+    H = observation_operator(cfg)
+    phi_ref = phi_true_at(cfg, cfg.n_steps - 1)
+    j = H.T @ (H @ phi_ref) / (cfg.sigma_o ** 2)
+    # restrict to the contested (disagreement) subspace -- where the two fields compete.
+    dis = jnp.asarray([cfg.node_names.index(n) for n in DISAGREEMENT_NODES])
+    return float(jnp.linalg.norm(j[dis]) / (jnp.linalg.norm(U[dis]) + 1e-12))

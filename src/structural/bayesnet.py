@@ -154,6 +154,29 @@ class LinearGaussianBN:
         gbn = self.to_info()
         return gbn_mean(gbn), gbn_cov(gbn)
 
+    def sample(self, key: jax.Array, n: int = 1) -> jax.Array:
+        """Ancestral samples from the generative DAG -- the direction the joint-only
+        ``GaussianBeliefNet`` cannot provide. The structural equation ``x = B x + b + e``
+        with ``e ~ N(0, diag(s))`` rearranges to
+
+            A x = b + e ,    A = I - B  (unit lower-triangular in topological order),
+
+        so ``x = A^{-1}(b + sqrt(s) * z)``, ``z ~ N(0, I)``. The marginal mean ``A^{-1} b``
+        and covariance ``A^{-1} diag(s) A^{-T}`` equal ``joint()`` exactly (the same ``A``,
+        ``s`` ``to_info`` compiles), so this draws from precisely the joint the precision
+        form encodes. Returns ``(n, d)``.
+
+        This is what lets an LGBN act as the *true world* a population samples from: when a
+        node is HIDDEN (dropped from the returned observation, see ``world_net.sample_world``)
+        its couplings carry a correlation into the data that no agent's menu represents -- a
+        residual that *emerges* over time rather than being planted."""
+        d = self.dim
+        A = jnp.eye(d) - self.B
+        z = jax.random.normal(key, (d, n))
+        rhs = self.b[:, None] + jnp.sqrt(self.s)[:, None] * z       # (d, n)
+        x = jnp.linalg.solve(A, rhs)                                # (d, n)
+        return x.T                                                  # (n, d)
+
     def marginal(self, name: str) -> tuple[float, float]:
         """The marginal belief ``(mean, variance)`` at one node -- the per-node
         belief the joint-only form could only get at via an explicit Schur

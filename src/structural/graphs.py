@@ -227,6 +227,32 @@ def complete(n: int) -> Graph:
 
 
 # ----------------------------------------------------------------------
+# Spectral read-outs: the connectivity axis of the Zollman transient.
+# ----------------------------------------------------------------------
+
+def laplacian(graph: Graph) -> np.ndarray:
+    """The (combinatorial) graph Laplacian ``L = D - A`` of the *bare* adjacency
+    (degree diagonal minus adjacency). ``L`` is symmetric PSD with a zero eigenvalue
+    per connected component; its spectrum is the connectivity read-out below."""
+    A = np.asarray(graph.A, dtype=float)
+    return np.diag(A.sum(axis=1)) - A
+
+
+def algebraic_connectivity(graph: Graph) -> float:
+    """The **Fiedler value** ``lambda_2`` -- the second-smallest Laplacian eigenvalue.
+    Zero iff the graph is disconnected (``isolated()`` or fully separate communities);
+    larger means a better-knit graph that mixes information faster. This is the axis the
+    Zollman speed/accuracy transient lives on: raising ``lambda_2`` (denser bridges, more
+    rewiring) speeds consensus but spends the transient diversity that, near a lock-in
+    boundary, protects a community from committing early to the worse paradigm.
+
+    Computed with ``numpy.linalg.eigvalsh`` (the Laplacian is symmetric), so the
+    eigenvalues come back sorted ascending and ``lambda_2`` is ``eigvals[1]``."""
+    w = np.linalg.eigvalsh(laplacian(graph))
+    return float(w[1]) if w.shape[0] > 1 else 0.0
+
+
+# ----------------------------------------------------------------------
 # Config -> Graph (the one place that reads a NetworkConfig).
 # ----------------------------------------------------------------------
 

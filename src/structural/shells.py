@@ -176,3 +176,121 @@ def node_oxygen_trace(Pi_t: np.ndarray, h_t: np.ndarray,
     node_oxy[:, safe] = np.clip(
         (mu_meas[:, safe] - mu_phlog[safe]) / denom[safe], 0.0, 1.0)
     return meas, node_oxy
+
+
+# ----------------------------------------------------------------------
+# 4. edge (coupling) trajectories -- did the data actually MOVE the structure?
+# ----------------------------------------------------------------------
+
+def edge_trace(Pi_t: np.ndarray, cfg: StructuralConfig,
+               pairs: list[tuple[str, str]]) -> dict[tuple[str, str], np.ndarray]:
+    """Population-mean off-diagonal precision ``Pi[a, b]`` over time for each node pair.
+
+    ``Pi_t`` (T, N, d, d) is the full belief-net trajectory from ``step.run_trace_net``;
+    ``pairs`` a list of ``(node_a, node_b)`` name tuples. Returns ``{(a, b): (T,) curve}``,
+    the population mean of the precision coupling between the two nodes at each step.
+
+    This is the raw structural-learning signal and the headline read-out of the substrate
+    migration (P1): the *relational* (gravimetric) observation operator deposits
+    OFF-DIAGONAL Fisher, so a belt coupling such as
+    ``("calx_heavier_than_metal", "mass_change_sign")`` GROWS over the rollout; the *node*
+    operator deposits only diagonal Fisher, so the same entry stays pinned at its prior
+    value -- the edges are frozen. Read straight off ``Pi`` (no inversion), so it is robust
+    to the improper hub prior. The normalized CPD weight ``B[child, parent]`` is the same
+    signal rescaled -- recover it with ``bayesnet.LinearGaussianBN.from_info`` on a PD
+    posterior if a CPD reading is wanted.
+    """
+    Pi_t = np.asarray(Pi_t)
+    names = cfg.node_names
+    out: dict[tuple[str, str], np.ndarray] = {}
+    for a, b in pairs:
+        ia, ib = names.index(a), names.index(b)
+        out[(a, b)] = Pi_t[:, :, ia, ib].mean(axis=1)        # (T,)
+    return out
+
+
+# ----------------------------------------------------------------------
+# 5. is there really a belt AND a core?  +  residual structural disagreement
+# ----------------------------------------------------------------------
+
+def conservatism_split(values: np.ndarray) -> tuple[float, float]:
+    """The belt/core threshold ``tau`` and an honesty number for the split.
+
+    ``tau`` is the median conservatism (the quantile boundary ``assign_shells`` uses for
+    ``n_shells=2``). The second return is **Sarle's bimodality coefficient**
+    ``BC = (skew^2 + 1) / kurtosis`` (non-excess kurtosis): for a unimodal Gaussian
+    ``BC ~ 0.33``, for a uniform ``~ 0.56``, and ``-> 1`` for a clean two-spike
+    distribution. The classic cutoff is ``5/9 ~ 0.555``: ``BC > 0.555`` suggests the
+    population really does have two conservatism modes (a belt and a core), while a low
+    ``BC`` means the belt/core split is a quantile *convenience* on a single mode, not a
+    structural fact -- which is exactly the caveat to PRINT next to any staircase figure
+    (per the honest-findings rule: a quantile split always *produces* two curves; this
+    number says whether the split is real)."""
+    v = np.asarray(values, dtype=float)
+    tau = float(np.median(v))
+    s = v.std()
+    if s < 1e-12:
+        return tau, 0.0
+    z = (v - v.mean()) / s
+    skew = float(np.mean(z ** 3))
+    kurt = float(np.mean(z ** 4))                # non-excess (Gaussian -> 3)
+    return tau, (skew ** 2 + 1.0) / kurt
+
+
+def residual_disagreement(Pi_t: np.ndarray) -> np.ndarray:
+    """Population dispersion of *structure* over time -- the paper's "residual structural
+    disagreement" measured quantity. At each step, the mean Frobenius distance of each
+    agent's precision matrix to the population-mean precision:
+
+        d(t) = (1/N) sum_i || Pi_i(t) - mean_j Pi_j(t) ||_F .
+
+    ``Pi_t`` (T, N, d, d) from ``step.run_trace_net``. Returns ``(T,)``.
+
+    This falls toward 0 as the population reaches structural *consensus* and stays high
+    when an entrenched bloc refuses to move (the lock-in signature: the core blocs go on
+    disagreeing forever). Read on the precision (not the mean), so it tracks the NET
+    converging; robust to the overall precision growth because every agent sharpens
+    together and the population mean tracks it (contrast a distance to a *fixed* prior,
+    which would be swamped by confidence growth). Pairs with ``observables.settling_time``
+    on this curve to read time-to-consensus."""
+    Pi_t = np.asarray(Pi_t)
+    Pi_bar = Pi_t.mean(axis=1, keepdims=True)            # (T,1,d,d)
+    fro = np.sqrt(((Pi_t - Pi_bar) ** 2).sum(axis=(2, 3)))  # (T,N)
+    return fro.mean(axis=1)                               # (T,)
+
+
+def edge_count_trace(Pi_t: np.ndarray, threshold: float = 0.15
+                     ) -> tuple[np.ndarray, np.ndarray]:
+    """Population-mean structural edge count over time and its signed step-to-step change,
+    for ``plot.plot_edge_edit_timeline``. An edge ``(i,j)`` is counted present when the
+    population-mean ``|Pi[i,j]|`` exceeds ``threshold`` (upper triangle only).
+
+    ``Pi_t`` (T, N, d, d) from ``run_trace_net`` (or (T, d, d)). Returns
+    ``(edge_count_t (T,), edge_delta_t (T,))``. On the relational substrate the count RISES
+    as the mass-balance data deposit new belt couplings (data-driven structure *expansion*);
+    Bayesian Model Reduction prunes the prior couplings the data stop supporting (structure
+    *reduction*). The two moves are the paper's expansion/reduction, read off the trajectory."""
+    Pi_t = np.asarray(Pi_t)
+    Pim = np.abs(Pi_t.mean(axis=1)) if Pi_t.ndim == 4 else np.abs(Pi_t)   # (T, d, d)
+    T, d, _ = Pim.shape
+    iu = np.triu_indices(d, k=1)
+    counts = np.array([(Pim[t][iu] > threshold).sum() for t in range(T)], dtype=float)
+    delta = np.concatenate([[0.0], np.diff(counts)])
+    return counts, delta
+
+
+def core_stall(curve: np.ndarray, level: float = 0.5) -> tuple[bool, float, float]:
+    """Lock-in read-out for an order-parameter trajectory ``curve`` (T,) -- a population
+    m(t), or a single shell's m_S(t). Returns ``(stalled, final, peak)``:
+
+      * ``stalled`` -- ``True`` if the curve never reaches ``level`` (it stayed near its
+        starting pole: evidential lock-in -- the paradigm shift never happened);
+      * ``final``   -- the last value (the realised attractor over the horizon);
+      * ``peak``    -- the max reached (so a curve that rose then was dragged back is
+        distinguishable from one that never moved).
+
+    A converged run has ``final`` near the post-shift truth (> ``level``, not stalled); a
+    locked-in run stalls near its origin (< ``level``, stalled). The boolean is the cell
+    classifier for the gamma x conservatism lock-in phase diagram."""
+    c = np.asarray(curve, dtype=float)
+    return bool(c.max() < level), float(c[-1]), float(c.max())

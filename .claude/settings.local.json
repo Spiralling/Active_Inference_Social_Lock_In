@@ -20,7 +20,10 @@
       "PowerShell(pdflatex *)",
       "Bash(grep -o 'frac[^$]*' notebooks/19_biased_experiment_lockin.ipynb)",
       "Bash(.venv/Scripts/python.exe -c ' *)",
-      "Bash(awk '{print $6,$7,$8,$9}')"
+      "Bash(awk '{print $6,$7,$8,$9}')",
+      "Bash(../.venv/Scripts/python.exe _build_nb36.py)",
+      "Bash(../.venv/Scripts/python.exe -m jupyter nbconvert --to notebook --execute --inplace 36_structure_learning_showcase.ipynb)",
+      "Bash(PYTHONIOENCODING=utf-8 ../.venv/Scripts/python.exe -c ' *)"
     ]
   }
 }
