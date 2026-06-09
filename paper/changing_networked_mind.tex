@@ -117,101 +117,191 @@ data-dependent structure learning. The Kuhnian phenomenology is recovered as a c
 structure learning, not posited alongside it.
 \end{abstract}
 
-% ======================================================================
-\section{Models of collective belief revision}
+\section{What scalar models miss}
 \label{sec:background}
 % ======================================================================
 
-The question of how a community evaluates, adopts, and discards a system of knowledge has, over the
-last two decades, migrated from the philosophy of science into computational social science, where
-the qualitative insights of Kuhn, Lakatos, and Feyerabend have been recast as agent-based and
-network models one can actually run. It is worth orienting against that body of work before adding
-to it, because the contribution we intend is sharply delimited by what these models already do well
-and by two things they do not do at all.
+When the chemical community released phlogiston it did not revise a single
+credence. It rewrote a network of commitments in which combustion, calcination,
+respiration, and the theory of acids were all load-bearing on a hub that had
+to go. Whether one reads this as a Kuhnian paradigm shift \citep{kuhn1962} or
+as competition between two rival research programs \citep{holmes2000}, the
+structural fact is the same: late-phlogistic theorists (Cavendish, Priestley,
+Kirwan, Macquer) proposed cascading revisions that proved mutually
+incompatible \citep{blumenthal2017}, and an earlier line of defence argued
+that what they were defending was less a single hypothesis about combustion
+than a constellation of ontological and empirical commitments
+\citep{boantza2011}---phlogiston was load-bearing for too much.
 
-The dominant formalism is \emph{network epistemology}: a community of agents, each holding a scalar
-credence over a small menu of competing hypotheses, repeatedly tests, updates by Bayes, and shares
-results with network neighbours \citep{zollman2010,oconnor2019}. The celebrated results of this
-program concern the surprising epistemic value of inefficiency. Zollman's effect---that sparsely
-connected communities often outperform densely connected ones, because slow information flow shields
-pockets of the network from early misleading data and so preserves transient diversity---vindicates,
-in mathematics, the old intuition that a field benefits when some of its members stubbornly resist
-the consensus. A parallel literature on the \emph{division of cognitive labour} shows that a
-community hedges its bets best not when its scientists reason as dutiful truth-seekers but when they
-chase reward, scattering across approaches that pure epistemic rationality would have left unstaffed
-\citep{kitcher1990,strevens2003}. And a more recent strand identifies a whole taxonomy of
-mechanisms---sparse topology, large populations, strong priors, adaptive learning rules, intermittent
-ties---that stave off premature convergence \citep{jonard2025}. Alongside these run the
-active-inference treatments of collective cognition, in which \emph{epistemic communities} develop
-shared belief through coupled free-energy minimization \citep{albarracin2022}, and the recent
-formalization of belief revision itself as carrying a cost \citep{hyland2025}. Decentralized-science
-efforts, finally, take these coordination questions out of simulation and into the design of real
-research institutions.
+The dominant formalism for modelling such communities is network epistemology:
+each agent holds a degree of belief, or credence, between $0$ and $1$, in a
+fixed proposition, updates by Bayes, and shares evidence or posteriors with
+network neighbours \citep{zollman2010,oconnor2019,polygraphs2024}. This
+programme has produced striking results. Zollman's effect---that sparsely
+connected communities often outperform densely connected ones, because slow
+information flow preserves transient diversity---is the formal vindication of
+the old intuition that a field benefits when some of its members stubbornly
+resist the consensus. Subsequent work has shown that polarization can emerge
+even when agents share evidence, if they disagree on how to interpret it
+\citep{michelini2023}, and a parallel literature on the division of cognitive
+labour shows that a community hedges its bets best not when its scientists
+reason as dutiful truth-seekers but when they chase reward
+\citep{kitcher1990,strevens2003}. The PolyGraphs reflection
+\citep{polygraphs2024} frames the project explicitly normatively---``how ought
+we rationally to form opinions''---and reads persistent disagreement as
+``ignorance on the part of the community.''
 
-Two features cut across nearly all of this work, and they are exactly the two we wish to change.
-The first is that \emph{exploration is posited rather than derived}. To keep a community from
-collapsing onto the first locally attractive theory, these models equip their agents with an
-exploration term---the $\epsilon$ of an $\epsilon$-greedy rule, a temperature, a switching cost, an
-exogenous prior strength. The diversity that protects the community is bought with a free parameter.
-The second, and deeper, feature is that \emph{the hypothesis space is fixed}. The agents update over
-a menu---theory A versus theory B, a handful of arms on a bandit---that the modeller wrote down in
-advance. The interesting dynamics live in how the topology of communication interacts with movement
-\emph{within} that menu. What no one studies is a community whose menu is \emph{itself} the thing
-being learned, revised, and transmitted. The room is nearly empty, and the reason it is empty is
-that there has been no cheap, principled mechanism for ``learning what the model even is'' that could
-be run across a population.
+This framing cannot represent the phlogiston case. The puzzle is not that the
+community failed to converge on a single credence: it is that the commitments
+were entangled, that revising any one of them forced a re-reading of the
+others, and that the disagreement was about which entanglements to keep, not
+about a number in $[0,1]$. The closest formal precedent is Thagard's ECHO,
+which treats the phlogiston/oxygen debate as constraint satisfaction over a
+coherence network with excitatory and inhibitory links between hypotheses and
+evidence \citep{thagard1989,thagard1990}. ECHO captures the structural
+intuition we need; it does not give us the directed causal dependencies, the
+carry-over cost of mind-change, or the asymmetry between expanding and
+reducing the network that the next sections derive.
+
+Two more recent lines have begun to address parts of what is missing.
+Active-inference accounts of epistemic communities supply an endogenous
+precision-based mechanism for lock-in: agents ``tend to sample information in
+order to justify their own view of reality, which eventually leads to them
+having a high degree of certainty about their beliefs,'' and once this
+certainty is reached ``it becomes very difficult to get them to change their
+views'' \citep{albarracin2022}. The same author and colleagues have extended
+the framework to shared expectations and group intentionality
+\citep{albarracin2024protentions}, while a parallel line gives a formal route
+from individual to group-level generative models that warns against naive
+aggregation: the mapping from individual to collective active inference is
+``non-trivial,'' with preference conflicts reducing group precision below
+single-agent levels \citep{friston2023federated,waade2025}. And the
+variational cost of mind-change has been formalized at the single-agent level
+as a motivated decision that trades the informational cost of revision against
+the utility of holding a belief \citep{hyland2025}, with consequences
+including confirmation bias and attitude polarization.
+
+What none of these does is treat \emph{belief structure itself} as the object
+of inference. They retain a fixed menu of hypotheses or a fixed coupling
+graph, and the dynamics they study live in how the topology of communication
+interacts with movement \emph{within} that menu. What no one studies is a
+community whose menu is itself the thing being learned, revised, and
+transmitted---a community whose paradigm is a directed graph of
+interdependent commitments, whose dependencies change as the community
+expands and prunes them, and whose dynamics on that changing structure
+generate the lag, the lock-in, and the eventual reorganization. The room is
+nearly empty, and the reason it is empty is that there has been no cheap,
+principled mechanism for ``learning what the model even is'' that could be
+run across a population.
 
 % ======================================================================
-\section{Hidden structure and the necessity of structure learning}
+\section{Why paradigms are networks under structure learning}
 \label{sec:hidden}
 % ======================================================================
 
-Return to Kuhn's deepest observation, which the scalar models gesture at but cannot embody: a
-paradigm shapes what a scientist can perceive, what she chooses to investigate, and which
-alternatives she will entertain---three faces, he insists, of a single fact \citep{kuhn1962}. The
-reason a scalar credence over a fixed menu cannot carry this is that a menu has no hidden interior.
-It can represent which theory is favoured; it cannot represent the dependencies that make one theory
-\emph{cost} more to abandon than another, nor the way a commitment at the centre of a web of
-inference quietly determines what counts, at the periphery, as an anomaly worth noticing.
+Return to Kuhn's deepest observation, which the scalar models gesture at but
+cannot embody: a paradigm shapes what a scientist can perceive, what she
+chooses to investigate, and which alternatives she will entertain---three
+faces, he insists, of a single fact \citep{kuhn1962}. The reason a scalar
+credence over a fixed menu cannot carry this is that a menu has no hidden
+interior. It can represent which theory is favoured; it cannot represent the
+dependencies that make one theory \emph{cost} more to abandon than another,
+nor the way a commitment at the centre of a web of inference quietly
+determines what counts, at the periphery, as an anomaly worth noticing.
 
-But there is a prior problem, and it is the one we want to make the engine of the paper, because it
-makes structure learning not a stylistic preference but a necessity. \emph{The structure of reality
-is hidden.} A scientist confronting a new domain is not given the right variables, and she is
-certainly not given the dependencies among them. She does not know, in advance, whether two observed
-regularities share a hidden common cause, are directly and lawfully coupled, or merely coincide. The
-generative model whose structure she must eventually come to hold is, at the outset, unknown in its
-very shape. This poses a question the fixed-menu models never have to face: if you do not know the
-structure of the world, how do you build a network over it that you can sample from at all?
+The pivot that forces everything that follows is that the structure of
+reality is itself hidden. A scientist confronting a new domain is not given
+the right variables and is certainly not given the dependencies among them.
+She does not know, in advance, whether two observed regularities share a
+hidden common cause, are directly and lawfully coupled, or merely coincide.
+The generative model whose structure she must eventually come to hold is, at
+the outset, unknown in its very shape. For an active-inference reader this
+move is natural: just as agents must infer hidden states they cannot directly
+observe, they must also infer the hidden \emph{dependencies among} those
+states. The cognitive-science literature on theory acquisition reaches the
+same conclusion from a different starting point. Ullman and Tenenbaum
+\citep{ullman2020} argue that conceptual development is best understood as
+``resource-constrained, hierarchical Bayesian program induction with
+different primitives and constraints,'' with theory learning operating as
+``stochastic search at two levels of abstraction---an outer loop in the space
+of theories, and an inner loop in the space of explanations or models
+generated by each theory'' \citep{kemp2008form,ullman2012}.
+``Symbolic representations,'' they emphasise, ``are better suited to
+capturing children's intuitive theories but give rise to a harder learning
+problem, which can only be solved by exploratory search.''
 
-The answer forces everything that follows. You begin with \emph{some} network---a provisional Bayes
-net of commitments---and you treat its structure as itself an object of inference, to be expanded
-when the data demand a commitment you had not represented and reduced when a dependency you had
-posited earns no evidence. Learning a model from scratch, when the structure is hidden, is
-\emph{Bayesian model expansion and reduction}. And this immediately discharges the first of our two
-debts to the prior literature: the exploration term that those models install by hand reappears here
-with a mechanism behind it. To explore is to \emph{expand}---to entertain a node or an edge not yet
-in the model---and the drive to do so is the epistemic value of the expansion, the expected
-information it would yield, which active inference already supplies through expected free energy
-\citep{friston2015,millidge2021}. We do not add an exploration bonus; we identify exploration with
-the structural move of proposing a new piece of the world.
+This is the framing that lets us name the second-debt our contribution pays.
+The standard network-epistemology models keep their communities from
+collapsing onto the first locally attractive theory by equipping their agents
+with an exploration term: an $\epsilon$ of an $\epsilon$-greedy rule, a
+temperature, a switching cost, an exogenous prior strength
+\citep{zollman2010,oconnor2019}. The diversity that protects the community is
+bought with a free parameter. Once we treat the structure of the model as
+itself an object of inference, the exploration term is no longer free: it
+is the epistemic value of expanding the model to entertain a commitment not
+yet in it, which active inference supplies through expected free energy
+\citep{friston2015,friston2017curiosity,millidge2021}. \emph{To explore is to
+expand.}
 
-\paragraph{Desiderata.}
-The construction that follows is built to satisfy six requirements:
-\begin{enumerate}
-\item that a paradigm be a \emph{structured} object---a network of interdependent commitments with a
-dense core and a sparse belt in contact with observation;
-\item that revising a commitment incur a \emph{carry-over} cost---the aggregate of the re-readings it
-forces on everything downstream;
-\item that \emph{conservatism be derived} from structural position rather than assigned by a dial;
-\item that \emph{structure learning be principled}---Bayesian model reduction over a continuous
-precision space whose corners are the discrete topologies;
-\item that \emph{conviction be a second field on the same network}, decoupled from conservatism and
-written into the model by the same expansion that writes a new belief;
-\item that the \emph{population signature} be a graded reorganization, or a stall, rather than a
-single thresholded flip.
-\end{enumerate}
-The active-inference machinery enters unmodified throughout. Section~\ref{sec:results} reports how
-each desideratum fares once the model is actually run.
+The complementary direction is no less principled. Active inference treats
+structure learning as the dual of state inference through two complementary
+operations: pruning structure the data do not support, and proposing
+structure the data demand \citep{friston2017curiosity,smith2020structure}.
+The exact half is Bayesian model reduction: because a reduced model shares
+its likelihood with the richer model and differs only in its prior, the
+change in evidence under any pruning is available in closed form from the
+already-inverted full posterior \citep{friston2018bmr}. The mechanism has
+been operationalized in active-inference agents and shown to ``operate in the
+absence of further sensory experience\dots redundant parameters are pruned,
+and agents form more precise representations,'' running at ``the slowest
+timescale'' of a documented hierarchy in which structure learning ``proceeds
+by redistributing the products of learning to minimise model complexity''
+\citep{smith2022plos}. This is the timescale, and the mechanism, on which a
+community decides which of its commitments to keep.
+
+What is new here is to make these two operations the actual object of a
+multi-agent dynamics. Existing applications of BMR have run on independent
+single agents \citep{smith2022plos} or used reduced priors within a single
+agent's sensorimotor loop \citep{priorelli2023}, and the canonical
+parametric-empirical-Bayes formulation defines ``group'' as between-subject
+neuroimaging rather than as interacting agents \citep{friston2016peb}. The
+recent collective-intelligence work that does live at the multi-agent scale
+proposes shared generative models but does not operationalize BMR
+\citep{friston2024ci,kaufmann2021}. Treating a paradigm as the object the
+community is jointly reducing and expanding is therefore an open move, and
+it is the move this paper makes.
+
+\paragraph{Two fields, one operator.} The single non-obvious step the rest of
+the paper turns on is that the same propagation operator
+$\Top = (I-A)^{-1}$ generates two distinct fields on the network. Acting on
+the unit source it returns the conservatism $\kappa=\Top\bone$, the
+carry-over cost of revising a commitment: a node is costly to revise because
+much depends on it. Acting on a utility source $u$ it returns the conviction
+field $U=\Top u$, the intrinsic value of holding a belief, propagated through
+the same dependencies that carry the cost. The two fields are linearly
+independent: a commitment can be central yet value-neutral, cheap yet
+cherished, structurally protected yet wanted false. This is the formal
+counterpart of the empirical posture of the Causal Attitude Network model,
+which treats attitudes as networks of evaluative reactions in which
+connectivity is attitude strength \citep{dalege2016}---now realised on the
+same directed graph that carries the cost of revision. We argue in
+Sections~\ref{sec:bmebmr}--\ref{sec:both} that lock-in, motivated
+persistence, Kuhnian transitions, and exploration-as-expansion all fall out
+of how these two fields interact.
+
+\paragraph{What the rest of the paper does.} The construction is built to
+satisfy six things and the rest of the paper checks them off:
+that a paradigm be a structured object with a dense core and a sparse belt;
+that revising a commitment incur an aggregate carry-over cost over its
+descendants; that conservatism be derived from structural position rather
+than assigned by a dial; that structure learning be principled---Bayesian
+model reduction over a continuous precision space whose corners are the
+discrete topologies; that conviction be a second field on the same network,
+decoupled from conservatism and written into the model by the same expansion
+that writes a new belief; and that the population signature be a graded
+reorganization, or a stall, rather than a single thresholded flip. The
+active-inference machinery enters unmodified throughout. Section~\ref{sec:results}
+reports how each desideratum fares once the model is actually run.
 
 % ======================================================================
 \section{Paradigm networks and structure learning}
@@ -1318,6 +1408,82 @@ A step-by-step tutorial on active inference and its application to empirical dat
 L.~Da Costa, T.~Parr, N.~Sajid, S.~Veselic, V.~Neacsu, and K.~Friston.
 Active inference on discrete state-spaces: a synthesis.
 \emph{Journal of Mathematical Psychology}, 99:102447, 2020.
+
+\bibitem[Holmes(2000)]{holmes2000}
+F.~L.~Holmes.
+The revolution in chemistry and physics: overthrow of a reigning paradigm or competition between
+contemporary research programs? \emph{Isis}, 91(4):735--753, 2000.
+
+\bibitem[Thagard(1990)]{thagard1990}
+P.~Thagard.
+The conceptual structure of the chemical revolution.
+\emph{Philosophy of Science}, 57(2):183--209, 1990.
+
+\bibitem[Boantza and Gal(2011)]{boantza2011}
+V.~D.~Boantza and O.~Gal.
+The `absolute existence' of phlogiston: the losing party's point of view.
+\emph{British Journal for the History of Science}, 44(3):317--342, 2011.
+
+\bibitem[Blumenthal and Ladyman(2017)]{blumenthal2017}
+G.~Blumenthal and J.~Ladyman.
+The development of problems within the phlogiston theories, 1766--1791.
+\emph{Foundations of Chemistry}, 19(3):241--280, 2017.
+
+\bibitem[Ball et al.(2024)]{polygraphs2024}
+B.~Ball, A.~Koliousis, A.~Mohanan, and M.~Peacey.
+Computational philosophy: reflections on the {PolyGraphs} project.
+\emph{Humanities and Social Sciences Communications}, 11:186, 2024.
+
+\bibitem[Michelini et al.(2023)]{michelini2023}
+M.~Michelini, J.~Osorio, W.~Houkes, D.~\v{S}e\v{s}elja, and C.~Stra\ss{}er.
+Scientific disagreements and the diagnosticity of evidence: how too much data may lead to polarization.
+\emph{Journal of Artificial Societies and Social Simulation}, 26(4):5, 2023.
+
+\bibitem[Albarracin et al.(2024)]{albarracin2024protentions}
+M.~Albarracin, R.~J.~Pitliya, T.~St.~Clere Smithe, D.~A.~Friedman, K.~Friston, and M.~J.~D.~Ramstead.
+Shared protentions in multi-agent active inference.
+\emph{Entropy}, 26(4):303, 2024.
+
+\bibitem[Friston et al.(2024a)]{friston2023federated}
+K.~J.~Friston, T.~Parr, C.~Heins, A.~Constant, D.~Friedman, T.~Isomura, C.~Fields,
+T.~Verbelen, M.~Ramstead, J.~Clippinger, and C.~D.~Frith.
+Federated inference and belief sharing.
+\emph{Neuroscience \& Biobehavioral Reviews}, 156:105500, 2024.
+
+\bibitem[Waade et al.(2025)]{waade2025}
+P.~T.~Waade, C.~L.~Olesen, J.~E.~Laursen, S.~W.~Nehrer, C.~Heins, K.~Friston, and C.~Mathys.
+As one and many: relating individual and emergent group-level generative models in active inference.
+\emph{Entropy}, 27(2):143, 2025.
+
+\bibitem[Ullman and Tenenbaum(2020)]{ullman2020}
+T.~D.~Ullman and J.~B.~Tenenbaum.
+Bayesian models of conceptual development: learning as building models of the world.
+\emph{Annual Review of Developmental Psychology}, 2:533--558, 2020.
+
+\bibitem[Smith et al.(2022b)]{smith2022plos}
+R.~Smith, V.~Neacsu, M.~B.~Mirza, R.~A.~Adams, and K.~J.~Friston.
+Simulating empirical phenomena of inference under active learning and active selection through
+{Bayesian} model reduction. \emph{PLOS ONE}, 17(12):e0277199, 2022.
+
+\bibitem[Priorelli and Stoianov(2023)]{priorelli2023}
+M.~Priorelli and I.~P.~Stoianov.
+Dynamic inference by model reduction.
+\emph{bioRxiv}, 2023. doi:10.1101/2023.09.10.557043.
+
+\bibitem[Friston et al.(2016)]{friston2016peb}
+K.~J.~Friston, V.~Litvak, A.~Oswal, A.~Razi, K.~E.~Stephan, B.~C.~M.~van Wijk, G.~Ziegler, and
+P.~Zeidman. Bayesian model reduction and empirical {Bayes} for group ({DCM}) studies.
+\emph{NeuroImage}, 128:413--431, 2016.
+
+\bibitem[Friston et al.(2024b)]{friston2024ci}
+K.~J.~Friston et al.
+Designing ecosystems of intelligence from first principles.
+\emph{Collective Intelligence}, 3(4), 2024. arXiv:2212.01354.
+
+\bibitem[Kaufmann et al.(2021)]{kaufmann2021}
+R.~Kaufmann, P.~Gupta, and J.~Taylor.
+An active inference model of collective intelligence.
+\emph{Entropy}, 23(7):830, 2021.
 
 \end{thebibliography}
 
