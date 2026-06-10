@@ -1,0 +1,63 @@
+{
+  "experiment": "cosmology_tracking",
+  "git": {
+    "sha": "008fc50b3e662a5b7d56fac47e43dc63872026b4",
+    "branch": "production/structural-minimal",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-06-09T16:41:07+00:00",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "params": {
+    "N_AGENTS": 150,
+    "N_STEPS": 180,
+    "T1": 60,
+    "T2": 120,
+    "SIGMA_O": 0.5,
+    "SEEDS": [
+      0,
+      1,
+      2
+    ],
+    "CONVICTION_LEVEL": 4.0,
+    "INTER_CONNECTED": 0.08,
+    "INTRA": 0.5
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.0",
+    "jaxlib": "0.9.0",
+    "numpy": "2.3.4",
+    "equinox": "0.13.6",
+    "networkx": "3.5",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.7"
+  },
+  "outputs": {
+    "simulation_arrays.npz": {
+      "arrays": {
+        "cluster_id": "5a29b37866bb45120e2528b9f0cf1b4b0b711b330c6ed2728c0d7738a23e1d44",
+        "disagree_both": "b1563a6a22eca1f0be3196f49a3ced65d512d7491160b483cbe7e9a207d36448",
+        "disagree_conviction": "f16b7071d8af8243ef53e606b8b4d2f50a42c58f4149df1c31f342b843861289",
+        "disagree_disconnection": "b1563a6a22eca1f0be3196f49a3ced65d512d7491160b483cbe7e9a207d36448",
+        "disagree_neither": "f16b7071d8af8243ef53e606b8b4d2f50a42c58f4149df1c31f342b843861289",
+        "epoch_names": "bb9f01c2bc429484ed41fdb4a11cfd3cb777df2a1dfead576ebb6113c99e3a83",
+        "held_both": "00866ccf33b750300ef91d5f270e47e75d1b1ba02ba61f4c5e085df32d1b09d2",
+        "held_conviction": "e51bc79c052a75619fd560b3ecfbc1257714ad1226cb0442431cb60d7bfe7089",
+        "held_disconnection": "e1ba3ac29165f576bf21f3624e38e6c94e6861557b8772523b9de2b7c82bf38e",
+        "held_neither": "e1ba3ac29165f576bf21f3624e38e6c94e6861557b8772523b9de2b7c82bf38e",
+        "learned_offdiag": "265a30efb007f1c6f40a5a5b904b140631d4eced241c6e59fd078c7601c9baf0",
+        "snap_t": "0f2da0e7f004abcfe332dd4db08b19e8ab94d28846011128da107e210a3bcdf4",
+        "theory_means": "7af11d193573bb108545c9e5d83cb586ec0b37ae5244fd29da1ee6cfbd948034",
+        "true_offdiag": "3e6d9bb7e6f4bda50baf6c98691a72e8c7e4bf62fb6ae0e31c857308e8f18434",
+        "true_per_snap": "7364836c411b418cb62e42fefa081a79ee31c1e08a914a81fcc2bc04b0b16cef"
+      }
+    },
+    "summary.json": "d7ad9fb04cc719d43fa988c9753d4f3128fb79dd6ab24c39e9f916a6f7738721"
+  },
+  "runner_version": 1
+}

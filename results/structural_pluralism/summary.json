@@ -1,0 +1,46 @@
+{
+  "config": {
+    "N": 60,
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "omega": 0.9,
+    "n_steps": 120,
+    "value_A": "dark_matter",
+    "value_B": "scale_variant_laws",
+    "world": "underdetermined blend"
+  },
+  "disconnected": {
+    "dist": 1.253461241722107,
+    "dist_std": 0.0,
+    "A_wiring": [
+      80.79974365234375,
+      7.9999799728393555,
+      7.9999799728393555
+    ],
+    "B_wiring": [
+      8.799978256225586,
+      7.9999799728393555,
+      79.999755859375
+    ]
+  },
+  "connected": {
+    "dist": 0.1603379100561142,
+    "dist_std": 0.0,
+    "A_wiring": [
+      48.39986801147461,
+      7.999981880187988,
+      40.39986038208008
+    ],
+    "B_wiring": [
+      41.19987106323242,
+      7.999981880187988,
+      47.599857330322266
+    ]
+  },
+  "mechanism": "value -> selective attention -> structure (endogenous-gamma does NOT align)"
+}

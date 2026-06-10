@@ -1,0 +1,62 @@
+{
+  "experiment": "staircase_gate",
+  "git": {
+    "sha": "008fc50b3e662a5b7d56fac47e43dc63872026b4",
+    "branch": "production/structural-minimal",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-06-09T16:46:57+00:00",
+  "seeds": [
+    0
+  ],
+  "params": {
+    "N": 60,
+    "BETAS": [
+      0.0,
+      1.0,
+      3.0,
+      10.0,
+      30.0
+    ],
+    "BETA_CTRL": 10.0,
+    "SEED": 0,
+    "t_shift": 40,
+    "n_steps": 120,
+    "sigma_o": 0.5
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.0",
+    "jaxlib": "0.9.0",
+    "numpy": "2.3.4",
+    "equinox": "0.13.6",
+    "networkx": "3.5",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.7"
+  },
+  "outputs": {
+    "simulation_arrays.npz": {
+      "arrays": {
+        "bc": "05e2b94a0b8ff743bc2131fd0ac57f21ea8af3373e2c361ab7424c2f2b097dec",
+        "best_belt": "483da38ce199823c482a56c4721fe1e7de918888bc755c3bef06a748a8fda1b3",
+        "best_beta": "361ee7ddc6290e870c0ad96e632f841af4ea26068fc0cd3d3a5dfa4bfb46fc67",
+        "best_core": "5059c27ad44b1090bebd968b383255859a60d7feeec1e48940254d0d81476715",
+        "best_mid": "5c400bcfd0f1221dfef73b4c524956233565c3ce8c1fed110a76369fa4df8fc6",
+        "beta0_belt": "195f200d7057303b5452c933223b607a01c9c8ee949573393ee2b94c900396b4",
+        "beta0_core": "302edb099aa59667e56d01424f6ef101f130b5c9b2eaafc10c0997b627b83067",
+        "beta0_mid": "4f9a8710aa70f6f9a0222ad5ab6c6d9c31225cd0ec0d3bbb3b675b6aefce3d7c",
+        "beta_ctrl": "4b0c9a2aabe6eb1c4e8c30d03a8c5c739b6cbc05ebbc90b60a803324ee5da6bd",
+        "betas": "1a9ddae8fa684c16d049e934ed7014beaf41550479b300363918e14330acd8e4",
+        "kappa": "271c7e3510afef427330974107e0305b9eb58a7dfde7af869fab593d2a704eb2",
+        "kappa_names": "675a6c7bda3dd913528d02800e6cb58c91c4ebc94a2c2ad6ae449c2ec62e6a08",
+        "lag": "9e0a6b672cf2f28543e85e63c6e2c1bb1a470a94d074da9f3a59dddcfc808a74",
+        "lag_shuffled": "55227407cab72c6269c9b7dc58fbcfb6baaf00f295750ccc5cf82fd9fc1d96f2",
+        "lag_uniform": "55227407cab72c6269c9b7dc58fbcfb6baaf00f295750ccc5cf82fd9fc1d96f2",
+        "snap_t": "2d530352227c6bc9558ec610965064b4f74d5d752e2455a3096a188d166703f5"
+      }
+    },
+    "summary.json": "b0d1e72e96c9807a668c944fafa7617c24793b36847720cec9211dc8e3f7eadb"
+  },
+  "runner_version": 1
+}

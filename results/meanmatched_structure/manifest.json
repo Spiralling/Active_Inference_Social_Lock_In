@@ -1,0 +1,60 @@
+{
+  "experiment": "meanmatched_structure",
+  "git": {
+    "sha": "008fc50b3e662a5b7d56fac47e43dc63872026b4",
+    "branch": "production/structural-minimal",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-06-09T16:47:00+00:00",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "params": {
+    "D": 6,
+    "RHO": 0.4,
+    "SIG_OBS": 0.1,
+    "N": 90,
+    "N_STEPS": 180,
+    "T1": 60,
+    "T2": 120,
+    "OMEGA": 0.9,
+    "VIEW_SIZES": [
+      1,
+      2,
+      3,
+      6
+    ],
+    "SEEDS": [
+      0,
+      1,
+      2
+    ]
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.0",
+    "jaxlib": "0.9.0",
+    "numpy": "2.3.4",
+    "equinox": "0.13.6",
+    "networkx": "3.5",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.7"
+  },
+  "outputs": {
+    "simulation_arrays.npz": {
+      "arrays": {
+        "chance": "452c4552a5cb0eedca463b29a5011fbba5b57a0d606dd7c8f40784604c239f38",
+        "iso": "eec19a5b78287ed1c6b94030269ddc58e838c67c1cab930ed2d1ef9fe42ba1e0",
+        "struc": "db37239b2087efe7dc7c0df7948a28ab51d3e0e143014b4c89eba633a9333560",
+        "traj_iso": "4cf94fabaa040b9dd7cdde7243b4677d41d7c41ee98af02826aa3f73d4864a03",
+        "traj_struc": "dc8ab4911ec576406f2d48c6fd82ee4c394c931fb2ac1e5b57e5de30f5888d86",
+        "view_sizes": "c596b3aa202537c436bab19e966b3482ebfac9b27bfaeaa72794150558e4891c"
+      }
+    },
+    "summary.json": "89e91cd1cc2a180f7f64c8c6bb93f2f7b5c9316bdf261d40e894df84ba9492b4"
+  },
+  "runner_version": 1
+}

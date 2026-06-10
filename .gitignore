@@ -7,10 +7,14 @@ venv/
 *.egg-info/
 .ipynb_checkpoints/
 
-# Results (large artifacts)
-results/*.npz
-results/*.csv
-results/*.pkl
+# Results (large artifacts) — recursive (**) so dumps in subdirs
+# (e.g. big_sweep/traj/) are caught too, not just files directly under results/.
+# Figures (*.png), JSON manifests, REPORT.md and rows.jsonl stay tracked.
+results/**/*.npz
+results/**/*.csv
+results/**/*.pkl
+# Per-run trajectory dumps from the big sweep (regenerable by re-running the harness)
+results/big_sweep/traj/
 
 # One-off dev-script output dumps (generators live in scripts/)
 nb_extract.txt

@@ -1,0 +1,61 @@
+{
+  "experiment": "endogenous_gamma",
+  "git": {
+    "sha": "008fc50b3e662a5b7d56fac47e43dc63872026b4",
+    "branch": "production/structural-minimal",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-06-09T16:46:45+00:00",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "params": {
+    "N": 60,
+    "LAM": 0.2,
+    "GATES": [
+      0.0,
+      0.5,
+      1.0,
+      2.0,
+      4.0,
+      8.0
+    ],
+    "SEEDS": [
+      0,
+      1,
+      2
+    ],
+    "t_shift": 40,
+    "n_steps": 120,
+    "sigma_o": 0.5
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.0",
+    "jaxlib": "0.9.0",
+    "numpy": "2.3.4",
+    "equinox": "0.13.6",
+    "networkx": "3.5",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.7"
+  },
+  "outputs": {
+    "simulation_arrays.npz": {
+      "arrays": {
+        "deaf_gamma": "c59d3c29186297cb1292ebbfb4d4818cdab686fb959089d8713dc9a07b1535d7",
+        "deaf_revolt": "4769157a1840cbafc3d18ac4a9351ede3a9ed6fa55f3f3d3306d3bf9948d9707",
+        "gamma": "964b4834d31869b5210fa5396559774b98f9b3eb80bb0290db654dfc7bf9b7cb",
+        "gates": "b908afed2a9e49889d9772e90fb01194e82301746a73d68461c07628ff6a940c",
+        "m_t_g0": "bd44bc2e96a3940fbe9f2539992a528abb80461c4cea0f147ac6139f03ac284e",
+        "m_t_ghi": "41719d64ef24c109ab4e48c83f10d6440fd0c26aebdb32dcb966204e09ffd85b",
+        "revolt": "9953a74e4bb7ec525bb86f4d4bee8c1755ebeaa7e92413a7b47e6f625fa450c2",
+        "snap_t": "2d530352227c6bc9558ec610965064b4f74d5d752e2455a3096a188d166703f5"
+      }
+    },
+    "summary.json": "29609ce87fabf6f5348e61f43440a9f51fd22b201fd0f8e7419104a1f631f9ea"
+  },
+  "runner_version": 1
+}
