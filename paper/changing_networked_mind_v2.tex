@@ -1,0 +1,1681 @@
+\documentclass[11pt]{article}
+
+% ---------- encoding & fonts ----------
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[expansion=false]{microtype}
+
+% ---------- math ----------
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+
+% ---------- figures ----------
+\usepackage{graphicx}
+\graphicspath{{figures/}}
+\usepackage{tikz}
+\usetikzlibrary{calc,positioning,arrows.meta}
+\usepackage{subcaption}
+\usepackage{xcolor}
+
+% ---------- layout ----------
+\usepackage[margin=1in]{geometry}
+\usepackage{multicol}
+\usepackage[round,authoryear]{natbib}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+
+% ---------- shorthands ----------
+\newcommand{\KL}[2]{D_{\mathrm{KL}}\!\left[#1\,\middle\|\,#2\right]}
+\newcommand{\E}[1]{\mathbb{E}\!\left[#1\right]}
+\newcommand{\Eq}[2]{\mathbb{E}_{#1}\!\left[#2\right]}
+\newcommand{\Var}[2]{\mathrm{Var}_{#1}\!\left[#2\right]}
+\newcommand{\desc}{\mathrm{desc}}
+\newcommand{\rw}{\rightsquigarrow}
+\newcommand{\Top}{\mathsf{T}}          % propagation operator
+\newcommand{\bone}{\mathbf{1}}         % unit source vector
+
+% ---------- palette ----------
+\definecolor{costc}{RGB}{40,80,170}
+\definecolor{newc}{RGB}{200,120,30}      % proposed / new node (amber)
+
+% ---------- network figure macros ----------
+\tikzset{
+  bel/.style={circle,draw=black!70,line width=0.4pt,minimum size=7mm,inner sep=0pt,font=\small},
+  obs/.style={rectangle,draw=black!45,fill=white,minimum size=2.6mm,inner sep=0pt},
+  core/.style={line width=0.9pt,black!75},
+  belt/.style={line width=0.5pt,black!55},
+  sens/.style={dashed,line width=0.4pt,black!40},
+  anno/.style={font=\scriptsize\itshape,text=black!75,align=center},
+  annoarrow/.style={-{Stealth[length=1.4mm]},line width=0.3pt,black!55},
+  % directed dependency edges; the *c variants shorten to clear 7mm nodes drawn at coordinates
+  dcore/.style={-{Stealth[length=1.5mm]},line width=0.9pt,black!75},
+  dbelt/.style={-{Stealth[length=1.3mm]},line width=0.5pt,black!55},
+  dcorec/.style={dcore,shorten <=0.37cm,shorten >=0.37cm},
+  dbeltc/.style={dbelt,shorten <=0.37cm,shorten >=0.37cm},
+}
+\newcommand{\Positions}{%
+  \coordinate (A) at (0,1.1);   \coordinate (B) at (-1.1,0);
+  \coordinate (C) at (1.1,0);   \coordinate (D) at (0,-1.1);
+  \coordinate (b1) at (-1.45,1.95); \coordinate (b2) at (1.45,1.95);
+  \coordinate (b3) at (-2.25,0);    \coordinate (b4) at (2.25,0);
+  \coordinate (b5) at (-1.45,-1.95);\coordinate (b6) at (1.45,-1.95);
+  \coordinate (o1) at (-1.95,2.6);  \coordinate (o2) at (1.95,2.6);
+  \coordinate (o3) at (-3.1,0);     \coordinate (o4) at (3.1,0);
+  \coordinate (o5) at (-1.95,-2.6); \coordinate (o6) at (1.95,-2.6);
+}
+\newcommand{\Edges}{%
+  \draw[dcorec] (A)--(B); \draw[dcorec] (A)--(C); \draw[dcorec] (A)--(D);
+  \draw[dcorec] (B)--(C); \draw[dcorec] (B)--(D); \draw[dcorec] (C)--(D);
+  \draw[dbeltc] (A)--(b1); \draw[dbeltc] (A)--(b2);
+  \draw[dbeltc] (B)--(b3); \draw[dbeltc] (C)--(b4);
+  \draw[dbeltc] (D)--(b5); \draw[dbeltc] (D)--(b6);
+  \draw[sens] (b1)--(o1); \draw[sens] (b2)--(o2); \draw[sens] (b3)--(o3);
+  \draw[sens] (b4)--(o4); \draw[sens] (b5)--(o5); \draw[sens] (b6)--(o6);
+  \node[obs] at (o1){}; \node[obs] at (o2){}; \node[obs] at (o3){};
+  \node[obs] at (o4){}; \node[obs] at (o5){}; \node[obs] at (o6){};
+}
+% tiny 3-node paradigm DAG inside an agent circle at (#1,#2)
+\newcommand{\miniNet}[2]{%
+  \draw[black!70,line width=0.5pt,fill=white] (#1,#2) circle (0.46);
+  \fill[costc!75] ($(#1,#2)+(0,0.22)$) circle (0.055);
+  \fill[costc!75] ($(#1,#2)+(-0.22,-0.13)$) circle (0.055);
+  \fill[costc!75] ($(#1,#2)+(0.22,-0.13)$) circle (0.055);
+  \draw[costc!80,line width=0.4pt,-{Stealth[length=1mm]}] ($(#1,#2)+(0,0.22)$) -- ($(#1,#2)+(-0.22,-0.13)$);
+  \draw[costc!80,line width=0.4pt,-{Stealth[length=1mm]}] ($(#1,#2)+(0,0.22)$) -- ($(#1,#2)+(0.22,-0.13)$);
+  \draw[costc!80,line width=0.4pt,-{Stealth[length=1mm]}] ($(#1,#2)+(-0.22,-0.13)$) -- ($(#1,#2)+(0.22,-0.13)$);
+}
+
+% ======================================================================
+\title{\bfseries Changing a Networked Mind:\\[2pt]
+\large Paradigm Dynamics as Structure Learning over a Hidden World}
+\author{Jonas Hallgren \and David Hyland \and Mahault Albarracin%
+\thanks{Author order and affiliations provisional. Draft for IWAI 2026.}}
+\date{Draft v2 (the rate, the audit, and the pooling rule) --- \today}
+% ======================================================================
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+A scientist is not handed the variables of the world, nor the dependencies among them: the structure
+of reality is hidden, and a community must \emph{learn} that structure even as it uses it. We model a
+paradigm as a directed network of commitments and a scientific community as a population of bounded
+active-inference agents performing \emph{Bayesian structure learning} on that network---expanding it
+by proposing new commitments and reducing it by pruning the dependencies the data do not support. One
+operator organizes the formalism: the propagation operator of the network carries a
+\emph{conservatism} field (the cost of revising a commitment) and a \emph{conviction} field (the
+value a bounded agent attaches to holding it), the same operator applied to two different sources.
+Running the model through the full Kuhnian cycle---normal science, anomaly, crisis, reduction,
+discovery---in a 2{,}488-run sweep yields three findings. The lock-in boundary sits at \emph{very}
+weak social coupling: conviction-driven gating of disconfirming evidence cannot defeat connection,
+and only isolation protects a superseded paradigm. Discovery of a genuinely unconceived dimension
+follows a Poisson waiting-time law, but a \emph{staggered} discovery does not survive the communal
+prior---survival is zero at slow proposal rates and appears only once arrivals cluster the
+community's wakings within a few steps of one another, a critical mass in \emph{time}. And the predicted belt-first/core-last staircase is a creature of \emph{observability},
+not of a revision-rate gradient: it appears when the core commitments carry no direct observation
+rows---evidence reaching them only through relational channels---and vanishes under full
+observability, which localizes what a richer model must add to data-dependent couplings.
+This version closes the loop the first draft left open: the proposal rate is no longer a dial but
+a \emph{posterior}---each agent infers its own model inadequacy from its residual and from its
+neighbours' discoveries (a filtered, trust-weighted point process of exactly Hawkes form), and the
+socially excited rate manufactures the near-simultaneity that survival requires, lifting staggered
+survival from zero to near-complete. Structures are now entertained on \emph{expiring} epistemic
+credit and audited by the same ledger that admits them, controlling the discovery check's
+false-discovery rate with no threshold; and the staggered-discovery death is shown to be a property
+of the \emph{pooling protocol}---under fusion that lets agents abstain on dimensions they do not
+represent, survival simply tracks discovery. Incommensurability, on this model, lives in how a
+community pools, not in its concepts.
+\end{abstract}
+
+% ======================================================================
+\section{Introduction: changing a frame, not a credence}
+\label{sec:background}
+% ======================================================================
+
+To change one's mind about a fact is to update a belief; to change a paradigm is to change the
+\emph{frame} in which beliefs are posed. Such a frame is not a credence but a \emph{structure}: a
+network of conditional dependencies through which information propagates. A community that only
+revised its credences, leaving the network fixed, could not change frame at all. This is the
+phenomenon Kuhn named but could not run forward \citep{kuhn1962}: nothing in \emph{The Structure of
+Scientific Revolutions} tells us, mechanistically, why a community holds a structure of commitments
+long past the first disconfirming evidence, nor what finally makes the holding give way.
+
+When the chemical community released phlogiston it did not revise a single credence. It rewrote a
+network of commitments in which combustion, calcination, respiration, and the theory of acids were
+all load-bearing on a hub that had to go: late-phlogistic theorists proposed cascading revisions that
+proved mutually incompatible \citep{blumenthal2017,holmes2000}, defending less a hypothesis about
+combustion than a constellation of entangled commitments \citep{boantza2011}---phlogiston was
+load-bearing for too much.
+
+The dominant formalism for such communities, network epistemology, cannot represent this case. Its
+agents hold a scalar credence in a fixed proposition and update on a trust graph
+\citep{zollman2010,oconnor2019,zollman2013}, a programme that has produced striking results on
+transient diversity, polarization, and the division of cognitive labour
+\citep{jonard2025,michelini2023,kitcher1990,strevens2003}---but the phlogiston puzzle is not a failure
+to converge on a number. The commitments were \emph{entangled}: revising any one forced a re-reading
+of the others, and the disagreement was about which entanglements to keep. Thagard's ECHO
+\citep{thagard1989,thagard1990} captures the structural intuition as undirected coherence; it lacks
+the directed dependencies, the carry-over cost of mind-change, and the expand/reduce asymmetry we
+derive below. Active-inference accounts of epistemic communities supply an endogenous precision-based
+lock-in mechanism \citep{albarracin2022} and warn that naive aggregation degrades collective precision
+\citep{friston2023federated,waade2025}; the variational cost of mind-change has been formalized for a
+single agent as a motivated trade between revision cost and the utility of a held belief
+\citep{hyland2025}. What none of these does is treat \emph{belief structure itself} as the object of
+inference: they retain a fixed menu of hypotheses, and a scalar credence over a menu cannot say how
+revising one commitment forces a re-reading of the rest, nor how a community arrives at a \emph{new}
+way of carving up the world. When only a number moves on the trust graph, a community can converge
+on it, herd on it, or split over it---but its members can never come to hold different \emph{kinds}
+of world, only different values on a shared one. The question, made concrete in \S\ref{sec:model},
+is therefore what moves: this paper lets a piece of \emph{structure} travel, so that one agent can
+come to represent a commitment its peers do not.
+
+We make structure the object. Agents carry a directed network of commitments, learn its structure by
+Bayesian model expansion and reduction, and are \emph{bounded}: they sample a complex world through
+narrow channels, value some conclusions over others, and judge what they receive against their own
+model. Section~\ref{sec:bmebmr} builds the model and states the simulation loop explicitly;
+Section~\ref{sec:results} reports a single-agent dark-energy net and a 1{,}816-run population sweep
+through the full Kuhnian cycle on the phlogiston world.
+
+% ======================================================================
+\section{Why paradigms are networks under structure learning}
+\label{sec:hidden}
+% ======================================================================
+
+\paragraph{The structure of reality is hidden.}
+A scientist confronting a new domain is not given the right variables, and is certainly not given the
+dependencies among them: she does not know whether two regularities share a hidden common cause, are
+lawfully coupled, or merely coincide. For an active-inference reader the move is natural: just as
+agents infer hidden states, they must infer the hidden \emph{dependencies among} those states. The
+cognitive-science literature on theory acquisition reaches the same conclusion---conceptual
+development as hierarchical Bayesian program induction, a stochastic search over structures
+\citep{ullman2020,kemp2008form,ullman2012}.
+
+\paragraph{To explore is to expand; to do normal science is to reduce.}
+Network-epistemology models keep their communities from collapsing onto the first attractive theory
+with a hand-tuned exploration term---an $\epsilon$, a temperature, a switching cost
+\citep{zollman2010,oconnor2019}. Once structure is the object of inference, the \emph{content} of
+exploration is no longer a tuned bonus but the epistemic value of expanding the model to entertain a
+commitment not yet in it \citep{friston2015,friston2017curiosity}; what stays free is only the
+\emph{rate} at which proposals arrive. The complementary operation is Bayesian model reduction:
+pruning structure the data do not support, in closed form, at the slowest timescale of the learning
+hierarchy \citep{friston2018bmr,smith2022plos}. Existing applications of this machinery run on single
+agents \citep{smith2022plos,priorelli2023} or define ``group'' as between-subject neuroimaging
+\citep{friston2016peb}; treating a paradigm as the object a \emph{community} jointly reduces and
+expands is the open move this paper makes.
+
+\paragraph{Two fields, one operator.}
+The single non-obvious step the rest of the paper turns on: once a paradigm is a network, one
+operation that network science already owns (\S\ref{sec:carryover})---propagating influence from a
+commitment to everything downstream---generates \emph{two} fields on the same graph, depending on
+what is propagated. Propagate sheer dependence and we get
+\emph{conservatism}: a commitment is costly to revise because much depends on it. Propagate
+\emph{value} and we get \emph{conviction}: the worth a bounded agent attaches to holding a belief,
+carried through the same dependencies. The two are independent---a commitment can be central yet
+value-neutral, cheap yet cherished (Fig.~\ref{fig:twofields}). That attitudes live on a network is
+the empirical posture of the Causal Attitude Network model \citep{dalege2016}; we place it on the
+same \emph{directed} graph that carries the cost of revision.
+
+\begin{figure}[h!]
+\centering
+\begin{subfigure}{0.49\textwidth}\centering
+\resizebox{0.92\linewidth}{!}{%
+\begin{tikzpicture}
+  \Positions \Edges
+  \node[bel,fill=blue!62!white] at (A){A};
+  \node[bel,fill=blue!56!white] at (B){B};
+  \node[bel,fill=blue!62!white] at (C){C};
+  \node[bel,fill=blue!60!white] at (D){D};
+  \node[bel,fill=blue!18!white] at (b1){};
+  \node[bel,fill=blue!20!white] at (b2){};
+  \node[bel,fill=blue!15!white] at (b3){};
+  \node[bel,fill=blue!18!white] at (b4){};
+  \node[bel,fill=blue!17!white] at (b5){};
+  \node[bel,fill=blue!15!white] at (b6){};
+\end{tikzpicture}}
+\par\vspace{4pt}
+\resizebox{0.74\linewidth}{!}{%
+\begin{tikzpicture}
+  \shade[left color=blue!10!white,right color=blue!62!white] (0,0) rectangle (4,0.28);
+  \draw[black!50,line width=0.3pt] (0,0) rectangle (4,0.28);
+  \node[font=\scriptsize] at (0.55,-0.28){low}; \node[font=\scriptsize] at (3.5,-0.28){high};
+\end{tikzpicture}}
+\caption{Revision cost $\kappa_i$ (conservatism)}
+\label{sub:cost}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.49\textwidth}\centering
+\resizebox{0.92\linewidth}{!}{%
+\begin{tikzpicture}
+  \Positions \Edges
+  \node[bel,fill=green!62!white] at (A){A};
+  \node[bel,fill=green!22!white] at (B){B};
+  \node[bel,fill=gray!22!white]  at (C){C};
+  \node[bel,fill=red!26!white]   at (D){D};
+  \node[bel,fill=gray!6!white]   at (b1){};
+  \node[bel,fill=green!58!white] at (b2){};
+  \node[bel,fill=red!12!white]   at (b3){};
+  \node[bel,fill=red!58!white]   at (b4){};
+  \node[bel,fill=green!12!white] at (b5){};
+  \node[bel,fill=gray!6!white]   at (b6){};
+  \node[anno] (an2) at (3.7,2.7){cheap, yet\\strongly held};
+  \draw[annoarrow] (an2) to[bend left=12] (b2);
+  \node[anno] (anC) at (3.9,-0.7){central, yet\\value-neutral};
+  \draw[annoarrow] (anC) to[bend left=10] (C);
+  \node[anno] (an4) at (3.9,1.0){wanted false,\\feeds $C$};
+  \draw[annoarrow] (an4) to[bend right=10] (b4);
+\end{tikzpicture}}
+\par\vspace{4pt}
+\resizebox{0.88\linewidth}{!}{%
+\begin{tikzpicture}
+  \shade[left color=red!58!white,right color=white] (0,0) rectangle (2,0.28);
+  \shade[left color=white,right color=green!62!white] (2,0) rectangle (4,0.28);
+  \draw[black!50,line width=0.3pt] (0,0) rectangle (4,0.28);
+  \node[font=\scriptsize] at (0.45,-0.28){want false}; \node[font=\scriptsize] at (2,-0.28){0};
+  \node[font=\scriptsize] at (3.5,-0.28){want true};
+\end{tikzpicture}}
+\caption{Intrinsic utility $u_i$ (conviction)}
+\label{sub:util}
+\end{subfigure}
+\caption{Two fields on one paradigm (schematic). Both panels carry the \emph{same} network---a densely
+coupled core $\{A,B,C,D\}$ and a sparse belt $\{b_1,\dots,b_6\}$ in contact with observation.
+\subref{sub:cost}~Revision cost is the carry-over of mind-change, $\kappa=\Top\bone$
+(Eq.~\ref{eq:kappa}): a node's cost is the precision-weighted mass of its descendants, a clean radial
+gradient monotone in centrality. \subref{sub:util}~Intrinsic utility is signed---beliefs one wants
+true (green), wants false (red), or is neutral toward (white)---and the conviction field
+$U=\Top u$ does not align with $\kappa$: $C$ is central yet value-neutral; $b_2$ is cheap yet strongly
+held; $b_4$, which feeds $C$, is a conclusion the community wants false. The two fields are
+$\Top\bone$ and $\Top u$, the same operator on two sources, and they are independent vectors.
+Appendix~\ref{app:darkenergy} shows this decoupling computed on a real dark-energy net.}
+\label{fig:twofields}
+\end{figure}
+
+% ======================================================================
+\section{The model}
+\label{sec:bmebmr}
+% ======================================================================
+
+We build the object up from the single agent and then state the population dynamics as an explicit
+per-round loop (\S\ref{sec:model}).
+
+\subsection{A paradigm network and its operator}
+\label{sec:carryover}
+
+An agent represents a paradigm as a directed network $G=(V,E,\Pi)$: nodes carry theoretical
+commitments $x_v$, edges carry inferential dependencies, and each edge bears a coupling precision
+$\pi_{uv}$ measuring how tightly $v$ is bound to $u$. This is just a generative model whose hidden
+states are the commitments themselves, with precision playing its usual role: a high-$\pi$ edge says
+that belief in $u$ strongly constrains belief in $v$. Internal coherence is the corresponding
+precision-weighted graphical model, $p(x\mid G)\propto\prod_{(u\to v)\in
+E}\psi_{uv}(x_u,x_v)^{\pi_{uv}}$. None of this machinery is ours: it is a linear-Gaussian structural
+equation model in the lineage of Wright's path analysis \citep{wright1934}, edges as path
+coefficients and precisions as their weights. We work
+throughout in that \emph{linear-Gaussian} regime, which puts every quantity below in closed form
+(Appendix~\ref{app:operator}); agents are \emph{honest}---no one misreports, so lock-in is never a
+dishonesty artifact---and \emph{bounded}, minimizing variational free energy step by step
+\citep{dacosta2020} rather than planning over policies.
+
+Revising a commitment is not a local act: changing $x_v$ forces everything that depends on it to
+re-equilibrate. Picture the cascade. A nudge at one node travels along each outgoing edge, weighted
+by that edge's precision; from each child it travels on to the grandchildren, picking up their
+couplings; and so on down every chain of dependence. If $A$ is the matrix of edge precisions, then
+$A^k$ collects the chains of length $k$, and summing chains of every length gives
+$\sum_k A^k=(I-A)^{-1}$ (a finite sum, since a DAG has no cycles to traverse forever). We did not
+have to invent this object; two literatures already own it. Path analysis knows it as the
+\emph{total-effects matrix}: what a unit change at one node does to every descendant once all the
+indirect routes are counted \citep{wright1934,bollen1987}. Network science knows the same sum as
+the Katz--Bonacich index, where it measures how much of the graph a node reaches through walks of
+all lengths \citep{katz1953,bonacich1987}; and it is exactly how influence travels between beliefs
+in precision-weighted Gaussian models \citep{malioutov2006}. We adopt it as the \emph{propagation
+operator} $\Top=(I-A)^{-1}$, indexed with rows as sources and columns as descendants, so the entry
+$\Top_{iw}=\pi_{i\rw w}$ is the total precision-weighted coupling propagated from $i$ to $w$ along
+all directed paths (Appendix~\ref{app:operator}).
+
+Conservatism is then recognized rather than posited. Place a unit of weight on every node and ask,
+for each commitment $i$, how much total weight a revision of $i$ would disturb. That is the operator
+applied to the unit source,
+\begin{equation}
+\kappa \;=\; \Top\,\bone,
+\qquad
+\kappa_i \;=\;1+\!\!\sum_{w\in\desc(i)}\!\!\pi_{i\rw w},
+\label{eq:kappa}
+\end{equation}
+the precision-weighted mass of a node's descendants. In network-science terms this is a centrality
+score---a node scores high when many strong chains of dependence leave it (formally, the broadcast
+variant of the Katz index)---and centrality is usually read as influence or status. We read the same
+number as \emph{revision cost}: a commitment is exactly as expensive to revise as the mass that must
+re-equilibrate when it moves. Conservatism is thus a centrality the graph already determines, not a
+disposition assigned by hand.
+
+What we add to this inherited machine comes in two layers. The first is contact with the world. The
+dense, high-precision interior of the network is the \emph{core}; the sparse periphery in contact
+with observation is the \emph{belt}, each belt node reading the world through a sensory channel of
+precision $\rho_k$. The core carries no direct sensory channel: an interior commitment is revised
+only by error propagated inward from the belt, through the same operator---costly by
+Eq.~\eqref{eq:kappa} and insulated by position, which is what makes it slow.
+
+The second layer is value, and the operator is run twice. Scientists are bounded agents who value
+some conclusions over others---a result on which a career rests is held more tightly than its
+evidence warrants \citep{kitcher1990,strevens2003}. Following the variational-cost account of belief
+revision \citep{hyland2025}, we attach to each node an intrinsic utility $u_i$ and let it propagate
+through the \emph{same} operator: a commitment one wants true lends value to its dependents, so the
+conviction field is
+\begin{equation}
+U \;=\; \Top\,u,
+\qquad
+U_i \;=\; u_i+\!\!\sum_{w\in\desc(i)}\!\!\pi_{i\rw w}\,u_w .
+\label{eq:U}
+\end{equation}
+In the operator's path-analytic reading, $U$ is the total effect of wanting things true. Where the
+inherited models propagate a single source, a paradigm carries two: $\Top\bone$ and $\Top u$ are
+linearly independent unless $u\propto\bone$, so the two fields need not align
+(Fig.~\ref{fig:twofields}), and Appendix~\ref{app:darkenergy} exhibits the misalignment computed on
+a real net.
+
+\subsection{Motivated revision and the lock-in parameter}
+\label{sec:revision}
+
+The bounded agent revises its belief $q(x)$ over the whole network by trading fidelity to the honest
+posterior against the value of where the commitments land,
+\begin{equation}
+\mathcal{F}[q]\;=\;\KL{q(x)}{p(x\mid o,G)}\;-\;\lambda\,\Eq{q}{U^{\!\top}\!x},
+\qquad\Longrightarrow\qquad
+q_\lambda(x)\;\propto\;p(x\mid o,G)\,e^{\lambda\,U^{\!\top}\!x},
+\label{eq:tilted}
+\end{equation}
+with $\lambda$ a single temperature governing how far value may bend the evidence. The operation
+itself is classical---an exponential tilt of the posterior, the form KL-regularized utility
+maximization always yields \citep{todorov2009,ortega2013}; what is ours is the source of the tilt, a
+conviction field propagated through the paradigm's own operator. In the linear-Gaussian regime the
+tilt is a pure mean shift, displacing the commitments by $\lambda\Sigma U$ and leaving the
+covariance untouched (Appendix~\ref{app:operator}). What opposes the displacement is
+evidence, also through the mean: a disconfirming channel $k$ with sensory precision $\rho_k$ and
+read-out $H_k$ pulls the mean back with gain $\propto\rho_k\,H_k\Sigma U$. As conviction drives a
+disconfirming channel toward $\rho_k\to0$ that gain vanishes: the channel can no longer move the
+mean, and the value-displaced commitment stands unrefuted. The fraction of disconfirming sensory
+precision so silenced,
+\begin{equation}
+\gamma\;=\;\frac{\sum_{k\in\mathrm{dis}}\rho_k\,\mathbb{1}[\,\rho_k\ \text{gated by the core}\,]}
+{\sum_{k\in\mathrm{dis}}\rho_k},
+\label{eq:gamma}
+\end{equation}
+is the \emph{lock-in parameter}. In the experiments $\gamma$ is endogenous: each round the weight on a
+disconfirming row is a saturating function of the conviction field projected onto it,
+$w_k=\exp(-g\,|U\!\cdot\!H_k|)$, with $g$ the conviction-to-censorship coupling---no channel is gated
+by hand.
+
+\subsection{Structure learning: reduction and expansion}
+\label{sec:structurelearning}
+
+Structure learning revises $G$ itself through two asymmetric operations
+\citep{friston2017curiosity,smith2020structure}, and the asymmetry is the formal counterpart of normal
+versus revolutionary science.
+
+\emph{Reduction} is the exact half. Each edge is parameterized by a prior precision $\alpha_e$
+($\alpha_e\to\infty$ pins the edge's parameter to zero; $\alpha_e\to0$ frees it), the
+automatic-relevance-determination parameterization of sparse Bayesian learning
+\citep{mackay1992,tipping2001}. Bayesian model reduction \citep{friston2011,friston2018bmr} scores any
+pruning in closed form from the already-inverted posterior,
+\begin{equation}
+\frac{p(o\mid\tilde M)}{p(o\mid M)}=\Eq{p(\theta\mid o)}{\frac{\tilde p(\theta)}{p(\theta)}},
+\label{eq:bmr}
+\end{equation}
+the Savage--Dickey ratio in general form: one inversion scores every candidate reduced structure
+without re-touching the data.
+
+\emph{Expansion} reaches what reduction cannot: a commitment no one has represented. Following
+\citet{friston2017curiosity}, the agent entertains a new node by wiring it tentatively to existing
+nodes with free priors ($\alpha_e\to0$) and letting reduction prune the proposal back to the couplings
+the data support (Fig.~\ref{fig:bmebmr}). Expansion is not closed-form---a new node may enlarge the
+likelihood's support and requires a real inversion---and this cost asymmetry is why a field
+reorganizes its periphery continually and its centre only rarely. The agent does not plan \emph{when}
+to expand: candidates arrive at a Poisson rate, and an arrival is kept only if the model log Bayes
+factor favours the wired-in node (Appendix~\ref{app:crisis-discovery}). It must be a rate,
+because one cannot plan toward a dimension one has not yet conceived---Stanford's problem of
+unconceived alternatives \citep{stanford2006}, to which we return. The rate itself, however, is
+not condemned to be a constant: like every precision in active inference it admits treatment as a
+\emph{belief}---here, the agent's belief that its own model class is incomplete---and
+\S\ref{sec:res-closing} gives it that treatment, with the constant rate retained as the agnostic
+baseline every comparison is run against.
+
+\begin{figure}[h!]
+\centering
+\begin{subfigure}{0.49\textwidth}\centering
+\resizebox{0.62\linewidth}{!}{%
+\begin{tikzpicture}[n/.style={circle,draw=costc!80,fill=costc!12,minimum size=6.5mm,inner sep=0pt,font=\small}]
+  \node[n](n1) at (0,0){}; \node[n](n2) at (1.5,0.35){};
+  \node[n](n3) at (1.2,-1.2){}; \node[n](n4) at (-0.3,-1.4){};
+  \node[n](n5) at (-1.1,-0.2){};
+  \draw[dcore] (n1)--(n2); \draw[dcore] (n2)--(n3); \draw[dcore] (n3)--(n4);
+  \draw[dcore] (n4)--(n5); \draw[dcore] (n1)--(n5); \draw[dcore] (n1)--(n3);
+  \node[circle,draw=newc,dashed,line width=0.8pt,fill=newc!12,minimum size=7mm,inner sep=0pt,font=\small\bfseries](N) at (0.2,1.9){?};
+  \foreach \t in {n1,n2,n3,n4,n5}
+    {\draw[newc,dashed,line width=0.5pt,-{Stealth[length=1.2mm]}] (N)--(\t);}
+\end{tikzpicture}}
+\caption{Expansion: propose}
+\label{sub:expand}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.49\textwidth}\centering
+\resizebox{0.62\linewidth}{!}{%
+\begin{tikzpicture}[n/.style={circle,draw=costc!80,fill=costc!12,minimum size=6.5mm,inner sep=0pt,font=\small}]
+  \node[n](n1) at (0,0){}; \node[n](n2) at (1.5,0.35){};
+  \node[n](n3) at (1.2,-1.2){}; \node[n](n4) at (-0.3,-1.4){};
+  \node[n](n5) at (-1.1,-0.2){};
+  \draw[dcore] (n1)--(n2); \draw[dcore] (n2)--(n3); \draw[dcore] (n3)--(n4);
+  \draw[dcore] (n4)--(n5); \draw[dcore] (n1)--(n5); \draw[dcore] (n1)--(n3);
+  \node[circle,draw=newc,line width=0.9pt,fill=newc!25,minimum size=7mm,inner sep=0pt,font=\small\bfseries](N) at (0.2,1.9){$N$};
+  \draw[newc,line width=1.0pt,-{Stealth[length=1.4mm]}] (N)--(n1);
+  \draw[newc,line width=1.0pt,-{Stealth[length=1.4mm]}] (N)--(n2);
+  \foreach \t in {n3,n4,n5}
+    {\draw[black!18,dash pattern=on 1pt off 1.6pt,line width=0.4pt] (N)--(\t);}
+\end{tikzpicture}}
+\caption{Reduction: dispose}
+\label{sub:reduce}
+\end{subfigure}
+\caption{Structure learning as expansion and reduction. \subref{sub:expand}~To entertain a commitment
+not yet in the model, the agent proposes a new node $N$ wired tentatively to every existing commitment
+with free priors ($\alpha_e\to 0$, dashed). \subref{sub:reduce}~Bayesian model reduction prunes the
+proposal in closed form, keeping only the couplings the data support. Expansion costs a real
+inversion; pruning is the cheap closed-form half.}
+\label{fig:bmebmr}
+\end{figure}
+
+\subsection{Forgetting}
+\label{sec:temporal}
+
+Read once from fixed precisions, $\kappa=\Top\bone$ can only grow as learning adds edges: a paradigm
+with no forgetting is a ratchet, and lock-in under it is automatic rather than earned. We import the
+standard remedy unmodified: accumulated precision relaxes toward the prior between updates,
+$\Pi\leftarrow\Pi_0+\omega(\Pi-\Pi_0)$ with forgetting factor $\omega\in(0,1]$
+\citep{friston2017process,smith2022tutorial}, so a deposit $k$ steps old carries weight $\omega^k$.
+The factor is the agent's prior on the world's structural drift---one forgets at the rate one believes
+the structure is moving \citep{mathys2011}. The operator inherits the time index,
+$\Top_t=(I-A_t)^{-1}$, and a once-central node whose couplings go unreinforced relaxes back toward
+cheapness. With forgetting, the value tilt saturates at $\lambda U/(1-\omega)$ and competes with the
+also-saturated per-step evidence, so conviction holds only above a threshold: an entrenched bloc
+re-tracks a moving truth at low $\lambda$ and stays locked at high---motivated persistence turned
+from a posited bias into a threshold conviction must clear.
+
+% ======================================================================
+\subsection{The population, and the simulation at a glance}
+\label{sec:model}
+% ======================================================================
+
+A population of $N$ agents inhabits a shared hidden world, each carrying its own paradigm network
+with its own coupling precisions, conviction field $U=\Top u$, and derived conservatism
+$\kappa=\Top\bone$. Agents are coupled on a trust graph: communities are blocks of a stochastic block
+model, with dense intra-community edges and an inter-community coupling weight (\emph{inter}) that we
+sweep from total isolation to dense contact. Beliefs and accumulated precisions are fused across
+trust edges in information form---a precision-weighted pooling of posteriors in which an agent's own
+evidence and its neighbours' carry weight in proportion to trust, the information-form counterpart
+of trust-weighted averaging in opinion dynamics \citep{degroot1974,acemoglu2011}---and what is not
+standard is that structural edits spread the same way: an agent whose neighbour has awakened a new node receives the proposal and scores it
+against its own model by Eq.~\eqref{eq:bmr}. Figure~\ref{fig:population} draws the picture: what
+travels on the trust graph is not a number but a piece of structure, evaluated against wiring the
+sender does not see.
+
+\begin{figure}[h!]
+\centering
+\resizebox{0.92\linewidth}{!}{%
+\begin{tikzpicture}[
+  n/.style={circle,draw=black!70,line width=0.4pt,fill=costc!35,minimum size=5.5mm,inner sep=0pt},
+  nb/.style={circle,draw=black!70,line width=0.4pt,fill=costc!10,minimum size=5.5mm,inner sep=0pt},
+  ag/.style={circle,draw=black!70,line width=0.5pt,fill=black!8,minimum size=7mm,inner sep=0pt},
+  dep/.style={-{Stealth[length=1.5mm]},line width=0.7pt,black!70},
+  depb/.style={-{Stealth[length=1.3mm]},line width=0.45pt,black!55}]
+  % ---- left: agent i's paradigm network, magnified ----
+  \node[n] (A) at (0,1.05) {};
+  \node[n] (B) at (-1.05,0) {};
+  \node[n] (C) at (1.05,0) {};
+  \node[n] (D) at (0,-1.05) {};
+  \node[nb] (b1) at (-2.15,0.9) {};
+  \node[nb] (b2) at (-1.9,-1.45) {};
+  \draw[dep] (A)--(B); \draw[dep] (A)--(C); \draw[dep] (A)--(D);
+  \draw[dep] (B)--(D); \draw[dep] (C)--(D);
+  \draw[depb] (B)--(b1); \draw[depb] (D)--(b2);
+  \node[obs] (o1) at (-3.1,1.4) {};
+  \node[obs] (o2) at (-2.85,-2.0) {};
+  \draw[sens] (b1)--(o1); \draw[sens] (b2)--(o2);
+  \node[font=\scriptsize] at (0.85,0.72) {$\pi_{uv}$};
+  \node[font=\scriptsize] at (-2.75,0.85) {$\rho_k$};
+  \node[anno] at (-3.3,2.0) {hidden world};
+  % the agent's boundary, pierced by its sensory channels
+  \draw[black!35,dashed,line width=0.5pt] (-0.3,-0.3) circle (2.35);
+  \node[font=\footnotesize,align=center] at (-0.3,-3.05)
+    {agent $i$'s paradigm network\\$G_i=(V,E,\Pi)$};
+  % ---- magnifier lines to one agent of the trust graph ----
+  \draw[black!35,dashed,line width=0.5pt] (5.2,0.2) -- (1.36,1.36);
+  \draw[black!35,dashed,line width=0.5pt] (5.2,0.2) -- (1.5,-1.81);
+  % ---- right: the trust graph, two communities ----
+  \draw[belt] (5.2,0.2)--(6.6,1.4); \draw[belt] (5.2,0.2)--(6.8,-0.8);
+  \draw[belt] (6.6,1.4)--(6.8,-0.8);
+  \draw[belt] (8.0,0.8)--(8.3,-0.6); \draw[belt] (8.3,-0.6)--(7.4,-1.9);
+  \draw[belt] (8.0,0.8)--(7.4,-1.9);
+  % the single weak channel between communities
+  \draw[line width=0.5pt,black!40,dash pattern=on 2.4pt off 2pt] (6.6,1.4)--(8.0,0.8);
+  \node[ag,fill=costc!30,draw=costc,line width=0.9pt] (ai) at (5.2,0.2) {$i$};
+  \node[ag] (a2) at (6.6,1.4) {};
+  \node[ag] (a3) at (8.0,0.8) {};
+  \node[ag] (a4) at (6.8,-0.8) {};
+  \node[ag] (a5) at (8.3,-0.6) {};
+  \node[ag] (a6) at (7.4,-1.9) {};
+  \node[anno] (anInter) at (9.6,1.9) {one weak channel between\\communities, weight \emph{inter}};
+  \draw[annoarrow] (anInter) to[bend right=10] (7.35,1.13);
+  \node[anno] (anTrust) at (9.3,-1.9) {trust channels:\\dense within a community};
+  \draw[annoarrow] (anTrust) to[bend left=12] (7.92,-1.24);
+  % ---- the object being passed: a structural proposal ----
+  \node[circle,draw=newc,line width=0.8pt,fill=newc!20,inner sep=2.1pt] (prop) at (5.92,0.82) {};
+  \draw[-{Stealth[length=1.6mm]},newc,line width=0.8pt] (6.1,0.97) -- (6.38,1.2);
+  \node[anno] (anProp) at (4.4,2.3) {a \emph{structural proposal}:\\a piece of $G_i$, scored by\\each receiver via $\Delta F$};
+  \draw[annoarrow] (anProp) to[bend left=12] (prop);
+\end{tikzpicture}}
+\caption{The population model. Right: the community is a trust graph, every circle an agent. Left,
+magnified: each agent privately holds a paradigm network $G_i=(V,E,\Pi)$---commitments coupled by
+precisions $\pi_{uv}$, a belt reading the hidden world through sensory channels of precision
+$\rho_k$---from which its conservatism $\kappa=\Top\bone$ and conviction $U=\Top u$ are derived. What
+passes along trust channels (amber) is a \emph{structural proposal}: a piece of paradigm, e.g.\ a
+newly awakened node, which each receiver scores against its own network by $\Delta F$
+(Eq.~\ref{eq:bmr}); posteriors fuse precision-weighted along the same channels. The trust graph is
+fixed at the start (a stochastic block model): channels are dense and strong inside a community, and
+a single weak weight \emph{inter}---the main dial of \S\ref{sec:results}---connects communities, so
+what reaches an agent from outside is its neighbours' evidence and proposals, scaled by trust.}
+\label{fig:population}
+\end{figure}
+
+Concretely, the experiments of \S\ref{sec:res-kuhn} instantiate the phlogiston world: a hub-structured
+paradigm net in which a single core commitment (phlogiston) is load-bearing for combustion,
+calcination and respiration; at a fixed step $t_{\mathrm{shift}}$ the world's regime flips (the calx
+is heavier---the gravimetric anomaly), and the truth thereafter contains a dimension (oxygen) that is
+\emph{not in any agent's network}. One round of the simulation, for every agent:
+
+\begin{enumerate}\itemsep1pt
+\item \textbf{Observe.} The world emits observations at the belt; channel weights on disconfirming
+rows are set endogenously by the conviction gate, $w_k=\exp(-g\,|U\!\cdot\!H_k|)$
+(\S\ref{sec:revision}), scaled by the agent's gate strength $s$.
+\item \textbf{Infer.} The agent updates its (value-tilted, Eq.~\ref{eq:tilted}) posterior over $x$ by
+exact linear-Gaussian inference and accumulates precision.
+\item \textbf{Crisis check (reduction).} Each candidate prune is scored on the move ledger: the
+closed-form prune evidence $\Delta F$ (Eq.~\ref{eq:bmr}) plus $\lambda_i$ times the equally
+closed-form conviction-value change of the prune,
+$\Delta U = U^{\!\top}\!(\mu_{\mathrm{reduced}}-\mu)$, read from the reduced posterior the
+Savage--Dickey identity already exhibits. Both protective belt edges scoring
+$\Delta F + \lambda_i\,\Delta U > 0$ is a \emph{crisis}, and the agent applies the reduction---the
+hub is released (Appendix~\ref{app:crisis-discovery}).
+\item \textbf{Discovery check (expansion).} After reduction, the residual the old paradigm absorbed
+becomes visible as a coherent pattern in prediction error; when a Poisson proposal arrives (rate
+$r$), its \emph{direction} is read from that pattern's leading eigenvector, and the wake is
+accepted iff the model log Bayes factor is positive---the data must hold the new node
+(\S\ref{sec:structurelearning}, Appendix~\ref{app:crisis-discovery}). The rate is constant in
+the baseline; \S\ref{sec:res-closing} makes it a posterior and a social process, and replaces the
+one-shot accept with an audited wake-then-prune cycle.
+\item \textbf{Fuse.} Posteriors and structural edits are pooled across the trust graph, weighted by
+the intra/inter coupling. Whether agents pool over \emph{all} dimensions or only over those they
+jointly represent is a protocol choice with consequences (\S\ref{sec:res-closing}).
+\item \textbf{Forget.} Accumulated precision decays by $\omega$ (\S\ref{sec:temporal}).
+\end{enumerate}
+
+Crisis, revolution and discovery are thus not stipulated events but threshold crossings of the
+model's own evidence; Appendix~\ref{app:crisis-discovery} derives both checks from the single
+tilted objective and lists explicitly what remains a modelling commitment.
+Table~\ref{tab:dials} lists the dials swept; everything else is held fixed, and
+all code is seeded and ships its own null and positive controls.
+
+\begin{table}[h!]
+\centering\footnotesize
+\begin{tabular}{lll}
+\hline
+Dial & Symbol & What it controls \\
+\hline
+Social coupling & \emph{inter} & inter-community trust weight (0 = isolation) \\
+Vanguard fraction & --- & fraction of agents in the open (low-$\lambda$) community \\
+Conviction & $\lambda_d$ & dogmatic community's value tilt / prune protection \\
+Gate scaling & $s$ & strength of the conviction gate on disconfirming channels \\
+Proposal rate & $r$ (Poisson) & arrival rate of structural proposals \\
+Forgetting & $\omega\in(0,1]$ & decay of accumulated evidence toward the prior \\
+Observation noise & $\sigma_o$ & sensory noise at the belt \\
+Social excitation & $\beta,\tau$ (Hawkes) & evidential weight / correlation time of a
+neighbour's discovery (\S\ref{sec:res-closing}) \\
+Adequacy gain & $\kappa_r$ & coupling of the inferred-inadequacy belief to the rate \\
+Epistemic credit & $\lambda_c$ & per-audit decay of the wake's epistemic credit \\
+Fusion protocol & --- & pool all dimensions (delta) vs.\ jointly represented (abstention) \\
+Value accretion & $\epsilon$ & rate at which $u$ accretes onto entrenched commitments \\
+\hline
+\end{tabular}
+\caption{The dials swept in the experiments (2{,}488 runs); all other quantities are held fixed.
+The lower block belongs to the closed-loop refinements of \S\ref{sec:res-closing}; each defaults
+to ``off'' (constant rate, one-shot accept, delta pooling, static $u$), reproducing the baseline
+model exactly.}
+\label{tab:dials}
+\end{table}
+
+% ======================================================================
+\section{Results}
+\label{sec:results}
+% ======================================================================
+
+All results are from the population of \S\ref{sec:model} run through the full Kuhnian cycle on the
+phlogiston world, swept overnight over the dials of Table~\ref{tab:dials} (2{,}488 healthy runs).
+The single-agent \emph{dark-energy} net that realises the two fields of Fig.~\ref{fig:twofields} on
+a worked example---and recovers the $\Omega_m$--$\Lambda$ degeneracy as a Schur complement, a
+quantity a scalar credence has no room to express---is reported in Appendix~\ref{app:darkenergy}.
+The nets are hand-wired to expose the geometry, not fitted to data: nothing here is evidence about
+chemistry or cosmology, only about how a structured, bounded, valued mind changes. We close with
+limitations and future work (\S\ref{sec:res-staircase}).
+
+\subsection{The full cycle, endogenously: the phlogiston sweep}
+\label{sec:res-kuhn}
+
+In the population, the whole Kuhnian arc---normal science, the gravimetric anomaly, crisis,
+reduction, discovery of oxygen, new normal---unfolds as successive threshold crossings of the agents'
+own evidence (\S\ref{sec:model}), with no phase stipulated. The sweep then asks where each beat of the
+arc lives in the dial space, and three findings organize it.
+
+\paragraph{Even a trace of outside contact ends the old paradigm; only total isolation protects it.}
+The first question the sweep answers: how much contact with the rest of the world can a dogmatic
+community tolerate and still keep phlogiston? Almost none. The setup pits a dogmatic community---high
+conviction, which makes its agents gate their own disconfirming channels (\S\ref{sec:revision})---
+against an open vanguard already tracking the anomaly, and dials the trust weight between the two
+communities (\emph{inter}) from $0$ (sealed off) up to dense contact. Sealed off, the protection
+works: under strong gating ($s=10$) only $19\%$ of the dogmatic community ever converts to oxygen.
+But the seal has to be perfect. At \emph{inter}$=0.005$---trust toward outsiders two hundred times
+weaker than trust within the community---$92\%$ convert, no matter how strong the gate,
+and making the agents twice as dogmatic ($\lambda_d:0.35\to0.8$) does not shift the picture at all
+(Fig.~\ref{fig:res-lockin}). The transition is genuinely a boundary, not a gradual fade: the
+run-to-run spread of outcomes, which is large exactly where a run can tip either way, spikes in a
+narrow band around \emph{inter}$\approx10^{-3}$ and is flat on both sides. Why is contact so
+corrosive? Because fusion shares \emph{evidence}, not just conclusions: an open vanguard of just
+$5\%$ of the population lifts end-state conversion from $0.60$ to $0.69$, because the vanguard's
+anomalous data flows across the trust channels and sets off each dogmatist's \emph{own} crisis. An
+agent can silence its own instruments; it cannot silence its neighbours'. Gating cannot defeat
+connection.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\linewidth]{fig_kuhn_lockin_boundary.png}
+\caption{Only isolation protects a superseded paradigm (phlogiston sweep). \emph{Left, centre:} the
+fraction of the dogmatic community that converts to oxygen, as a function of contact with the open
+community (\emph{inter}) and of how strongly conviction gates disconfirming channels ($s$), at two
+conviction levels ($\lambda_d=0.35$ and $0.8$). Gating keeps conversion low only when contact is
+essentially zero; past \emph{inter}$\,\approx0.005$ nearly everyone converts, and doubling conviction
+barely changes the picture. \emph{Right:} the run-to-run spread of outcomes---large exactly where a
+run can tip either way---spikes in a narrow band around
+\emph{inter}$\,\approx5\times10^{-4}$, the signature of a sharp boundary rather than a gradual fade.}
+\label{fig:res-lockin}
+\end{figure}
+
+A control pins down what does the stalling. Keep conviction exactly as high but switch the gate
+off---the agents stay just as motivated, but keep listening---and the community revolts in full
+(revolted fraction $1.0$, versus $0.0$ once the gate silences the disconfirming channels,
+$\gamma\to1$). So the evidence was never absent or out of reach: what stalls a community is
+conviction closing the channels that would deliver it. Lock-in is derived, not assumed---it appears
+exactly when enough disconfirming precision is silenced (Eq.~\ref{eq:gamma}) that the data lose
+their grip on the agent's commitments.
+
+\paragraph{Discovery waits on evidence; keeping it requires discovering together.}
+Discovery in this model means waking a node---oxygen---that no agent's network yet contains, and
+since one cannot search for a concept one has not conceived, candidates arrive at random (Poisson
+rate $r$, \S\ref{sec:structurelearning}). Individually this behaves as a waiting process should:
+the fraction of the open community that discovers within the horizon follows the textbook law
+$1-(1-r)^T$, rising from $44\%$ at $r=0.01$ to $100\%$ at $r=0.16$ (Fig.~\ref{fig:res-waiting},
+left). The \emph{first} discovery, however, is not rate-limited at all: with $\sim$40 agents
+drawing in parallel, an attempt arrives almost immediately at every rate, and the median first
+discovery sits at $t\approx82$ whether proposals are rare, frequent, or deterministic (right
+panel)---its date is set by when the post-reduction residual earns a positive Bayes factor, not by
+the arrival process. The community's first discovery waits on evidence, not on luck. What the rate
+\emph{does} govern is survival. A discovery made by one agent at a time does not survive (the red
+curve): at $r\le0.04$ the lone discoverer's oxygen node is averaged away every time---the moment it
+fuses beliefs with peers who lack the concept, the shared prior treats the slot the others do not
+represent as a firmly held ``no such thing,'' and pulls the awakened coupling back to zero.
+Survival appears only once arrivals are frequent enough to wake the community within a few steps of
+one another: $31\%$ of runs at $r=0.16$, matching the simultaneous-proposal limit ($28\%$). A new
+concept does not need a critical mass of believers eventually; it needs them at the same
+\emph{time}. (On the fusion scheme this result rides on, see \S\ref{sec:res-staircase}.)
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\linewidth]{fig_kuhn_waiting_time.png}
+\caption{Discovery and survival of the unconceived (phlogiston sweep). \emph{Left:} the fraction of
+the open community that discovers oxygen follows the waiting-time law $1-(1-r)^T$ (dashed); the
+fraction whose concept \emph{survives} fusion (red) is zero at slow rates---staggered discoverers
+are pulled back by the communal prior---and rises only once arrivals cluster the wakings in time,
+reaching $31\%$ at $r=0.16$, the simultaneous-proposal limit ($28\%$, point at right
+edge)---critical mass in \emph{time}. \emph{Right:} with $\sim$40 agents drawing in parallel, an
+attempt arrives almost immediately at every rate; the date of the first discovery is set by the
+evidence (the post-reduction Bayes factor), not by the arrival process.}
+\label{fig:res-waiting}
+\end{figure}
+
+\paragraph{The cycle is robust, and the discovery check carries no tuned threshold.}
+Re-running the full arc across forgetting and observation noise ($\omega\in[0.9,1.0]$,
+$\sigma_o\in[0.25,1.0]$) leaves crisis and reduction untouched everywhere---including the
+no-forgetting wall $\omega=1$---and discovery essentially complete at every $\omega<1$. At the wall
+itself discovery thins ($55\%$/$43\%$/$16\%$ of the open community at
+$\sigma_o=0.25$/$0.5$/$1.0$): with nothing ever forgotten, the accumulated precision is so
+entrenched that the woken node struggles to earn a positive Bayes factor against it. A community
+that never forgets still sees its paradigm die; what it loses is the capacity to grow the
+successor. Nor is there an acceptance bar to miscalibrate: the wake's sole
+accept test is the model log Bayes factor, which rejects proposals the residual does not support
+(Appendix~\ref{app:crisis-discovery}). A separate residual-floor gate---demanding the unexplained
+error clear some height before a new node is even entertained---would duplicate that test with a
+free constant, and a sensitivity probe shows the constant is dangerous: set above the prediction
+error the dead paradigm actually leaves behind after reduction, it suppresses every proposal and
+discovery dies almost everywhere. The model instead has the property that gate would have had to be
+tuned to imitate: an agent entertains new structure at exactly the level of error its old structure
+produces, because that error is what the Bayes factor weighs.
+
+\subsection{Closing the loop: exploration as inference, survival as protocol}
+\label{sec:res-closing}
+
+The first draft of this paper left two stand-ins at the heart of its discovery process and owned
+them as limitations: a constant Poisson rate where a generative process should be, and a one-shot
+acceptance where a cycle of entertaining-and-settling belongs. Both stand-ins are now gone, and
+removing them is not an engineering upgrade but a point of principle for an active-inference
+model: \emph{everything that modulates inference should itself be inferred}. Active inference
+already treats every precision as a quantity the agent estimates rather than receives---attention
+as inferred sensory precision, volatility as an inferred rate of change \citep{mathys2011,
+parr2017uncertainty,friston2017process}---and \S\ref{sec:temporal} applied exactly that reading to
+forgetting:
+$\omega$ is the agent's prior on the world's structural drift. The proposal rate is the missing
+dual. Forgetting answers ``how fast do I believe the \emph{world} is moving?''; the rate answers
+``how strongly do I believe \emph{my model} fails to span it?'' Each is a belief about
+nonstationarity---one about the territory, one about the map---and a model that infers the first
+while hard-coding the second is half-closed. This subsection closes it, in three moves, and then
+reports what closing it does to the population results. Throughout, the constant-rate,
+one-shot, delta-pooling baseline of \S\ref{sec:res-kuhn} is retained and every comparison is run
+against it; each mechanism ships its own control.
+
+\paragraph{The rate is a posterior over model adequacy.}
+What evidence could an agent have that its model class is incomplete? Exactly one quantity
+qualifies, and the model already computes it: the residual floor---the leading eigenvalue of the
+windowed prediction-error second moment, the error that persists after every parameter update and
+every closed-form reduction has done what it can. Within-model inference can redistribute this
+error but never absorb it; its persistence is therefore evidence about the model \emph{class},
+not the parameters, which is what makes it the licensed likelihood for a belief about adequacy.
+The agent tracks it with a fixed-gain filter, $s \leftarrow (1-\rho)\,s + \rho\cdot\mathrm{floor}$
+---the same exponential-forgetting form as $\omega$, and the standard conjugate (Gamma--Poisson)
+update under a drift prior on the latent rate---and reads its proposal rate off the posterior:
+$r(t) = r_0 + \kappa_r \max(s - s_{\mathrm{ref}}, 0)$, decaying back to the agnostic base
+$r_0$ whenever the model is adequate. The result (Fig.~\ref{fig:res-rateposterior}) has the
+signature a posterior should have and a dial cannot: through normal science the rate sits
+indistinguishably at $r_0$; after the agent's own crisis exposes the residual, it surges (to an
+effective $0.34$ from $r_0=0.01$); and once the woken node explains the residual it decays back.
+The crisis-to-discovery delay falls from $55$ to $29$ steps---and the control that matters is not
+the fixed rate it beats but the fixed rate it \emph{matches}: a constant-rate agent given the
+adaptive run's realized mean rate achieves the same delay ($27$ steps). The gain is not more
+exploration; it is exploration \emph{when the agent's own evidence calls for it}, with the quiet
+periods spent at the agnostic base. Stanford's constraint survives intact: nothing here plans
+toward a specific unconceived dimension; only the \emph{propensity to look} is inferred.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\linewidth]{fig_rate_posterior.png}
+\caption{The proposal rate as a posterior over model adequacy. \emph{Left:} the per-agent rate
+(blue, mean and 10--90\% band) is flat at the base rate $r_0$ through normal science, rises with
+the post-crisis residual floor (amber, right axis)---the evidence of model-class inadequacy the
+within-model updates cannot absorb---and decays once the woken node explains it. \emph{Right:}
+crisis-to-discovery delay. The adaptive agent (left bar) matches a fixed-rate control given its
+realized mean rate (right bar) while idling at $r_0$ when the model is adequate: the gain is
+rate-when-needed, not more rate.}
+\label{fig:res-rateposterior}
+\end{figure}
+
+\paragraph{A neighbour's discovery is evidence about one's own model class.}
+The second evidence stream is social, and it is here that the population mechanics earn their
+active-inference reading. The agents share one hidden world; if that world contains a dimension
+my model lacks, it contains a dimension my neighbours' models lack \emph{for the same reason}.
+Model inadequacy thus has a common cause across the community, and a trusted neighbour's
+discovery---their wake of a node the data then hold---is an observation carrying evidence about
+\emph{my} adequacy variable, precisely the situation in which federated inference prescribes
+pooling \citep{friston2023federated,waade2025}. Filtering these point-process observations
+through the trust weights the population already fuses over, under an exponentially-correlated
+prior on the latent inadequacy, yields a posterior intensity of exactly the linear self-exciting
+(Hawkes) form \citep{hawkes1971},
+\begin{equation}
+r_i(t) \;=\; r_0 \;+\; \sum_{j\in\partial i} T_{ij} \sum_{t_j<t} \beta\, e^{-(t-t_j)/\tau},
+\label{eq:hawkes}
+\end{equation}
+with $t_j$ the neighbours' discovery times: $\beta$ is the trust-scaled evidential weight of one
+observed discovery, $\tau$ the assumed correlation time of inadequacy, and the kernel's
+\emph{parametric form} is the one commitment this derivation does not discharge. What was, in the
+first draft, a sketched refinement is now the mechanism that resolves the survival problem.
+Recall the staggered-discovery death: at $r\le0.04$ a lone discoverer's oxygen node is averaged
+away by still-pinned peers, every time. Under Eq.~\eqref{eq:hawkes} the first discovery raises
+the whole neighbourhood's propensity to look, the cascade compresses the community's wakings from
+a dispersion of $64$ steps to $2$, and---because survival turns out to be
+\emph{completeness}-driven (a single still-pinned peer holds the fused slot precision enormous
+for every neighbour)---the completed cascade lets the anchored couplings consolidate. Survival
+rises monotonically in $\beta$ from exactly zero at $\beta=0$ to $0.88$--$0.95$ at $\beta=1.5$
+across base rates $r_0\in\{0.005,0.01,0.02\}$ at which an unexcited community essentially never
+completes (Fig.~\ref{fig:res-hawkes}; 32 seeds per cell). The branching ratio of
+Eq.~\eqref{eq:hawkes} is thereby the model's quantitative answer to a question the first draft
+could only pose: how much social excitement does a revolution need.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.62\linewidth]{fig_kuhn_hawkes.png}
+\caption{Social excitation rescues the staggered discovery (sweep panel E, 32 seeds per cell).
+Fraction of the open community whose oxygen concept survives fusion, versus the excitation
+$\beta$ of Eq.~\eqref{eq:hawkes}, at three base rates. At $\beta=0$ (the first draft's constant
+rate) survival is exactly zero: staggered wakings are crushed one at a time. Excitation
+compresses the community's wakings in time, the cascade completes, no pinned peer remains in the
+fusion average, and survival rises to $0.88$--$0.95$---the near-simultaneity that survival
+requires, manufactured by the community itself.}
+\label{fig:res-hawkes}
+\end{figure}
+
+\paragraph{Structures are entertained on expiring credit and audited by their own ledger.}
+The one-shot accept conflated two decisions that expected free energy keeps apart: the epistemic
+value of \emph{entertaining} a structure and the evidence for \emph{keeping} it
+\citep{friston2015,friston2017curiosity}. The wake-then-prune cycle separates them. A proposal is
+now accepted on the full ledger $\Delta F + \Delta G > 0$: the epistemic gain---positive for any
+new latent, since one always learns \emph{something} about a variable one starts tracking---pays
+for adoption, so curiosity is allowed to be wrong. The woken structure is then audited every
+round in the same currency that admitted it (the bordered-model log Bayes factor against the
+agent's pre-wake anchor at the stored coupling), with the credit \emph{expiring}: the $k$-th
+audit's verdict is $\Delta F_{\mathrm{now}} + \Delta G\,\lambda_c^{k}$, and a run of prune
+verdicts re-pins the slot to its exact dormant form, leaving the agent free to wake it again.
+The decay is principled in direction if surrogate in form: expected information gain about a
+latent is a \emph{diminishing} resource by construction---it shrinks as the posterior over that
+latent sharpens---so the geometric factor stands in for recomputing $\Delta G$ on the current
+posterior (its stated successor; Appendix~\ref{app:exploration-future}). The cycle is what
+discharges the false-discovery rate the first draft owned: in a null world that never shifts,
+curiosity wakes structure in $100\%$ of agents---and the audit re-pins $100\%$ of those wakes,
+exactly; in the flip world the genuine hub is woken everywhere and never pruned
+(Appendix~\ref{app:exploration-future}, Fig.~\ref{fig:wakeprune}). Two companion measurements
+close two more commitments. Widening the search---three eigen-hub candidates, each with its own
+dormant slot, plus the three largest residual couplings, $1{,}140$ candidates priced on the same
+ledger---does not dilute discovery: the true cause wins $53$ of $60$ acceptances (median cosine
+$0.999$ against the rank-one baseline), the remainder being marginal repeated-look crossings of
+the kind the audit exists to retract. And running the identical discovery check \emph{before}
+each agent's crisis, at every step, the ledger rejects $13{,}180$ of $13{,}185$ pre-crisis
+agent-steps (the five crossings marginal, $\Delta F<0.005$): the crisis-before-expansion ordering
+the first draft enforced by fiat is enforced by the evidence---the intact paradigm absorbs the
+residual, so there is nothing for the check to find until reduction exposes it. A stipulation
+became a result.
+
+\paragraph{Incommensurability is a property of the pooling protocol.}
+The first draft owned that the staggered-discovery death rides on a modelling choice: posterior
+fusion pools the unconceived slot's pin as if it were a firmly held ``no such thing.'' In
+information form that is literally what the pin is---a maximally precise belief at zero---but
+\emph{having no such variable} is a statement about an agent's model class, not a precise belief
+within its support, and conflating the two is a category error the pooling literature has long
+flagged: pooling is only defined over a shared algebra \citep{genest1986}, and belief sharing in
+federated inference operates over the factors agents hold in common
+\citep{friston2023federated}. The corrected protocol is dimension-aware fusion: each entry of the
+precision matrix is pooled only over the neighbours that \emph{represent} it (weights
+renormalized per entry), while a receiver keeps its own pin---so a concept still cannot arrive
+through averaging, only through the receiver's own discovery check. The consequence is not a
+softening but a wholesale relocation of the survival threshold (Fig.~\ref{fig:res-fusion}; 32
+seeds per cell): under delta pooling, staggered survival is $0$ at every rate; under abstention
+pooling it is $0.39/0.64/0.86$ at $r_0=0.005/0.01/0.02$---tracking the discovery fraction itself.
+The headline of \S\ref{sec:res-kuhn}, that a new concept needs critical mass \emph{in time}, is
+thus revealed as the signature of one protocol: communities that pool as if absence were denial
+need their discoverers synchronized; communities whose members abstain on what they cannot
+represent need only discoverers. Which protocol a real community implements---and where between
+the two endpoints it sits---is an empirical question the model now prices from both ends.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.62\linewidth]{fig_kuhn_fusion.png}
+\caption{The survival threshold moves with the pooling protocol (sweep panel F, 32 seeds per
+cell). Solid: fraction of the open community whose concept survives; dashed: fraction that
+discovers at all. Under the first draft's delta pooling (red) a pinned slot is a confident
+``no such thing'' and staggered survival is zero at every rate; under abstention pooling
+(green)---agents pool each dimension only with neighbours that represent it---survival tracks
+discovery. Incommensurability as a population-level force is a property of the protocol, not of
+the concepts.}
+\label{fig:res-fusion}
+\end{figure}
+
+\paragraph{Value accretes onto what the programme has built (Lakatos, run forward).}
+The remaining exogenous source in the model was the intrinsic utility $u$. Active inference does
+not require preferences to be fixed: an agent that accumulates evidence under a model comes to
+expect---and, in the self-evidencing reading, to \emph{prefer}---the states that model renders
+unsurprising \citep{hohwy2016}. We let $u$ accrete accordingly: each node's utility gains a slow
+state driven by the agent's own accumulated evidence deposit (the diagonal of $\Pi-\Pi_0$,
+max-normalized), $u_{\mathrm{eff}} = u\,(1+g)$ with
+$g \leftarrow \mathrm{clip}(g + \epsilon\,\mathrm{entrenchment} - \delta\,g,\,0,\,g_{\max})$, so
+value flows toward the commitments the programme's own data have entrenched. Because $U=\Top u$
+feeds the endogenous gate of Eq.~\eqref{eq:gamma}, the consequence is Lakatos's arc run forward
+rather than narrated: a maturing programme increasingly silences its own disconfirming channels
+($\gamma$ climbs from $0.72$ to $0.97$ as $\epsilon$ rises), conversion at the lock-in boundary
+falls from $0.94$ to $0.67$, and at very weak coupling the dogmatic community's conversion is
+\emph{delayed} roughly $2.2$-fold rather than prevented
+(Appendix~\ref{app:exploration-future}, Fig.~\ref{fig:lakatos}). The two-lever law of
+\S\ref{sec:res-kuhn} survives self-evidencing: conviction that grows from the inside still loses
+to connection; it buys the old paradigm time, not immunity---which is a fair gloss of what a
+degenerating problemshift is.
+
+\paragraph{The mechanisms compose.}
+Refinements that hold one at a time can still break jointly, so the composition is itself a
+result: with the adequacy-posterior rate, the social excitation, the expiring-credit audit,
+abstention pooling and value accretion all enabled in one population, the full arc still runs
+---crisis at $t\approx67$, discovery at $t\approx69$, the rate surging $0.02\to0.77$ and decaying
+back to base, zero false prune-backs, concept survival complete, and the never-shifting null
+world silent in every channel. No mechanism breaks another, because none of them adds a new
+objective: each routes a quantity the ledger already computes---residual, epistemic gain,
+evidence, deposit---back into a parameter that had been a constant.
+
+\subsection{Limitations and future work}
+\label{sec:res-staircase}
+
+The honest boundary of the model is easy to draw because its two threshold events are derived:
+crisis and discovery are the move ledger of Appendix~\ref{app:crisis-discovery}, and whatever the
+derivation does not fix is named there as a commitment. The first draft's list was longer; the
+mechanisms of \S\ref{sec:res-closing} closed its largest entries (the constant rate, the one-shot
+accept, the fixed candidate set, the static $u$, the enforced ordering, the unexamined pooling
+rule), and the boundary below is what remains after them.
+
+\paragraph{Where the narrow waist moved.}
+Everything revolutionary in the model still passes through model expansion, but the waist is no
+longer where the first draft drew it. The candidate space is now searched rather than given: per
+arrival the agent entertains the top-$k$ eigen-directions of its residual as competing hubs, each
+with its own dormant slot, alongside candidate couplings among existing commitments whose
+magnitudes are estimated from the residual---all priced on the one ledger
+(\S\ref{sec:res-closing}). What the search still cannot reach is a genuinely new
+\emph{observation channel}: every candidate above edits the prior over a fixed likelihood, while
+a new instrument enlarges the likelihood's own support---the same line Eq.~\eqref{eq:bmr} draws
+between reduction and expansion, now drawn one level up. That is the sharpened Knightian
+boundary: structure learning over latent structure is closed-loop; structure learning over the
+\emph{sensorium} is not, and we know of no agnostic stand-in for it as clean as the Poisson rate
+was for unconceived latents.
+
+\paragraph{What remains stipulated.}
+Appendix~\ref{app:crisis-discovery} keeps the shortened list: the operationalization of crisis
+(the belt conjunction) and the estimator horizons, joined now by the commitments the new
+mechanisms import. The Hawkes kernel of Eq.~\eqref{eq:hawkes} is \emph{motivated} as filtered
+social evidence but its parametric form ($\beta$, $\tau$, exponential memory) is chosen, not
+derived; the expiring credit's geometric decay $\lambda_c$ is a fixed-form surrogate for
+recomputing $\Delta G$ on the current posterior; and the audit's grace and patience are horizons
+of the same standing as the proposal window. These are Table~\ref{tab:dials}-class quantitative
+choices, named as such. One qualifier belongs in the main text: survival is
+\emph{completeness}-driven, so its numbers are horizon-bound---a constant-rate community given a
+high enough rate and a long enough horizon also completes its cascade and survives. ``Critical
+mass in time'' remains the law; what \S\ref{sec:res-closing} adds is the mechanism by which a
+community reaches it at rates serendipity alone essentially never does.
+
+\paragraph{The pooling protocol, priced at its endpoints only.}
+The survival result is now bracketed by two protocols---delta pooling (absence read as denial)
+and full abstention (the unrepresented dimension simply not pooled)---and the truth about real
+communities presumably lies between: partial discounting of the unconceived, perhaps an
+abstention that softens as a concept saturates one's neighbourhood. The abstention endpoint also
+carries its own strong reading, stated plainly: under it a concept can \emph{never} arrive
+through averaging, only through one's own discovery check---testimony alone cannot install a
+dimension. Interpolating the family of protocols between the endpoints, and asking which point
+real communities occupy, is the empirical question this model has converted from a confession
+into a measurement; Laudan's reticulated co-variation of theory, method, and aim
+\citep{laudan1984} is a natural frame for letting the protocol itself be learned.
+
+\paragraph{The staircase lives in observability, and what that localizes.}
+The structural account predicts a belt-first, core-last \emph{staircase}: the cheap periphery
+reorganizes first, the costly core only after the crisis. Where the staircase comes from turns out
+to be sharply diagnostic. A conservatism-gated revision \emph{rate} does not produce it---the
+high-$\kappa$ nodes reorganize first, indistinguishably from uniform and shuffled-$\kappa$ nulls
+(Appendix~\ref{app:staircase})---because the linear-Gaussian Fisher deposit is set by the
+observation operator rather than the data, so the conservatism geometry never enters the update.
+The staircase appears when that geometry is placed in \emph{observability}: when core commitments
+carry no direct observation rows and evidence reaches them only through relational channels, the
+belt realigns immediately after the world changes and the core only after the agent's own crisis,
+while the full-observability configuration---no staircase---serves as the control. What this
+localizes as the live limitation is the operator-set deposit itself: couplings here are selected
+among, not estimated from data, so structure learning is model comparison over a parameterized
+family rather than discovery of arbitrary structure. Each experiment ships its own null and
+positive controls (a world that never shifts produces neither crisis nor discovery; the gated,
+isolated community stays locked; Poisson discovery follows the waiting-time law), and the
+provenance of the sweep numbers is flagged where they are quoted (\S\ref{sec:res-kuhn}).
+
+\paragraph{Finally, the model is stylized.}
+The nets are hand-wired to expose the geometry, not fitted to data; the dials of
+Table~\ref{tab:dials} are swept, not inferred; and a community that ``tracks'' the eventually-true
+theory is committed to it, not thereby correct. What clears the ``more than a redescription'' bar
+is not any single result but the conjunction a scalar credence cannot voice: the Schur-complement
+degeneracy (a scalar has no off-diagonal to fill), the derived-not-imposed lock-in with its
+deaf-but-honest control, and an expansion that wakes an unconceived node only when the world makes
+its absence felt---now with no tuned threshold anywhere between the evidence and the act.
+
+% ======================================================================
+\section{Discussion}
+\label{sec:discussion}
+% ======================================================================
+
+Everything distinctive follows from taking the hidden structure seriously: a conservatism gradient
+derived rather than assigned, an exploration drive that is the value of expanding the model rather
+than a tuned bonus, a conviction field that is the same operator on a different source, and a
+population arc---crisis, revolution, lock-in, or release---that emerges as threshold crossings of the
+agents' own evidence. The sweep adds the population-scale phenomenology: the lock-in boundary lives
+at very weak coupling, so the protective strategies internal to a community (conviction, gating) are
+dominated by the single external variable of contact; and the survival of a new concept is governed
+not by how many eventually conceive it but by how nearly in time they do.
+
+We should be candid about which philosopher this picture serves: Lakatos, more than Kuhn. The
+conservatism geometry \emph{derives} his hard core and protective belt---a node is costly to revise
+because much depends on it---rather than decreeing them \citep{lakatos1970}, and with value
+accretion (\S\ref{sec:res-closing}) his temporal arc runs forward too: a programme that piles up
+evidence comes to value what it has built, silences its own disconfirming channels by degrees, and
+degenerates into a conservatism that delays its supersession without preventing it---problemshifts
+as dynamics rather than retrospective labels. Identifying the
+carry-over cascade with Kuhnian \emph{incommensurability} is the framing's most contestable move: a
+directed Bayes net makes incommensurability commensurable by construction---one precision space,
+revolution a long traverse rather than a gestalt switch---whereas Kuhn's incommensurability is
+precisely the absence of the common measure the network presupposes \citep{kuhn1983}. Where the
+staircase lives (\S\ref{sec:res-staircase}) is the tell: it appears only when the core is shielded
+from direct observation, and graded reorganization on fixed, fully observed wiring is a Lakatosian
+problemshift, not a Kuhnian reconstitution. Yet the sweep's survival result earns a piece of it
+back, and \S\ref{sec:res-closing} sharpens where that piece lives: the fusion that crushes a
+staggered discovery is a shared conceptual scheme suppressing a concept it does not contain---and
+the suppression appears exactly under the protocol that pools absence as denial, vanishing when
+agents abstain on dimensions they do not represent. Incommensurability as a population-level
+force is a property of how the community pools, not of the concepts pooled---which is, if
+anything, the more Kuhnian statement: the obstacle lives in the community's shared practice, and
+changing the practice, not the concepts, is what dissolves it.
+
+Finally, the unconceived marks the limit of structure learning itself. Structure learning navigates
+beautifully within the dimensions a model posits but is blind to the dimension no one has
+proposed---Stanford's problem of unconceived alternatives \citep{stanford2006}: not uncertainty over
+which known structure is right, but whether the space of known structures contains the truth at all.
+One cannot place a posterior over the unconceived---but one \emph{can} place a posterior over
+whether one's model has missed something, and \S\ref{sec:res-closing} shows that this is enough to
+bring the search itself inside active inference: the agent looks for what it cannot name at a rate
+set by its own inferred inadequacy and by its neighbours' discoveries, while still unable to aim.
+Stanford's constraint is honoured, not escaped---the direction of the unconceived stays dark; only
+the \emph{urgency} of looking is inferred. \S\ref{sec:res-kuhn} showed both edges of the blade
+under the agnostic rate: too low and the dimension goes undiscovered within the horizon; alone, a
+discovery does not survive the communal prior. \S\ref{sec:res-closing} showed that both edges are
+social, and blunt from the community's side---excitement synchronizes the wakings survival needs,
+and a community that abstains on what it cannot represent does not crush its discoverers. The
+hidden structure of the world, which forced us into structure learning on the first page, is in
+the end the thing no amount of structure learning can guarantee to have caught; what a community
+controls is how hard it looks, and what it does to the member who finds it first.
+
+% ======================================================================
+\setlength{\bibsep}{1.2pt}
+\begin{multicols}{2}\raggedright
+\begin{thebibliography}{99}\footnotesize
+
+\bibitem[Albarracin et al.(2022)]{albarracin2022}
+M.~Albarracin, D.~Demekas, M.~J.~D.~Ramstead, and C.~Heins.
+Epistemic communities under active inference. \emph{Entropy}, 24(4):476, 2022.
+
+\bibitem[Dalege et al.(2016)]{dalege2016}
+J.~Dalege, D.~Borsboom, F.~van Harreveld, H.~van den Berg, M.~Conner, and H.~L.~J.~van der Maas.
+Toward a formalized account of attitudes: the Causal Attitude Network (CAN) model.
+\emph{Psychological Review}, 123(1):2--22, 2016.
+
+\bibitem[Friedman et al.(2008)]{friedman2008glasso}
+J.~Friedman, T.~Hastie, and R.~Tibshirani.
+Sparse inverse covariance estimation with the graphical lasso.
+\emph{Biostatistics}, 9(3):432--441, 2008.
+
+\bibitem[Friston and Penny(2011)]{friston2011}
+K.~J.~Friston and W.~Penny.
+Post hoc Bayesian model selection. \emph{NeuroImage}, 56(4):2089--2099, 2011.
+
+\bibitem[Friston et al.(2015)]{friston2015}
+K.~Friston, F.~Rigoli, D.~Ognibene, C.~Mathys, T.~Fitzgerald, and G.~Pezzulo.
+Active inference and epistemic value. \emph{Cognitive Neuroscience}, 6(4):187--214, 2015.
+
+\bibitem[Friston et al.(2017)]{friston2017curiosity}
+K.~J.~Friston, M.~Lin, C.~D.~Frith, G.~Pezzulo, J.~A.~Hobson, and S.~Ondobaka.
+Active inference, curiosity and insight. \emph{Neural Computation}, 29(10):2633--2683, 2017.
+
+\bibitem[Friston et al.(2018)]{friston2018bmr}
+K.~J.~Friston, T.~Parr, and P.~Zeidman.
+Bayesian model reduction. arXiv:1805.07092, 2018.
+
+\bibitem[Hawkes(1971)]{hawkes1971}
+A.~G.~Hawkes.
+Spectra of some self-exciting and mutually exciting point processes.
+\emph{Biometrika}, 58(1):83--90, 1971.
+
+\bibitem[Hohwy(2016)]{hohwy2016}
+J.~Hohwy.
+The self-evidencing brain. \emph{No\^us}, 50(2):259--285, 2016.
+
+\bibitem[Hyland and Albarracin(2025)]{hyland2025}
+D.~Hyland and M.~Albarracin.
+On the variational costs of changing our minds. arXiv:2509.17957, 2025.
+(Also in \emph{Active Inference: IWAI 2025}, CCIS vol.~2857, Springer, 2026,
+doi:10.1007/978-3-032-16955-6\_1.)
+
+\bibitem[Jonard et al.(2025)]{jonard2025}
+N.~Jonard, S.~Reijula, and L.~Marengo.
+Theory choice in epistemic networks: five ways to avoid premature convergence. PhilSci Archive, 2025.
+
+\bibitem[Kitcher(1990)]{kitcher1990}
+P.~Kitcher.
+The division of cognitive labor. \emph{Journal of Philosophy}, 87(1):5--22, 1990.
+
+\bibitem[Koller and Friedman(2009)]{koller2009}
+D.~Koller and N.~Friedman.
+\emph{Probabilistic Graphical Models: Principles and Techniques}. MIT Press, 2009.
+
+\bibitem[Kuhn(1962)]{kuhn1962}
+T.~S.~Kuhn.
+\emph{The Structure of Scientific Revolutions}. University of Chicago Press, 1962.
+
+\bibitem[MacKay(1992)]{mackay1992}
+D.~J.~C.~MacKay.
+Bayesian interpolation. \emph{Neural Computation}, 4(3):415--447, 1992.
+
+\bibitem[Millidge et al.(2021)]{millidge2021}
+B.~Millidge, A.~Tschantz, and C.~L.~Buckley.
+Whence the expected free energy? \emph{Neural Computation}, 33(2):447--482, 2021.
+
+\bibitem[Neal(1996)]{neal1996}
+R.~M.~Neal.
+\emph{Bayesian Learning for Neural Networks}.
+Lecture Notes in Statistics 118, Springer, 1996.
+
+\bibitem[Nguyen(2020)]{nguyen2018}
+C.~T.~Nguyen.
+Echo chambers and epistemic bubbles. \emph{Episteme}, 17(2):141--161, 2020.
+
+\bibitem[O'Connor and Weatherall(2019)]{oconnor2019}
+C.~O'Connor and J.~O.~Weatherall.
+\emph{The Misinformation Age}. Yale University Press, 2019.
+
+\bibitem[Parr and Friston(2017)]{parr2017uncertainty}
+T.~Parr and K.~J.~Friston.
+Uncertainty, epistemics and active inference.
+\emph{Journal of the Royal Society Interface}, 14(136):20170376, 2017.
+
+\bibitem[Smith et al.(2020)]{smith2020structure}
+R.~Smith, P.~Schwartenbeck, T.~Parr, and K.~J.~Friston.
+An active inference approach to modeling structure learning: concept learning as an example case.
+\emph{Frontiers in Computational Neuroscience}, 14:41, 2020.
+
+\bibitem[Stanford(2006)]{stanford2006}
+P.~K.~Stanford.
+\emph{Exceeding Our Grasp: Science, History, and the Problem of Unconceived Alternatives}.
+Oxford University Press, 2006.
+
+\bibitem[Strevens(2003)]{strevens2003}
+M.~Strevens.
+The role of the priority rule in science. \emph{Journal of Philosophy}, 100(2):55--79, 2003.
+
+\bibitem[Thagard(1989)]{thagard1989}
+P.~Thagard.
+Explanatory coherence. \emph{Behavioral and Brain Sciences}, 12(3):435--467, 1989.
+
+\bibitem[Tipping(2001)]{tipping2001}
+M.~E.~Tipping.
+Sparse Bayesian learning and the relevance vector machine.
+\emph{Journal of Machine Learning Research}, 1:211--244, 2001.
+
+\bibitem[Zollman(2010)]{zollman2010}
+K.~J.~S.~Zollman.
+The epistemic benefit of transient diversity. \emph{Erkenntnis}, 72(1):17--35, 2010.
+
+\bibitem[Griffiths and Ghahramani(2011)]{griffiths2011ibp}
+T.~L.~Griffiths and Z.~Ghahramani.
+The Indian Buffet Process: an introduction and review.
+\emph{Journal of Machine Learning Research}, 12:1185--1224, 2011.
+
+\bibitem[Kemp and Tenenbaum(2008)]{kemp2008form}
+C.~Kemp and J.~B.~Tenenbaum.
+The discovery of structural form.
+\emph{Proceedings of the National Academy of Sciences}, 105(31):10687--10692, 2008.
+
+\bibitem[Ullman et al.(2012)]{ullman2012}
+T.~D.~Ullman, N.~D.~Goodman, and J.~B.~Tenenbaum.
+Theory learning as stochastic search in a language of thought.
+\emph{Cognitive Development}, 27(4):455--480, 2012.
+
+\bibitem[Friston et al.(2017b)]{friston2017process}
+K.~Friston, T.~FitzGerald, F.~Rigoli, P.~Schwartenbeck, and G.~Pezzulo.
+Active inference: a process theory. \emph{Neural Computation}, 29(1):1--49, 2017.
+
+\bibitem[Mathys et al.(2011)]{mathys2011}
+C.~Mathys, J.~Daunizeau, K.~J.~Friston, and K.~E.~Stephan.
+A Bayesian foundation for individual learning under uncertainty.
+\emph{Frontiers in Human Neuroscience}, 5:39, 2011.
+
+\bibitem[Smith et al.(2022)]{smith2022tutorial}
+R.~Smith, K.~J.~Friston, and C.~Whyte.
+A step-by-step tutorial on active inference and its application to empirical data.
+\emph{Journal of Mathematical Psychology}, 107:102632, 2022.
+
+\bibitem[Da Costa et al.(2020)]{dacosta2020}
+L.~Da Costa, T.~Parr, N.~Sajid, S.~Veselic, V.~Neacsu, and K.~Friston.
+Active inference on discrete state-spaces: a synthesis.
+\emph{Journal of Mathematical Psychology}, 99:102447, 2020.
+
+\bibitem[Holmes(2000)]{holmes2000}
+F.~L.~Holmes.
+The revolution in chemistry and physics: overthrow of a reigning paradigm or competition between
+contemporary research programs? \emph{Isis}, 91(4):735--753, 2000.
+
+\bibitem[Thagard(1990)]{thagard1990}
+P.~Thagard.
+The conceptual structure of the chemical revolution.
+\emph{Philosophy of Science}, 57(2):183--209, 1990.
+
+\bibitem[Boantza and Gal(2011)]{boantza2011}
+V.~D.~Boantza and O.~Gal.
+The `absolute existence' of phlogiston: the losing party's point of view.
+\emph{British Journal for the History of Science}, 44(3):317--342, 2011.
+
+\bibitem[Blumenthal and Ladyman(2017)]{blumenthal2017}
+G.~Blumenthal and J.~Ladyman.
+The development of problems within the phlogiston theories, 1766--1791.
+\emph{Foundations of Chemistry}, 19(3):241--280, 2017.
+
+\bibitem[Ball et al.(2024)]{polygraphs2024}
+B.~Ball, A.~Koliousis, A.~Mohanan, and M.~Peacey.
+Computational philosophy: reflections on the {PolyGraphs} project.
+\emph{Humanities and Social Sciences Communications}, 11:186, 2024.
+
+\bibitem[Michelini et al.(2023)]{michelini2023}
+M.~Michelini, J.~Osorio, W.~Houkes, D.~\v{S}e\v{s}elja, and C.~Stra\ss{}er.
+Scientific disagreements and the diagnosticity of evidence: how too much data may lead to polarization.
+\emph{Journal of Artificial Societies and Social Simulation}, 26(4):5, 2023.
+
+\bibitem[Albarracin et al.(2024)]{albarracin2024protentions}
+M.~Albarracin, R.~J.~Pitliya, T.~St.~Clere Smithe, D.~A.~Friedman, K.~Friston, and M.~J.~D.~Ramstead.
+Shared protentions in multi-agent active inference.
+\emph{Entropy}, 26(4):303, 2024.
+
+\bibitem[Friston et al.(2024a)]{friston2023federated}
+K.~J.~Friston, T.~Parr, C.~Heins, A.~Constant, D.~Friedman, T.~Isomura, C.~Fields,
+T.~Verbelen, M.~Ramstead, J.~Clippinger, and C.~D.~Frith.
+Federated inference and belief sharing.
+\emph{Neuroscience \& Biobehavioral Reviews}, 156:105500, 2024.
+
+\bibitem[Waade et al.(2025)]{waade2025}
+P.~T.~Waade, C.~L.~Olesen, J.~E.~Laursen, S.~W.~Nehrer, C.~Heins, K.~Friston, and C.~Mathys.
+As one and many: relating individual and emergent group-level generative models in active inference.
+\emph{Entropy}, 27(2):143, 2025.
+
+\bibitem[Ullman and Tenenbaum(2020)]{ullman2020}
+T.~D.~Ullman and J.~B.~Tenenbaum.
+Bayesian models of conceptual development: learning as building models of the world.
+\emph{Annual Review of Developmental Psychology}, 2:533--558, 2020.
+
+\bibitem[Smith et al.(2022b)]{smith2022plos}
+R.~Smith, V.~Neacsu, M.~B.~Mirza, R.~A.~Adams, and K.~J.~Friston.
+Simulating empirical phenomena of inference under active learning and active selection through
+{Bayesian} model reduction. \emph{PLOS ONE}, 17(12):e0277199, 2022.
+
+\bibitem[Priorelli and Stoianov(2023)]{priorelli2023}
+M.~Priorelli and I.~P.~Stoianov.
+Dynamic inference by model reduction.
+\emph{bioRxiv}, 2023. doi:10.1101/2023.09.10.557043.
+
+\bibitem[Friston et al.(2016)]{friston2016peb}
+K.~J.~Friston, V.~Litvak, A.~Oswal, A.~Razi, K.~E.~Stephan, B.~C.~M.~van Wijk, G.~Ziegler, and
+P.~Zeidman. Bayesian model reduction and empirical {Bayes} for group ({DCM}) studies.
+\emph{NeuroImage}, 128:413--431, 2016.
+
+\bibitem[Friston et al.(2024b)]{friston2024ci}
+K.~J.~Friston et al.
+Designing ecosystems of intelligence from first principles.
+\emph{Collective Intelligence}, 3(4), 2024. arXiv:2212.01354.
+
+\bibitem[Kaufmann et al.(2021)]{kaufmann2021}
+R.~Kaufmann, P.~Gupta, and J.~Taylor.
+An active inference model of collective intelligence.
+\emph{Entropy}, 23(7):830, 2021.
+
+\bibitem[Acemoglu and Ozdaglar(2011)]{acemoglu2011}
+D.~Acemoglu and A.~Ozdaglar.
+Opinion dynamics and learning in social networks.
+\emph{Dynamic Games and Applications}, 1(1):3--49, 2011.
+
+\bibitem[Bala and Goyal(1998)]{balagoyal1998}
+V.~Bala and S.~Goyal.
+Learning from neighbours. \emph{Review of Economic Studies}, 65(3):595--621, 1998.
+
+\bibitem[Bohren and Hauser(2021)]{bohren2021}
+J.~A.~Bohren and D.~N.~Hauser.
+Learning with heterogeneous misspecified models: characterization and robustness.
+\emph{Econometrica}, 89(6):3025--3077, 2021.
+
+\bibitem[Bollen(1987)]{bollen1987}
+K.~A.~Bollen.
+Total, direct, and indirect effects in structural equation models.
+\emph{Sociological Methodology}, 17:37--69, 1987.
+
+\bibitem[Bonacich(1987)]{bonacich1987}
+P.~Bonacich.
+Power and centrality: a family of measures.
+\emph{American Journal of Sociology}, 92(5):1170--1182, 1987.
+
+\bibitem[DeGroot(1974)]{degroot1974}
+M.~H.~DeGroot.
+Reaching a consensus. \emph{Journal of the American Statistical Association}, 69(345):118--121, 1974.
+
+\bibitem[Feyerabend(1975)]{feyerabend1975}
+P.~Feyerabend.
+\emph{Against Method}. New Left Books, 1975.
+
+\bibitem[Genest and Zidek(1986)]{genest1986}
+C.~Genest and J.~V.~Zidek.
+Combining probability distributions: a critique and an annotated bibliography.
+\emph{Statistical Science}, 1(1):114--135, 1986.
+
+\bibitem[Hegselmann and Krause(2002)]{hegselmann2002}
+R.~Hegselmann and U.~Krause.
+Opinion dynamics and bounded confidence: models, analysis and simulation.
+\emph{Journal of Artificial Societies and Social Simulation}, 5(3), 2002.
+
+\bibitem[Katz(1953)]{katz1953}
+L.~Katz.
+A new status index derived from sociometric analysis. \emph{Psychometrika}, 18(1):39--43, 1953.
+
+\bibitem[Kuhn(1983)]{kuhn1983}
+T.~S.~Kuhn.
+Commensurability, comparability, communicability.
+\emph{PSA: Proceedings of the Biennial Meeting of the Philosophy of Science Association},
+1982(2):669--688, 1983.
+
+\bibitem[Lakatos(1970)]{lakatos1970}
+I.~Lakatos.
+Falsification and the methodology of scientific research programmes.
+In I.~Lakatos and A.~Musgrave, editors, \emph{Criticism and the Growth of Knowledge},
+pages 91--196. Cambridge University Press, 1970.
+
+\bibitem[Laudan(1977)]{laudan1977}
+L.~Laudan.
+\emph{Progress and Its Problems: Towards a Theory of Scientific Growth}.
+University of California Press, 1977.
+
+\bibitem[Laudan(1984)]{laudan1984}
+L.~Laudan.
+\emph{Science and Values: The Aims of Science and Their Role in Scientific Debate}.
+University of California Press, 1984.
+
+\bibitem[Lehrer and Wagner(1981)]{lehrer1981}
+K.~Lehrer and C.~Wagner.
+\emph{Rational Consensus in Science and Society}. D.~Reidel, 1981.
+
+\bibitem[Malioutov et al.(2006)]{malioutov2006}
+D.~M.~Malioutov, J.~K.~Johnson, and A.~S.~Willsky.
+Walk-sums and belief propagation in Gaussian graphical models.
+\emph{Journal of Machine Learning Research}, 7:2031--2064, 2006.
+
+\bibitem[O'Connor and Weatherall(2018)]{oconnorpolar2018}
+C.~O'Connor and J.~O.~Weatherall.
+Scientific polarization. \emph{European Journal for Philosophy of Science}, 8(3):855--875, 2018.
+
+\bibitem[Ortega and Braun(2013)]{ortega2013}
+P.~A.~Ortega and D.~A.~Braun.
+Thermodynamics as a theory of decision-making with information-processing costs.
+\emph{Proceedings of the Royal Society A}, 469(2153):20120683, 2013.
+
+\bibitem[Todorov(2009)]{todorov2009}
+E.~Todorov.
+Efficient computation of optimal actions.
+\emph{Proceedings of the National Academy of Sciences}, 106(28):11478--11483, 2009.
+
+\bibitem[Wright(1934)]{wright1934}
+S.~Wright.
+The method of path coefficients. \emph{Annals of Mathematical Statistics}, 5(3):161--215, 1934.
+
+\bibitem[Zollman(2013)]{zollman2013}
+K.~J.~S.~Zollman.
+Network epistemology: communication in epistemic communities.
+\emph{Philosophy Compass}, 8(1):15--27, 2013.
+
+\end{thebibliography}
+\end{multicols}
+
+% ======================================================================
+\clearpage
+\appendix
+% ======================================================================
+\section{The operator, the tilt, and the Schur residue}
+\label{app:operator}
+% ======================================================================
+
+\paragraph{Linear-Gaussian construction.} The couplings form a structural equation model $x=Ax+\zeta$,
+$\zeta\sim\mathcal N(0,D^{-1})$ with $A$ the weighted DAG adjacency \citep{koller2009}; the choice is
+for tractability, and a nonlinear coupling would replace $\Top$ by a local linearization. The
+propagation operator is the resolvent
+\begin{equation}
+\Top=(I-A)^{-1}=\sum_{k\ge 0}A^k,\qquad
+\Top_{iw}=\!\!\sum_{\text{paths }i\rw w}\ \prod \pi\ =\ \pi_{i\rw w},
+\label{eq:Top-full}
+\end{equation}
+the Neumann series finite because a DAG makes $A$ nilpotent. We realise $\Top$ on the coupling
+magnitudes $|A|$ so downstream mass does not cancel when a child opposes a parent; the signed $A$
+builds the precision matrix. We index $\Top$ so that $\kappa_i$ sums row $i$; under the SEM
+convention the released code stores the transpose and computes the same fields as column-sums of
+$\Top^{\!\top}$, so a reader reproducing $\Top\bone$ literally against the code's array must
+transpose first.
+
+\paragraph{The value tilt.} With honest posterior $p(x\mid o,G)=\mathcal N(\mu,\Sigma)$, the tilted
+posterior of Eq.~\eqref{eq:tilted} is a pure mean shift,
+$q_\lambda(x)=\mathcal N(\mu+\lambda\Sigma U,\,\Sigma)$, with cumulant-generating function
+$Z(\lambda)=\lambda\,U^{\!\top}\!\mu+\tfrac12\lambda^2\,U^{\!\top}\!\Sigma U$. Note that gating a
+channel ($\rho_k\to0$) \emph{raises} the posterior variance and hence $Z''$; lock-in lives in the
+vanishing mean-update gain $\rho_k H_k\Sigma U$, not in the curvature.
+
+\paragraph{The Schur residue.} Marginalizing a hub condenses its influence into new edges among its
+neighbours: for a common-cause structure over $(x_1,x_2,b)$,
+\begin{equation}
+\Pi=\begin{pmatrix}2&0&1\\0&2&1\\1&1&2\end{pmatrix}
+\ \xrightarrow{\ \text{marginalize } b\ }\
+\begin{pmatrix}2&0\\0&2\end{pmatrix}-\tfrac12\begin{pmatrix}1\\1\end{pmatrix}\begin{pmatrix}1&1\end{pmatrix}
+=\begin{pmatrix}1.5&-0.5\\-0.5&1.5\end{pmatrix},
+\label{eq:schur}
+\end{equation}
+a direct coupling induced where the joint had a zero. Conditioning on a shared \emph{effect} (the
+supernova collider of Appendix~\ref{app:darkenergy}) is the dual operation, and both fill in the
+off-diagonal coupling the carry-over cost is built from.
+
+% ======================================================================
+% The crisis and discovery checks, derived from the ledger (+ the
+% exploration-as-social-process future-work paragraphs at its tail).
+\input{appendix_crisis_discovery_v2}
+
+% ======================================================================
+\section{The two fields on a worked example: the dark-energy net}
+\label{app:darkenergy}
+% ======================================================================
+
+This appendix realises the two fields of Fig.~\ref{fig:twofields} on a domain net: general
+relativity (GR) at the root; the density parameters $\Omega_m$ and the cosmological constant
+$\Lambda$ as dials; the Friedmann expansion, distance modulus $\mu(z)$ and a Type-Ia supernova (SN)
+reading as a descending chain; light-bending, the perihelion precession, gravitational redshift, CMB
+and BBN as GR's other branches; and a modified-gravity (MOND) prediction the community wants false.
+The net is hand-wired to expose the geometry, not fitted to data.
+
+Computing $\kappa=\Top\bone$ and $U=\Top u$ on this net (Fig.~\ref{fig:res-twofield}) makes the
+two-field claim concrete. Conservatism is steepest at GR ($\kappa_{\mathrm{GR}}=10.5$, the maximum)
+and shallow at the cosmological constant ($\kappa_\Lambda=2.85$, a ratio of $3.7$): GR carries every
+predicted observable below it, $\Lambda$ only the distance--redshift branch. This is Lakatos's
+belt-protects-core falling straight out of the operator---when the 1998 anomaly arrives at the
+bottom, the cheap move is to turn the dial with the smallest descendant set ($\Lambda$), not the
+ancestor with the largest (GR). The conviction field $U=\Top u$, with the community valuing the
+accelerating-universe supernova reading ($u_{\mathrm{SN}}=+1$), the $\Lambda$ commitment ($+0.6$)
+and wanting MOND false ($-0.8$), \emph{inverts} that order: $U_\Lambda=1.19$ (the most cherished)
+exceeds $U_{\mathrm{GR}}=0.45$ while $\kappa_\Lambda<\kappa_{\mathrm{GR}}$. The two fields are
+de-correlated (Pearson $r(\kappa,U)=0.25$), the visible face of the algebraic independence guaranteed
+whenever $u\not\propto\bone$: $\Lambda$ is \emph{cheap yet cherished}, GR \emph{central yet
+comparatively value-neutral}, the GR machinery (light-bending, perihelion, clocks, CMB, BBN) central
+yet value-neutral ($U\approx 0$), and MOND the conclusion the community wants false ($U<0$)---exactly
+the three annotated cases of Fig.~\ref{fig:twofields}, now computed by the operator on a domain net
+rather than assigned by hand.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\linewidth]{fig_two_fields_dag.png}
+\caption{The two fields, computed on the dark-energy paradigm net. \emph{Left:} conservatism
+$\kappa=\Top\bone$ (Eq.~\ref{eq:kappa})---GR is hot ($\kappa=10.5$), the observation leaves cold;
+the directed arrows make ``everything hangs below GR'' visible. \emph{Right:} conviction $U=\Top u$
+(Eq.~\ref{eq:U}) on the same graph---$\Lambda$ and the supernova reading green (cherished), MOND red
+(wanted false), GR's other machinery value-neutral. The decoupling is the realisation of
+Fig.~\ref{fig:twofields}: the value order inverts the cost order ($U_\Lambda>U_{\mathrm{GR}}$ while
+$\kappa_\Lambda<\kappa_{\mathrm{GR}}$; $r(\kappa,U)=0.25$).}
+\label{fig:res-twofield}
+\end{figure}
+
+The Schur residue of Eq.~\eqref{eq:schur} is equally concrete. A priori $\Omega_m$ and $\Lambda$ are
+independent (correlation $0.00$, a round cloud). Conditioning on the shared supernova
+observation---clamping the descendant both dials feed---manufactures an off-diagonal coupling
+between them where the joint had a zero: the cloud collapses onto the tilted ``banana''
+(Fig.~\ref{fig:res-schur}), with correlation rising to $+0.50$. This is the
+$\Omega_m$--$\Lambda$ degeneracy direction every dark-energy contour plot draws, here reproduced as a
+Schur complement on the precision matrix. Conditioning on a shared \emph{effect} (the supernova
+collider---explaining-away) and marginalizing a shared \emph{cause} (Eq.~\ref{eq:schur}) are
+\emph{dual} operations, not the same one, but both fill in the off-diagonal coupling the carry-over
+cost is built from.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.52\linewidth]{fig_schur_banana.png}
+\caption{The Schur degeneracy, computed. The two dials are uncorrelated a priori
+(grey, $r=0.00$); conditioning on their shared supernova descendant induces the off-diagonal coupling
+(crimson, $r=+0.50$)---the $\Omega_m$--$\Lambda$ ``banana''. Marginalizing a shared latent hub and
+conditioning on a shared observation are the two readings of one complement.}
+\label{fig:res-schur}
+\end{figure}
+
+% ======================================================================
+\section{Coupling of the two fields under model expansion}
+\label{app:both}
+% ======================================================================
+
+The two fields are coupled by the expansion operation, and with $\Top$ defined the coupling follows
+directly. When the agent expands its model---proposing a new commitment $N$ wired by candidate
+conditionals to a set of existing nodes---the joint gains an explicit factor,
+\begin{equation}
+p(x,x_N\mid G')\;\propto\;p(x\mid G)\!\!\prod_{(N\leftrightarrow v)}\!\!\psi_{Nv}(x_v,x_N)^{\pi_{Nv}},
+\label{eq:expand}
+\end{equation}
+with the candidate edges entered at free prior precision ($\alpha_e\to 0$) so that reduction can
+carve them back. In operator terms, adding $N$ appends a row and a column to $A$---and therefore to
+$\Top$---and appends one entry to \emph{each} of the two source vectors, the unit source $\bone$ and
+the utility source $u$. The two consequences are then immediate. Every node $N$ touches gains the new
+coupling precision it must now also propagate,
+\begin{equation}
+\Delta\kappa_v \;=\; \pi_{Nv},
+\label{eq:dkappa}
+\end{equation}
+while the conviction field gains, at $N$ and along its new edges,
+\begin{equation}
+\Delta U \;=\; u_N+\!\!\sum_{w\in\desc(N)}\!\!\pi_{N\rw w}\,u_w .
+\label{eq:dU}
+\end{equation}
+A single expansion thus writes the new commitment into both the cost geometry and the value geometry
+(Fig.~\ref{fig:both}). This is the precise content of motivated structure learning: an agent
+contemplating a node that would, once wired in, lend value to a cherished core---or force the revision
+of one---registers that prospect in \emph{both} fields, as a carry-over cost it must pay and as a value
+change it may welcome or resist, and scores the keep-or-prune decision against the value-tilted ledger
+of Eq.~\eqref{eq:tilted}. The same proposal can therefore be evidence-favoured
+and value-rejected, or the reverse.
+
+\begin{figure}[h!]
+\centering
+\begin{subfigure}{0.49\textwidth}\centering
+\resizebox{0.62\linewidth}{!}{%
+\begin{tikzpicture}[n/.style={circle,draw=costc!80,fill=costc!16,minimum size=7mm,inner sep=0pt,font=\small}]
+  \node[n](A) at (0,1){A}; \node[n](B) at (-1,0){B};
+  \node[n](C) at (1,0){C}; \node[n](D) at (0,-1){D};
+  \draw[dcore] (A)--(B); \draw[dcore] (A)--(C); \draw[dcore] (A)--(D);
+  \draw[dcore] (B)--(C); \draw[dcore] (B)--(D); \draw[dcore] (C)--(D);
+  \node[circle,draw=newc,line width=0.9pt,fill=newc!22,minimum size=7mm,inner sep=0pt,font=\small\bfseries](N) at (1.7,1.5){$N$};
+  \draw[newc,line width=1.0pt,-{Stealth[length=1.4mm]}] (N)--(A) node[midway,above,font=\tiny,text=black!70]{$\pi$};
+  \draw[newc,line width=1.0pt,-{Stealth[length=1.4mm]}] (N)--(C);
+\end{tikzpicture}}
+\caption{enters the belief network (coupling $\pi$, $\Delta\kappa_v=\pi_{Nv}$)}
+\label{sub:bel}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.49\textwidth}\centering
+\resizebox{0.62\linewidth}{!}{%
+\begin{tikzpicture}[n/.style={circle,draw=black!60,minimum size=7mm,inner sep=0pt,font=\small}]
+  \node[n,fill=green!40!white](A) at (0,1){A}; \node[n,fill=gray!10!white](B) at (-1,0){B};
+  \node[n,fill=green!18!white](C) at (1,0){C}; \node[n,fill=gray!8!white](D) at (0,-1){D};
+  \draw[dcore] (A)--(B); \draw[dcore] (A)--(C); \draw[dcore] (A)--(D);
+  \draw[dcore] (B)--(C); \draw[dcore] (B)--(D); \draw[dcore] (C)--(D);
+  \node[circle,draw=green!50!black,line width=0.9pt,fill=green!60!white,minimum size=7mm,inner sep=0pt,font=\small\bfseries](N) at (1.7,1.5){$N$};
+  \draw[green!45!black,line width=1.0pt,-{Stealth[length=1.4mm]}] (N)--(A) node[midway,above,font=\tiny,text=black!70]{$u$};
+  \draw[green!45!black,line width=1.0pt,-{Stealth[length=1.4mm]}] (N)--(C);
+\end{tikzpicture}}
+\caption{enters the utility network (propagated value, $\Delta U$)}
+\label{sub:val}
+\end{subfigure}
+\caption{One expansion, two fields. Adding a commitment $N$ with new conditionals appends a row and a
+column to the operator $\Top$ and an entry to each source vector: into the belief network, where each
+new edge carries a coupling precision $\pi$ and so adds to carry-over cost by
+Eq.~\eqref{eq:dkappa} (a), and into the utility network, where $N$'s value propagates along the same
+new edges by Eq.~\eqref{eq:dU} and tints the commitments it reaches (b). The keep-or-prune decision is
+scored against the value-tilted ledger, so a proposal can be evidence-favoured yet value-rejected, or
+the reverse.}
+\label{fig:both}
+\end{figure}
+
+% ======================================================================
+\section{A coarse model resolves a complex world only slowly}
+\label{app:coarse}
+% ======================================================================
+
+This experiment isolates the cost of a coarse Bayes net against a world richer than it. The true
+world is a complex twelve-parameter Gaussian with four latent factors (correlated, individually
+ambiguous directions); a coarse agent senses only $\mathrm{res}$ random aggregate combinations per
+step. Coarser is slower (Fig.~\ref{fig:res-coarse}, left): the time to resolve the world state to
+within a fixed tolerance grows from $58$ steps at full resolution to $221$ steps at
+$\mathrm{res}=1$, and below a resolution the agent does not finish within the horizon. Adding
+forgetting floors the resolution outright (Fig.~\ref{fig:res-coarse}, right): a net that both
+under-senses and forgets plateaus at a residual error that rises as $\omega$ falls ($0.08\to0.28$),
+and at $\mathrm{res}=3,\,\omega\le0.93$ never resolves the world at all. A complex world has no clear
+answer for a bounded, forgetful, under-sensing learner---the honest limit the hidden-structure premise
+of \S\ref{sec:hidden} implies.
+
+\begin{figure}[h!]
+\centering
+\begin{subfigure}{0.6\textwidth}\centering
+\includegraphics[width=\linewidth]{fig_coarse_resolve.png}\caption{coarser $\Rightarrow$ slower}
+\label{sub:coarse}
+\end{subfigure}\hfill
+\begin{subfigure}{0.38\textwidth}\centering
+\includegraphics[width=\linewidth]{fig_coarse_floor.png}\caption{forgetting floors it}
+\label{sub:floor}
+\end{subfigure}
+\caption{A coarse net on a complex world. \subref{sub:coarse}~Relative error in the reconstructed
+world state over time, by sensing resolution; time-to-resolve grows sharply as the net coarsens.
+\subref{sub:floor}~With a fixed coarse sensor, forgetting plateaus the error at a floor that rises as
+$\omega$ falls---the world is never fully resolved.}
+\label{fig:res-coarse}
+\end{figure}
+
+% ======================================================================
+\section{The staircase negative in detail}
+\label{app:staircase}
+% ======================================================================
+
+In the base dynamics the conservatism $\kappa$ is a static read-out that never enters the update.
+The natural fix is to let $\kappa$ gate the \emph{rate} of revision: a per-node deposit gate
+$g_i=1/(1+\beta\kappa_i)$, PD-preserving, so a high-$\kappa$ core node integrates evidence slower
+than a cheap belt node. We tested it on the phlogiston net, and it does \emph{not} recover the
+staircase (Fig.~\ref{fig:res-staircase-app}). The belt$\to$core lag stays negative ($-55$ steps at
+$\beta=0$, $-45$ at large $\beta$): the high-$\kappa$ nodes reorganize \emph{first}, not last, and
+the $\kappa$-gradient gate is indistinguishable from a gradient-free uniform slowdown ($-45$) and a
+shuffled-$\kappa$ gate ($-45$). Two reasons, which share one root cause. First, a deposit gate
+scales both numerator and denominator of the mean $\mu=\Pi^{-1}h$, so it barely throttles
+mean-tracking---and mean-tracking is where theory identity lives. Second, the nodes that actually
+reorganize are exactly the high-$\kappa$ mass-law commitments the relational operator refutes
+directly, while the low-$\kappa$ belt are agreement nodes with nothing to reorganize, so the
+conservatism stratification is confounded with move-versus-don't-move. The root cause: with an
+operator-set Fisher deposit $J=H^\top H/\sigma^2$---set by the observation operator, not the
+data---the structure does not move, so theory identity rides the posterior \emph{means} and neither
+a rate gate on those means nor the stratified couplings can express the staircase. The negative
+localizes the missing ingredient to a data-dependent observation model in which the couplings
+themselves are learned (a structure-matched or nonlinear operator).
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\linewidth]{fig_staircase.png}
+\caption{The staircase is \emph{not} recovered by a conservatism-gated revision rate (phlogiston).
+\emph{Left:} reorganization by $\kappa$-shell at the best $\beta$ ($\beta=0$ baseline dotted)---the
+high-$\kappa$ ``core'' moves first and the low-$\kappa$ ``belt'' (agreement nodes) never reorganizes,
+the reverse of the prediction. \emph{Right:} the belt$\to$core lag stays negative and the
+$\kappa$-gradient gate (purple) is matched by the gradient-free uniform (grey square) and
+shuffled-$\kappa$ (red cross) nulls---the gradient adds nothing. The negative localizes the missing
+ingredient to data-dependent structure learning.}
+\label{fig:res-staircase-app}
+\end{figure}
+
+\end{document}

@@ -1,0 +1,74 @@
+{
+  "experiment": "hawkes_rescue",
+  "git": {
+    "sha": "a40ac529b87dc1c3875f486c57ba1f0160d07a68",
+    "branch": "production/structural-minimal",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-06-11T13:58:29+00:00",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "params": {
+    "N": 80,
+    "T_SHIFT": 40,
+    "N_STEPS": 320,
+    "OMEGA": 0.97,
+    "SIGMA_O": 0.5,
+    "GATE_STRENGTH": 1.0,
+    "S_DOGMA": 3.0,
+    "TAU": 10.0,
+    "BETAS": [
+      0.0,
+      0.25,
+      0.5,
+      1.0,
+      1.5
+    ],
+    "R0S": [
+      0.005,
+      0.01,
+      0.02
+    ],
+    "SEEDS": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "WORKERS": 6
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.0",
+    "jaxlib": "0.9.0",
+    "numpy": "2.3.4",
+    "equinox": "0.13.6",
+    "networkx": "3.5",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.7"
+  },
+  "outputs": {
+    "simulation_arrays.npz": {
+      "arrays": {
+        "betas": "26183ec590060af1cb2286cf1c1f30e3801ee6dbd024ca2e930ae8506cd2043b",
+        "det_survive": "0957052bbeac1f5ebb1dfa934c0dfc589868f55b8d514f816973c78548d683bc",
+        "discover": "7233c819dc48dc2fa555e4d9f832cfc9646197c1273c600469b0ef586e5b93cb",
+        "r0s": "8f905724cbec8703482029f3a1a10fb7a8c3a395b85266c5f51483d35c8a0fdc",
+        "seeds": "cf9cd6050924ea9d44317201616dd6e23335c423069b1240ece1f2b4007a5ce5",
+        "survive": "e6b441a95d6e527dec987b2843f16149842a9ddf483e00c173d6f5eb01fb5b16",
+        "wake_std": "cfe6be0ab3846e54f5891c71f6871bae1cbf6f671284268701bb8199810b76d3"
+      }
+    },
+    "summary.json": "9a6bfbba88bcfbbfbb5917ea573710767440498b7b72531aef623fba76221a31"
+  },
+  "runner_version": 1
+}

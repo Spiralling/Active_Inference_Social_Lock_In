@@ -5,8 +5,6 @@
     "n_steps": 180,
     "sigma_o": 0.5,
     "window": 30,
-    "trigger": 2.0,
-    "sustain": 5,
     "drives": [
       "rotation_curve_anomaly",
       "large_scale_structure_anomaly",
@@ -16,7 +14,7 @@
   },
   "representative": {
     "coupling": 1.6,
-    "wake_step": 133,
+    "wake_step": 162,
     "woke_after_T2": true,
     "f1_unwoken": 0.0,
     "f1_woken": 1.0,
@@ -34,16 +32,16 @@
     "wake_fraction": [
       0.0,
       0.0,
-      1.0,
-      1.0,
+      0.0,
+      0.6666666666666666,
       1.0
     ],
     "mean_wake_step": [
       NaN,
       NaN,
-      141.0,
-      131.0,
-      129.0
+      NaN,
+      169.5,
+      160.0
     ],
     "after_T2_fraction": [
       1.0,
@@ -55,8 +53,8 @@
   },
   "controls": {
     "null_wake_step": -1,
-    "positive_wake_step": 133,
+    "positive_wake_step": 162,
     "positive_woke_after_T2": true,
-    "pre_T2_floor_max": 0.9327633380889893
+    "pre_T2_delta_F_max": -0.088226318359375
   }
 }

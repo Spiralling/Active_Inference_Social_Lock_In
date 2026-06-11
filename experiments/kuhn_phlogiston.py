@@ -2,12 +2,14 @@
 
 The integration experiment: N=80 agents in two communities (open vs dogmatic) live through the
 deterministic regime flip of the phlogiston world (the precision balance arrives at t_shift:
-calx is heavier). Crisis is the model's OWN prune evidence (Savage-Dickey Delta F crossing the
-conviction protection lam_i * v_e); revolution is Bayesian model reduction APPLIED (the agent
-adopts the CPD-reduced prior over the edges its own evidence flags, hub released); discovery is
-Bayesian model expansion (a genuinely unconceived OXYGEN slot, bordered on a residual-triggered,
-optionally Poisson-arriving proposal scored by the model log Bayes factor); and the population
-fuses precision over an SBM graph, so awakened oxygen structure spreads socially.
+calx is heavier). Crisis is the model's OWN ledger (the Savage-Dickey prune evidence Delta F
+plus lam_i times the closed-form conviction-value change Delta U of the prune, crossing zero --
+the tilted objective applied to a structural move, no proxy threshold); revolution is Bayesian
+model reduction APPLIED (the agent adopts the CPD-reduced prior over the edges its own ledger
+flags, hub released); discovery is Bayesian model expansion (a genuinely unconceived OXYGEN
+slot, bordered on an optionally Poisson-arriving proposal whose SOLE accept test is the model
+log Bayes factor -- no residual-floor trigger); and the population fuses precision over an SBM
+graph, so awakened oxygen structure spreads socially.
 
 Figures:
 * ``kuhn_phlogiston_timeline.png`` -- the headline (disconnected communities, deterministic
@@ -27,7 +29,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from experiments.registry import ExperimentSpec, register
-from src.structural.models.kuhn_phlogiston import SUSTAIN, single_run
+from src.structural.models.kuhn_phlogiston import single_run
 
 
 def _med(x):
@@ -71,31 +73,26 @@ def fig_timeline(r, path) -> dict:
     a0.legend(fontsize=8, loc="center left")
     a0.set_title("The chemical revolution, endogenously: population + model reduction + expansion")
 
-    # --- panel 2: the prune evidence (the anomaly curve IS Delta F) ---
-    tt = np.arange(r["dF_belt_tn"].shape[0])
-    ve = float(r["v_e_belt"].min())
+    # --- panel 2: the prune ledger (the anomaly curve IS the score) ---
+    tt = np.arange(r["score_belt_tn"].shape[0])
     for label, c, color in (("open", 0, "#1e8449"), ("dogmatic", 1, "#922b21")):
         with np.errstate(all="ignore"):                 # expanded agents are NaN-masked
-            m = np.nanmean(r["dF_belt_tn"][:, comm == c], axis=1)
-        a1.plot(tt, m, lw=2.0, color=color, label=f"{label}: belt $\\Delta F$ (own evidence)")
-    lam_o = float(r["lam"][comm == 0][0]); lam_d = float(r["lam"][comm == 1][0])
-    a1.axhline(lam_o * ve, color="#1e8449", ls="--", lw=1.0,
-               label=r"open protection $\lambda_o v_e$")
-    a1.axhline(lam_d * ve, color="#922b21", ls="--", lw=1.0,
-               label=r"dogmatic protection $\lambda_d v_e$")
+            m = np.nanmean(r["score_belt_tn"][:, comm == c], axis=1)
+        a1.plot(tt, m, lw=2.0, color=color,
+                label=f"{label}: belt ledger $\\Delta F + \\lambda\\,\\Delta U$")
+    a1.axhline(0.0, color="k", ls="--", lw=1.0, label="crisis threshold (score $> 0$)")
     a1.axvline(t_shift, color="k", lw=0.8)
-    a1.scatter(cs[cs >= 0], np.full((cs >= 0).sum(), lam_o * ve), marker="v", s=22,
+    a1.scatter(cs[cs >= 0], np.zeros((cs >= 0).sum()), marker="v", s=22,
                color="#c0392b", zorder=5, label="per-agent crisis (BMR applied)")
-    a1.set_ylabel("Savage-Dickey prune\nevidence on the belt")
+    a1.set_ylabel("prune ledger score\non the belt")
     a1.legend(fontsize=7, ncol=2)
-    a1.set_title("crisis is the model's own evidence crossing its conviction protection -- "
-                 "the gated community starves its own detector")
+    a1.set_title("crisis is the model's own ledger crossing zero: evidence vs the closed-form "
+                 "conviction value of the edge -- the gated community starves its own detector")
 
     # --- panel 3: the discovery wave ---
     fl = r["floor_tn"][:, comm == 0]
     a2.plot(tt, fl.mean(axis=1), lw=1.8, color="#b9770e",
-            label="residual floor after reduction (open)")
-    a2.axhline(1.5, color="k", ls=":", lw=1.0, label="expansion trigger")
+            label="residual floor after reduction (open; telemetry)")
     a2.set_ylabel("residual floor\n(hub proposal strength)")
     a2b = a2.twinx()
     for label, c, color in (("open", 0, "#1e8449"), ("dogmatic", 1, "#922b21")):
@@ -155,7 +152,7 @@ def run(out_dir, params: dict) -> None:
                 s_open=params["S_OPEN"], lam_open=params["LAM_OPEN"],
                 lam_dogma=params["LAM_DOGMA"], omega=params["OMEGA"],
                 sigma_o=params["SIGMA_O"], t_shift=params["T_SHIFT"],
-                n_steps=params["N_STEPS"], trigger=params["TRIGGER"])
+                n_steps=params["N_STEPS"])
 
     # ---- headline: deterministic world + deterministic proposals, isolated communities ----
     r = single_run(inter=0.0, s_dogma=params["S_DOGMA"], proposal_rate=None, seed=0, **base)
@@ -165,6 +162,8 @@ def run(out_dir, params: dict) -> None:
     t_shift = params["T_SHIFT"]
     o, d = comm == 0, comm == 1
     assert r["dF_belt_tn"][:t_shift].max() < 0, "normal science must be quiet (dF < 0 pre-shift)"
+    assert r["score_belt_tn"][:t_shift].max() < 0, \
+        "normal science must be quiet (ledger score < 0 pre-shift)"
     assert (cs[o] >= 0).all() and cs[cs >= 0].min() > t_shift, \
         "the open community must reach crisis, and only after the anomaly"
     assert (es[o] >= 0).mean() > 0.8, "the open community should discover oxygen"
@@ -194,10 +193,9 @@ def run(out_dir, params: dict) -> None:
         assert ok.any(), f"Poisson seed {s}: nobody completed crisis->discovery"
         delays.append(float(np.mean(esp[ok] - csp[ok])))
     mean_delay = float(np.mean(delays))
-    lo = SUSTAIN
-    hi = lo + 3.0 / params["PROPOSAL_RATE"]
+    lo, hi = 1.0, 3.0 / params["PROPOSAL_RATE"]
     assert lo <= mean_delay <= hi, \
-        f"Poisson discovery delay should be a waiting time (~sustain + 1/rate): {mean_delay:.1f}"
+        f"Poisson discovery delay should be a waiting time (~1/rate): {mean_delay:.1f}"
 
     # ---- Fig B sweep ----
     inters = list(params["INTERS"]); s_dogmas = list(params["S_DOGMAS"])
@@ -225,7 +223,7 @@ def run(out_dir, params: dict) -> None:
     np.savez_compressed(
         out_dir / "simulation_arrays.npz",
         snap_t=r["snap_t"], oxy_index_sc=r["oxy_index_sc"],
-        dF_belt_tn=r["dF_belt_tn"], floor_tn=r["floor_tn"],
+        dF_belt_tn=r["dF_belt_tn"], score_belt_tn=r["score_belt_tn"], floor_tn=r["floor_tn"],
         oxy_coupling_tn=r["oxy_coupling_tn"],
         crisis_step=r["crisis_step"], expand_step=r["expand_step"],
         n_pruned=r["n_pruned"], community=r["community"],
@@ -243,7 +241,7 @@ def run(out_dir, params: dict) -> None:
                "n_pruned_med": int(np.median(r["n_pruned"][o]))}
     (out_dir / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
     print(f"HEADLINE: the full Kuhn cycle with the model's own machinery -- anomaly at "
-          f"t={t_shift}, crisis (Delta F crosses lambda v_e) at t={info_a['t_crisis']}, "
+          f"t={t_shift}, crisis (ledger Delta F + lambda Delta U crosses 0) at t={info_a['t_crisis']}, "
           f"reduction prunes ~{int(np.median(r['n_pruned'][o]))} edges, oxygen bordered at "
           f"t={info_a['t_discovery']} (Poisson delay ~{mean_delay:.0f} steps when stochastic); "
           f"the gated community never sees its own crisis but ANY social coupling converts it: "
@@ -254,17 +252,18 @@ register(ExperimentSpec(
     model="phlogiston",
     name="kuhn_phlogiston",
     description="The chemical revolution, endogenously: population + Bayesian model reduction "
-                "+ expansion in one loop. Crisis = the agent's own Savage-Dickey evidence "
-                "crossing its conviction protection; revolution = the reduction applied; "
-                "discovery = the unconceived oxygen node bordered on a residual-triggered, "
-                "Poisson-arriving proposal; fusion spreads the new structure socially. Lock-in "
-                "requires gating AND isolation.",
+                "+ expansion in one loop. Crisis = the agent's own prune ledger (Savage-Dickey "
+                "Delta F + lambda Delta U, both closed-form) crossing zero; revolution = the "
+                "reduction applied; discovery = the unconceived oxygen node bordered on a "
+                "Poisson-arriving proposal whose sole accept test is the model log Bayes "
+                "factor; fusion spreads the new structure socially. Lock-in requires gating "
+                "AND isolation.",
     run=run,
     out_dir="kuhn_phlogiston",
     params=dict(
         N_AGENTS=80, T_SHIFT=40, N_STEPS=180, OMEGA=0.97, SIGMA_O=0.5,
         LAM_OPEN=0.10, LAM_DOGMA=0.35, GATE_STRENGTH=1.0, S_OPEN=0.3, S_DOGMA=3.0,
-        TRIGGER=1.5, PROPOSAL_RATE=0.08,
+        PROPOSAL_RATE=0.08,
         INTERS=(0.0, 0.01, 0.05, 0.2), S_DOGMAS=(1.0, 3.0, 6.0),
         SEEDS=(0, 1, 2),
     ),

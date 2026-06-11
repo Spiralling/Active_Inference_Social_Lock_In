@@ -1,0 +1,12 @@
+{
+  "A_final_open": 40,
+  "A_final_dogma": 40,
+  "B_final_beta0.0": 0,
+  "B_final_beta1.0": 40,
+  "C_final_posterior": 0,
+  "C_final_posterior_masked": 25,
+  "D_final_eps0.0": 40,
+  "D_half_eps0.0": 84,
+  "D_final_eps1.0": 40,
+  "D_half_eps1.0": 188
+}

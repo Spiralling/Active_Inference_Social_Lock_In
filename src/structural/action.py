@@ -43,6 +43,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+import numpy as np
 import jax
 import jax.numpy as jnp
 
@@ -116,6 +117,109 @@ def residual_from_errors(errors: jax.Array) -> jax.Array:
     residual=...)``."""
     E = jnp.asarray(errors)
     return _zero_diag_sym((E.T @ E) / E.shape[0])
+
+
+def propose_hubs_topk(net: GaussianBeliefNet, neighbours: tuple[str, ...],
+                      residual: jax.Array | None = None, k: int = 1
+                      ) -> tuple[HubProposal, ...]:
+    """The top-``k`` eigenpairs of the residual block as COMPETING hub candidates.
+
+    The limitations section names the single pre-allocated slot with its rank-one residual
+    reading as the model's narrow waist: "a real discovery process entertains many structures
+    at once". This is the searched version: each eigenpair of the residual is the best
+    ``m``-th orthogonal common-cause explanation, returned in descending ``|lambda|`` order
+    so they compete on the same ledger (``expansion_score`` each, accept the winner -- or
+    every positive one). ``k = 1`` reproduces ``propose_hub`` exactly. The couplings remain
+    ESTIMATED from the residual (eigenvalue and eigenvector), not selected from a fixed set.
+    """
+    R = _zero_diag_sym(residual) if residual is not None else residual_block(net, neighbours)
+    evals, evecs = jnp.linalg.eigh(R)
+    absvals = jnp.abs(evals)
+    order = jnp.argsort(-absvals)
+    total = float(absvals.sum()) + 1e-12
+    out = []
+    for m in range(min(int(k), int(R.shape[0]))):
+        top = int(order[m])
+        s = float(absvals[top])
+        out.append(HubProposal(strength=s, pattern=evecs[:, top],
+                               neighbours=tuple(neighbours), rank1_ratio=s / total))
+    return tuple(out)
+
+
+def coupling_candidates(residual: jax.Array, neighbours: tuple[str, ...],
+                        top_m: int = 3) -> tuple[tuple[str, str, float], ...]:
+    """Candidate NEW COUPLINGS among existing commitments, read off the residual block --
+    the second structure family the limitations name beyond a single hub.
+
+    Returns the ``top_m`` largest-|magnitude| off-diagonal entries of the residual as
+    ``(node_a, node_b, magnitude)`` triples (the magnitude is the residual entry itself --
+    estimated from the data's error structure, not drawn from a fixed candidate set). Score
+    each with :func:`coupling_score` on the same ledger as the hub candidates."""
+    R = np.asarray(_zero_diag_sym(residual))
+    k = R.shape[0]
+    pairs = [(abs(R[i, j]), i, j) for i in range(k) for j in range(i + 1, k)]
+    pairs.sort(reverse=True)
+    return tuple((neighbours[i], neighbours[j], float(R[i, j]))
+                 for (_, i, j) in pairs[: int(top_m)])
+
+
+def _pd_capped_edge(Pi: jax.Array, a: int, b: int, s: float,
+                    fraction: float = 0.7) -> float:
+    """Cap an off-diagonal precision edit so the 2x2 principal minor stays PD with margin
+    (followed by an exact eigenvalue check in :func:`coupling_score`)."""
+    bound = float(jnp.sqrt(Pi[a, a] * Pi[b, b]))
+    lim = fraction * bound - float(Pi[a, b]) * np.sign(s) if bound > 0 else 0.0
+    return float(np.clip(s, -abs(lim), abs(lim)))
+
+
+def coupling_score(net_post: GaussianBeliefNet, net_prior: GaussianBeliefNet,
+                   edge: tuple[str, str], magnitude: float,
+                   accept_eps: float = 1e-4) -> MoveScore:
+    """Score ADDING a coupling between two existing nodes -- expansion within the support.
+
+    The same model-log-Bayes-factor construction as ``expansion_score``, for the edit that
+    writes a residual-estimated off-diagonal precision entry into both the posterior and the
+    prior (the augmented model must carry the same wiring in both, so the d-dim normalizers
+    cancel inside each bracket):
+
+        delta_F = [logZ(post+e) - logZ(prior+e)] - [logZ(post) - logZ(prior)].
+
+    ``delta_G = 0``: no new latent is introduced, so there is no epistemic-gain subsidy --
+    couplings among observed commitments must pay in evidence alone (the prior/likelihood
+    line of the ledger, same standing as reduction). The magnitude is PD-capped (2x2 minor
+    bound, then halved against an exact eigenvalue check) so the edit never makes either
+    net improper; a zero residual entry wires nothing and is correctly declined."""
+    a, b = net_post.names.index(edge[0]), net_post.names.index(edge[1])
+    s = _pd_capped_edge(net_post.Pi, a, b, float(magnitude))
+    s = _pd_capped_edge(net_prior.Pi, a, b, s)
+
+    def _edited(net, s_val):
+        Pi = net.Pi.at[a, b].add(s_val).at[b, a].add(s_val)
+        return GaussianBeliefNet(Pi=Pi, h=net.h, names=net.names)
+
+    for _ in range(8):                            # exact PD guard (cheap: d <= ~12)
+        if s == 0.0:
+            break
+        ok = all(float(jnp.linalg.eigvalsh(_edited(n, s).Pi)[0]) > 1e-9
+                 for n in (net_post, net_prior))
+        if ok:
+            break
+        s *= 0.5
+    else:
+        s = 0.0
+
+    if s == 0.0:
+        return MoveScore(move="couple", delta_F=0.0, delta_G=0.0, delta_U=0.0,
+                         score=0.0, accept=False,
+                         detail={"edge": edge, "magnitude": 0.0})
+    post_e, prior_e = _edited(net_post, s), _edited(net_prior, s)
+    delta_F = float(
+        (bmr.log_evidence(post_e) - bmr.log_evidence(prior_e))
+        - (bmr.log_evidence(net_post) - bmr.log_evidence(net_prior))
+    )
+    return MoveScore(move="couple", delta_F=delta_F, delta_G=0.0, delta_U=0.0,
+                     score=delta_F, accept=bool(delta_F > accept_eps),
+                     detail={"edge": edge, "magnitude": s})
 
 
 def propose_hub(net: GaussianBeliefNet, neighbours: tuple[str, ...],

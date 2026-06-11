@@ -16,43 +16,43 @@
   "by_rate": [
     {
       "lambda": 0.02,
-      "wake_fraction": 0.725,
-      "mean_wake": 142.82758620689654,
-      "std_wake": 13.529199495949088,
-      "mean_delay_after_T2": 22.82758620689654
+      "wake_fraction": 0.45,
+      "mean_wake": 143.0,
+      "std_wake": 47.67016304193268,
+      "mean_delay_after_T2": 23.0
     },
     {
       "lambda": 0.05,
-      "wake_fraction": 0.975,
-      "mean_wake": 136.66666666666666,
-      "std_wake": 10.145943570716867,
-      "mean_delay_after_T2": 16.666666666666657
+      "wake_fraction": 0.775,
+      "mean_wake": 149.41935483870967,
+      "std_wake": 37.74342428825347,
+      "mean_delay_after_T2": 29.419354838709666
     },
     {
       "lambda": 0.1,
-      "wake_fraction": 1.0,
-      "mean_wake": 131.95,
-      "std_wake": 8.546783020528835,
-      "mean_delay_after_T2": 11.949999999999989
+      "wake_fraction": 0.925,
+      "mean_wake": 150.59459459459458,
+      "std_wake": 34.89401672513534,
+      "mean_delay_after_T2": 30.594594594594582
     },
     {
       "lambda": 0.3,
       "wake_fraction": 1.0,
-      "mean_wake": 125.9,
-      "std_wake": 3.7336309405188937,
-      "mean_delay_after_T2": 5.900000000000006
+      "mean_wake": 143.925,
+      "std_wake": 31.76112993896785,
+      "mean_delay_after_T2": 23.92500000000001
     },
     {
       "lambda": 1.0,
       "wake_fraction": 1.0,
-      "mean_wake": 123.7,
-      "std_wake": 2.6758176320519302,
-      "mean_delay_after_T2": 3.700000000000003
+      "mean_wake": 134.95,
+      "std_wake": 42.773794547596545,
+      "mean_delay_after_T2": 14.949999999999989
     }
   ],
   "deterministic": {
-    "mean_wake": 127.225,
+    "mean_wake": 130.8,
     "wake_fraction": 1.0
   },
-  "null_coupling0_wake_fraction": 0.0
+  "null_coupling0_wake_fraction": 0.1
 }

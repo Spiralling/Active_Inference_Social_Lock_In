@@ -258,17 +258,19 @@ independent. The agent can't represent it as one of its nodes — so its footpri
 **coherent pattern in the prediction errors** (errors taken against the *current epoch's* theory
 mean, so the theory flips at T1/T2 are subtracted out and only the unconceived shift remains).
 
-The agent reads the residual floor `λ_max(R)` from its recent errors; when it clears a trigger and
-*holds*, the agent **wakes a new node** (`action.wake_hub`) — the paradigm grows a dimension. The
-witness: the wake fires **after** `T2`, never before, and not at all when there is no hidden cause.""")
+The agent reads the hub proposal's *direction* from the leading eigenvector of its recent errors;
+the wake's sole accept test is the **expansion model Bayes factor** — the data must hold the woken
+node (no residual-floor trigger, no sustain debounce). The agent **wakes a new node**
+(`action.wake_hub`) — the paradigm grows a dimension. The witness: the wake fires **after** `T2`,
+never before, and not at all when there is no hidden cause.""")
 
 code(r"""rep_a = la.single_run(coupling=1.6, seed=0)
 f, dF = rep_a['floor_t'], rep_a['delta_F_t']
 na, nw = rep_a['n_active_t'], rep_a['n_woken_t']; ws = rep_a['wake_step']
 fig, axs = plt.subplots(1, 3, figsize=(15, 4.2))
-axs[0].plot(f, lw=2); axs[0].axhline(la.TRIGGER, color='grey', ls=':', label='trigger'); axs[0].legend(fontsize=8)
-axs[0].set_title('residual floor (the TRIGGER)'); axs[0].set_ylabel(r'$\lambda_{max}(R)$')
-axs[1].plot(dF, lw=2); axs[1].axhline(0, color='grey', lw=1); axs[1].set_title('expansion model Bayes factor'); axs[1].set_ylabel(r'$\Delta F$')
+axs[0].plot(f, lw=2)
+axs[0].set_title('residual floor (telemetry)'); axs[0].set_ylabel(r'$\lambda_{max}(R)$')
+axs[1].plot(dF, lw=2); axs[1].axhline(0, color='grey', lw=1); axs[1].set_title('expansion model Bayes factor (the accept test)'); axs[1].set_ylabel(r'$\Delta F$')
 axs[2].step(range(len(na)), na, where='post', lw=2, label='true active causes')
 axs[2].step(range(len(nw)), nw, where='post', lw=2, ls='--', label='nodes woken (agent)')
 axs[2].set_yticks([0,1]); axs[2].set_title('agent grows a node when the world does'); axs[2].legend(fontsize=8)

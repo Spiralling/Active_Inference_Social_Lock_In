@@ -175,27 +175,82 @@ def fig_d(rows, path) -> dict:
         return {}
     omegas = sorted({r["omega"] for r in D})
     sigmas = sorted({r["sigma_o"] for r in D})
-    triggers = sorted({r["trigger"] for r in D})
-    fig, axs = plt.subplots(1, len(triggers), figsize=(4.4 * len(triggers), 3.6),
-                        squeeze=False)
-    axs = axs[0]
-    out = {}
-    for ti, tr in enumerate(triggers):
-        M = np.zeros((len(sigmas), len(omegas)))
-        for si, sg in enumerate(sigmas):
-            for oi, om in enumerate(omegas):
-                rs = _sel(D, omega=om, sigma_o=sg, trigger=tr)
-                M[si, oi] = np.mean([r["open_expand_frac"] for r in rs]) if rs else np.nan
-        im = axs[ti].imshow(M, cmap="RdYlGn", vmin=0, vmax=1, aspect="auto", origin="lower")
-        axs[ti].set_xticks(range(len(omegas))); axs[ti].set_xticklabels(omegas)
-        axs[ti].set_yticks(range(len(sigmas))); axs[ti].set_yticklabels(sigmas)
-        axs[ti].set_xlabel(r"forgetting $\omega$"); axs[ti].set_ylabel(r"noise $\sigma_o$")
-        axs[ti].set_title(f"open community discovers oxygen\n(trigger={tr})", fontsize=9)
-        fig.colorbar(im, ax=axs[ti], shrink=0.85)
-        out[str(tr)] = M.tolist()
+    fig, axs = plt.subplots(1, 1, figsize=(4.8, 3.6), squeeze=False)
+    ax = axs[0][0]
+    M = np.zeros((len(sigmas), len(omegas)))
+    for si, sg in enumerate(sigmas):
+        for oi, om in enumerate(omegas):
+            rs = _sel(D, omega=om, sigma_o=sg)
+            M[si, oi] = np.mean([r["open_expand_frac"] for r in rs]) if rs else np.nan
+    im = ax.imshow(M, cmap="RdYlGn", vmin=0, vmax=1, aspect="auto", origin="lower")
+    ax.set_xticks(range(len(omegas))); ax.set_xticklabels(omegas)
+    ax.set_yticks(range(len(sigmas))); ax.set_yticklabels(sigmas)
+    ax.set_xlabel(r"forgetting $\omega$"); ax.set_ylabel(r"noise $\sigma_o$")
+    ax.set_title("open community discovers oxygen", fontsize=9)
+    fig.colorbar(im, ax=ax, shrink=0.85)
+    out = {"open_expand_frac": M.tolist()}
     fig.suptitle("robustness: where the full cycle (crisis + reduction + discovery) survives",
                  fontsize=10)
     plt.tight_layout(rect=[0, 0, 1, 0.9]); plt.savefig(path, dpi=130); plt.close(fig)
+    return out
+
+
+def fig_e(rows, path) -> dict:
+    """The Hawkes rescue at sweep scale: survival vs excitation beta, per base rate."""
+    E = _sel(rows, panel="E_hawkes")
+    if not E:
+        return {}
+    betas = sorted({r["hawkes_beta"] for r in E})
+    r0s = sorted({r["proposal_rate"] for r in E})
+    fig, ax = plt.subplots(figsize=(6.4, 4.2))
+    cmap = plt.cm.viridis
+    out = {}
+    for ri, r0 in enumerate(r0s):
+        surv = [_mci([r["open_struct_frac"] for r in _sel(E, hawkes_beta=b,
+                                                          proposal_rate=r0)])
+                for b in betas]
+        ax.errorbar(betas, [m for m, _ in surv], yerr=[c for _, c in surv], marker="o",
+                    lw=2.0, capsize=3, color=cmap(ri / max(len(r0s) - 1, 1)),
+                    label=f"$r_0$={r0}")
+        out[str(r0)] = [m for m, _ in surv]
+    ax.set_xlabel(r"Hawkes excitation $\beta$")
+    ax.set_ylabel("fraction whose concept SURVIVES fusion")
+    ax.set_ylim(-0.04, 1.04)
+    ax.set_title("social excitation rescues the staggered discovery\n"
+                 "(the trust graph manufactures near-simultaneity)")
+    ax.legend(fontsize=8)
+    plt.tight_layout(); plt.savefig(path, dpi=130); plt.close(fig)
+    return out
+
+
+def fig_f(rows, path) -> dict:
+    """The pooling rule as an axis: survival under posterior vs dimension-aware fusion."""
+    F = _sel(rows, panel="F_fusion")
+    if not F:
+        return {}
+    rates = sorted({r["proposal_rate"] for r in F})
+    fig, ax = plt.subplots(figsize=(6.4, 4.2))
+    out = {}
+    for mode, color in (("posterior", "#922b21"), ("posterior_masked", "#1e8449")):
+        surv = [_mci([r["open_struct_frac"] for r in _sel(F, fuse_mode=mode,
+                                                          proposal_rate=rt)])
+                for rt in rates]
+        disc = [_mci([r["open_expand_frac"] for r in _sel(F, fuse_mode=mode,
+                                                          proposal_rate=rt)])
+                for rt in rates]
+        ax.errorbar(rates, [m for m, _ in surv], yerr=[c for _, c in surv], marker="s",
+                    lw=2.2, capsize=3, color=color, label=f"survives | {mode}")
+        ax.errorbar(rates, [m for m, _ in disc], yerr=[c for _, c in disc], marker="o",
+                    lw=1.2, ls="--", capsize=3, color=color, alpha=0.6,
+                    label=f"discovers | {mode}")
+        out[mode] = dict(rates=list(rates), survive=[m for m, _ in surv])
+    ax.set_xscale("log")
+    ax.set_xlabel(r"proposal rate $\lambda$")
+    ax.set_ylabel("fraction of the open community")
+    ax.set_ylim(-0.04, 1.04)
+    ax.set_title("the survival threshold moves with the pooling rule")
+    ax.legend(fontsize=7.5)
+    plt.tight_layout(); plt.savefig(path, dpi=130); plt.close(fig)
     return out
 
 
@@ -207,6 +262,8 @@ def main() -> None:
         "B": fig_b(rows, OUT / "figB_lockin_boundary.png"),
         "C": fig_c(rows, OUT / "figC_waiting_time.png"),
         "D": fig_d(rows, OUT / "figD_robustness.png"),
+        "E": fig_e(rows, OUT / "figE_hawkes.png"),
+        "F": fig_f(rows, OUT / "figF_fusion.png"),
         "n_rows": len(rows),
     }
     (OUT / "summary.json").write_text(json.dumps(info, indent=2), encoding="utf-8")
@@ -221,19 +278,25 @@ def main() -> None:
   (inter ~ 0.0005-0.002, where the run-to-run susceptibility peaks); neither the conviction
   gate nor the prune threshold moves it far. Only isolation protects the paradigm.
 - **figC_waiting_time.png** -- per-agent discovery follows the waiting-time law
-  1-(1-lambda)^T, and the population's FIRST discovery is nearly free (parallel draws). The
-  surprise: **a staggered discovery never survives** -- at every Poisson rate the lone
-  discoverers' oxygen node is crushed by precision fusion with their still-pinned peers
-  (effective coupling -> ~0), and the concept persists only when the community wakes it
-  near-simultaneously (the deterministic point). Concepts need critical mass IN TIME.
+  1-(1-lambda)^T (44% at rate 0.01 -> 100% at 0.16), but the population's FIRST discovery is
+  not rate-limited at all: with ~40 parallel draws an attempt arrives almost immediately, and
+  the median first discovery sits at t~82 at every rate INCLUDING deterministic -- its date is
+  set by when the post-reduction residual earns a positive Bayes factor, not by arrival.
+  Discovery waits on evidence, not on luck. Survival is what the rate governs: **a staggered
+  discovery does not survive** -- zero survival at rate <= 0.04 (the lone discoverer's oxygen
+  node is crushed by precision fusion with still-pinned peers), rising to ~31% at rate 0.16,
+  matching the simultaneous-proposal limit (~28%). Concepts need critical mass IN TIME.
   *Caveat*: under `posterior` fusion the unconceived slot's pin is pooled as if it were a
   strongly-held zero belief -- a modeling choice. It reads naturally as incommensurability
   (the shared conceptual scheme suppresses unshared concepts), but fusion schemes that
   exclude unconceived dimensions would soften it.
-- **figD_robustness.png** -- the full cycle survives across forgetting x noise at trigger
-  1.0-1.5 (including omega=1: with sigma_o=0.5 the deposit keeps the crossing reachable);
-  trigger 2.5 sits above the post-reduction residual floor and kills expansion -- the
-  calibration cliff to keep away from.
+- **figD_robustness.png** -- crisis and reduction survive everywhere across forgetting x
+  noise, INCLUDING the omega=1 memory wall; discovery is essentially complete for omega < 1
+  and thins at the wall itself (0.55/0.43/0.16 of the open community at sigma 0.25/0.5/1.0):
+  with nothing forgotten, the entrenched precision denies the woken node a positive Bayes
+  factor. A community that never forgets still sees its paradigm die; it loses the capacity
+  to grow the successor. (No trigger constant exists to calibrate: the Bayes factor is the
+  sole expansion accept test.)
 """
     (OUT / "REPORT.md").write_text(report, encoding="utf-8")
     print(report)

@@ -1,0 +1,39 @@
+{
+  "config": {
+    "N_AGENTS": 80,
+    "T_SHIFT": 40,
+    "N_STEPS": 180,
+    "OMEGA": 0.97,
+    "SIGMA_O": 0.5,
+    "GATE_STRENGTH": 1.0,
+    "S_DOGMA": 3.0,
+    "R0": 0.01,
+    "KAPPA": 0.2,
+    "FLOOR_EMA": 0.1,
+    "FLOOR_REF": 0.3,
+    "RATE_MAX": 0.8,
+    "SEEDS": [
+      0,
+      1,
+      2
+    ]
+  },
+  "fig": {
+    "t_crisis": 58,
+    "t_disc": 86,
+    "delays": {
+      "adaptive ($r_0$=0.01)": 28.775862068965516,
+      "fixed $r$=0.01": 55.31818181818182,
+      "fixed $r$=0.339 (matched mean)": 27.266666666666666
+    }
+  },
+  "delay_adaptive": 28.775862068965516,
+  "delay_fixed_r0": 55.31818181818182,
+  "delay_matched": 27.266666666666666,
+  "matched_rate": 0.3394705217916878,
+  "realized_rates": [
+    0.34321188724879914,
+    0.3455234573721424,
+    0.3296762207541218
+  ]
+}

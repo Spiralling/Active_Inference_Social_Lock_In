@@ -25,8 +25,12 @@ recovers nb43) and (ii) an OPTIONAL per-agent conviction tilt ``h <- h + tilt_i 
 default -> byte-identical).
 
 The per-step loop is an explicit Python loop (not ``jax.lax.scan``) -- mirroring nb43 -- because
-the conviction-gated prune is a *variable* read-out (per agent, per edge, thresholded by the
-per-epoch ``lambda_i v_e``) and host syncs are kept out of the loop (snapshots only).
+the conviction-gated prune is a *variable* read-out (per agent, per edge, scored on the unified
+move ledger ``dF + lambda dU``) and host syncs are kept out of the loop (snapshots only).
+NOTE on the regression gate: the three jit kernels and the belief DYNAMICS remain byte-identical
+to nb43; the prune READ-OUT (``kept_t`` / ``revolted_t``) was upgraded from the proxy threshold
+``dF > lambda v_e`` to the closed-form ledger ``dF + lambda dU > 0`` (see ``_dU_NE``), so those
+two telemetry arrays differ from nb43 by design.
 """
 
 from __future__ import annotations
@@ -138,6 +142,43 @@ class Scenario:
 
 
 @dataclass(frozen=True)
+class ConvictionDynamics:
+    """Dynamic intrinsic utility ``u`` (the Lakatos closure of the conviction field).
+
+    The paper's limitations name the commitment: "the conviction source ``u`` is exogenous
+    and static. Letting ``u`` accrete onto structurally entrenched commitments -- value
+    aligning with conservatism as a programme matures -- would recover Lakatos's progressive
+    and degenerating problemshifts." This is that mechanism, opt-in: each step a per-agent,
+    per-node gain state ``g`` (N, d) integrates the agent's own ENTRENCHMENT,
+
+        g <- clip(g + eps * entrenchment - decay * g, 0, g_max),
+        u_eff = u_base * (1 + g),
+
+    sign-preserving (value accretes onto what the agent already values, where its structure
+    is loaded), so ``eps = 0`` (or ``None``) is exactly the static field. Entrenchment is
+    read from the agent's own beliefs:
+
+      ``fisher_diag`` : the accumulated evidence deposit ``diag(Pi - Pi_prior)``, max-
+                        normalized per agent -- commitments the programme has piled data on;
+      ``degree``      : the off-diagonal mass of ``|Pi|`` -- commitments much depends on
+                        (the conservatism geometry itself).
+
+    The clip ``g_max`` bounds the accretion x endogenous-gate (E2) feedback loop: dynamic
+    conviction feeds both the gate and the ledger's ``Delta U``, and an unbounded gain would
+    run away."""
+
+    eps: float = 0.0
+    decay: float = 0.01
+    entrenchment: str = "fisher_diag"
+    g_max: float = 10.0
+
+    def __post_init__(self):
+        if self.entrenchment not in ("fisher_diag", "degree"):
+            raise ValueError(f"entrenchment must be 'fisher_diag'|'degree', "
+                             f"got {self.entrenchment!r}")
+
+
+@dataclass(frozen=True)
 class AgentSpec:
     """Per-agent population heterogeneity (everything that is NOT the shared world).
 
@@ -197,6 +238,31 @@ def _dF_NE(Pi, h, Pi0, h0, Pi0r, h0r):
 
 
 @jax.jit
+def _dU_NE(Pi, h, Pi0, h0, Pi0r, h0r, U):
+    """Per-agent, per-edge conviction-value change of the prune, ``Delta U[i, e]`` (N, E).
+
+    The companion of ``_dF_NE`` on the unified move ledger ``score = Delta F + lam * Delta U``:
+    where ``_dF_NE`` reads the evidence half, this reads the value half in the same closed
+    form. The Savage-Dickey identity already exhibits the reduced posterior -- shared
+    likelihood deposit ``J = Pi - Pi0``, ``j = h - h0``, reduced posterior
+    ``(Pi0r_e + J, h0r_e + j)`` -- so the value change of pruning edge ``e`` is one solve:
+
+        Delta U[i, e] = U_i . (mu_reduced(i, e) - mu(i)),
+
+    with ``U_i`` the agent's conviction field (``dual_field.conviction_field``). Pruning a
+    conviction-protective edge moves the mean away from the conviction (``Delta U < 0``), so
+    the ledger reproduces the old ``Delta F > lam * v_e`` form with the actual value loss in
+    place of the proxy ``v_e = |U_p| + |U_c|``. Double vmap mirrors ``_dF_NE``."""
+    mu = jnp.linalg.solve(Pi, h[..., None])[..., 0]                  # (N, d)
+    def per_edge(Pr, hr):
+        def one(P, q, m, u):
+            mu_r = jnp.linalg.solve(Pr + (P - Pi0), (hr + (q - h0))[..., None])[..., 0]
+            return u @ (mu_r - m)
+        return jax.vmap(one)(Pi, h, mu, U)
+    return jax.vmap(per_edge)(Pi0r, h0r).T                           # (N, E)
+
+
+@jax.jit
 def _cpd_fuse(Pi, h, W):
     """Fuse in DIRECTED-CPD space: communicate the Bayes NET, not the precision.
 
@@ -213,6 +279,43 @@ def _cpd_fuse(Pi, h, W):
     b_f = W @ b
     s_f = W @ s                                           # variances stay positive
     return jax.vmap(bn_to_info)(B_f, b_f, s_f)
+
+
+@jax.jit
+def _fuse_masked(Pi, h, J_all, j_all, W, mask):
+    """Dimension-aware posterior fusion: pool ONLY over agents that represent a dimension.
+
+    ``mask`` (N, d): 1 where the dimension is awake/represented for that agent, 0 where it
+    is an unconceived (pinned) slot. The paper's limitations section flags that plain
+    ``posterior`` fusion pools a pinned slot's huge self-precision as if it were a firmly
+    held "no such thing", crushing a lone discoverer's coupling; this mode is the named
+    alternative -- a fusion scheme that EXCLUDES unrepresented dimensions:
+
+      * sender side: agent ``j`` contributes to entry ``(a, b)`` only if it represents both
+        dimensions (``M_j[a,b] = mask_j[a] mask_j[b]``), and the weights are renormalized
+        per-entry over the representing senders, so an awake slot is never dragged toward a
+        neighbour's pin;
+      * receiver side: where agent ``i`` itself does not represent the entry, it keeps its
+        OWN value -- a pinned slot stays pinned (one cannot receive a concept one does not
+        contain; the concept itself still spreads through the proposal channel, not through
+        averaging).
+
+    With an all-ones mask every denominator is 1 and this reduces exactly to the
+    ``posterior`` mode (``fuse`` + deposit). NOTE: the per-entry renormalization makes the
+    fused matrix a different convex mix per entry, which does not automatically preserve
+    positive-definiteness; ``tests/test_fuse_masked.py`` checks PD along a staggered wake
+    trajectory (the asleep-receiver case is exactly block-diagonal and safe)."""
+    EPSm = 1e-12
+    M = mask[:, :, None] * mask[:, None, :]                       # (N,d,d) sender entries
+    num = jnp.einsum("ij,jab->iab", W, M * Pi)
+    den = jnp.einsum("ij,jab->iab", W, M)
+    fused = jnp.where(den > EPSm, num / (den + EPSm), Pi)
+    Pi_f = jnp.where(M > 0, fused, Pi)                            # receiver guard
+    num_h = W @ (mask * h)
+    den_h = W @ mask
+    fused_h = jnp.where(den_h > EPSm, num_h / (den_h + EPSm), h)
+    h_f = jnp.where(mask > 0, fused_h, h)
+    return Pi_f + J_all, h_f + j_all
 
 
 @partial(jax.jit, static_argnames=("mode",))
@@ -253,6 +356,7 @@ def run_simulation(scenario: Scenario, graph: graphs.Graph, spec: AgentSpec, *,
                    endogenous_gamma: bool = False, gate_strength: float = 1.0,
                    w_floor: float = 0.0, deposit_gate: jax.Array | None = None,
                    host_hook: Callable | None = None,
+                   conviction_dynamics: ConvictionDynamics | None = None,
                    snapshot_every: int = 5, seed: int = 0) -> dict:
     """Simulate ``N = graph.n`` agents pooling precision over ``graph`` in ``scenario``'s
     world, reading out the conviction-gated structural prune per agent each snapshot.
@@ -304,6 +408,12 @@ def run_simulation(scenario: Scenario, graph: graphs.Graph, spec: AgentSpec, *,
     lam = np.asarray(spec.lam)                            # (N,)
     tilt = None if spec.tilt is None else jnp.asarray(spec.tilt)
     u_agent = scenario.u if spec.u_agent is None else jnp.asarray(spec.u_agent)
+    # DYNAMIC conviction (Lakatos accretion, opt-in): the per-agent gain state g (N, d)
+    # integrates each agent's own entrenchment; u_agent becomes u_base * (1 + g). None =>
+    # u_agent stays the static field above, byte-identical.
+    u_base = jnp.broadcast_to(u_agent, (N, d)) if conviction_dynamics is not None else None
+    g_gain = jnp.zeros((N, d)) if conviction_dynamics is not None else None
+    u_gain_t: list = []
     H, phis, sigma_o = scenario.H, scenario.phis, float(scenario.sigma_o)
 
     # ENDOGENOUS gamma (E2): the conviction field silences its OWN disconfirming channels.
@@ -317,20 +427,26 @@ def run_simulation(scenario: Scenario, graph: graphs.Graph, spec: AgentSpec, *,
     disc_arr = np.asarray(scenario.disc_rows, dtype=int)
     disc_idx = jnp.asarray(disc_arr)
     gate_sqrt = None if deposit_gate is None else jnp.sqrt(jnp.asarray(deposit_gate))
-    Pi0, h0, Pi0r, h0r, v_e = (scenario.Pi0, scenario.h0, scenario.Pi0r,
-                               scenario.h0r, np.asarray(scenario.v_e))
+    Pi0, h0, Pi0r, h0r = scenario.Pi0, scenario.h0, scenario.Pi0r, scenario.h0r
+    v_e = np.asarray(scenario.v_e)        # kept as an OUTPUT (substrate property); the prune
+    # read-out itself no longer thresholds on it -- see the ledger in ``snapshot``.
     epoch_t = scenario.epoch_t
     belt_ix = np.asarray(scenario.belt_ix, dtype=int)
 
     key = jax.random.PRNGKey(seed)
+    fuse_mask = None                       # (N, d) representation mask (posterior_masked)
     snap_t, kept_t, revolted_t, m_t, snap_Pi, snap_h, gamma_t = [], [], [], [], [], [], []
     last_dF = last_pruned = None
 
     def snapshot(t):
         e = int(epoch_t[t])
         dF = np.asarray(_dF_NE(Pi, h, Pi0[e], h0[e], Pi0r[e], h0r[e]))   # (N,E)
-        protect = lam[:, None] * v_e[e][None, :]                          # (N,E)
-        pruned = dF > protect
+        # the prune read-out is the unified move ledger, score = dF + lam * dU, with dU the
+        # CLOSED-FORM conviction-value change of each prune under the agent's own conviction
+        # field (the former proxy threshold lam * v_e replaced by the quantity it stood for).
+        U = conviction_field(Pi, h, scenario.names, u_agent, scenario.conviction_alpha)
+        dU = np.asarray(_dU_NE(Pi, h, Pi0[e], h0[e], Pi0r[e], h0r[e], U))  # (N,E)
+        pruned = (dF + lam[:, None] * dU) > 0.0
         kept_t.append((~pruned).sum(axis=1))
         revolted_t.append(pruned[:, belt_ix].all(axis=1))
         m_t.append(float(scenario.order_fn(Pi, h)))
@@ -347,6 +463,17 @@ def run_simulation(scenario: Scenario, graph: graphs.Graph, spec: AgentSpec, *,
         if omega < 1.0:                       # relax accumulated evidence toward the prior
             Pi = Pi_prior + omega * (Pi - Pi_prior)
             h = h_prior + omega * (h - h_prior)
+        if conviction_dynamics is not None:   # Lakatos accretion: value follows entrenchment
+            cd = conviction_dynamics
+            if cd.entrenchment == "fisher_diag":
+                ent = jnp.diagonal(Pi - Pi_prior, axis1=1, axis2=2)        # (N, d) deposit
+            else:                              # "degree": off-diagonal structural load
+                ent = jnp.abs(Pi).sum(axis=2) - jnp.abs(
+                    jnp.diagonal(Pi, axis1=1, axis2=2))
+            ent = jnp.maximum(ent, 0.0)
+            ent = ent / (ent.max(axis=1, keepdims=True) + EPS)             # per-agent norm
+            g_gain = jnp.clip(g_gain + cd.eps * ent - cd.decay * g_gain, 0.0, cd.g_max)
+            u_agent = u_base * (1.0 + g_gain)
         if endogenous_gamma and disc_arr.size:   # conviction silences its own disc channels (E2)
             Ug = conviction_field(Pi, h, scenario.names, u_agent, scenario.conviction_alpha)
             proj = jnp.abs(Ug @ H[disc_idx].T)                          # (N, n_disc)
@@ -358,7 +485,11 @@ def run_simulation(scenario: Scenario, graph: graphs.Graph, spec: AgentSpec, *,
         if gate_sqrt is not None:                # conservatism gates the revision rate (E1)
             J_all = gate_sqrt[None, :, None] * J_all * gate_sqrt[None, None, :]
             j_all = gate_sqrt[None, :] * j_all
-        Pi, h = _fuse_observe(Pi, h, J_all, j_all, W, Woff, eta, fuse_mode)
+        if fuse_mode == "posterior_masked":
+            mk = jnp.ones((N, d)) if fuse_mask is None else jnp.asarray(fuse_mask)
+            Pi, h = _fuse_masked(Pi, h, J_all, j_all, W, mk)
+        else:
+            Pi, h = _fuse_observe(Pi, h, J_all, j_all, W, Woff, eta, fuse_mode)
         if tilt is not None:                            # the conviction lever (off by default)
             U = conviction_field(Pi, h, scenario.names, u_agent, scenario.conviction_alpha)
             h = h + tilt[:, None] * U
@@ -366,17 +497,28 @@ def run_simulation(scenario: Scenario, graph: graphs.Graph, spec: AgentSpec, *,
             upd = host_hook(t, np.asarray(Pi), np.asarray(h), np.asarray(Pi_prior),
                             np.asarray(h_prior), np.asarray(w_obs), np.asarray(o_all))
             if upd:
+                # "fuse_mask" (N, d): which dimensions each agent represents -- consumed
+                # by next step's fuse_mode="posterior_masked" (the hook owns wake state).
+                if "fuse_mask" in upd:
+                    fuse_mask = np.asarray(upd.pop("fuse_mask"))
+            if upd:
                 Pi = jnp.asarray(upd.get("Pi", Pi))
                 h = jnp.asarray(upd.get("h", h))
                 Pi_prior = jnp.asarray(upd.get("Pi_prior", Pi_prior))
                 h_prior = jnp.asarray(upd.get("h_prior", h_prior))
         if (t % snapshot_every == 0) or (t == n_steps - 1):
             last_dF, last_pruned = snapshot(t)
+            if conviction_dynamics is not None:
+                u_gain_t.append(np.asarray(g_gain))
 
     snap_Pi_arr = np.stack(snap_Pi)                                       # (S,N,d,d)
     disagreement_t = shells.residual_disagreement(snap_Pi_arr)           # (S,)
 
+    extra = {}
+    if conviction_dynamics is not None:
+        extra["u_gain_t"] = np.stack(u_gain_t)            # (S, N, d) accreted gain
     return {
+        **extra,
         "snap_t": np.asarray(snap_t),
         "kept_t": np.stack(kept_t),                       # (S, N)
         "revolted_t": np.stack(revolted_t),               # (S, N) bool

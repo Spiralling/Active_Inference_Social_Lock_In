@@ -1,0 +1,61 @@
+{
+  "experiment": "adaptive_rate",
+  "git": {
+    "sha": "a40ac529b87dc1c3875f486c57ba1f0160d07a68",
+    "branch": "production/structural-minimal",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-06-11T14:00:24+00:00",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "params": {
+    "N_AGENTS": 80,
+    "T_SHIFT": 40,
+    "N_STEPS": 180,
+    "OMEGA": 0.97,
+    "SIGMA_O": 0.5,
+    "GATE_STRENGTH": 1.0,
+    "S_DOGMA": 3.0,
+    "R0": 0.01,
+    "KAPPA": 0.2,
+    "FLOOR_EMA": 0.1,
+    "FLOOR_REF": 0.3,
+    "RATE_MAX": 0.8,
+    "SEEDS": [
+      0,
+      1,
+      2
+    ]
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.0",
+    "jaxlib": "0.9.0",
+    "numpy": "2.3.4",
+    "equinox": "0.13.6",
+    "networkx": "3.5",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.7"
+  },
+  "outputs": {
+    "simulation_arrays.npz": {
+      "arrays": {
+        "community": "f24ab393d867daf4a9131a42c28e760a528fa4ebe901d332446850464524fe46",
+        "crisis_step": "707cd8735928c54409c17fb4df683110c71086e1b7b7f0fd69f799be9e2f6795",
+        "delay_adaptive": "365375c1217795e81d4549851e7cce77f99ba115b704c7701c8b90743b7a7313",
+        "delay_fixed": "a2aa152dce3e970be21fd1cc1bec523c5660fd503fac3b0ec8c96b7a53ae2746",
+        "delay_matched": "0aaa7f67e16e8bea0110751f28e264a707f54b730b951d118fca9ef598162690",
+        "expand_step": "35805db4f112e59234116eb02ed2a8159983bb64fee0f1c6ed502bc48d599acd",
+        "floor_tn": "3045e1b54268e531d7f0d930193ac978d7097e595c2c60860b502004f6a6acd8",
+        "matched_rate": "b0e13431994d8140259e4774ae77262886069956312fdc212654ebefa49d5ccc",
+        "rate_tn": "5ca2d43716908587f4796465b502dd6404d7650a428ba63a3cfd671bfae5c0a5"
+      }
+    },
+    "summary.json": "e8e98307bd23bac3f19a0516f6b26a8b2bd93d4182028334c5a0fe670daeb6cc"
+  },
+  "runner_version": 1
+}

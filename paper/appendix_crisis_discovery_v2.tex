@@ -1,0 +1,268 @@
+% ======================================================================
+% APPENDIX (v2): the crisis and discovery checks, derived from the ledger.
+% \input from changing_networked_mind_v2.tex (after the operator appendix).
+% Uses the main paper's macros (\Top, \KL, \Eq) and labels (eq:tilted,
+% eq:bmr, eq:gamma, sec:structurelearning, sec:revision, tab:dials).
+% ======================================================================
+
+% ----------------------------------------------------------------------
+\section{The crisis and discovery checks, derived from the ledger}
+\label{app:crisis-discovery}
+% ----------------------------------------------------------------------
+
+The per-round loop of \S\ref{sec:model} contains two threshold events: the \emph{crisis check}
+(when does an agent prune the protective edges and release the hub?) and the \emph{discovery
+check} (when does it wake the unconceived node?). This appendix states exactly what each check
+computes, derives both from the single objective the paper already carries, and lists the
+modelling commitments that remain after the derivation. The aim is that nothing in the two
+checks should read as a stipulated event: every acceptance is the model's own evidence weighed
+on the model's own ledger, and everything that is \emph{not} derived is named as a commitment.
+
+\subsection{One ledger for every structural move}
+
+The bounded agent of \S\ref{sec:revision} revises its beliefs by minimizing
+$\KL{q}{p(x\mid o,G)}-\lambda\,\Eq{q}{U^{\!\top}\!x}$ (Eq.~\ref{eq:tilted}): fidelity to the
+honest posterior, traded against the value of where the commitments land, at temperature
+$\lambda$. A structural move---pruning an edge, waking a node---changes both terms, so the same
+objective scores the move:
+\begin{equation}
+\mathrm{score}(M\!\to\!\tilde M)
+\;=\;
+\underbrace{\Delta F}_{\text{log Bayes factor}}
+\;+\;
+\underbrace{\Delta G}_{\text{epistemic gain}}
+\;+\;
+\lambda\,\underbrace{\Delta U}_{\text{conviction value}},
+\qquad
+\text{accept}\iff \mathrm{score}>0,
+\label{eq:ledger}
+\end{equation}
+with $\Delta F$ the evidence for the edited structure, $\Delta G$ the expected information gain
+about any newly introduced latent (zero for a prune), and
+$\Delta U = \Eq{q_{\tilde M}}{U^{\!\top}\!x}-\Eq{q_{M}}{U^{\!\top}\!x}$ the change in the
+conviction-field value of the commitments. Equation~\eqref{eq:ledger} is not a new mechanism:
+it is Eq.~\eqref{eq:tilted} evaluated at two structures and differenced. Both threshold events
+of the simulation are instances of it.
+
+\subsection{The crisis check is the ledger on a prune}
+
+For a prune, every term of Eq.~\eqref{eq:ledger} is closed-form in the linear-Gaussian setting.
+The evidence half is Bayesian model reduction (Eq.~\ref{eq:bmr}): writing the agent's
+accumulated likelihood deposit as $J=\Pi-\Pi_0$, $j=h-h_0$, the Savage--Dickey identity scores
+the swap of the prior $(\Pi_0,h_0)$ for the edge-$e$-reduced prior $(\Pi_0^{(e)},h_0^{(e)})$
+under the same likelihood, and---this is the part the main text does not spell out---it
+\emph{already exhibits the reduced posterior},
+\begin{equation}
+\Pi^{(e)} = \Pi_0^{(e)} + J,
+\qquad
+h^{(e)} = h_0^{(e)} + j ,
+\end{equation}
+so the value half costs one linear solve per candidate edge:
+\begin{equation}
+\Delta U_e \;=\; U^{\!\top}\!\bigl(\mu^{(e)}-\mu\bigr),
+\qquad
+\mu^{(e)} = \bigl(\Pi^{(e)}\bigr)^{-1}h^{(e)},\quad \mu = \Pi^{-1}h,
+\label{eq:dU-prune}
+\end{equation}
+with $U=\Top u$ the agent's \emph{current} conviction field, read along its present couplings.
+The crisis check is then exactly the ledger: edge $e$ is flagged iff
+$\Delta F_e + \lambda\,\Delta U_e > 0$, and \emph{crisis} is the round at which both protective
+belt edges are flagged, upon which the agent adopts the reduced prior composed over every edge
+its own ledger flags (the hub released). Pruning a conviction-protective edge moves the
+posterior mean away from the cherished commitments, so $\Delta U_e<0$ and the rule reproduces
+the intuitive form ``the evidence must overcome $\lambda$ times the value the edge protects.''
+
+A natural surrogate suggests itself here: the static threshold $\Delta F_e > \lambda\,v_e$ with
+$v_e = |U_{\mathrm{parent}}|+|U_{\mathrm{child}}|$, the summed conviction magnitude at the
+edge's endpoints---available without a solve, and with the
+right \emph{form} (it is Eq.~\eqref{eq:ledger} with $\Delta U_e \equiv -v_e$). But it has the
+wrong \emph{content}: $v_e$ is a static stand-in for a quantity the model can compute exactly,
+so we compute it. The difference is not cosmetic, and its direction is itself informative:
+because the reduced and full posteriors share the likelihood deposit, the mean displacement of
+a prune---and with it $\lambda\,\Delta U_e$---\emph{shrinks as evidence accumulates}. A
+data-rich paradigm is barely protected at the threshold; almost all of its persistence must
+come from upstream, from the conviction gate that decides which evidence is allowed to
+accumulate at all (Eq.~\ref{eq:gamma}). The static surrogate would quietly overstate threshold
+protection; the exact ledger locates lock-in where the paper's results put it: gating plus
+isolation, not a high bar at the moment of decision.
+
+\subsection{The discovery check is the ledger on an expansion}
+
+Expansion cannot be closed-form (\S\ref{sec:structurelearning}): a new node needs a real
+inversion, and---Stanford's problem of unconceived alternatives---the agent cannot plan toward
+a dimension it has not conceived. The discovery check therefore has exactly two parts, and only
+two:
+
+\begin{enumerate}
+\item \textbf{Arrival.} Candidate proposals arrive at a Poisson rate $r$. This is the one
+place a stipulated process enters, and it is a deliberate modelling commitment: a rate is the
+maximally agnostic model of conceiving what one has not conceived. The proposal's
+\emph{direction} is read from the model's own prediction errors: a hidden hub $b$ wired to the
+visible nodes with couplings $c$ leaves, on marginalization, the rank-one footprint
+$-cc^{\!\top}/\Pi_{bb}$, so the leading eigenvector of the windowed error second moment is the
+best single-hub explanation of the residual. The window is an estimator horizon, not a gate.
+\item \textbf{Acceptance.} The arrived proposal is accepted iff the \emph{model log Bayes
+factor} of the bordered (hub-wired) model against the agent's current one is positive---that
+is, iff the residual genuinely loads on the proposed hub, equivalently iff the immediate
+Savage--Dickey prune of the new couplings would be rejected. The epistemic gain $\Delta G$ sits
+on the ledger too, but on the other side of the move: being positive for \emph{any} new latent,
+it is what pays for attempting the (in general expensive) inversion, and it cannot keep a hub
+the data do not hold---an accept test that included it would wake on pure noise. Entertaining
+is paid by curiosity; keeping is paid by evidence. One consequence is owned rather than hidden:
+repeated looks give the Bayes factor a small false-discovery rate (rare
+noise crossings of $\Delta F>0$ in the null world). We regard this as a feature of the honest
+model---communities do occasionally adopt spurious structure---and its principled remedy is not
+a reinstated threshold but the wake-then-prune cycle named in the limitations, in which a
+spuriously woken node is pruned back by the same reduction that scored it.
+\end{enumerate}
+
+A tempting third part is deliberately absent: a \emph{trigger}, requiring the residual floor
+(the eigenvalue above) to clear some height, perhaps for a sustained number of steps, before
+the Bayes factor is consulted. Such a gate would duplicate the accept test's job with a free
+constant---the Bayes factor already rejects proposals the residual does not support---and its
+only principled reading, a budget on when to pay for the expensive inversion, is a statement
+about real scientific communities rather than about this simulation, where the inversion is a
+small log-determinant. The discovery check therefore has no tuned threshold: the Poisson rate
+carries Stanford's commitment, the eigenvector carries the direction, and the ledger decides.
+(The floor is still recorded as telemetry, because it is the visible signature of the residual
+the old paradigm had been absorbing.)
+
+\subsection{What remains a modelling commitment}
+
+The derivation above leaves a short, explicit list of choices that are \emph{not} forced by the
+formalism. We state them because the paper's claim that ``crisis, revolution and discovery are
+threshold crossings of the model's own evidence'' is honest only if its boundary is drawn:
+
+\begin{itemize}
+\item \textbf{The belt conjunction.} ``Crisis'' is operationalized as \emph{both} named
+mass-law edges flagged in the same round. The per-edge accept is derived; the conjunction over
+those two edges is our operational definition of having eliminated the phlogiston mass-law
+reading.
+\item \textbf{The ordering --- now a result, not a commitment.} The first draft enforced that
+expansion is attempted only after an agent's own crisis, and flagged that letting the check run
+pre-crisis and showing the ledger rejects it would upgrade the commitment to a result. It does:
+running the identical proposal + ledger pipeline for every pre-crisis agent at every step
+(without applying it), the ledger rejects $13{,}180$ of $13{,}185$ pre-crisis agent-steps; the
+five crossings are marginal ($\Delta F < 0.005$, two orders below the post-crisis acceptance
+evidence) and are exactly the repeated-look false-positive rate owned above, whose remedy is
+the wake-then-prune cycle (\S\ref{app:exploration-future}). The intact paradigm absorbs the
+residual; there is nothing for the check to find until reduction exposes it.
+\item \textbf{The Poisson rate $r$} (swept), the prediction-error \emph{window} (an estimator
+horizon), a short \emph{warm-up} before reduction is permitted (an initialization guard), and
+the released hub's self-precision are quantitative choices of the same standing as the other
+dials of Table~\ref{tab:dials}.
+\item \textbf{The new mechanisms' own commitments.} The closed-loop refinements of
+\S\ref{sec:res-closing} discharge the largest entries of the first draft's list (the constant
+rate, the one-shot accept, the static $u$) but import quantitative choices of their own: the
+Hawkes kernel's parametric form ($\beta$, $\tau$, exponential memory)---the \emph{reading} of
+the kernel as filtered social evidence is motivated below, its shape is chosen; the expiring
+credit's geometric decay $\lambda_c$, a fixed-form surrogate for recomputing $\Delta G$ on the
+current posterior; and the audit's grace and patience horizons. All are
+Table~\ref{tab:dials}-class dials, swept or defaulted, never tuned against an outcome.
+\end{itemize}
+
+% ----------------------------------------------------------------------
+\subsection{The rate, made principled (and the audit that pays its debts)}
+\label{app:exploration-future}
+% ----------------------------------------------------------------------
+
+The first draft of this appendix sketched two refinements as future work; both are now
+mechanisms of the model, exercised in \S\ref{sec:res-closing}. This subsection records the
+inferential readings that license them, the audit that the full ledger's acceptance rule makes
+necessary, and the accretion dynamics behind the Lakatos result---together with what each leaves
+stipulated.
+
+\paragraph{The adequacy belief, filtered.}
+One explores at the rate one believes one's model is incomplete, and that belief has a licensed
+likelihood: the residual floor the discovery check already records---the prediction error that
+persists after every within-model update, whose persistence is therefore evidence about the
+model \emph{class} rather than its parameters. The agent tracks it with a fixed-gain filter,
+$s \leftarrow (1-\rho)\,s + \rho\cdot\mathrm{floor}$, the same exponential-forgetting form as
+$\omega$ (and the fixed-gain limit of conjugate Gamma--Poisson updating under a drift prior on
+the latent rate), and sets $r(t) = r_0 + \kappa_r \max(s - s_{\mathrm{ref}}, 0)$, capped at
+$r_{\max}$. A persistent residual raises the agent's own arrival rate; a quiet model lets it
+decay to the agnostic base. The clean waiting-time law of \S\ref{sec:res-kuhn} does, as
+anticipated, dissolve into a feedback system; the experiments therefore report realized
+(effective) rates, and the matched-mean control of \S\ref{sec:res-closing} is what separates
+``rate when needed'' from ``more rate.''
+
+\paragraph{The social stream, and why its filter is a Hawkes kernel.}
+Because the agents share one hidden world, model inadequacy has a common cause across the
+community, and a trusted neighbour's discovery is evidence about one's \emph{own} adequacy
+variable---the situation in which federated inference prescribes pooling
+\citep{friston2023federated}. Filtering the neighbours' discovery events (a point process,
+observed through the trust weights $T_{ij}$ the population already fuses over) under an
+exponentially-correlated prior on the latent inadequacy yields a posterior intensity that is a
+shot-noise process: a baseline plus a decaying bump per observed event. That is exactly the
+linear self-exciting form of \citet{hawkes1971},
+\begin{equation}
+r_i(t) \;=\; r_0 \;+\; \sum_{j\in\partial i}\, T_{ij} \sum_{t_j < t} \beta\, e^{-(t-t_j)/\tau},
+\end{equation}
+with $t_j$ the neighbours' discovery times: $\beta$ the trust-scaled evidential weight of one
+observed discovery, $\tau$ the assumed correlation time of inadequacy. The structural-proposal
+channel the model already has is thereby promoted from carrying \emph{content} (which node to
+wake) to also carrying \emph{momentum} (how eagerly to look)---a formal home for the observation
+that revolutions arrive in waves---and the branching ratio becomes the model's measurable answer
+to how much social excitement a revolution needs (\S\ref{sec:res-closing},
+Fig.~\ref{fig:res-hawkes}). What the reading does not discharge: the kernel's parametric form is
+chosen, and the excitation deposited by a wake that is later pruned back (below) is not
+retracted---the community's excitement is an observation of the wake, not of the verdict.
+
+\paragraph{The wake-then-prune audit.}
+Accepting wakes on the full ledger $\Delta F + \Delta G > 0$ lets curiosity adopt structure the
+data do not (yet) hold, so the acceptance rule itself creates the obligation to audit. The audit
+re-asks the wake's own question every round: the bordered-model log Bayes factor of the agent's
+\emph{current} (conditioned) beliefs against its \emph{pre-wake} anchor at the stored coupling
+---not a Savage--Dickey prune of the wired prior, which would compare two priors and find the
+hub favoured by construction, since the slot has no observation row and is held only by the
+data's mean displacement along its pattern. The $k$-th audit's verdict is
+\begin{equation}
+\mathrm{verdict}_k \;=\; \Delta F_{\mathrm{now}} \;+\; \Delta G\,\lambda_c^{\,k},
+\end{equation}
+the wake's ledger with \emph{expiring} credit: epistemic gain pays for entertaining, but it is a
+diminishing resource---information gain about a latent shrinks as the posterior over it
+sharpens---so the geometric $\lambda_c$ is a fixed-form surrogate whose principled successor is
+recomputing $\Delta G$ on the current hub posterior. A patience-length run of non-positive
+verdicts (after a grace period covering post-wake consolidation) re-pins the slot to its exact
+dormant form, and the agent may wake it again later: entertaining is paid by expiring curiosity,
+keeping by evidence. Figure~\ref{fig:wakeprune} shows the cycle doing the false-discovery work
+the commitments list above assigns it: in a null world that never shifts, the credit wakes hubs
+in every agent and the audit re-pins every one of them; in the flip world the genuine hub is
+woken everywhere and never pruned.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\linewidth]{fig_wake_then_prune.png}
+\caption{The wake-then-prune cycle controls the repeated-look false-discovery rate with no
+threshold. \emph{Left:} null world (no regime shift)---the audit verdict (evidence plus
+expiring credit) of every noise-woken hub decays below zero and the slot is re-pinned exactly.
+\emph{Centre:} flip world---the genuine hub's verdict stays positive; the data take over before
+the credit runs out. \emph{Right:} curiosity wakes structure in both worlds; the audit keeps
+only what the data hold.}
+\label{fig:wakeprune}
+\end{figure}
+
+\paragraph{Value accretion (the Lakatos closure).}
+The conviction source $u$, exogenous and static in the first draft, gains the slow dynamics the
+limitations called for: per node, $u_{\mathrm{eff}} = u\,(1+g)$ with
+$g \leftarrow \mathrm{clip}(g + \epsilon\,e - \delta\,g,\,0,\,g_{\max})$ and $e$ the agent's own
+entrenchment (the diagonal of its accumulated evidence deposit $\Pi-\Pi_0$, max-normalized)---
+self-evidencing made slow \citep{hohwy2016}: value flows toward the commitments the programme's
+own data have entrenched, and through $U=\Top u$ and the gate of Eq.~\eqref{eq:gamma} a maturing
+programme increasingly silences its own disconfirming channels. The clip bounds the
+accretion--gate feedback loop. Figure~\ref{fig:lakatos} shows the resulting phase picture: gain
+accreting over the run, the realized gate climbing with $\epsilon$, and conversion at the
+lock-in boundary falling---progressive and degenerating problemshifts as dynamics
+(\S\ref{sec:res-closing}).
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\linewidth]{fig_lakatos.png}
+\caption{Dynamic conviction (Lakatos, run forward). \emph{Left:} the accreted gain $g$ grows as
+the programme matures---conviction follows the agent's own evidence deposit, not a decree.
+\emph{Centre:} the realized self-silencing gate $\gamma$ strengthens with the accretion rate
+$\epsilon$. \emph{Right:} dogmatic-community conversion at the lock-in boundary over the
+$(\epsilon,\,\mathrm{decay})$ plane: a programme that matures into conservatism delays its
+supersession---and still loses to connection.}
+\label{fig:lakatos}
+\end{figure}

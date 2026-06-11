@@ -1,0 +1,54 @@
+{
+  "experiment": "multi_candidate",
+  "git": {
+    "sha": "a40ac529b87dc1c3875f486c57ba1f0160d07a68",
+    "branch": "production/structural-minimal",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-06-11T14:10:04+00:00",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "params": {
+    "N_AGENTS": 40,
+    "T_SHIFT": 40,
+    "N_STEPS": 180,
+    "OMEGA": 0.97,
+    "SIGMA_O": 0.5,
+    "GATE_STRENGTH": 1.0,
+    "S_DOGMA": 3.0,
+    "PROPOSAL_RATE": 0.08,
+    "N_SLOTS": 3,
+    "K_HUBS": 3,
+    "TOP_COUPLINGS": 3,
+    "SEEDS": [
+      0,
+      1,
+      2
+    ]
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.0",
+    "jaxlib": "0.9.0",
+    "numpy": "2.3.4",
+    "equinox": "0.13.6",
+    "networkx": "3.5",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.7"
+  },
+  "outputs": {
+    "simulation_arrays.npz": {
+      "arrays": {
+        "cosines": "ade2251ddbe0cc3db265edf40821d0ee9c53325ea3624d9b119d7554d5d41acf",
+        "dF_accepted": "01525e7ed2a859772f428051023cd535cf7a8d877e042d8146d5514cce29c85b",
+        "dF_rejected": "23ec977afa8e88fb3b18423fa1c72a038a78221e69a5b9a8dd691e3d06657973"
+      }
+    },
+    "summary.json": "4a1358ca064478d5e0c3d6454a0a2116d501e91f54ce1b2f382fa3888869ef86"
+  },
+  "runner_version": 1
+}

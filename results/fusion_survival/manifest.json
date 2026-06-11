@@ -1,0 +1,64 @@
+{
+  "experiment": "fusion_survival",
+  "git": {
+    "sha": "a40ac529b87dc1c3875f486c57ba1f0160d07a68",
+    "branch": "production/structural-minimal",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-06-11T14:03:28+00:00",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "params": {
+    "N": 80,
+    "T_SHIFT": 40,
+    "N_STEPS": 320,
+    "OMEGA": 0.97,
+    "SIGMA_O": 0.5,
+    "GATE_STRENGTH": 1.0,
+    "S_DOGMA": 3.0,
+    "RATES": [
+      0.005,
+      0.01,
+      0.02
+    ],
+    "SEEDS": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "WORKERS": 6
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.0",
+    "jaxlib": "0.9.0",
+    "numpy": "2.3.4",
+    "equinox": "0.13.6",
+    "networkx": "3.5",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.7"
+  },
+  "outputs": {
+    "simulation_arrays.npz": {
+      "arrays": {
+        "discover_masked": "efd7cbb177db1a705f92d119e1ccc9ccd25a24c0c9e7aa0ddecea7128262d8f8",
+        "discover_posterior": "efd7cbb177db1a705f92d119e1ccc9ccd25a24c0c9e7aa0ddecea7128262d8f8",
+        "rates": "8f905724cbec8703482029f3a1a10fb7a8c3a395b85266c5f51483d35c8a0fdc",
+        "survive_masked": "efd7cbb177db1a705f92d119e1ccc9ccd25a24c0c9e7aa0ddecea7128262d8f8",
+        "survive_posterior": "7e9aa2083e24b77cf048d395b553ef76060543dd8bf024f6f0f6fa698e1c80c7"
+      }
+    },
+    "summary.json": "161026a4a115e21accd88cfe7bb0cb984b533af7a17556f1b84095e96edc9d07"
+  },
+  "runner_version": 1
+}

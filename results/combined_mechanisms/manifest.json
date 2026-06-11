@@ -1,0 +1,70 @@
+{
+  "experiment": "combined_mechanisms",
+  "git": {
+    "sha": "a40ac529b87dc1c3875f486c57ba1f0160d07a68",
+    "branch": "production/structural-minimal",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-06-11T14:22:15+00:00",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "params": {
+    "N_AGENTS": 80,
+    "INTER": 0.01,
+    "T_SHIFT": 40,
+    "N_STEPS": 320,
+    "OMEGA": 0.97,
+    "SIGMA_O": 0.5,
+    "GATE_STRENGTH": 1.0,
+    "S_DOGMA": 3.0,
+    "R0": 0.02,
+    "HAWKES_BETA": 0.5,
+    "HAWKES_TAU": 10.0,
+    "KAPPA": 0.2,
+    "FLOOR_REF": 0.3,
+    "RATE_MAX": 0.8,
+    "PRUNE_GRACE": 15,
+    "PRUNE_PATIENCE": 5,
+    "CREDIT_DECAY": 0.85,
+    "CONVICTION_EPS": 0.3,
+    "SEEDS": [
+      0,
+      1,
+      2
+    ]
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.0",
+    "jaxlib": "0.9.0",
+    "numpy": "2.3.4",
+    "equinox": "0.13.6",
+    "networkx": "3.5",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.7"
+  },
+  "outputs": {
+    "simulation_arrays.npz": {
+      "arrays": {
+        "community": "f24ab393d867daf4a9131a42c28e760a528fa4ebe901d332446850464524fe46",
+        "crisis_step": "b78ec5ced6328f7a00dc04a04003bdd426765794645a4dc7bc37d03cec3a9186",
+        "expand_step": "18ef00f218cc4680531a990fab3a07acd207469b38976e2f2edc8594f20dbf4d",
+        "floor_tn": "9301c33cc20abf573162b100dcb2976d613020dbb9d32d866155cb34946e65bb",
+        "hub_dF_prune_tn": "5180f6a7f5f4358be82fa635775910886266c79ecf80cd5f0a4ab3ef601d04e2",
+        "null_rate_tn": "07be63d7adda32db5d7754d706291aba318611890c7fb76c2bacee7d20c3b7bc",
+        "oxy_coupling_tn": "f31d27b30a8c96653fb674519a194f67768f3447e3214fce53d293230a8375a1",
+        "oxy_index_sc": "694e0aeffbcc7790b265efe6758e4cd894679cb3c4b08fc2f16f7b8832c0ab18",
+        "precrisis_dF_tn": "9d6bdb5601c96f31eb54ea61924246609b2401994c5f16eb10c1499f24616030",
+        "prune_back_step": "e0432ee83729bf506b06d86e6ef6e9ea14b159cf0091cd20e1096bf320f443a5",
+        "rate_tn": "fc54bbc6a833e0ab8414a968caa255a40c73f6fa8b261a5371d21561322b97f5",
+        "snap_t": "da40c6b2260a5de3f5f9c12fb9d741931d2792ff9a529545ab0e250b9b6d53a0"
+      }
+    },
+    "summary.json": "b1de77139ec66c0e0e3bde4d81bb9777b5dd788a360105e0021c4b953caa4351"
+  },
+  "runner_version": 1
+}

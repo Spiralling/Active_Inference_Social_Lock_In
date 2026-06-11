@@ -24,6 +24,24 @@ Population precision-fusion on a phlogiston substrate: network λ₂ governs str
 - **Figures:** diag_topology_sweep, diag_dynamics, diag_bridge_sweep
 - **Seeds:** [0]
 
+### `adaptive_rate`
+
+The active-inference closure of the proposal rate (limitations section, implemented): the arrival rate is an updatable hyperprior on the agent's own model adequacy, driven by the residual floor the discovery check records -- persistent residual raises the rate, a quiet model decays it.
+
+- **Run:** `python scripts/run.py run adaptive_rate`
+- **Outputs:** `results/adaptive_rate/`
+- **Figures:** fig_adaptive_rate
+- **Seeds:** [0, 1, 2]
+
+### `combined_mechanisms`
+
+The composition check: every limitation-closing mechanism (Hawkes+adaptive rate, wake-then-prune audit, dimension-aware fusion, Lakatos conviction, pre-crisis measurement) enabled in ONE run -- the full Kuhn cycle completes, nothing breaks, the null world is silent.
+
+- **Run:** `python scripts/run.py run combined_mechanisms`
+- **Outputs:** `results/combined_mechanisms/`
+- **Figures:** fig_combined_mechanisms
+- **Seeds:** [0, 1, 2]
+
 ### `endogenous_gamma`
 
 E2: conviction-driven γ silences a paradigm's own disconfirming channels, deriving evidential lock-in (deaf-but-honest control revolts).
@@ -34,14 +52,41 @@ E2: conviction-driven γ silences a paradigm's own disconfirming channels, deriv
 - **Figures:** diag_endogenous_gamma
 - **Seeds:** [0, 1, 2]
 
+### `fusion_survival`
+
+The pooling rule as a dial (limitations section, implemented): dimension-aware fusion that excludes unrepresented dimensions moves the concept-survival threshold from 'critical mass in time' to 'conceive it at all' -- incommensurability located in how communities pool, not in the concepts.
+
+- **Run:** `python scripts/run.py run fusion_survival`
+- **Outputs:** `results/fusion_survival/`
+- **Figures:** fig_fusion_survival
+- **Seeds:** [1, 2, 3, 4, 5, 6]
+
+### `hawkes_rescue`
+
+The Hawkes refinement of the proposal rate (limitations section, implemented): a self- and mutually-exciting arrival rate on the trust graph rescues the staggered discovery that constant-rate Poisson proposal always loses to fusion -- the community manufactures the near-simultaneity that concept survival requires.
+
+- **Run:** `python scripts/run.py run hawkes_rescue`
+- **Outputs:** `results/hawkes_rescue/`
+- **Figures:** fig_hawkes_rescue
+- **Seeds:** [1, 2, 3, 4, 5, 6]
+
 ### `kuhn_phlogiston`
 
-The chemical revolution, endogenously: population + Bayesian model reduction + expansion in one loop. Crisis = the agent's own Savage-Dickey evidence crossing its conviction protection; revolution = the reduction applied; discovery = the unconceived oxygen node bordered on a residual-triggered, Poisson-arriving proposal; fusion spreads the new structure socially. Lock-in requires gating AND isolation.
+The chemical revolution, endogenously: population + Bayesian model reduction + expansion in one loop. Crisis = the agent's own prune ledger (Savage-Dickey Delta F + lambda Delta U, both closed-form) crossing zero; revolution = the reduction applied; discovery = the unconceived oxygen node bordered on a Poisson-arriving proposal whose sole accept test is the model log Bayes factor; fusion spreads the new structure socially. Lock-in requires gating AND isolation.
 
 - **Run:** `python scripts/run.py run kuhn_phlogiston`
 - **Outputs:** `results/kuhn_phlogiston/`
 - **Figures:** kuhn_phlogiston_timeline, kuhn_phlogiston_phase
 - **Seeds:** [0, 1, 2]
+
+### `lakatos_conviction`
+
+Dynamic conviction u (limitations + appendix commitment, implemented): intrinsic utility accretes onto structurally entrenched commitments via the agent's own Fisher deposit, recovering Lakatos's progressive vs degenerating problemshifts as an (eps, decay) phase diagram at the lock-in boundary.
+
+- **Run:** `python scripts/run.py run lakatos_conviction`
+- **Outputs:** `results/lakatos_conviction/`
+- **Figures:** fig_lakatos_conviction
+- **Seeds:** [0, 1, 2, 3]
 
 ### `meanmatched_structure`
 
@@ -50,6 +95,24 @@ Truth in the STRUCTURE: mean-matched theories where the λ/means classifier is b
 - **Run:** `python scripts/run.py run meanmatched_structure`
 - **Outputs:** `results/meanmatched_structure/`
 - **Figures:** diag_meanmatched
+- **Seeds:** [0, 1, 2]
+
+### `multi_candidate`
+
+Multi-candidate model expansion (limitations section, implemented): several hub candidates (top-k residual eigenpairs, one pre-allocated slot each) and candidate couplings among existing commitments (largest residual entries, magnitudes estimated from the data) compete on the same ledger; the true hub wins, rivals and spurious couplings are rejected, the null world accepts nothing.
+
+- **Run:** `python scripts/run.py run multi_candidate`
+- **Outputs:** `results/multi_candidate/`
+- **Figures:** fig_multi_candidate
+- **Seeds:** [0, 1, 2]
+
+### `precrisis_check`
+
+The enforced crisis-before-expansion ordering upgraded to a result (appendix commitment list, implemented): the identical discovery check run pre-crisis at every step is rejected by the ledger everywhere -- the residual only becomes visible to the check after the agent's own reduction.
+
+- **Run:** `python scripts/run.py run precrisis_check`
+- **Outputs:** `results/precrisis_check/`
+- **Figures:** fig_precrisis_check
 - **Seeds:** [0, 1, 2]
 
 ### `staircase_gate`
@@ -69,6 +132,15 @@ Communities that VALUE different theories learn different WIRING (value -> selec
 - **Outputs:** `results/structural_pluralism/`
 - **Figures:** diag_structural_pluralism
 - **Seeds:** [0, 1, 2, 3, 4]
+
+### `wake_then_prune`
+
+The wake-then-prune cycle (limitations + appendix, implemented): wakes accepted on the full ledger (epistemic credit pays for entertaining), audited every round by the re-evaluated wake evidence plus expiring credit; spurious wakes re-pinned exactly, genuine hubs kept -- the principled false-discovery remedy with no tuned threshold.
+
+- **Run:** `python scripts/run.py run wake_then_prune`
+- **Outputs:** `results/wake_then_prune/`
+- **Figures:** fig_wake_then_prune
+- **Seeds:** [0, 1, 2]
 
 ## cosmology
 
@@ -145,7 +217,7 @@ The dark-energy paradigm as one directed Bayes net: conservatism κ=T·1 (GR car
 
 ### `kuhn_cycle`
 
-The Kuhn cycle, endogenously: core observability (commitments have no direct observation row) makes the belt-first/core-last staircase REAL (fixing the Sec 4.4 null, which becomes the control), an anomaly accumulator at the unobserved core triggers crisis and revolution, and conviction gating turns the crisis off -- a sharp, bimodal revolution/lock-in phase transition.
+The Kuhn cycle, endogenously: core observability (commitments have no direct observation row) makes the belt-first/core-last staircase REAL (fixing the Sec 4.4 null, which becomes the control), crisis is the core-release move's own ledger (Savage-Dickey dF + lam dU crossing zero -- no accumulator threshold), and conviction gating stalls the revolution by silencing the channels the released core needs -- a bimodal revolution/lock-in phase transition.
 
 - **Run:** `python scripts/run.py run kuhn_cycle`
 - **Outputs:** `results/kuhn_cycle/`

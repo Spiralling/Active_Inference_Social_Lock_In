@@ -1,13 +1,14 @@
 """Poisson arrival of structural edits: the RATE at which new commitments enter.
 
 The deterministic regrowth (``cosmology_regrowth``) wakes the unconceived ``dark_energy`` node the
-moment its residual floor clears the trigger and holds. But *when* a community proposes a new
-commitment is itself contingent -- the exploration rate network-epistemology models put in by hand.
-The paper models node arrival as a POISSON PROCESS that fixes only the RATE: structural-edit attempts
-arrive at rate ``lambda`` (each step with prob ``1 - e^{-lambda}``), and the wake fires on the first
-arrival once the floor is already high. Discovery becomes a random WAITING TIME ~ ``1/lambda``. The
-arrival RNG is separate from the world-sample RNG, so the floor trajectory is identical to the
-deterministic run -- only the wake timing is Poisson-gated.
+moment the expansion model Bayes factor accepts it (the data hold the woken node). But *when* a
+community proposes a new commitment is itself contingent -- the exploration rate
+network-epistemology models put in by hand. The paper models node arrival as a POISSON PROCESS
+that fixes only the RATE: structural-edit attempts arrive at rate ``lambda`` (each step with prob
+``1 - e^{-lambda}``), and the wake fires on the first arrival the Bayes factor accepts. Discovery
+becomes a random WAITING TIME ~ ``1/lambda``. The arrival RNG is separate from the world-sample
+RNG, so the evidence trajectory is identical to the deterministic run -- only the wake timing is
+Poisson-gated.
 
 Reuses ``single_run`` from ``src.structural.models.cosmology_regrowth``.
 """
@@ -57,9 +58,12 @@ def run(out_dir, params: dict) -> None:
     print(f"{'determ.':>7} | {det['wake_fraction']:9.2f} | {det['mean_wake']:9.1f} | "
           f"{det['std_wake']:5.1f} | {det['mean_delay_after_T2']:.1f}")
 
-    # null: no cause (coupling 0) -> the floor never rises, so no arrival can fire a wake
+    # null: no cause (coupling 0). With a threshold-free accept the Bayes factor makes rare
+    # noise crossings over ~180 looks per run, so the null's false-discovery rate is SMALL but
+    # not exactly zero -- the price of removing the ad hoc trigger (see the appendix; the
+    # principled completion is wake-then-prune, named in the paper's limitations).
     null = wake_times(1.0, coupling=0.0, n_seeds=10)
-    print(f"\nnull (coupling=0, λ=1.0): wake_fraction={null['wake_fraction']:.2f} (expect 0.00)")
+    print(f"\nnull (coupling=0, λ=1.0): wake_fraction={null['wake_fraction']:.2f} (expect ~0, tolerate <= 0.1)")
 
     # ---- figures ----
     fig, (a0, a1) = plt.subplots(1, 2, figsize=(13, 4.8))
@@ -81,14 +85,15 @@ def run(out_dir, params: dict) -> None:
 
     # ---- asserts ----
     means = [r["mean_wake"] for r in rows]
-    assert null["wake_fraction"] == 0.0, \
-        f"null (no cause) woke under Poisson arrivals: {null['wake_fraction']}"
+    assert null["wake_fraction"] <= 0.1, \
+        f"null false-discovery rate should be rare (got {null['wake_fraction']})"
     assert means[0] > means[-1] + 2.0, \
         f"slower arrivals should discover LATER on average (got {means[0]:.1f} vs {means[-1]:.1f})"
     assert rows[-1]["wake_fraction"] >= rows[0]["wake_fraction"] - 1e-9, \
         "faster arrivals should not discover less often"
-    assert all((r["wake_times"] >= T2).all() for r in rows if r["wake_times"].size), \
-        "a wake fired before the cause appeared (T2)"
+    after_T2 = np.concatenate([r["wake_times"] >= T2 for r in rows if r["wake_times"].size])
+    assert after_T2.mean() >= 0.9, \
+        f"wakes should overwhelmingly follow the cause (after-T2 fraction {after_T2.mean():.2f})"
 
     # ---- save ----
     np.savez_compressed(

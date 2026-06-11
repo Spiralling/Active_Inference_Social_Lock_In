@@ -18,7 +18,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from src.structural.models.cosmology_regrowth import (
-    single_run, T1, T2, N_STEPS, SIGMA_O, WINDOW, TRIGGER, SUSTAIN, WARMUP, HUB_NAME, DRIVES)
+    single_run, T1, T2, N_STEPS, SIGMA_O, WINDOW, WARMUP, HUB_NAME, DRIVES)
 from experiments.registry import ExperimentSpec, register
 
 
@@ -30,8 +30,8 @@ def mechanisms_in_a_row(tele: dict, coupling: float):
           f"switches on, coupling {DRIVES} at {coupling}.")
     print(f"  [init]   the agent's 6-node menu holds those commitments INDEPENDENT -- no slot for "
           f"the cause.")
-    print(f"  [t<T1]   epoch 0; residual floor ~ {f[WARMUP:T1].max():.2f} (< trigger {TRIGGER}: "
-          f"errors vs the menu's prediction are just noise)")
+    print(f"  [t<T1]   epoch 0; residual floor ~ {f[WARMUP:T1].max():.2f} (noise level: errors "
+          f"vs the menu's prediction carry no coherent shift)")
     print(f"  [T1..T2] epoch 1 (theory flips, but errors are vs the CURRENT epoch mean -> still "
           f"just noise); floor max {f[T1:T2].max():.2f}")
     if ws >= 0:
@@ -41,7 +41,7 @@ def mechanisms_in_a_row(tele: dict, coupling: float):
         print(f"  [recover] drive-marginal edge-F1: {tele['f1_unwoken']:.2f} (no node) -> "
               f"{tele['f1_woken']:.2f} (woken)  structure_recovered={tele['structure_recovered']}")
     else:
-        print("  [no wake] the floor never cleared the trigger (the null / no-cause control).")
+        print("  [no wake] the model Bayes factor never accepted (the null / no-cause control).")
 
 
 def make_figure(tele: dict, path):
@@ -49,11 +49,11 @@ def make_figure(tele: dict, path):
     na, nw = tele["n_active_t"], tele["n_woken_t"]
     ws = tele["wake_step"]
     fig, axs = plt.subplots(1, 3, figsize=(15, 4.2))
-    axs[0].plot(f, lw=2); axs[0].axhline(TRIGGER, color="grey", ls=":", lw=1, label="trigger")
-    axs[0].set_title("residual floor (the TRIGGER)"); axs[0].set_ylabel(r"$\lambda_{max}(R)$")
-    axs[0].legend(fontsize=8)
+    axs[0].plot(f, lw=2)
+    axs[0].set_title("residual floor (telemetry)"); axs[0].set_ylabel(r"$\lambda_{max}(R)$")
     axs[1].plot(dF, lw=2); axs[1].axhline(0, color="grey", lw=1)
-    axs[1].set_title("expansion model Bayes factor"); axs[1].set_ylabel(r"$\Delta F$")
+    axs[1].set_title("expansion model Bayes factor (the accept test)")
+    axs[1].set_ylabel(r"$\Delta F$")
     axs[2].step(range(len(na)), na, where="post", lw=2, label="true active causes")
     axs[2].step(range(len(nw)), nw, where="post", lw=2, ls="--", label="nodes woken (agent)")
     axs[2].set_title("does the agent grow a node when the world does?")
@@ -104,14 +104,14 @@ def run(out_dir, params: dict) -> None:
     print("\n=== null / sanity controls ===")
     print(f"  null (coupling=0):      wake_step={null['wake_step']}  (expect -1, never)")
     print(f"  positive (coupling={rep_coupling}): wake_step={pos['wake_step']}  woke_after_T2={pos['woke_after_T2']}")
-    print(f"  pre-T2 floor max (pos): {pos['floor_t'][WARMUP:T2].max():.2f}  (expect < trigger {TRIGGER})")
+    print(f"  pre-T2 Bayes factor max (pos): {pos['delta_F_t'][WARMUP:T2].max():.3f}  (expect <= 0)")
 
     assert null["wake_step"] == -1, \
         f"null world (no cause) spuriously woke at t={null['wake_step']}"
     assert pos["wake_step"] >= 0 and pos["woke_after_T2"], \
         f"positive case did not wake after T2 (wake={pos['wake_step']})"
-    assert pos["floor_t"][WARMUP:T2].max() < TRIGGER, \
-        "pre-T2 residual floor exceeded the trigger (would mis-fire before the cause exists)"
+    assert pos["delta_F_t"][WARMUP:T2].max() <= 0, \
+        "pre-T2 Bayes factor went positive (would mis-fire before the cause exists)"
     assert wake_frac[0] == 0.0, f"coupling=0 had nonzero wake fraction {wake_frac[0]}"
     assert wake_frac[-1] > 0.9, f"strong cause coupling failed to discover (frac {wake_frac[-1]})"
 
@@ -127,8 +127,7 @@ def run(out_dir, params: dict) -> None:
     )
     summary = {
         "config": {"T1": T1, "T2": T2, "n_steps": N_STEPS, "sigma_o": SIGMA_O,
-                   "window": WINDOW, "trigger": TRIGGER, "sustain": SUSTAIN,
-                   "drives": list(DRIVES), "hub_name": HUB_NAME},
+                   "window": WINDOW, "drives": list(DRIVES), "hub_name": HUB_NAME},
         "representative": {"coupling": rep_coupling, "wake_step": rep["wake_step"],
                            "woke_after_T2": rep["woke_after_T2"],
                            "f1_unwoken": rep["f1_unwoken"], "f1_woken": rep["f1_woken"],
@@ -139,7 +138,7 @@ def run(out_dir, params: dict) -> None:
         "controls": {"null_wake_step": null["wake_step"],
                      "positive_wake_step": pos["wake_step"],
                      "positive_woke_after_T2": pos["woke_after_T2"],
-                     "pre_T2_floor_max": float(pos["floor_t"][WARMUP:T2].max())},
+                     "pre_T2_delta_F_max": float(pos["delta_F_t"][WARMUP:T2].max())},
     }
     with (out_dir / "summary.json").open("w", encoding="utf-8") as fh:
         json.dump(summary, fh, indent=2)

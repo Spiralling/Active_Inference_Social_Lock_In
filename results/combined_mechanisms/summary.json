@@ -1,0 +1,74 @@
+{
+  "config": {
+    "N_AGENTS": 80,
+    "INTER": 0.01,
+    "T_SHIFT": 40,
+    "N_STEPS": 320,
+    "OMEGA": 0.97,
+    "SIGMA_O": 0.5,
+    "GATE_STRENGTH": 1.0,
+    "S_DOGMA": 3.0,
+    "R0": 0.02,
+    "HAWKES_BETA": 0.5,
+    "HAWKES_TAU": 10.0,
+    "KAPPA": 0.2,
+    "FLOOR_REF": 0.3,
+    "RATE_MAX": 0.8,
+    "PRUNE_GRACE": 15,
+    "PRUNE_PATIENCE": 5,
+    "CREDIT_DECAY": 0.85,
+    "CONVICTION_EPS": 0.3,
+    "SEEDS": [
+      0,
+      1,
+      2
+    ]
+  },
+  "fig": {
+    "t_crisis": 67,
+    "t_discovery": 69,
+    "rate_peak": 0.7748964301600454,
+    "survive_open": 1.0
+  },
+  "rows": [
+    {
+      "seed": 0,
+      "open_crisis_frac": 1.0,
+      "open_wake_frac": 1.0,
+      "open_pruneback_frac": 0.0,
+      "open_survive_frac": 1.0,
+      "dogma_oxy_end": 0.817894458770752,
+      "rate_preshift": 0.019999999999999997,
+      "rate_peak": 0.7748964301600454,
+      "rate_end": 0.02000003153509491,
+      "precrisis_frac_pos": 0.00046468401486988845,
+      "finite": true
+    },
+    {
+      "seed": 1,
+      "open_crisis_frac": 1.0,
+      "open_wake_frac": 1.0,
+      "open_pruneback_frac": 0.0,
+      "open_survive_frac": 1.0,
+      "dogma_oxy_end": 0.8336000442504883,
+      "rate_preshift": 0.02000848915650145,
+      "rate_peak": 0.7220197891963622,
+      "rate_end": 0.020000002688278087,
+      "precrisis_frac_pos": 0.0006775067750677507,
+      "finite": true
+    },
+    {
+      "seed": 2,
+      "open_crisis_frac": 1.0,
+      "open_wake_frac": 1.0,
+      "open_pruneback_frac": 0.0,
+      "open_survive_frac": 1.0,
+      "dogma_oxy_end": 0.7587634325027466,
+      "rate_preshift": 0.020112820347533943,
+      "rate_peak": 0.7848420972479384,
+      "rate_end": 0.02006804379139465,
+      "precrisis_frac_pos": 0.0006615506747816883,
+      "finite": true
+    }
+  ]
+}

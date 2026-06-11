@@ -1,0 +1,45 @@
+{
+  "config": {
+    "N_AGENTS": 40,
+    "T_SHIFT": 40,
+    "N_STEPS": 180,
+    "OMEGA": 0.97,
+    "SIGMA_O": 0.5,
+    "GATE_STRENGTH": 1.0,
+    "S_DOGMA": 3.0,
+    "SEEDS": [
+      0,
+      1,
+      2
+    ]
+  },
+  "fig": {
+    "precrisis_max": 0.004608154296875,
+    "median_crisis": 58,
+    "median_expand": 25
+  },
+  "rows": [
+    {
+      "seed": 0,
+      "precrisis_max": 0.004608154296875,
+      "n_measured": 4395,
+      "frac_positive": 0.0004550625711035267,
+      "expand_after_crisis": true
+    },
+    {
+      "seed": 1,
+      "precrisis_max": 0.0020599365234375,
+      "n_measured": 4392,
+      "frac_positive": 0.0004553734061930783,
+      "expand_after_crisis": true
+    },
+    {
+      "seed": 2,
+      "precrisis_max": 0.0008697509765625,
+      "n_measured": 4398,
+      "frac_positive": 0.00022737608003638017,
+      "expand_after_crisis": true
+    }
+  ],
+  "precrisis_dF_max": 0.004608154296875
+}

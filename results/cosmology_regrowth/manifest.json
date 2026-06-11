@@ -1,11 +1,11 @@
 {
   "experiment": "cosmology_regrowth",
   "git": {
-    "sha": "e851d11a877251439b5b1302dcfaef7e3b811887",
+    "sha": "a40ac529b87dc1c3875f486c57ba1f0160d07a68",
     "branch": "production/structural-minimal",
     "dirty": true
   },
-  "timestamp_utc": "2026-06-10T10:06:51+00:00",
+  "timestamp_utc": "2026-06-11T09:53:00+00:00",
   "seeds": [
     0,
     1,
@@ -44,17 +44,17 @@
         "T2": "92ae26277736de6a6283a3a716e05667bfb63acc827f483ef41f64e138a9c1d3",
         "after_T2_fraction": "d34897468acb177e93250f55d7c363f4a1827b6fb1168971fd6397eb6fc6c11b",
         "couplings": "767a026e3c2e7a92e1b222a4decc1e208e249d8e37afdb6b3ac3bc81d8a9f185",
-        "mean_wake_step": "bd7f3e98457baaea8e4e3cc77012c091db3d066450c3d4290bec1df350d6baa1",
+        "mean_wake_step": "243ee96f6669f6b8f870d2bb7739639b24c624798385d826f825d0d9c08f0c25",
         "rep_delta_F_t": "9c2f9c4c91e2b674b2362f582e1a72f92f9d6c827bcfea7257103c85d4b82d11",
         "rep_floor_t": "d73beeb3d92a8911a8c4e462451aa9ee1fa09786f40a84dc5d6d8f300f3a0d7f",
         "rep_n_active_t": "b92197d5b003f9f40c549c00223c6941b02591e2bc0bed80b219cf9afc95c688",
-        "rep_n_woken_t": "daa6341a501f383d269782a3373c3ad140cae9ea12b20822c3ca6cb44403c9e6",
-        "rep_wake_step": "1be1001ac24e7621debce96d1561be7b894a99443c7d83a5efc6351d0f3ef260",
+        "rep_n_woken_t": "962bbd022f0efd06d02aa010f08d3db6af543a6389c2e4cdb24f5b50a8fb0ce9",
+        "rep_wake_step": "bcbcb3bcddaf73457a46819dbabe723763929a09a8e0baaaaa0622799295631f",
         "seeds": "129d7c8430eea69d8dc239e7cde4a4574ff8ecb9256150f828ec1d68afb5cddc",
-        "wake_fraction": "90eceea09151922c9bb517b73aabea9f469011d672186064a8a484c8fe7597c3"
+        "wake_fraction": "c72002aa6017543637850c68464dc0e5563d6e4bbb8fdd5497fc2471b076abe5"
       }
     },
-    "summary.json": "6a984a15025f071e759aa4b39cded0ba318849d9d135007a82014807e1119408"
+    "summary.json": "f0be6de77539d1a93c740cf2571a1b9844276875caa4985be0fbcd4eaaca557f"
   },
   "runner_version": 1
 }

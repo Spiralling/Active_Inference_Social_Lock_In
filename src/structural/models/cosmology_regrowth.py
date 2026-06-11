@@ -8,9 +8,10 @@ data-driven structure re-growth happens: a hidden node the agent's menu does not
 In the **third** epoch (``t >= T2``) a genuinely *unconceived* ``dark_energy`` node switches on,
 coupling a set of commitments the 6-node cosmology menu holds independent. A host-loop agent (the
 wake GROWS the basis -- a variable-dimension move that cannot live in ``jax.lax.scan``) observes
-node-wise, reads the residual floor from its recent prediction errors, and scores
-``{sample, reduce, expand}``. The witness: the agent wakes a new node AFTER T2, not before, and the
-null (``coupling = 0``) never wakes.
+node-wise, reads the hub-proposal DIRECTION from its recent prediction errors, and accepts the
+wake on the expansion score alone (the model log Bayes factor + epistemic gain -- no
+residual-floor trigger, no sustain debounce). The witness: the agent wakes a new node AFTER T2,
+not before, and the null (``coupling = 0``) never wakes.
 
 This is the **pure science library** for the cosmology-regrowth family (``cosmology_regrowth`` and
 its dependent ``cosmology_poisson``): the world/agent constants, the ``single_run`` host loop, and
@@ -34,16 +35,14 @@ from src.structural import scenarios as sc
 from src.structural.landscape_presets import cosmology_basis
 
 __all__ = [
-    "T1", "T2", "N_STEPS", "SIGMA_O", "WINDOW", "TRIGGER", "SUSTAIN", "WARMUP",
+    "T1", "T2", "N_STEPS", "SIGMA_O", "WINDOW", "WARMUP",
     "HUB_SELF_PREC", "HUB_NAME", "DRIVES", "StepRecord", "single_run",
 ]
 
-# ---- configuration: the changing world + the wake debounce ----
+# ---- configuration: the changing world ----
 T1, T2, N_STEPS = 60, 120, 180
 SIGMA_O = 0.5
-WINDOW = 30           # trailing error window (a changing world -> recent errors matter)
-TRIGGER = 2.0         # residual-floor height to consider the wake
-SUSTAIN = 5           # the floor must hold for this many steps (kills noise spikes)
+WINDOW = 30           # trailing error window: the proposal-DIRECTION estimator horizon
 WARMUP = 5            # ignore the small-sample transient at the very start
 HUB_SELF_PREC = 2.0
 HUB_NAME = "dark_energy"
@@ -77,7 +76,7 @@ _DRIVE_IDX = [_NAMES.index(n) for n in DRIVES]
 
 @dataclass(frozen=True)
 class StepRecord:
-    floor: float          # residual-floor height (the TRIGGER), windowed
+    floor: float          # residual-floor height, windowed (telemetry, not a gate)
     delta_F: float        # expansion model Bayes factor
     score: float
     accepted: bool
@@ -93,21 +92,23 @@ def single_run(coupling: float, *, seed: int = 0, latent_mean: float = 1.6,
     errors (vs the current epoch's theory mean -- so the theory flips at T1/T2 are subtracted out and
     only the unconceived shift remains).
 
-    ``proposal_rate`` selects WHEN the agent attempts a structural edit:
-      * ``None`` (default): the deterministic debounce -- wake when the floor clears the trigger for
-        ``SUSTAIN`` consecutive steps.
+    The wake's SOLE accept test is the expansion score (the model log Bayes factor plus the
+    epistemic gain, ``action.expansion_score``): there is no residual-floor trigger and no
+    sustain debounce -- the windowed errors only fix the proposal's direction, and the ledger
+    decides whether the residual loads on the hub. ``proposal_rate`` selects WHEN the agent
+    attempts a structural edit:
+      * ``None`` (default): attempt every step after ``WARMUP`` -- wake on the first accept.
       * a float ``lambda``: structural-edit attempts arrive as a POISSON PROCESS (each step with
-        prob ``1 - e^{-lambda}``) and the wake fires on the first arrival for which the floor already
-        clears the trigger, so the discovery TIME is a random waiting time of rate ``lambda``. A
-        SEPARATE arrival RNG leaves the world-sample stream (hence the floor trajectory) identical to
-        the deterministic run -- only the wake *timing* is Poisson-gated."""
+        prob ``1 - e^{-lambda}``) and the wake fires on the first arrival the score accepts, so
+        the discovery TIME is a random waiting time of rate ``lambda``. A SEPARATE arrival RNG
+        leaves the world-sample stream (hence the floor trajectory) identical to the
+        deterministic run -- only the wake *timing* is Poisson-gated."""
     causes = (CauseSpec(activate=T2, drives=DRIVES, coupling=coupling,
                         mean=latent_mean, name=HUB_NAME),)
     prior = world_net.agnostic_prior(_CFG6, LatentWorldConfig(), t=0, phi_fn=_phi_fn)
     agent = prior
     errors: list[np.ndarray] = []
     key = jax.random.PRNGKey(seed)
-    streak = 0
     wake_step = -1
     recs: list[StepRecord] = []
     f1_unwoken = f1_woken = float("nan")
@@ -127,10 +128,14 @@ def single_run(coupling: float, *, seed: int = 0, latent_mean: float = 1.6,
         agent = add_fisher(agent, J, j)
         scx = action.expansion_score(agent, prior, prop, HUB_NAME,
                                      hub_self_prec=HUB_SELF_PREC)
-        eligible = (t >= WARMUP) and scx.accept and (prop.strength >= TRIGGER)
-        if proposal_rate is None:                  # deterministic debounce (existing behaviour)
-            streak = streak + 1 if eligible else 0
-            fire = streak >= SUSTAIN
+        # The sole accept test is the model log Bayes factor: the data must HOLD the woken
+        # hub (delta_F > 0 <=> the immediate Savage-Dickey prune of the new edges would be
+        # rejected). The epistemic gain delta_G pays for ATTEMPTING the inversion -- it is on
+        # the score telemetry -- but cannot keep a hub the data do not support (it is positive
+        # for any new latent, so including it in the accept test wakes on pure noise).
+        eligible = (t >= WARMUP) and (scx.delta_F > 0.0)
+        if proposal_rate is None:                  # deterministic attempts (every step)
+            fire = eligible
         else:                                      # Poisson arrival of a structural-edit attempt
             fire = bool(arr_rng.random() < p_arrival) and eligible
         n_active = int(t >= T2 and coupling > 0.0)

@@ -1,0 +1,29 @@
+{
+  "config": {
+    "N_AGENTS": 40,
+    "T_SHIFT": 40,
+    "N_STEPS": 180,
+    "OMEGA": 0.97,
+    "SIGMA_O": 0.5,
+    "GATE_STRENGTH": 1.0,
+    "S_DOGMA": 3.0,
+    "PROPOSAL_RATE": 0.08,
+    "N_SLOTS": 3,
+    "K_HUBS": 3,
+    "TOP_COUPLINGS": 3,
+    "SEEDS": [
+      0,
+      1,
+      2
+    ]
+  },
+  "fig": {
+    "n_accepted": 60,
+    "n_rival_hubs": 510,
+    "n_couplings": 570,
+    "max_rejected_dF": 0.077911376953125
+  },
+  "median_cosine": 0.9992765188217163,
+  "n_candidates": 1140,
+  "null_accepted": 0
+}

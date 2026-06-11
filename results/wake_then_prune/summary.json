@@ -1,0 +1,72 @@
+{
+  "config": {
+    "N_AGENTS": 40,
+    "T_SHIFT": 40,
+    "N_STEPS": 260,
+    "OMEGA": 0.97,
+    "SIGMA_O": 0.5,
+    "GATE_STRENGTH": 1.0,
+    "S_DOGMA": 3.0,
+    "PROPOSAL_RATE": 0.1,
+    "PRUNE_GRACE": 15,
+    "PRUNE_PATIENCE": 5,
+    "CREDIT_DECAY": 0.85,
+    "SEEDS": [
+      0,
+      1,
+      2
+    ]
+  },
+  "fig": {
+    "null_woke": 1.0,
+    "null_pruned": 1.0,
+    "flip_woke": 1.0,
+    "flip_pruned": 0.0
+  },
+  "rows": [
+    {
+      "world": "null",
+      "seed": 0,
+      "woke_frac": 1.0,
+      "pruned_frac": 1.0,
+      "med_prune_delay": 47.0
+    },
+    {
+      "world": "flip",
+      "seed": 0,
+      "woke_frac": 1.0,
+      "pruned_frac": 0.0,
+      "med_prune_delay": NaN
+    },
+    {
+      "world": "null",
+      "seed": 1,
+      "woke_frac": 1.0,
+      "pruned_frac": 1.0,
+      "med_prune_delay": 45.5
+    },
+    {
+      "world": "flip",
+      "seed": 1,
+      "woke_frac": 1.0,
+      "pruned_frac": 0.0,
+      "med_prune_delay": NaN
+    },
+    {
+      "world": "null",
+      "seed": 2,
+      "woke_frac": 1.0,
+      "pruned_frac": 1.0,
+      "med_prune_delay": 46.5
+    },
+    {
+      "world": "flip",
+      "seed": 2,
+      "woke_frac": 1.0,
+      "pruned_frac": 0.0,
+      "med_prune_delay": NaN
+    }
+  ],
+  "null_pruned_frac": 1.0,
+  "flip_pruned_frac": 0.0
+}
