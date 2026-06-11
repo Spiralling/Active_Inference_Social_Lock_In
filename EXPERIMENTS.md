@@ -34,6 +34,15 @@ E2: conviction-driven γ silences a paradigm's own disconfirming channels, deriv
 - **Figures:** diag_endogenous_gamma
 - **Seeds:** [0, 1, 2]
 
+### `kuhn_phlogiston`
+
+The chemical revolution, endogenously: population + Bayesian model reduction + expansion in one loop. Crisis = the agent's own Savage-Dickey evidence crossing its conviction protection; revolution = the reduction applied; discovery = the unconceived oxygen node bordered on a residual-triggered, Poisson-arriving proposal; fusion spreads the new structure socially. Lock-in requires gating AND isolation.
+
+- **Run:** `python scripts/run.py run kuhn_phlogiston`
+- **Outputs:** `results/kuhn_phlogiston/`
+- **Figures:** kuhn_phlogiston_timeline, kuhn_phlogiston_phase
+- **Seeds:** [0, 1, 2]
+
 ### `meanmatched_structure`
 
 Truth in the STRUCTURE: mean-matched theories where the λ/means classifier is blind; communicating the Bayes net rescues convergence only with pair views.
@@ -52,6 +61,15 @@ E1: does a conservatism-gated revision rate recover the belt-first/core-last sta
 - **Figures:** diag_staircase
 - **Seeds:** [0]
 
+### `structural_pluralism`
+
+Communities that VALUE different theories learn different WIRING (value -> selective attention -> structure); disconnection preserves the structural divergence, connection collapses it -- the structure-level sibling of the lock-in results.
+
+- **Run:** `python scripts/run.py run structural_pluralism`
+- **Outputs:** `results/structural_pluralism/`
+- **Figures:** diag_structural_pluralism
+- **Seeds:** [0, 1, 2, 3, 4]
+
 ## cosmology
 
 ### `cosmology_tracking`  ⭐ _(canonical)_
@@ -63,3 +81,146 @@ Lens B: do communities re-track each cosmology epoch or get stuck? 2x2 disconnec
 - **Notebook:** `nb44_cosmology_tracking_levers`
 - **Figures:** diag_tracking_2x2, diag_diversity
 - **Seeds:** [0, 1, 2]
+
+### `bayesnet_comms`
+
+Communicating directed Bayes nets (CPD averaging) vs pooling precision (λ): under full observability agents share structure and differ only in means, so the two coincide.
+
+- **Run:** `python scripts/run.py run bayesnet_comms`
+- **Outputs:** `results/bayesnet_comms/`
+- **Figures:** diag_bayesnet_comms
+- **Seeds:** [0, 1, 2]
+
+### `cosmology_coarse_world`
+
+A coarse Bayes net resolves a complex high-dim world only slowly (time-to-resolve grows as sensing resolution falls); forgetting imposes an irreducible error floor.
+
+- **Run:** `python scripts/run.py run cosmology_coarse_world`
+- **Outputs:** `results/cosmology_coarse_world/`
+- **Figures:** diag_coarse_resolve, diag_forgetting_floor
+
+### `cosmology_forgetting`
+
+Forgetting (ω<1) breaks the no-forgetting wall (the population re-tracks each epoch); conviction then becomes motivated persistence with an EARNED lock-in threshold.
+
+- **Run:** `python scripts/run.py run cosmology_forgetting`
+- **Outputs:** `results/cosmology_forgetting/`
+- **Figures:** diag_wall_break, diag_tradeoff, diag_motivated_persistence
+
+### `cosmology_poisson`
+
+Node arrival as a Poisson process: structural discovery becomes a waiting time ~1/λ after T2 (faster proposers discover sooner); null coupling never wakes.
+
+- **Run:** `python scripts/run.py run cosmology_poisson`
+- **Outputs:** `results/cosmology_poisson/`
+- **Figures:** diag_poisson
+
+### `cosmology_regrowth`
+
+Lens A: a host-loop agent grows a NODE for an unconceived dark_energy that switches on after T2 (wake fires only post-T2; null coupling never wakes) -- genuine data-driven structure re-growth.
+
+- **Run:** `python scripts/run.py run cosmology_regrowth`
+- **Outputs:** `results/cosmology_regrowth/`
+- **Notebook:** `nb44_cosmology_tracking_levers`
+- **Figures:** cosmology_regrowth
+- **Seeds:** [0, 1, 2]
+
+### `cosmology_sweeps`
+
+E3-E5: connectivity (Zollman speed-vs-diversity), prior stiffness, and sharing-conclusions-vs-raw-evidence on the cosmology re-tracking task.
+
+- **Run:** `python scripts/run.py run cosmology_sweeps`
+- **Outputs:** `results/cosmology_sweeps/`
+- **Figures:** diag_sweeps
+- **Seeds:** [0, 1]
+
+### `cosmology_twofield`
+
+The dark-energy paradigm as one directed Bayes net: conservatism κ=T·1 (GR carries everything) and conviction U=Tᵀu (Λ cheap-yet-cherished) are decoupled, and conditioning on the supernova node manufactures the Schur degeneracy (the banana).
+
+- **Run:** `python scripts/run.py run cosmology_twofield`
+- **Outputs:** `results/cosmology_twofield/`
+- **Notebook:** `nb45_two_fields_darkenergy`
+- **Figures:** twofield_bars, twofield_decoupling, schur_banana, twofield_dag
+
+### `kuhn_cycle`
+
+The Kuhn cycle, endogenously: core observability (commitments have no direct observation row) makes the belt-first/core-last staircase REAL (fixing the Sec 4.4 null, which becomes the control), an anomaly accumulator at the unobserved core triggers crisis and revolution, and conviction gating turns the crisis off -- a sharp, bimodal revolution/lock-in phase transition.
+
+- **Run:** `python scripts/run.py run kuhn_cycle`
+- **Outputs:** `results/kuhn_cycle/`
+- **Figures:** kuhn_cycle_timeline, kuhn_cycle_phase
+- **Seeds:** [0, 1, 2]
+
+### `partial_obs_comms`
+
+Partial observability makes agents structurally heterogeneous (B-dispersion rises); maps where communicating Bayes nets diverges from pooling precision and where the population fails to converge.
+
+- **Run:** `python scripts/run.py run partial_obs_comms`
+- **Outputs:** `results/partial_obs_comms/`
+- **Figures:** diag_partial_obs
+- **Seeds:** [0, 1, 2]
+
+## landscape
+
+### `frontier_fixed_points`  ⭐ _(canonical)_
+
+Prop. 1 + gate ablation: seed-determined fixed points on a static deep world with buried pockets; the SAME seeds collapse to one fixed point under full observability -- structural pluralism is the endogenous observation frontier, not noise.
+
+- **Run:** `python scripts/run.py run frontier_fixed_points`
+- **Outputs:** `results/frontier_fixed_points/`
+- **Figures:** diag_fixed_point_cuts, diag_pdist_matrices, diag_pocket_resolution, diag_unlocked
+- **Seeds:** [0]
+
+### `beta_calibration`
+
+Diagnostic: the fit-vs-utility beta scaling per landscape stage (the six derived beta values) that calibrates the two-stage beta_u choices.
+
+- **Run:** `python scripts/run.py run beta_calibration`
+- **Outputs:** `results/beta_calibration/`
+- **Seeds:** [0]
+
+### `frontier_connectivity`
+
+The lambda2 lever on the frontier: sharing data-supported proposals (testimony) merges frontiers and collapses plural fixed points; disconnection protects them (landscape analogue of big-sweep map A).
+
+- **Run:** `python scripts/run.py run frontier_connectivity`
+- **Outputs:** `results/frontier_connectivity/`
+- **Figures:** diag_connectivity
+- **Seeds:** [0, 1, 2]
+
+### `frontier_lockin`
+
+Lock-in map after a regime change: conviction tilt x forgetting decide whether a community re-allocates its resolution budget to the new structure or stays locked into the old region (landscape analogue of big-sweep map C).
+
+- **Run:** `python scripts/run.py run frontier_lockin`
+- **Outputs:** `results/frontier_lockin/`
+- **Figures:** diag_lockin
+- **Seeds:** [0, 1, 2]
+
+### `frontier_sweep`
+
+The frontier sweep, story-first: ~340 resumable runs feeding exactly three headline figures -- (1) pluralism needs the frontier AND disconnection, (2) the conviction x memory lock-in boundary, (3) discovery of new deep structure is coverage, not communication.
+
+- **Run:** `python scripts/run.py run frontier_sweep`
+- **Outputs:** `results/frontier_sweep/`
+- **Figures:** fig1_pluralism, fig2_lockin, fig3_discovery
+- **Seeds:** [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+
+### `landscape_simulation`
+
+Deterministic multi-agent landscape simulation on the cosmology-extreme presets: fit+utility hypothesis switching with structure-pull; winner/precision trajectories and per-community final-net distances.
+
+- **Run:** `python scripts/run.py run landscape_simulation`
+- **Outputs:** `results/landscape_simulation/`
+- **Figures:** community_bayesnet_snapshots, edge_edit_timeline, log_evidence_race, mean_field_hypothesis_share, community_distance_heatmap
+- **Seeds:** [0]
+
+### `landscape_two_stage`
+
+Two landscape stages -- utility-dominant fixed-truth vs subtle-drift high-noise -- the same population under two (sigma_obs, beta_u, truth) regimes, with the fit-vs-utility beta calibration reported per stage.
+
+- **Run:** `python scripts/run.py run landscape_two_stage`
+- **Outputs:** `results/landscape_two_stage/`
+- **Figures:** stageA_*, stageB_*
+- **Seeds:** [0]

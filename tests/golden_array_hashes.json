@@ -6,6 +6,11 @@
     "fot_posterior": "bdce3ed17c4f0a5f4080f24510b8b88e76036c946b4069a30c263cacbc19115b",
     "snap_t": "465178744a5d61f0c936c301c29fd4d2b33f41daf8d37d7a22bf0dd73e430c6e"
   },
+  "beta_calibration": {
+    "fields": "314935cc0f1be712943426607eae9716a36c88cf40f105a3593b21b7c3a3cdcd",
+    "stageA": "ff445d89bc7be89ca88891434aaf0277434766ac3461ec5cc27f0064ff407bac",
+    "stageB": "6f5e083fe17cd0356fa68a9b7bcdfd212896cb06a541c846c38321bef12c9513"
+  },
   "cosmology_coarse_world": {
     "K": "bfd8ec0ace239f48a4e365bcce1d6d3f9fd645f21ada27d5d09805f8002c8dfd",
     "M": "aea2f3e95400d43b91babc2cad19b3ff97b4e119dfdf76bec827516e812ea5e2",
@@ -93,6 +98,50 @@
     "theory_means": "7af11d193573bb108545c9e5d83cb586ec0b37ae5244fd29da1ee6cfbd948034",
     "true_offdiag": "3e6d9bb7e6f4bda50baf6c98691a72e8c7e4bf62fb6ae0e31c857308e8f18434",
     "true_per_snap": "7364836c411b418cb62e42fefa081a79ee31c1e08a914a81fcc2bc04b0b16cef"
+  },
+  "cosmology_twofield": {
+    "B": "014679685e650589d39ffa790ee4a42290176bf0b06254b1b36f002ad1c4565b",
+    "Pi": "3208f594bdf60f6e71c839f28808fd0d33981cd52a6250cc8f688e05e579ebc2",
+    "U": "f2ef95c85315975e7263e1b870adc411284f9d5c79c76dc6640e00bd339c003d",
+    "kappa": "bb49e868df7cb0d9b63a8da09dfb4213a789a740565e8565ea383b80d0f96a91",
+    "names": "e6317d0324da642949d5a0de9f18251757dbf5bb7be8aee34d434ffa911b39c2",
+    "post_cov": "f2cacccd556b80c37b44bce7b942f962a7cb3c81d0228806439c164bd2925574",
+    "prior_cov": "cc40cffb566ed97d0f05ab548604f2807aa9a69967b269196292893676c8c08a",
+    "utility": "240f072c7b2ae0a4603302cdb6567f979d02021346ae536c661cd85755cda731"
+  },
+  "landscape_simulation": {
+    "Pi_t": "ef1742bb28c9adb10dddf9e343015acdb55a226bec549bf2184a96fc6aeff472",
+    "accepted_t": "07c55b64a55b8d4fc49256c17120afbc70902d13e09597d57e5f5cb963df0dc4",
+    "cluster_membership": "388792f7024b85e796ec6b655c747776519f3b3845fa58e3cae8ac11655d9281",
+    "community_distance_cc": "093e2631188319e1a33b4407ab4519f5a15b11d0420fe8b26d4206fd1236755e",
+    "edge_count_t": "eae5545ef5046643f23b5464074e7fe07616772a9b76dad7948fb50abf8d79d2",
+    "edge_edit_delta_t": "dd95b841200c733bb30f01c0d1a2f148499d99ed4bc3ebe820c2acf351088dc2",
+    "h_t": "a31e0d8a8bb3111ca00b4eb85440a1c673ddf12475b7157bf507492911f8b4b6",
+    "log_evidence_tk": "ff3f5b36c913ec9507e1d2514d7a690685ad16b0fe2939859ed0c71cebd51115",
+    "precision_scale": "08d799e6983eab0ec7ed2f6ed39e727cd6e38bcc0be6a739c15ee0413e11cad4",
+    "winner_tn": "7c3ab0f1b01e1856fb630f5a1fc7341be59042ed2ae490f2f86f8fd987df7b8a"
+  },
+  "landscape_two_stage": {
+    "stageA_Pi_t": "b3470484f92d672142a27fe4ab0826a274da4e5a27d5ef22e3331543dd74d497",
+    "stageA_accepted_t": "00e4131a2b16ab2fe89664032424f9205848feddf6587d81f6d7fb764ead0af1",
+    "stageA_cluster_membership": "388792f7024b85e796ec6b655c747776519f3b3845fa58e3cae8ac11655d9281",
+    "stageA_community_distance_cc": "02b6251c765e1eb90da138e44a299254bc8422e0809afa84d2b370eb261dad20",
+    "stageA_edge_count_t": "eae5545ef5046643f23b5464074e7fe07616772a9b76dad7948fb50abf8d79d2",
+    "stageA_edge_edit_delta_t": "dd95b841200c733bb30f01c0d1a2f148499d99ed4bc3ebe820c2acf351088dc2",
+    "stageA_h_t": "1196168184faf4c0662814b2100ec10099df6a3fb21edd243dc19a975cbb086c",
+    "stageA_log_evidence_tk": "bd5ab723d0f4b804e8483352a11564f111dc58b2df10457f4f9bce47c268ca89",
+    "stageA_precision_scale": "08d799e6983eab0ec7ed2f6ed39e727cd6e38bcc0be6a739c15ee0413e11cad4",
+    "stageA_winner_tn": "f561421baf1c66e1cd48996351d35a7feda8428342bdc77b14f8da32aac23066",
+    "stageB_Pi_t": "2094db4c0d96d4f13a3fcfcd6d9487cdd87f95293becac54708f92c60d7eb5a4",
+    "stageB_accepted_t": "3280718b4b1cd13343d65255ac5af4cb50abd120091fe2ab4a171562c6b2714e",
+    "stageB_cluster_membership": "388792f7024b85e796ec6b655c747776519f3b3845fa58e3cae8ac11655d9281",
+    "stageB_community_distance_cc": "574727fd3de900ab57e106dcd0c0dc6597ef12fd1e9c8297020823b16d1d3701",
+    "stageB_edge_count_t": "eae5545ef5046643f23b5464074e7fe07616772a9b76dad7948fb50abf8d79d2",
+    "stageB_edge_edit_delta_t": "dd95b841200c733bb30f01c0d1a2f148499d99ed4bc3ebe820c2acf351088dc2",
+    "stageB_h_t": "6943515c2ba48c1b122b466eb6c6433af4e50def15798311cff061c1b3e7df70",
+    "stageB_log_evidence_tk": "5ac8b037b9194b9fbe03aa3725b9188f78da5b18e39df2e0ca358230a4e2fee0",
+    "stageB_precision_scale": "08d799e6983eab0ec7ed2f6ed39e727cd6e38bcc0be6a739c15ee0413e11cad4",
+    "stageB_winner_tn": "2216bb8d72c59afc06da692231945b94410724cc61556cb83b20c5dadc4f2713"
   },
   "meanmatched_structure": {
     "chance": "452c4552a5cb0eedca463b29a5011fbba5b57a0d606dd7c8f40784604c239f38",

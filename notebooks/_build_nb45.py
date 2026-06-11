@@ -70,18 +70,15 @@ ROOT = ROOT if (ROOT / 'scripts').exists() else ROOT.parent
 sys.path.insert(0, str(ROOT))
 import numpy as np
 
-# Import ALL the script helpers up front. Each script calls matplotlib.use('Agg') at import
-# time (they render headless), so we re-assert %matplotlib inline AFTER these imports and do
-# no further script imports below -- otherwise a later import would silently switch us back to
-# Agg and the figures would not render in the notebook.
-from scripts.run_cosmology_twofield import (
-    build_dark_energy_dag, conservatism, conviction, utility_vector, schur_banana,
-    propagation_operator, draw_dag, _short, NODES)
-from scripts.run_cosmology_tracking import COMM_LABELS, HOMES, EPOCH_NAMES, T1, T2
-from scripts.run_cosmology_regrowth import TRIGGER
-
 %matplotlib inline
 import matplotlib.pyplot as plt
+
+# Model libraries (pure compute; importing them never flips the matplotlib backend).
+from src.structural.models.cosmology_twofield import (
+    build_dark_energy_dag, conservatism, conviction, utility_vector, schur_banana,
+    propagation_operator, draw_dag, _short, NODES)
+from src.structural.models.cosmology import COMM_LABELS, HOMES, EPOCH_NAMES, T1, T2
+from src.structural.models.cosmology_regrowth import TRIGGER
 from matplotlib.patches import Ellipse
 plt.rcParams.update({'figure.dpi': 120, 'axes.grid': True, 'grid.alpha': 0.3})
 

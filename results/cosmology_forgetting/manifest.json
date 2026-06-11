@@ -1,0 +1,61 @@
+{
+  "experiment": "cosmology_forgetting",
+  "git": {
+    "sha": "e851d11a877251439b5b1302dcfaef7e3b811887",
+    "branch": "production/structural-minimal",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-06-10T10:50:08+00:00",
+  "seeds": [],
+  "params": {
+    "OMEGAS": [
+      1.0,
+      0.97,
+      0.93,
+      0.88,
+      0.8,
+      0.7
+    ],
+    "SNAP": 5,
+    "PERSIST_OMEGA": 0.9,
+    "CONV_GRID": [
+      0.0,
+      6.0,
+      15.0,
+      30.0,
+      60.0
+    ]
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.0",
+    "jaxlib": "0.9.0",
+    "numpy": "2.3.4",
+    "equinox": "0.13.6",
+    "networkx": "3.5",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.7"
+  },
+  "outputs": {
+    "simulation_arrays.npz": {
+      "arrays": {
+        "T1": "d6ad3fbc95b4cea9c232bd5afb18d1d1a74cfcb5566125b4e9dbe314be0530c5",
+        "T2": "92ae26277736de6a6283a3a716e05667bfb63acc827f483ef41f64e138a9c1d3",
+        "by_epoch": "8983a7e1117c3cf9c1a299cbf3c693a54e6acf854851c619ad2bd139b0605431",
+        "comm_labels": "c9047d7c6f21a29da6ac0f3b6991733497991dff0e0a1a37676a8367b2f9cf43",
+        "epoch_names": "bb9f01c2bc429484ed41fdb4a11cfd3cb777df2a1dfead576ebb6113c99e3a83",
+        "frac_on_true": "1a23177f1b1167e0ee713ed68456ac577d18e325ae4774ff66f215b83a3decf8",
+        "mean_prec": "c83a3f12a91d9ce787472bf5c8c63342a0a464b1fd28ed4f4d65a688a3645d14",
+        "omegas": "c9c7a53b2a6efe3c3036a1cf5a131e57321660a35b2b10b2c3dc74bd2c85c164",
+        "persist_cons_end": "756adbb2db553e2ccc43f6fc682060c3d2a2d89ee6aa15eb851cccf848636148",
+        "persist_conv": "8644182e9ae22bb34752de8fe76e6df125c0e019e44be404cbd055242ed7e136",
+        "persist_held": "0e07789c8951eb35c75006a450700aa4bd029d738a114a581cb5b532db482eb7",
+        "snap_t": "465178744a5d61f0c936c301c29fd4d2b33f41daf8d37d7a22bf0dd73e430c6e",
+        "true_epoch": "8d57d10793b0e4645a0b53485aec1a73f737cfa876a38e335e27bf3bd36897b8"
+      }
+    },
+    "summary.json": "419ce1d355d2291903d50542ef366097ba03f3cefa618068b90f19686db57d11"
+  },
+  "runner_version": 1
+}

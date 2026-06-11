@@ -1,0 +1,74 @@
+{
+  "experiment": "landscape_two_stage",
+  "git": {
+    "sha": "e851d11a877251439b5b1302dcfaef7e3b811887",
+    "branch": "production/structural-minimal",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-06-10T10:32:26+00:00",
+  "seeds": [
+    0
+  ],
+  "params": {
+    "N_AGENTS": 240,
+    "N_STEPS": 80,
+    "SEED": 0,
+    "STRUCTURE_PULL": 0.18,
+    "EDGE_THRESHOLD": 0.18,
+    "STAGES": [
+      {
+        "tag": "landscape_stageA_utility_dominant",
+        "prefix": "stageA",
+        "sigma_obs": 0.45,
+        "beta_u": 4.0,
+        "true_mean": "fixed"
+      },
+      {
+        "tag": "landscape_stageB_subtle_high_noise",
+        "prefix": "stageB",
+        "sigma_obs": 2.0,
+        "beta_u": 1.0,
+        "true_mean": "subtle_drift"
+      }
+    ]
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.0",
+    "jaxlib": "0.9.0",
+    "numpy": "2.3.4",
+    "equinox": "0.13.6",
+    "networkx": "3.5",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.7"
+  },
+  "outputs": {
+    "simulation_arrays.npz": {
+      "arrays": {
+        "stageA_Pi_t": "b3470484f92d672142a27fe4ab0826a274da4e5a27d5ef22e3331543dd74d497",
+        "stageA_accepted_t": "00e4131a2b16ab2fe89664032424f9205848feddf6587d81f6d7fb764ead0af1",
+        "stageA_cluster_membership": "388792f7024b85e796ec6b655c747776519f3b3845fa58e3cae8ac11655d9281",
+        "stageA_community_distance_cc": "02b6251c765e1eb90da138e44a299254bc8422e0809afa84d2b370eb261dad20",
+        "stageA_edge_count_t": "eae5545ef5046643f23b5464074e7fe07616772a9b76dad7948fb50abf8d79d2",
+        "stageA_edge_edit_delta_t": "dd95b841200c733bb30f01c0d1a2f148499d99ed4bc3ebe820c2acf351088dc2",
+        "stageA_h_t": "1196168184faf4c0662814b2100ec10099df6a3fb21edd243dc19a975cbb086c",
+        "stageA_log_evidence_tk": "bd5ab723d0f4b804e8483352a11564f111dc58b2df10457f4f9bce47c268ca89",
+        "stageA_precision_scale": "08d799e6983eab0ec7ed2f6ed39e727cd6e38bcc0be6a739c15ee0413e11cad4",
+        "stageA_winner_tn": "f561421baf1c66e1cd48996351d35a7feda8428342bdc77b14f8da32aac23066",
+        "stageB_Pi_t": "2094db4c0d96d4f13a3fcfcd6d9487cdd87f95293becac54708f92c60d7eb5a4",
+        "stageB_accepted_t": "3280718b4b1cd13343d65255ac5af4cb50abd120091fe2ab4a171562c6b2714e",
+        "stageB_cluster_membership": "388792f7024b85e796ec6b655c747776519f3b3845fa58e3cae8ac11655d9281",
+        "stageB_community_distance_cc": "574727fd3de900ab57e106dcd0c0dc6597ef12fd1e9c8297020823b16d1d3701",
+        "stageB_edge_count_t": "eae5545ef5046643f23b5464074e7fe07616772a9b76dad7948fb50abf8d79d2",
+        "stageB_edge_edit_delta_t": "dd95b841200c733bb30f01c0d1a2f148499d99ed4bc3ebe820c2acf351088dc2",
+        "stageB_h_t": "6943515c2ba48c1b122b466eb6c6433af4e50def15798311cff061c1b3e7df70",
+        "stageB_log_evidence_tk": "5ac8b037b9194b9fbe03aa3725b9188f78da5b18e39df2e0ca358230a4e2fee0",
+        "stageB_precision_scale": "08d799e6983eab0ec7ed2f6ed39e727cd6e38bcc0be6a739c15ee0413e11cad4",
+        "stageB_winner_tn": "2216bb8d72c59afc06da692231945b94410724cc61556cb83b20c5dadc4f2713"
+      }
+    },
+    "summary.json": "772818dbee26d61493cdbd09de145989a063dc38d7c9dd681f40e86f12eacf79"
+  },
+  "runner_version": 1
+}

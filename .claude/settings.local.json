@@ -23,7 +23,14 @@
       "Bash(awk '{print $6,$7,$8,$9}')",
       "Bash(../.venv/Scripts/python.exe _build_nb36.py)",
       "Bash(../.venv/Scripts/python.exe -m jupyter nbconvert --to notebook --execute --inplace 36_structure_learning_showcase.ipynb)",
-      "Bash(PYTHONIOENCODING=utf-8 ../.venv/Scripts/python.exe -c ' *)"
+      "Bash(PYTHONIOENCODING=utf-8 ../.venv/Scripts/python.exe -c ' *)",
+      "Bash(grep -n \"bibitem\\\\|\\\\\\\\\\\\\\\\bibliography\\\\|thebibliography\\\\|\\\\\\\\\\\\\\\\cite{\" \"C:\\\\GitHub\\\\Paradigm_Shift_Act_Inf\\\\paper\\\\changing_networked_mind.tex\")",
+      "Bash(latexmk -pdf -interaction=nonstopmode changing_networked_mind.tex)",
+      "Bash(pdfinfo changing_networked_mind.pdf)",
+      "Bash(cp \"C:/GitHub/Paradigm_Shift_Act_Inf/results/kuhn_sweep/figB_lockin_boundary.png\" \"C:/GitHub/Paradigm_Shift_Act_Inf/paper/figures/fig_kuhn_lockin_boundary.png\")",
+      "Bash(cp \"C:/GitHub/Paradigm_Shift_Act_Inf/results/kuhn_sweep/figC_waiting_time.png\" \"C:/GitHub/Paradigm_Shift_Act_Inf/paper/figures/fig_kuhn_waiting_time.png\")",
+      "Bash(pip list *)",
+      "Bash(grep '^[+-]\\\\\\\\\\\\\\\\section')"
     ]
   }
 }

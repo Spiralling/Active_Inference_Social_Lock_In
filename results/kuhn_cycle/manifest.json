@@ -1,0 +1,82 @@
+{
+  "experiment": "kuhn_cycle",
+  "git": {
+    "sha": "e851d11a877251439b5b1302dcfaef7e3b811887",
+    "branch": "production/structural-minimal",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-06-10T18:12:42+00:00",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "params": {
+    "N_AGENTS": 24,
+    "N_STEPS": 160,
+    "T1": 60,
+    "OMEGA": 0.9,
+    "CORE_STIFFNESS": 200.0,
+    "RELEASE": 0.005,
+    "THETA_STAR": 100.0,
+    "GATES": [
+      0.0,
+      0.25,
+      0.5,
+      0.75,
+      1.0,
+      1.5,
+      2.0,
+      3.0
+    ],
+    "THETAS": [
+      40.0,
+      70.0,
+      100.0,
+      140.0,
+      Infinity
+    ],
+    "SEEDS": [
+      0,
+      1,
+      2
+    ]
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.0",
+    "jaxlib": "0.9.0",
+    "numpy": "2.3.4",
+    "equinox": "0.13.6",
+    "networkx": "3.5",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.7"
+  },
+  "outputs": {
+    "simulation_arrays.npz": {
+      "arrays": {
+        "A_raw_tn": "867ff223a1a786f2aa9a3e28dbc796edd42418b35036836004cb40200b4f0cf3",
+        "A_tn": "867ff223a1a786f2aa9a3e28dbc796edd42418b35036836004cb40200b4f0cf3",
+        "belt_prog_t": "c7fe46c37a10176ea3abf6950e3b4ab593bc59999af4dbe6f9de5f1b6a862253",
+        "core_prog_t": "2c3e8bddbc578de307b979c5795f57c7762564b76e731898565cfb3eb8a14046",
+        "crisis_step": "889bad453348774a7227c89a95c316fd67b6eecc0420f4b4c6b692ac6c3d5306",
+        "ctrl_belt_prog_t": "e2814a1d8fc46a63485489dad42bab0a158c6760bf6fd7545edafbc557cb0911",
+        "ctrl_core_prog_t": "162c061acd4d0894d2e96714e3d088619a088b924b60c7514989708e68c74b3a",
+        "gamma_t_lock": "4597be372ba35023efdcf171f0a0f941600e73610707c90c04af026765f3bd46",
+        "lock_A_raw_tn": "89c6351e45d2035baf953bbcf3188b97b41f5cf50e1a39a5be97406345a08dba",
+        "lock_A_tn": "cb6ac4e9dc500a7e6bc3cd3a57e111f723a624094a5ed9d7d04e92e72e660120",
+        "lock_core_prog_t": "a2ece77c0d77f7f842ba3894b32ebd47da23f1d4957c4c87149b53fe1fec5b42",
+        "rev_frac": "a6a55fa7868b7d2a8d928933ba51b8543ebb1b17d3808ea9de5e27e31286d7e3",
+        "snap_t": "b571029c6081bd6dd99d7da408f59d20b24dcb791595fe1781aa8183beed3dc3",
+        "sweep_core_final": "23796a20ad57641e7ce58aa174527507855a9cc7f8fffd166e12874d890a77ac",
+        "sweep_g": "fc4339eebdaa1d781452f2e8f5d7c5d53d115f701e557f8bea6549646d4bb070",
+        "sweep_gates": "19815733fe3afc5847b71a6162ef6388284f2117f6270d9df3da319591dbafc3",
+        "sweep_theta": "f442b489ea69ba6ec82121a84552beae179c6497cf381b38c819e453f3d7ec8c",
+        "sweep_thetas": "4707634803ba7642e980e3eb11596607c3db22e0c31d9c69e92fff7da1680839"
+      }
+    },
+    "summary.json": "514f3b1765ae1ebc749bd5c3f87685cf1a5b036ffc9a7b208c775f42d80ed558"
+  },
+  "runner_version": 1
+}

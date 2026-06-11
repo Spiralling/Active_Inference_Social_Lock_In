@@ -1,0 +1,23 @@
+{
+  "config": {
+    "n_agents": 240,
+    "n_steps": 80,
+    "seed": 0,
+    "sigma_obs": 0.45,
+    "beta_u": 0.65,
+    "structure_pull": 0.18,
+    "edge_threshold": 0.18
+  },
+  "hypothesis_names": [
+    "dark_matter",
+    "scale_variant_laws",
+    "modified_gravity"
+  ],
+  "final_shares": [
+    0.9958333333333333,
+    0.0,
+    0.004166666666666667
+  ],
+  "final_edge_count": 5,
+  "average_switch_rate": 0.0008438818565400845
+}

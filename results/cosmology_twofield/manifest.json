@@ -1,0 +1,38 @@
+{
+  "experiment": "cosmology_twofield",
+  "git": {
+    "sha": "e851d11a877251439b5b1302dcfaef7e3b811887",
+    "branch": "production/structural-minimal",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-06-10T10:21:24+00:00",
+  "seeds": [],
+  "params": {},
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.0",
+    "jaxlib": "0.9.0",
+    "numpy": "2.3.4",
+    "equinox": "0.13.6",
+    "networkx": "3.5",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.7"
+  },
+  "outputs": {
+    "simulation_arrays.npz": {
+      "arrays": {
+        "B": "014679685e650589d39ffa790ee4a42290176bf0b06254b1b36f002ad1c4565b",
+        "Pi": "3208f594bdf60f6e71c839f28808fd0d33981cd52a6250cc8f688e05e579ebc2",
+        "U": "f2ef95c85315975e7263e1b870adc411284f9d5c79c76dc6640e00bd339c003d",
+        "kappa": "bb49e868df7cb0d9b63a8da09dfb4213a789a740565e8565ea383b80d0f96a91",
+        "names": "e6317d0324da642949d5a0de9f18251757dbf5bb7be8aee34d434ffa911b39c2",
+        "post_cov": "f2cacccd556b80c37b44bce7b942f962a7cb3c81d0228806439c164bd2925574",
+        "prior_cov": "cc40cffb566ed97d0f05ab548604f2807aa9a69967b269196292893676c8c08a",
+        "utility": "240f072c7b2ae0a4603302cdb6567f979d02021346ae536c661cd85755cda731"
+      }
+    },
+    "summary.json": "57bde9d759972848596eb64bf2aae5fd345794bcc9a19172ad2ceb6bbe769eb0"
+  },
+  "runner_version": 1
+}

@@ -1,0 +1,80 @@
+{
+  "experiment": "kuhn_phlogiston",
+  "git": {
+    "sha": "e851d11a877251439b5b1302dcfaef7e3b811887",
+    "branch": "production/structural-minimal",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-06-10T20:52:33+00:00",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "params": {
+    "N_AGENTS": 80,
+    "T_SHIFT": 40,
+    "N_STEPS": 180,
+    "OMEGA": 0.97,
+    "SIGMA_O": 0.5,
+    "LAM_OPEN": 0.1,
+    "LAM_DOGMA": 0.35,
+    "GATE_STRENGTH": 1.0,
+    "S_OPEN": 0.3,
+    "S_DOGMA": 3.0,
+    "TRIGGER": 1.5,
+    "PROPOSAL_RATE": 0.08,
+    "INTERS": [
+      0.0,
+      0.01,
+      0.05,
+      0.2
+    ],
+    "S_DOGMAS": [
+      1.0,
+      3.0,
+      6.0
+    ],
+    "SEEDS": [
+      0,
+      1,
+      2
+    ]
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.0",
+    "jaxlib": "0.9.0",
+    "numpy": "2.3.4",
+    "equinox": "0.13.6",
+    "networkx": "3.5",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.7"
+  },
+  "outputs": {
+    "simulation_arrays.npz": {
+      "arrays": {
+        "community": "f24ab393d867daf4a9131a42c28e760a528fa4ebe901d332446850464524fe46",
+        "crisis_step": "76365a78f8c94b0c61d67f9cf49217221dbd05c647c9eabc6aa45d4b23f638dd",
+        "dF_belt_tn": "6907f961513cd36fbcbcf271d88bc2687d869890824ccfc3247ecbd571f0462d",
+        "expand_step": "d4ad8aa12ed6f5a2bb72e42d95b10d9891f7abc875ff7566171f610e040b8eb0",
+        "floor_tn": "808e73afe694c419e21bb1c15f39e049b66dfad7dc532187d0fc919060c0d338",
+        "lam": "c08fbdcea47b8861ca4a2c8473c3f23fc8ffc60cce92b4740b49e0c7fdfc39a3",
+        "n_pruned": "107d42b9bd4396e6ebafcae5823960bfc996b2361e4a4a6a2fbff48591ae8e05",
+        "oxy_coupling_tn": "0edad5de3dcc7f6cebf9b70ab61d3d3f0042d53c26ad2b8b8df722434520c339",
+        "oxy_index_sc": "63b93264ae467a4ef3dc5d2c2a569c454e759395fff125467b1e67e1d52f9d5b",
+        "phase_adopt": "0d6d7ae2b46543ef110c31556d37e297f892a8004f6680d407be55a8d6a1835b",
+        "phase_conv": "fcd32480e40a13c268d974ca38a1796c21365b146d59d55e6493c4bc78a906f2",
+        "phase_crisis": "829ab09140ac5236d896aebc74985f9b6f428a4eb4bba6ecaf9f66fd19176b74",
+        "phase_inters": "f3470c5c84be0c33df8644762e530233d88eaf5c08301267b3ad6f3f9deff9f8",
+        "phase_s_dogmas": "7d6704c2e54978a0c5f6bfa1079b95186563c02828f01bb2e830aab6718fa641",
+        "poisson_delays": "4fe2b8c6cf5ec8f0865f14f8cdce1df37f5e1ea0da3f1aaf9755fb3805edb0e0",
+        "snap_t": "7b2e35ad41591a7b41cf39bf71d6c720ef0b71012c9143eb24ac10e73d0f7bb9",
+        "v_e_belt": "9efe824ccfb9d52b96ed145b5c35972b83e32a0c984656ed70a7f7212e1f6d87"
+      }
+    },
+    "summary.json": "516db5391759b92cee6992b394da88c846bb4f905767fc2c281aca96c81a7f6b"
+  },
+  "runner_version": 1
+}

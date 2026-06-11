@@ -1,0 +1,60 @@
+{
+  "experiment": "partial_obs_comms",
+  "git": {
+    "sha": "e851d11a877251439b5b1302dcfaef7e3b811887",
+    "branch": "production/structural-minimal",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-06-10T10:01:32+00:00",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "params": {
+    "N": 90,
+    "OMEGA": 0.9,
+    "P_OBS": [
+      1.0,
+      0.7,
+      0.5,
+      0.33
+    ],
+    "MODES": [
+      "posterior",
+      "bayesnet",
+      "deposit_pool"
+    ],
+    "SEEDS": [
+      0,
+      1,
+      2
+    ],
+    "CONVERGE": 0.6
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.0",
+    "jaxlib": "0.9.0",
+    "numpy": "2.3.4",
+    "equinox": "0.13.6",
+    "networkx": "3.5",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.7"
+  },
+  "outputs": {
+    "simulation_arrays.npz": {
+      "arrays": {
+        "B_disp": "64942d3f601587bfe579a7761655f2d0ce18a10c1b9fadab6bf1a63b7bf62ec5",
+        "diversity": "4c7a702cdda992d6472be2263884078894b9ce751436b802a53d228f8bd43a13",
+        "iso_on_truth": "4769157a1840cbafc3d18ac4a9351ede3a9ed6fa55f3f3d3306d3bf9948d9707",
+        "modes": "80f0fd0a59a0e016092c48868834eb2436c37683005024047c291664f3ee34a4",
+        "on_truth": "cf842fbad6eac36a2bf3031c65a6a7bf2fc6c6b55d0ae950dbcba79a7a3b003c",
+        "p_obs": "65fe36ff6a1d059fbff8b174667d267ef8ff8cd84a719395de3349fb68383a69"
+      }
+    },
+    "summary.json": "71b610526bac04f2ea198c6c24f050ce05f7c21808ca0ac88b1b22fe9674c082"
+  },
+  "runner_version": 1
+}

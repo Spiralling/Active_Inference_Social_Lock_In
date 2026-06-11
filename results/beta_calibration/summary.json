@@ -1,0 +1,18 @@
+{
+  "stageA": {
+    "beta_equal_t0": 1.9701750625677241,
+    "beta_equal_tfinal": 2.2607779123128036,
+    "beta_equal_mean": 2.115476487440264,
+    "beta_utility_dominant": 6.346429462320792,
+    "beta_balanced": 2.115476487440264,
+    "beta_fit_dominant": 0.6346429462320792
+  },
+  "stageB": {
+    "beta_equal_t0": 1.3521798454520406,
+    "beta_equal_tfinal": 1.3936455439235613,
+    "beta_equal_mean": 1.372912694687801,
+    "beta_utility_dominant": 4.118738084063403,
+    "beta_balanced": 1.372912694687801,
+    "beta_fit_dominant": 0.4118738084063403
+  }
+}

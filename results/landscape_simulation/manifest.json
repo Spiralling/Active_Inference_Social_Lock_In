@@ -1,0 +1,50 @@
+{
+  "experiment": "landscape_simulation",
+  "git": {
+    "sha": "e851d11a877251439b5b1302dcfaef7e3b811887",
+    "branch": "production/structural-minimal",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-06-10T10:32:19+00:00",
+  "seeds": [
+    0
+  ],
+  "params": {
+    "N_AGENTS": 240,
+    "N_STEPS": 80,
+    "SEED": 0,
+    "SIGMA_OBS": 0.45,
+    "BETA_U": 0.65,
+    "STRUCTURE_PULL": 0.18,
+    "EDGE_THRESHOLD": 0.18
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.0",
+    "jaxlib": "0.9.0",
+    "numpy": "2.3.4",
+    "equinox": "0.13.6",
+    "networkx": "3.5",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.7"
+  },
+  "outputs": {
+    "simulation_arrays.npz": {
+      "arrays": {
+        "Pi_t": "ef1742bb28c9adb10dddf9e343015acdb55a226bec549bf2184a96fc6aeff472",
+        "accepted_t": "07c55b64a55b8d4fc49256c17120afbc70902d13e09597d57e5f5cb963df0dc4",
+        "cluster_membership": "388792f7024b85e796ec6b655c747776519f3b3845fa58e3cae8ac11655d9281",
+        "community_distance_cc": "093e2631188319e1a33b4407ab4519f5a15b11d0420fe8b26d4206fd1236755e",
+        "edge_count_t": "eae5545ef5046643f23b5464074e7fe07616772a9b76dad7948fb50abf8d79d2",
+        "edge_edit_delta_t": "dd95b841200c733bb30f01c0d1a2f148499d99ed4bc3ebe820c2acf351088dc2",
+        "h_t": "a31e0d8a8bb3111ca00b4eb85440a1c673ddf12475b7157bf507492911f8b4b6",
+        "log_evidence_tk": "ff3f5b36c913ec9507e1d2514d7a690685ad16b0fe2939859ed0c71cebd51115",
+        "precision_scale": "08d799e6983eab0ec7ed2f6ed39e727cd6e38bcc0be6a739c15ee0413e11cad4",
+        "winner_tn": "7c3ab0f1b01e1856fb630f5a1fc7341be59042ed2ae490f2f86f8fd987df7b8a"
+      }
+    },
+    "summary.json": "af9762b5fad68b4777aff903aefe2625846c052e0a851d4150a0b6456c117200"
+  },
+  "runner_version": 1
+}

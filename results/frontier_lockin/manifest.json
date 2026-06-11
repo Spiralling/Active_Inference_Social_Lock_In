@@ -1,0 +1,64 @@
+{
+  "experiment": "frontier_lockin",
+  "git": {
+    "sha": "e851d11a877251439b5b1302dcfaef7e3b811887",
+    "branch": "production/structural-minimal",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-06-10T16:43:26+00:00",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "params": {
+    "N_COMMUNITIES": 2,
+    "INIT_BIAS_DEPTH": 3,
+    "BUDGET": 16,
+    "OMEGA": 0.9,
+    "N_STEPS": 140,
+    "SEED": 0,
+    "T_CHANGE": 40,
+    "BAND_AMP": 3.0,
+    "VALUE_BETA": 5.0,
+    "VALUE_LAMBDAS": [
+      0.0,
+      2.0,
+      8.0
+    ],
+    "OMEGAS": [
+      0.8,
+      0.9,
+      0.97
+    ],
+    "RUN_SEEDS": [
+      0,
+      1,
+      2
+    ]
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.0",
+    "jaxlib": "0.9.0",
+    "numpy": "2.3.4",
+    "equinox": "0.13.6",
+    "networkx": "3.5",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.7"
+  },
+  "outputs": {
+    "simulation_arrays.npz": {
+      "arrays": {
+        "cold_block_size": "f7de727be61fefae3c297e7f29c45dc975ca10d4c31470120549a67b57f203c7",
+        "lockin": "ce324adaa5c1941b4bd1fdd71b9d658d86d273b2d54b6cd8cc7480f075d545f3",
+        "omegas": "ed57dd992b2e2c53e7c85108203e5d610d9cd4c2c9c4660ef7e2fe31d95310d7",
+        "run_seeds": "129d7c8430eea69d8dc239e7cde4a4574ff8ecb9256150f828ec1d68afb5cddc",
+        "value_lambdas": "42e07721f2cc5d1e098d7e15a963b8891cc3575f41c588c71d824bb1d460d738"
+      }
+    },
+    "summary.json": "ff4bf0042487175002ffe51d6159776384d9a08ae754a5f62ab16669e7b27744"
+  },
+  "runner_version": 1
+}

@@ -1,0 +1,50 @@
+{
+  "experiment": "bayesnet_comms",
+  "git": {
+    "sha": "e851d11a877251439b5b1302dcfaef7e3b811887",
+    "branch": "production/structural-minimal",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-06-10T10:01:16+00:00",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "params": {
+    "OMEGA": 0.9,
+    "SEEDS": [
+      0,
+      1,
+      2
+    ],
+    "MODES": [
+      "posterior",
+      "bayesnet"
+    ]
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.0",
+    "jaxlib": "0.9.0",
+    "numpy": "2.3.4",
+    "equinox": "0.13.6",
+    "networkx": "3.5",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.7"
+  },
+  "outputs": {
+    "simulation_arrays.npz": {
+      "arrays": {
+        "div_bayesnet": "a91217408018761cf6aded0a013b3bd5fdc4c1dcd95a8b6d336199fae10ff044",
+        "div_posterior": "9fd67643320d122501c686b48f3390b4ce6883da1fd01eaadb8d75b66fc6b1b9",
+        "fot_bayesnet": "bdce3ed17c4f0a5f4080f24510b8b88e76036c946b4069a30c263cacbc19115b",
+        "fot_posterior": "bdce3ed17c4f0a5f4080f24510b8b88e76036c946b4069a30c263cacbc19115b",
+        "snap_t": "465178744a5d61f0c936c301c29fd4d2b33f41daf8d37d7a22bf0dd73e430c6e"
+      }
+    },
+    "summary.json": "771d11f1b1a23ebfa7d07afd305a1fe8d9ffb35cf8fc74be970d017f207f7536"
+  },
+  "runner_version": 1
+}

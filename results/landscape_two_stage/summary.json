@@ -1,0 +1,62 @@
+{
+  "stageA": {
+    "config": {
+      "n_agents": 240,
+      "n_steps": 80,
+      "seed": 0,
+      "sigma_obs": 0.45,
+      "beta_u": 4.0,
+      "structure_pull": 0.18,
+      "edge_threshold": 0.18,
+      "stage_tag": "landscape_stageA_utility_dominant"
+    },
+    "hypothesis_names": [
+      "dark_matter",
+      "scale_variant_laws",
+      "modified_gravity"
+    ],
+    "final_shares": [
+      0.5375,
+      0.24166666666666667,
+      0.22083333333333333
+    ],
+    "final_edge_count": 5,
+    "average_switch_rate": 0.0,
+    "beta_calibration": {
+      "equal_mean": 2.115476487440264,
+      "utility_dominant": 6.346429462320792,
+      "balanced": 2.115476487440264,
+      "fit_dominant": 0.6346429462320792
+    }
+  },
+  "stageB": {
+    "config": {
+      "n_agents": 240,
+      "n_steps": 80,
+      "seed": 0,
+      "sigma_obs": 2.0,
+      "beta_u": 1.0,
+      "structure_pull": 0.18,
+      "edge_threshold": 0.18,
+      "stage_tag": "landscape_stageB_subtle_high_noise"
+    },
+    "hypothesis_names": [
+      "dark_matter",
+      "scale_variant_laws",
+      "modified_gravity"
+    ],
+    "final_shares": [
+      0.5375,
+      0.24166666666666667,
+      0.22083333333333333
+    ],
+    "final_edge_count": 5,
+    "average_switch_rate": 0.004008438818565401,
+    "beta_calibration": {
+      "equal_mean": 1.372912694687801,
+      "utility_dominant": 4.118738084063403,
+      "balanced": 1.372912694687801,
+      "fit_dominant": 0.4118738084063403
+    }
+  }
+}

@@ -69,7 +69,7 @@ plt.rcParams.update({'figure.dpi': 120, 'axes.grid': True, 'grid.alpha': 0.3})
 
 from src.structural import graphs, shells
 from src.structural.phlogiston import StructuralConfig
-from scripts.run_multiagent_topology import (
+from src.structural.models.phlogiston import (
     run_world, build_substrate, topology_panel, bridge_sweep, placement_contrast,
     CALIB, BELT)
 

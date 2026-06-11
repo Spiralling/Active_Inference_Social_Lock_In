@@ -84,11 +84,11 @@ plt.rcParams.update({'figure.dpi': 120, 'axes.grid': True, 'grid.alpha': 0.3})
 
 from src.structural import scenarios as sc
 # Lens B helpers (the simulation + readouts live in the re-runnable script)
-from scripts.run_cosmology_tracking import (
+from src.structural.models.cosmology import (
     run_cell, held_by_community, CELLS, COMM_LABELS, HOMES, EPOCH_NAMES,
     T1, T2, N_STEPS, CONVICTION_LEVEL, INTER_CONNECTED)
 # Lens A helper
-from scripts import run_cosmology_regrowth as la
+from src.structural.models import cosmology_regrowth as la
 
 RESULTS = ROOT / 'results' / 'cosmology_tracking'
 RESULTS.mkdir(parents=True, exist_ok=True)

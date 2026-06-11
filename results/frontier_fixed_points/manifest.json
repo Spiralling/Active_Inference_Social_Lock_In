@@ -1,0 +1,56 @@
+{
+  "experiment": "frontier_fixed_points",
+  "git": {
+    "sha": "e851d11a877251439b5b1302dcfaef7e3b811887",
+    "branch": "production/structural-minimal",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-06-10T16:43:57+00:00",
+  "seeds": [
+    0
+  ],
+  "params": {
+    "N_COMMUNITIES": 4,
+    "INIT_BIAS_DEPTH": 3,
+    "BUDGET": 16,
+    "OMEGA": 0.9,
+    "N_STEPS": 80,
+    "SEED": 0
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.0",
+    "jaxlib": "0.9.0",
+    "numpy": "2.3.4",
+    "equinox": "0.13.6",
+    "networkx": "3.5",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.7"
+  },
+  "outputs": {
+    "simulation_arrays.npz": {
+      "arrays": {
+        "D_off": "77e3b987b7b563b1c42f57aa8a18e76e7be3a2e86129d2ef695280e8769283f6",
+        "D_on": "1808803cbb94f3c11134b9cb50513d9277f40e8bff4611638e3f11cacc8d63d0",
+        "leaf_order": "5e6580aeb2e4542e96e4fcb29db66e719e886ac8980f53340f5fa448efcda341",
+        "n_fine": "92ae26277736de6a6283a3a716e05667bfb63acc827f483ef41f64e138a9c1d3",
+        "off_cut_size_tc": "e58c5c056f9e2cc5c15d3f60fd8904770ffe8d95f02451c90a56622464c68a63",
+        "off_final_assignment_cf": "38865723a6598493a930c8c799b7c12afab58b9e2cd0e56a2ee608164663e110",
+        "off_mean_pdist_t": "3889b1d09a84f881dddae2d36a5c4c10a1d7c287120df454bc30513c8cccaee9",
+        "off_recon_error_tc": "75add26e6d457a8589b8f66c731653595cbd07edfab41d24bd30328c0123012a",
+        "off_unlocked_frac_tc": "56855ee20f7c07cb2d0f2f2d38fead18e7850d005d8cdbfa449b88f454bee451",
+        "on_cut_size_tc": "f648fcbe63af373e29bc1fa8efc380e514858dbfb84c151eba49e8f54ba78d98",
+        "on_final_assignment_cf": "8beb9ece5b137d80b5267302dddbbdfda5edef43d56f7476c95a270ea069e50b",
+        "on_mean_pdist_t": "0f2bdd2659f20c092fcc3a8436397b6cbdf368c2554bd750aee2f2a66686418a",
+        "on_recon_error_tc": "76ec844da676aaf7aefa90cf00dd687f9392d4fff060f56489f45955255cbb30",
+        "on_unlocked_frac_tc": "3c591d751734bc3618ce7c9108e754844ff613d68fcca9e382f5e595ca08b4d1",
+        "pocket_nodes": "d58684d47b925ff50dded03647cd9fcb36d082dd62fefbd2593a8dc140397fca",
+        "pocket_sizes_off": "b4b3e2263972586eb0167e749c2a5927d6950a4c87bd3ebf94a1aa77558244aa",
+        "pocket_sizes_on": "4a3e8dd927b3e9ca52fe3143afd82a8ab7023fa987e3ee4dd3516d859b144631"
+      }
+    },
+    "summary.json": "320f803a9ac116082d348bf42a63f363c0dcfaa870e13ca0415a8f2f413df6f5"
+  },
+  "runner_version": 1
+}

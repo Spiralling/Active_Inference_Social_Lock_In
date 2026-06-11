@@ -172,10 +172,14 @@ def _deposit_all(H, phi, keys, sigma_o, w_obs):
     """One round of evidence for every agent (vectorised): agent ``i`` draws
     ``o_i = H phi + eps`` (own noise) and deposits ``J_i = H^T diag(w_i) H / sigma^2``,
     with ``w_i`` down-weighting the disconfirming rows by its self-censorship.
-    ``keys`` (N,2), ``w_obs`` (N,m). Returns ``(J_all, j_all)`` (N,d,d),(N,d)."""
+    ``keys`` (N,2), ``w_obs`` (N,m). Returns ``(J_all, j_all, o_all)``
+    (N,d,d),(N,d),(N,m) -- the raw observations are returned so host-side read-outs
+    (e.g. an anomaly accumulator) can see what the agents saw; the RNG draws are
+    unchanged, so dynamics are byte-identical to the two-output version."""
     def one(key, w):
         o = sample_o(H, phi, sigma_o, key)
-        return fisher_deposit_weighted(H, o, sigma_o, w)
+        J, j = fisher_deposit_weighted(H, o, sigma_o, w)
+        return J, j, o
     return jax.vmap(one)(keys, w_obs)
 
 
@@ -248,6 +252,7 @@ def run_simulation(scenario: Scenario, graph: graphs.Graph, spec: AgentSpec, *,
                    forgetting: float = 1.0,
                    endogenous_gamma: bool = False, gate_strength: float = 1.0,
                    w_floor: float = 0.0, deposit_gate: jax.Array | None = None,
+                   host_hook: Callable | None = None,
                    snapshot_every: int = 5, seed: int = 0) -> dict:
     """Simulate ``N = graph.n`` agents pooling precision over ``graph`` in ``scenario``'s
     world, reading out the conviction-gated structural prune per agent each snapshot.
@@ -259,6 +264,13 @@ def run_simulation(scenario: Scenario, graph: graphs.Graph, spec: AgentSpec, *,
     is a *read-out* of where each fused agent lands -- it never mutates the net -- re-armed
     against the *current epoch's* reference prior so "structure that fit epoch 0 but not
     epoch 1" reads as stale.
+
+    ``host_hook`` (optional): called once per step AFTER fuse/observe/tilt and BEFORE the
+    snapshot, as ``host_hook(t, Pi, h, Pi_prior, h_prior, w_obs, o)`` with numpy arrays
+    (``o`` (N,m) = this step's raw observations). It may return a dict replacing any of
+    ``{"Pi", "h", "Pi_prior", "h_prior"}`` -- e.g. an endogenous-crisis mechanism that
+    releases the forgetting anchor's core precision when an anomaly accumulator crosses a
+    threshold. ``None`` (default) keeps the loop host-sync-free and byte-identical.
 
     Returns a dict of host arrays (snapshots every ``snapshot_every`` steps + the final step);
     see the keys at the bottom. ``snap_Pi`` / ``snap_h`` carry the full per-agent nets so the
@@ -342,7 +354,7 @@ def run_simulation(scenario: Scenario, graph: graphs.Graph, spec: AgentSpec, *,
             w_obs = w_obs_base.at[:, disc_idx].set(w_disc)
         key, sk = jax.random.split(key)
         keys = jax.random.split(sk, N)
-        J_all, j_all = _deposit_all(H, phi, keys, sigma_o, w_obs)
+        J_all, j_all, o_all = _deposit_all(H, phi, keys, sigma_o, w_obs)
         if gate_sqrt is not None:                # conservatism gates the revision rate (E1)
             J_all = gate_sqrt[None, :, None] * J_all * gate_sqrt[None, None, :]
             j_all = gate_sqrt[None, :] * j_all
@@ -350,6 +362,14 @@ def run_simulation(scenario: Scenario, graph: graphs.Graph, spec: AgentSpec, *,
         if tilt is not None:                            # the conviction lever (off by default)
             U = conviction_field(Pi, h, scenario.names, u_agent, scenario.conviction_alpha)
             h = h + tilt[:, None] * U
+        if host_hook is not None:                # host-side per-step logic (e.g. crisis)
+            upd = host_hook(t, np.asarray(Pi), np.asarray(h), np.asarray(Pi_prior),
+                            np.asarray(h_prior), np.asarray(w_obs), np.asarray(o_all))
+            if upd:
+                Pi = jnp.asarray(upd.get("Pi", Pi))
+                h = jnp.asarray(upd.get("h", h))
+                Pi_prior = jnp.asarray(upd.get("Pi_prior", Pi_prior))
+                h_prior = jnp.asarray(upd.get("h_prior", h_prior))
         if (t % snapshot_every == 0) or (t == n_steps - 1):
             last_dF, last_pruned = snapshot(t)
 

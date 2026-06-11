@@ -1,0 +1,66 @@
+{
+  "experiment": "cosmology_sweeps",
+  "git": {
+    "sha": "e851d11a877251439b5b1302dcfaef7e3b811887",
+    "branch": "production/structural-minimal",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-06-10T09:55:02+00:00",
+  "seeds": [
+    0,
+    1
+  ],
+  "params": {
+    "OMEGA": 0.9,
+    "SEEDS": [
+      0,
+      1
+    ],
+    "INTERS": [
+      0.0,
+      0.01,
+      0.03,
+      0.08,
+      0.2
+    ],
+    "PRECS": [
+      0.5,
+      1.0,
+      2.0,
+      4.0,
+      8.0
+    ],
+    "FUSE_MODES": [
+      "posterior",
+      "deposit_pool",
+      "deposit_keep"
+    ]
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.0",
+    "jaxlib": "0.9.0",
+    "numpy": "2.3.4",
+    "equinox": "0.13.6",
+    "networkx": "3.5",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.7"
+  },
+  "outputs": {
+    "simulation_arrays.npz": {
+      "arrays": {
+        "e3_delay": "bba4deda480ab9268ee390614f6e1f9a76476a168889f3e4bb12c52c8ffa1d67",
+        "e3_div": "aa78bc287164c05dfdeda7b30e4adcd96e096f2fe8db055239c795fd647ff405",
+        "e3_lambda2": "28db17d27bc3af9b073624f574f079e8b0435a61bc12f7944b1f685ae60b89ce",
+        "e4_delay": "bba4deda480ab9268ee390614f6e1f9a76476a168889f3e4bb12c52c8ffa1d67",
+        "e4_prec": "2cbc0490c55c57e7c6d22f407feca82c65ea264d8e88066cb3fa66954ed86dd6",
+        "e5_div": "4a11657549b6a4283b64890b6b078f3b154878b73b0df3430a86a0be102d1b78",
+        "e5_modes": "8c23254ccf1f0820d3aac4babab06e3dcfddd41448627e0e7f70d8a335541176",
+        "e5_track": "195a4091fa813370f7bcc746cb7059010f0246e047f573936d0b6f152a85bb6f"
+      }
+    },
+    "summary.json": "2786064a270c66fb68d046312a0ad5165ef1b06259d2b17188d280bb82922b10"
+  },
+  "runner_version": 1
+}

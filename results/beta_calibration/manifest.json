@@ -1,0 +1,56 @@
+{
+  "experiment": "beta_calibration",
+  "git": {
+    "sha": "e851d11a877251439b5b1302dcfaef7e3b811887",
+    "branch": "production/structural-minimal",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-06-10T10:32:29+00:00",
+  "seeds": [
+    0
+  ],
+  "params": {
+    "N_AGENTS": 240,
+    "N_STEPS": 80,
+    "SEED": 0,
+    "STRUCTURE_PULL": 0.18,
+    "STAGES": [
+      {
+        "key": "stageA",
+        "tag": "landscape_stageA_utility_dominant",
+        "sigma_obs": 0.45,
+        "beta_u": 4.0,
+        "true_mean": "fixed"
+      },
+      {
+        "key": "stageB",
+        "tag": "landscape_stageB_subtle_high_noise",
+        "sigma_obs": 2.0,
+        "beta_u": 1.0,
+        "true_mean": "subtle_drift"
+      }
+    ]
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.0",
+    "jaxlib": "0.9.0",
+    "numpy": "2.3.4",
+    "equinox": "0.13.6",
+    "networkx": "3.5",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.7"
+  },
+  "outputs": {
+    "simulation_arrays.npz": {
+      "arrays": {
+        "fields": "314935cc0f1be712943426607eae9716a36c88cf40f105a3593b21b7c3a3cdcd",
+        "stageA": "ff445d89bc7be89ca88891434aaf0277434766ac3461ec5cc27f0064ff407bac",
+        "stageB": "6f5e083fe17cd0356fa68a9b7bcdfd212896cb06a541c846c38321bef12c9513"
+      }
+    },
+    "summary.json": "a5716f0a2dbe094bd224b2be6ca7f69e7cd1a64915819174739bd8583034c32d"
+  },
+  "runner_version": 1
+}

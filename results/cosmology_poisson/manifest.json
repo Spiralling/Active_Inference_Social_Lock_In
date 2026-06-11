@@ -1,0 +1,57 @@
+{
+  "experiment": "cosmology_poisson",
+  "git": {
+    "sha": "e851d11a877251439b5b1302dcfaef7e3b811887",
+    "branch": "production/structural-minimal",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-06-10T10:14:35+00:00",
+  "seeds": [],
+  "params": {
+    "RATES": [
+      0.02,
+      0.05,
+      0.1,
+      0.3,
+      1.0
+    ],
+    "N_SEEDS": 40,
+    "COUPLING": 1.6
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.0",
+    "jaxlib": "0.9.0",
+    "numpy": "2.3.4",
+    "equinox": "0.13.6",
+    "networkx": "3.5",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.7"
+  },
+  "outputs": {
+    "simulation_arrays.npz": {
+      "arrays": {
+        "T2": "92ae26277736de6a6283a3a716e05667bfb63acc827f483ef41f64e138a9c1d3",
+        "coupling": "b317ed90290d8063d3ce83180d0e04ce0f14088a2021cd74ff054e231b1081fd",
+        "det_mean_wake": "b76845b5d909e6d2409453fd12ea21b93020d73114b498260b73e0e9f5394dc5",
+        "det_std_wake": "b9fae36783ff66c30ec6d9f5a4275e8796339033fbb74bbf769fc64c605f75b4",
+        "det_wake_times": "af51097c1116bd069e1fc0086f736404e0a9c83c12b13b81548cd9443fea3fdb",
+        "mean_delay": "f7be8ea8c59bce13165b5d584d468bdd179e84495fb0ccb281751a7e47bb1c9b",
+        "mean_wake": "233128f8390f2a82c3d076911c5cc6c50b43bfb083256d8a67e27dad127a959c",
+        "n_seeds": "921e251521982e7d12c337c2f2f0eea4260289d7d807b4a1d1bc916accbe65f7",
+        "n_steps": "ff4425218e60bcb36bf51b7cc6af46c8890670689e921feb941cd41f81c78a48",
+        "rates": "1a236e6656dec3c2f4eaa6b1b4b2510747022b0523d458990c14e2531394efff",
+        "std_wake": "5f7377deac8d17b748043e3e08d5d7921b96c8a96acf3d69a40a336cd771740a",
+        "wake_fraction": "8112b40c4b85d2d6a71b8bedabdeb1debfd4a7f2d5a592d4ea454be6476068b1",
+        "wake_times_0": "f342d581ff2069d557048d52fdfb6b8154e83ee77acab108e08989c50692471f",
+        "wake_times_1": "de01ea7b47f7593c029f33cb76b6d0b27c29da52c6ea5ae7206dc2c2ea2541f5",
+        "wake_times_2": "81550b93d49a5869ab12ec402695cb23409fdb6a666e43b906e4b884ba70464f",
+        "wake_times_3": "2d5e5e074ba6de3deccf17d40b0ef9031d35e61d75ebf8d780ded39d6970e402",
+        "wake_times_4": "75e63cdb0e377bd78ee4fcbb343d860704777176fbd2323fc358c91fc0404b78"
+      }
+    },
+    "summary.json": "5e712f62c9ec7855a4b7acf1e488c5d7706b022f11360e7e30a72e081d8bd8e4"
+  },
+  "runner_version": 1
+}
