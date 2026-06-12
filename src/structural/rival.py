@@ -279,11 +279,14 @@ def init_uniform(cfg: RivalConfig, n: int) -> tuple[jax.Array, jax.Array, jax.Ar
             jnp.zeros((n, K)))
 
 
-def _step(carry, phi, cfg: RivalConfig, W, A_self, w_att):
+def _step(carry, phi, cfg: RivalConfig, W, A_self, w_att, track_means=True):
     """One round: gate -> communicate hypotheses -> fuse within frame -> score
     (prequential, BEFORE deposit) -> deposit into every candidate -> forget.
     The RNG layout (one split + N keys per step) is independent of K, the gates
-    and ``fuse_nets``, so every condition sees byte-identical observations."""
+    and ``fuse_nets``, so every condition sees byte-identical observations.
+    ``track_means=False`` skips the per-step MAP-mean and top-2-divergence
+    read-outs (returns zeros) -- a pure speed option for callers that only need
+    the model posterior ``L_t``; the dynamics (carry) are byte-identical."""
     Pi, h, L, key = carry
     N = Pi.shape[0]
     K = cfg.n_candidates
@@ -326,12 +329,18 @@ def _step(carry, phi, cfg: RivalConfig, W, A_self, w_att):
     Pi, h = anchored_forget(Pi, h, aP, ah, cfg.omega)
     L = (1.0 - cfg.rho_L) * L
 
-    # per-step read-outs: MAP-candidate effective net mean + how torn each agent is
-    onehot = jax.nn.one_hot(jnp.argmax(L, axis=-1), K)
-    Pi_eff = jnp.einsum("nk,nkab->nab", onehot, Pi)
-    h_eff = jnp.einsum("nk,nkd->nd", onehot, h)
-    mu_eff = jax.vmap(jnp.linalg.solve)(Pi_eff, h_eff)
-    D_top2 = rival_divergence(Pi, h, L) if K > 1 else jnp.zeros((N,))
+    # per-step read-outs: MAP-candidate effective net mean + how torn each agent is.
+    # Skipped (zeros) when track_means is off -- the per-step vmap-solve + top-2 KL
+    # is the bulk of the cost and is pure waste for posterior-only callers.
+    if track_means:
+        onehot = jax.nn.one_hot(jnp.argmax(L, axis=-1), K)
+        Pi_eff = jnp.einsum("nk,nkab->nab", onehot, Pi)
+        h_eff = jnp.einsum("nk,nkd->nd", onehot, h)
+        mu_eff = jax.vmap(jnp.linalg.solve)(Pi_eff, h_eff)
+        D_top2 = rival_divergence(Pi, h, L) if K > 1 else jnp.zeros((N,))
+    else:
+        mu_eff = jnp.zeros((N, cfg.dim))
+        D_top2 = jnp.zeros((N,))
     return (Pi, h, L, key), (L, mu_eff, D_top2)
 
 
@@ -339,7 +348,8 @@ def run_rival(cfg: RivalConfig, W: jax.Array, A_self: jax.Array, w_att: jax.Arra
               phis: jax.Array, seed: int = 0,
               Pi_init: jax.Array | None = None,
               h_init: jax.Array | None = None,
-              L_init: jax.Array | None = None) -> dict:
+              L_init: jax.Array | None = None,
+              track_means: bool = True) -> dict:
     """Scan the rival dynamics over a precomputed world ``phis`` (T, d).
 
     ``W`` (N, N) fixed row-stochastic trust; ``A_self`` (N, N) adjacency + I (the
@@ -349,7 +359,10 @@ def run_rival(cfg: RivalConfig, W: jax.Array, A_self: jax.Array, w_att: jax.Arra
     multi-PHASE runs (e.g. a shared normal-science era followed by per-community
     attention regimes) chain the final state of one call into the next. Returns
     host arrays: ``L_t (T, N, K)``, ``q_t``, ``mu_eff_t (T, N, d)``,
-    ``D_top2_t (T, N)`` and the final state."""
+    ``D_top2_t (T, N)`` and the final state. ``track_means=False`` returns ZEROS
+    for ``mu_eff_t`` / ``D_top2_t`` (the per-step MAP-mean and top-2 divergence are
+    the bulk of the cost) -- a pure speed option for posterior-only callers; the
+    dynamics and ``L_t`` / final state are byte-identical."""
     import numpy as np
 
     n = int(W.shape[0])
@@ -361,7 +374,7 @@ def run_rival(cfg: RivalConfig, W: jax.Array, A_self: jax.Array, w_att: jax.Arra
     key = jax.random.PRNGKey(seed)
 
     def step_fn(carry, phi):
-        return _step(carry, phi, cfg, W, A_self, w_att)
+        return _step(carry, phi, cfg, W, A_self, w_att, track_means)
 
     (Pi, h, L, _), (L_t, mu_eff_t, D_t) = jax.lax.scan(
         step_fn, (Pi, h, L, key), jnp.asarray(phis))

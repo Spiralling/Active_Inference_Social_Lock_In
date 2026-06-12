@@ -24,6 +24,14 @@ Population precision-fusion on a phlogiston substrate: network λ₂ governs str
 - **Figures:** diag_topology_sweep, diag_dynamics, diag_bridge_sweep
 - **Seeds:** [0]
 
+### `abc_conflict`
+
+Inferred reliability (Student-t lambda) on a 3-node chain with a persistently contradictory channel: the baseline's confident compromise vs the robust agent's crisis -- lambda collapse, transient variance inflation, and strain localized on the conflicted edge.
+
+- **Run:** `python scripts/run.py run abc_conflict`
+- **Outputs:** `results/abc_conflict/`
+- **Figures:** fig_abc_means, fig_abc_lambda, fig_abc_variance, fig_abc_strain
+
 ### `adaptive_rate`
 
 The active-inference closure of the proposal rate (limitations section, implemented): the arrival rate is an updatable hyperprior on the agent's own model adequacy, driven by the residual floor the discovery check records -- persistent residual raises the rate, a quiet model decays it.
@@ -33,6 +41,15 @@ The active-inference closure of the proposal rate (limitations section, implemen
 - **Figures:** fig_adaptive_rate
 - **Seeds:** [0, 1, 2]
 
+### `applied_bmr`
+
+The crisis check executed: in-loop Bayesian Model Reduction that actually mutates the net (exact Savage-Dickey reduced posterior, anchor included). Stale structure leaves the net when the world turns, never-supported over-wiring goes immediately, and conviction lambda is the lock-in dial that stops the prune.
+
+- **Run:** `python scripts/run.py run applied_bmr`
+- **Outputs:** `results/applied_bmr/`
+- **Figures:** fig_belt_coupling, fig_removal_timing, fig_lambda_sweep
+- **Seeds:** [1, 2, 3]
+
 ### `combined_mechanisms`
 
 The composition check: every limitation-closing mechanism (Hawkes+adaptive rate, wake-then-prune audit, dimension-aware fusion, Lakatos conviction, pre-crisis measurement) enabled in ONE run -- the full Kuhn cycle completes, nothing breaks, the null world is silent.
@@ -41,6 +58,24 @@ The composition check: every limitation-closing mechanism (Hawkes+adaptive rate,
 - **Outputs:** `results/combined_mechanisms/`
 - **Figures:** fig_combined_mechanisms
 - **Seeds:** [0, 1, 2]
+
+### `crisis_trace`
+
+The Kuhn cycle with inferred channel reliability (reliability_nu) on the step.py population: at the regime flip the anomalous channels are inferred unreliable (denial, selective), conversion is throttled ~2.6x (crisis-as-delay), and the gate rehabilitates as the belief catches up. The channel gate stretches the conversion rather than breaking it; the slow-then-sudden merge lives in the social gate (lockin_inferred_trust).
+
+- **Run:** `python scripts/run.py run crisis_trace`
+- **Outputs:** `results/crisis_trace/`
+- **Figures:** fig_crisis_trace
+- **Seeds:** [0]
+
+### `divergent_wiring`
+
+Trust that reads WIRING preserves structural pluralism under full contact where fixed trust and opinion-reading trust both collapse it; the collective's surplus lives in the union of nets, never the consensus (synergy = 0, the averaging theorem-let).
+
+- **Run:** `python scripts/run.py run divergent_wiring`
+- **Outputs:** `results/divergent_wiring/`
+- **Figures:** fig_divergence_traces, fig_contested_portrait, fig_collective_vs_individual, fig_gate_strength, fig_connectivity_boundary, fig_bmr_three_camps
+- **Seeds:** [0, 1, 2, 3, 4]
 
 ### `endogenous_gamma`
 
@@ -61,6 +96,24 @@ The pooling rule as a dial (limitations section, implemented): dimension-aware f
 - **Figures:** fig_fusion_survival
 - **Seeds:** [1, 2, 3, 4, 5, 6]
 
+### `gate_anatomy`
+
+Wishful vs dogmatic lock-in, head-to-head: the conviction gate (silence what threatens your values) vs the cost gate (silence what would force the web to re-equilibrate), at matched initial silencing; plus trust as an earned track record (EMA'd disagreement) vs the instantaneous read. Three figures: conversion curves per gate mode, the lock-in boundary per mode, and the boundary under earned trust.
+
+- **Run:** `python scripts/run.py run gate_anatomy`
+- **Outputs:** `results/gate_anatomy/`
+- **Figures:** fig_gate_conversion, fig_gate_boundary, fig_earned_trust_boundary, fig_gate_saturation
+- **Seeds:** [0, 1, 2]
+
+### `gated_divergence`
+
+Content-gated trust (social_nu) on a complete graph: uniform fusion collapses two opposed camps to consensus in two rounds; the Student-t trust gate severs cross-camp fusion and preserves the divergence over the whole horizon (timescale separation, honestly not a new fixed point).
+
+- **Run:** `python scripts/run.py run gated_divergence`
+- **Outputs:** `results/gated_divergence/`
+- **Figures:** fig_divergence_distance, fig_gamma_heatmap
+- **Seeds:** [0]
+
 ### `hawkes_rescue`
 
 The Hawkes refinement of the proposal rate (limitations section, implemented): a self- and mutually-exciting arrival rate on the trust graph rescues the staggered discovery that constant-rate Poisson proposal always loses to fusion -- the community manufactures the near-simultaneity that concept survival requires.
@@ -79,6 +132,15 @@ The chemical revolution, endogenously: population + Bayesian model reduction + e
 - **Figures:** kuhn_phlogiston_timeline, kuhn_phlogiston_phase
 - **Seeds:** [0, 1, 2]
 
+### `kuhnian_transition`
+
+The Kuhnian transition on real community topology (conversion vs bridge density, with the measured transition width deciding whether 'phase transition' is earned) plus the discovered immunization effect (weak contact spreads the accommodated incumbent), and the K=3 Lakatos ladder: belt-first core-last as a sequence of model retreats.
+
+- **Run:** `python scripts/run.py run kuhnian_transition`
+- **Outputs:** `results/kuhnian_transition/`
+- **Figures:** fig_kuhnian_transition, fig_lakatos_ladder
+- **Seeds:** [0, 1, 2]
+
 ### `lakatos_conviction`
 
 Dynamic conviction u (limitations + appendix commitment, implemented): intrinsic utility accretes onto structurally entrenched commitments via the agent's own Fisher deposit, recovering Lakatos's progressive vs degenerating problemshifts as an (eps, decay) phase diagram at the lock-in boundary.
@@ -87,6 +149,15 @@ Dynamic conviction u (limitations + appendix commitment, implemented): intrinsic
 - **Outputs:** `results/lakatos_conviction/`
 - **Figures:** fig_lakatos_conviction
 - **Seeds:** [0, 1, 2, 3]
+
+### `lockin_inferred_trust`
+
+The lock-in boundary rerun with content-gated trust (social_nu) in the full Kuhn-cycle machinery: cross-community trust is inferred from belief disagreement, collapses to ~1% while the camps diverge (self-organized isolation, conversion stalled where fixed trust converts), and -- being memoryless -- reopens as the laggards drift in: the conversion timescale roughly doubles and the contraction theorem survives (metastability, not a new fixed point).
+
+- **Run:** `python scripts/run.py run lockin_inferred_trust`
+- **Outputs:** `results/lockin_inferred_trust/`
+- **Figures:** fig_lockin_inferred_trust, fig_rehabilitation
+- **Seeds:** [0, 1]
 
 ### `meanmatched_structure`
 
@@ -106,6 +177,15 @@ Multi-candidate model expansion (limitations section, implemented): several hub 
 - **Figures:** fig_multi_candidate
 - **Seeds:** [0, 1, 2]
 
+### `network_epistemology`
+
+The canonical Zollman figures (accuracy & speed vs connectivity, the speed/accuracy scatter, the reference topologies) on the rival engine -- showing the speed/accuracy TRADEOFF dissolves: discovery is topology-free, diffusion helps both axes, and hub centrality beats density. Plus the beta x gamma conversion phase diagram.
+
+- **Run:** `python scripts/run.py run network_epistemology`
+- **Outputs:** `results/network_epistemology/`
+- **Figures:** fig_topologies, fig_zollman_curves, fig_connectivity_sweep, fig_speed_accuracy, fig_phase_diagram, fig_kuhn_trajectories_by_topology
+- **Seeds:** [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199]
+
 ### `precrisis_check`
 
 The enforced crisis-before-expansion ordering upgraded to a result (appendix commitment list, implemented): the identical discovery check run pre-crisis at every step is rejected by the ledger everywhere -- the residual only becomes visible to the check after the agent's own reduction.
@@ -115,6 +195,24 @@ The enforced crisis-before-expansion ordering upgraded to a result (appendix com
 - **Figures:** fig_precrisis_check
 - **Seeds:** [0, 1, 2]
 
+### `rival_kuhn`
+
+The Kuhn cycle on the represented-rival engine: normal science, crisis (the model posterior going torn -- entropy spike), revolution and stable new normal, denial/lock-in via post-shift self-censorship, and a vanguard converting a locked majority through hypothesis communication alone.
+
+- **Run:** `python scripts/run.py run rival_kuhn`
+- **Outputs:** `results/rival_kuhn/`
+- **Figures:** fig_kuhn_cycle, fig_denial_lockin, fig_social_revolution
+- **Seeds:** [0, 1, 2]
+
+### `schism_threshold`
+
+Two opposed camps in full contact, sweeping the confidence they accumulated apart: under content-gated trust there is a sharp schism threshold (below it the camps merge exactly like the fixed-trust control; above it most disagreement survives) because the trust gate reads gap^2 x precision -- confidence at contact is what incubation time buys, so incommensurability has a timescale.
+
+- **Run:** `python scripts/run.py run schism_threshold`
+- **Outputs:** `results/schism_threshold/`
+- **Figures:** fig_schism_threshold
+- **Seeds:** [0]
+
 ### `staircase_gate`
 
 E1: does a conservatism-gated revision rate recover the belt-first/core-last staircase? (honest null vs uniform / shuffled-κ controls).
@@ -123,6 +221,14 @@ E1: does a conservatism-gated revision rate recover the belt-first/core-last sta
 - **Outputs:** `results/structural_staircase_gate/`
 - **Figures:** diag_staircase
 - **Seeds:** [0]
+
+### `strain_targeted_bmr`
+
+Per-edge strain (node-splitting conflict z^2, the zero-edge read-off) ranks a planted misspecified prior edge first at every step and targets the Savage-Dickey pruning verdict to it -- BMR guided by WHERE the model hurts instead of an all-edges scan.
+
+- **Run:** `python scripts/run.py run strain_targeted_bmr`
+- **Outputs:** `results/strain_targeted_bmr/`
+- **Figures:** fig_edge_strain, fig_deltaF
 
 ### `structural_pluralism`
 
@@ -232,6 +338,15 @@ Partial observability makes agents structurally heterogeneous (B-dispersion rise
 - **Outputs:** `results/partial_obs_comms/`
 - **Figures:** diag_partial_obs
 - **Seeds:** [0, 1, 2]
+
+### `represented_rivals`
+
+The existence proof that model uncertainty buys walls: agents that hold K candidate wirings with a prequential posterior over a model index (q(phi, m)) lock onto true structure where the Gaussian pool blurs forever, and sustain genuinely distinct camps under full contact where plain fusion collapses and trust gates only buy time.
+
+- **Run:** `python scripts/run.py run represented_rivals`
+- **Outputs:** `results/represented_rivals/`
+- **Figures:** fig_blur_vs_crisp, fig_walls_vs_time
+- **Seeds:** [0, 1, 2, 3, 4]
 
 ## landscape
 

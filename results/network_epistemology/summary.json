@@ -1,0 +1,46 @@
+{
+  "config": {
+    "N": 24,
+    "N_VAN": 4,
+    "T_SHIFT": 80,
+    "T": 600,
+    "SIGMA_O": 1.0,
+    "OMEGA": 0.9,
+    "ALPHA_M": 0.02,
+    "Q_CONS": 0.9,
+    "GAMMA_HARD": 1.0,
+    "GAMMA_EASY": 0.99,
+    "Z_BETA": 0.06,
+    "R": 100,
+    "R_HEAT": 30,
+    "H_BETAS": [
+      0.0,
+      0.01,
+      0.03,
+      0.06,
+      0.12,
+      0.25
+    ],
+    "H_GAMMAS": [
+      0.9,
+      0.97,
+      0.99,
+      1.0
+    ],
+    "MAX_WORKERS": 6
+  },
+  "accuracy_hard": {
+    "cycle": 0.0,
+    "wheel": 1.0,
+    "community": 0.0,
+    "complete": 1.0
+  },
+  "speed_easy": {
+    "cycle": 550.0,
+    "wheel": 234.0,
+    "community": 451.0,
+    "complete": 220.0
+  },
+  "zollman_verdict": "tradeoff DISSOLVED: discovery topology-free (homogeneous probe flat), diffusion helps both speed and accuracy; the wheel converts on the hub-broadcast despite low lambda_2",
+  "finding": "the network-epistemology speed/accuracy tradeoff is a property of the consensus-only representation (herding under premature pooling). With represented rivals the tradeoff is absent: correct prequential evidence cannot herd, so sparsity buys no accuracy; and when truth must DIFFUSE from a vanguard, connectivity (and hub centrality) help both axes monotonically -- a contagion regime, not a discovery one."
+}

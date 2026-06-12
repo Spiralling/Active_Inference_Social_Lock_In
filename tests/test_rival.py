@@ -156,6 +156,26 @@ def test_gaussian_kl_properties():
 # 7. Engine smoke on the cosmology menu.
 # ----------------------------------------------------------------------
 
+def test_track_means_false_preserves_posterior():
+    """track_means=False must leave L_t / q_t / final state byte-identical (only the
+    mu_eff_t / D_top2_t read-outs become zeros) -- the speed option is dynamics-safe."""
+    from src.structural.scenarios import cosmology_presets
+    nets = [p.belief_net for p in cosmology_presets()]
+    cfg = rv.RivalConfig(Pi0=jnp.stack([n.Pi for n in nets]),
+                         h0=jnp.stack([n.h for n in nets]),
+                         H=jnp.eye(6), sigma_o=0.5, omega=0.9, alpha_m=0.02)
+    N = 4
+    W = jnp.ones((N, N)) / N
+    A = jnp.ones((N, N))
+    phis = jnp.zeros((15, 6))
+    full = rv.run_rival(cfg, W, A, jnp.ones((N, 6)), phis, seed=2)
+    light = rv.run_rival(cfg, W, A, jnp.ones((N, 6)), phis, seed=2, track_means=False)
+    assert np.array_equal(full["L_t"], light["L_t"])
+    assert np.array_equal(full["q_t"], light["q_t"])
+    assert np.array_equal(full["L"], light["L"]) and np.array_equal(full["Pi"], light["Pi"])
+    assert np.allclose(light["mu_eff_t"], 0.0)             # the skipped read-outs
+
+
 def test_engine_smoke_cosmology_menu():
     from src.structural.scenarios import cosmology_presets
     nets = [p.belief_net for p in cosmology_presets()]
