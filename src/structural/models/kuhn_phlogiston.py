@@ -554,7 +554,8 @@ def make_revolution_hook(*, scn: Scenario, sub, lam: np.ndarray,
 def single_run(*, N: int = 80, inter: float = 0.05, intra: float = 0.4,
                frac_open: float = 0.5,
                lam_open: float = 0.10, lam_dogma: float = 0.35,
-               gate_strength: float = 1.0, s_open: float = 0.3, s_dogma: float = 3.0,
+               gate_strength: float | np.ndarray = 1.0, gate_mode: str = "conviction",
+               s_open: float = 0.3, s_dogma: float = 3.0,
                omega: float = 0.97, sigma_o: float = 0.5,
                t_shift: int = 40, t_reverse: int | None = None, n_steps: int = 180,
                proposal_rate: float | None = 0.08,
@@ -573,6 +574,7 @@ def single_run(*, N: int = 80, inter: float = 0.05, intra: float = 0.4,
                conviction_eps: float = 0.0, conviction_decay: float = 0.01,
                entrenchment_mode: str = "fisher_diag", conviction_gmax: float = 10.0,
                social_nu: float | None = None,
+               trust_memory: float | None = None,
                seed: int = 0, snapshot_every: int = 2) -> dict:
     """N agents, two equal communities (open vs dogmatic), through the deterministic regime
     flip. ``proposal_rate=None`` => deterministic expansion attempts (headline mode);
@@ -636,8 +638,10 @@ def single_run(*, N: int = 80, inter: float = 0.05, intra: float = 0.4,
     social_idx = (tuple(scn.names.index(n) for n in DISAGREEMENT_NODES)
                   if social_nu is not None else None)
     r = run_simulation(scn, graph, spec, fuse_mode=fuse_mode, forgetting=omega,
-                       endogenous_gamma=(gate_strength > 0), gate_strength=gate_strength,
+                       endogenous_gamma=bool(np.any(np.asarray(gate_strength) > 0)),
+                       gate_strength=gate_strength, gate_mode=gate_mode,
                        social_nu=social_nu, social_idx=social_idx,
+                       trust_memory=trust_memory,
                        host_hook=hook, conviction_dynamics=conv_dyn,
                        snapshot_every=snapshot_every, seed=seed)
 

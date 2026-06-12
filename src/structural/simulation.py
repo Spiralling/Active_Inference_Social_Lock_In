@@ -47,7 +47,7 @@ from src.structural import graphs, linalg, shells
 from src.structural import reliability as rel
 from src.structural.step import fuse, trust_weights
 from src.structural.world import sample_o, fisher_deposit_weighted
-from src.structural.dual_field import conviction_field
+from src.structural.dual_field import conviction_field, cost_field_live
 from src.structural.bayesnet import from_info as bn_from_info, to_info as bn_to_info
 
 EPS = 1e-12
@@ -101,6 +101,17 @@ class Scenario:
     Read-out
       ``order_fn`` : ``(Pi (N,d,d), h (N,d)) -> scalar`` the population order parameter.
       ``lstar``    : a reference conviction scale (reported, not used in the dynamics).
+
+    Applied reduction (only consumed when ``run_simulation(bmr_every=...)`` is set)
+      ``reduce_fn`` : ``(epoch: int, flags: (n_edges,) bool) -> (Pi_red (d,d), h_red (d,))``
+                      the JOINT reduced reference prior with all flagged edges removed at
+                      once. Needed because per-edge reductions need not compose: when two
+                      contested edges share a child (the phlogiston belt), summing the
+                      single-edge prior deltas double-subtracts the co-parent fill-in term.
+                      ``None`` => the engine falls back to the per-edge delta sum
+                      ``Pi0[e] + sum_flagged (Pi0r[e,k] - Pi0[e])``, which is exact iff the
+                      per-edge reductions are disjoint (true for cosmology's
+                      ``zero_edge_prior`` edits).
     """
 
     name: str
@@ -124,6 +135,7 @@ class Scenario:
     conviction_alpha: float
     order_fn: Callable
     lstar: float = 0.0
+    reduce_fn: Callable | None = None
 
     @property
     def dim(self) -> int:
@@ -226,6 +238,30 @@ def _deposit_all(H, phi, keys, sigma_o, w_obs):
 
 
 @jax.jit
+def _deposit_all_gated(H, phi, keys, sigma_o, w_obs, Pi, h, nu):
+    """``_deposit_all`` with per-channel INFERRED RELIABILITY -- the Student-t
+    scale-mixture gate of ``reliability.channel_reliability``: each agent's channel
+    weights are multiplied by ``lambda_k = (nu+1)/(nu + z_k^2)``, the posterior
+    reliability of channel ``k`` given the agent's OWN surprise at this step's
+    observation. On-prediction channels keep full weight; a gross outlier is
+    discounted ``~ nu/z^2`` (inferred unreliable, not averaged in).
+
+    The mirror of ``step._fuse_then_observe`` / ``step._observe_pooled``
+    (``cfg.reliability_nu``), so the mechanism lives ONCE in ``reliability.py`` and
+    both engines wire it. One reading difference, stated honestly: here ``z^2`` is
+    read against the agent's own PRE-FUSION belief (this engine computes deposits
+    before it fuses) -- identical to step.py's observation-sharing mode; step.py's
+    posterior mode reads the post-fusion belief, one fusion later. The RNG draws
+    are identical to ``_deposit_all``, so the same seed sees the same world."""
+    def one(key, w, Pi_i, h_i):
+        o = sample_o(H, phi, sigma_o, key)
+        lam_k = rel.channel_reliability(Pi_i, h_i, H, o, sigma_o, nu)
+        J, j = fisher_deposit_weighted(H, o, sigma_o, w * lam_k)
+        return J, j, o
+    return jax.vmap(one)(keys, w_obs, Pi, h)
+
+
+@jax.jit
 def _dF_NE(Pi, h, Pi0, h0, Pi0r, h0r):
     """Per-agent, per-edge prune evidence ``Delta F[i, e]`` (N, E) via Savage-Dickey.
 
@@ -261,6 +297,34 @@ def _dU_NE(Pi, h, Pi0, h0, Pi0r, h0r, U):
             return u @ (mu_r - m)
         return jax.vmap(one)(Pi, h, mu, U)
     return jax.vmap(per_edge)(Pi0r, h0r).T                           # (N, E)
+
+
+def _joint_reduced(scenario: Scenario, e: int, F: np.ndarray
+                   ) -> tuple[np.ndarray, np.ndarray]:
+    """The JOINT reduced reference prior per agent for one applied-BMR round.
+
+    ``F`` (N, n_edges) bool: which contested edges each agent's ledger flags for
+    removal. Returns ``(R (N,d,d), r (N,d))`` -- for each agent, epoch ``e``'s
+    reference prior with ALL its flagged edges removed at once, via
+    ``scenario.reduce_fn`` (exact: recompiles the masked CPD net) or the per-edge
+    delta-sum fallback (exact only for disjoint reductions -- see ``Scenario``).
+    Host numpy; flag rows are deduplicated (``np.unique``) because agents share
+    flag patterns heavily, so the cost is (unique patterns) x one small compile."""
+    Pi0e, h0e = np.asarray(scenario.Pi0[e]), np.asarray(scenario.h0[e])
+    Pi0re, h0re = np.asarray(scenario.Pi0r[e]), np.asarray(scenario.h0r[e])
+    uniq, inv = np.unique(F, axis=0, return_inverse=True)
+    R_u = np.empty((len(uniq),) + Pi0e.shape)
+    r_u = np.empty((len(uniq),) + h0e.shape)
+    for k, row in enumerate(uniq):
+        if not row.any():
+            R_u[k], r_u[k] = Pi0e, h0e
+        elif scenario.reduce_fn is not None:
+            Rk, rk = scenario.reduce_fn(e, row)
+            R_u[k], r_u[k] = np.asarray(Rk), np.asarray(rk)
+        else:
+            R_u[k] = Pi0e + (Pi0re[row] - Pi0e[None]).sum(axis=0)
+            r_u[k] = h0e + (h0re[row] - h0e[None]).sum(axis=0)
+    return R_u[inv], r_u[inv]
 
 
 @jax.jit
@@ -355,12 +419,16 @@ def run_simulation(scenario: Scenario, graph: graphs.Graph, spec: AgentSpec, *,
                    fuse_mode: str = "posterior", eta: float = 0.5,
                    forgetting: float = 1.0,
                    endogenous_gamma: bool = False, gate_strength: float = 1.0,
-                   w_floor: float = 0.0, deposit_gate: jax.Array | None = None,
+                   w_floor: float = 0.0, gate_mode: str = "conviction",
+                   deposit_gate: jax.Array | None = None,
                    social_nu: float | None = None,
                    social_idx: tuple[int, ...] | None = None,
                    social_gate: str = "means",
                    social_pairs: tuple | None = None,
                    social_scale_floor: float = 0.1,
+                   trust_memory: float | None = None,
+                   reliability_nu: float | None = None,
+                   bmr_every: int | None = None,
                    host_hook: Callable | None = None,
                    conviction_dynamics: ConvictionDynamics | None = None,
                    snapshot_every: int = 5, seed: int = 0) -> dict:
@@ -374,6 +442,43 @@ def run_simulation(scenario: Scenario, graph: graphs.Graph, spec: AgentSpec, *,
     is a *read-out* of where each fused agent lands -- it never mutates the net -- re-armed
     against the *current epoch's* reference prior so "structure that fit epoch 0 but not
     epoch 1" reads as stale.
+
+    ``reliability_nu`` (optional) turns on per-channel INFERRED RELIABILITY: each
+    agent's deposit weights are multiplied by the Student-t reliability
+    ``(nu+1)/(nu+z_k^2)`` of its own surprise at this step's observation
+    (``reliability.channel_reliability`` -- the same gate the step.py engine wires
+    via ``cfg.reliability_nu``; see ``_deposit_all_gated`` for the one reading
+    difference). ``None`` (default) is byte-identical.
+
+    ``gate_mode`` selects WHAT the endogenous sensory gate (E2) reads
+    (``reliability.gate_weights``): ``"conviction"`` (default, byte-identical) silences a
+    disconfirming channel by how directly it bears on what the agent VALUES
+    (``|U . H_disc|``); ``"cost"`` silences it by the re-equilibration mass of the
+    commitments it addresses (``kappa . |H_disc|``, the live revision-cost field
+    ``dual_field.cost_field_live``) -- wishful vs dogmatic lock-in, separated.
+
+    ``trust_memory`` (optional) makes the content-gated trust a TRACK RECORD rather than
+    an instantaneous read: the pairwise disagreement statistic is accumulated as an EMA
+    ``Z2_t = omega_T Z2_{t-1} + (1 - omega_T) z2_t`` upstream of the Student-t weight
+    (``reliability.trust_memory_update``), so a neighbour who has KEPT disagreeing stays
+    discounted after one agreeable step and trust is re-earned at the memory's timescale.
+    Requires ``social_nu``; works under both ``social_gate`` modes. ``None`` (default) is
+    byte-identical.
+
+    ``bmr_every`` (optional) makes the reduction APPLIED rather than read-out -- the
+    paper's crisis check actually executed: every ``bmr_every`` steps each agent scores
+    the contested edges on the SAME ledger the snapshot reads (``dF + lam_i dU > 0``)
+    and its belief is replaced by the exact Savage-Dickey reduced posterior for the
+    flagged set -- the joint reduced reference prior (``Scenario.reduce_fn``) plus the
+    agent's untouched accumulated deposit ``Pi - Pi0``. The forgetting anchor receives
+    the same (precision-scaled) edit, so with ``forgetting < 1`` a pruned coupling
+    relaxes toward ZERO, not back toward the old prior. Semantics, stated honestly:
+    marginal per-edge scores, joint application (exactly the paper's crisis-check
+    reading); the application is a toggle-delta -- re-evaluated each round from the
+    current net, so a cleared flag RESTORES the prior edge (structure is reversible;
+    regrowth on supporting evidence is allowed). Because the deposit is inferred as
+    ``Pi - Pi0`` against the UNREDUCED reference, a live edit biases its own future
+    score (mild hysteresis). ``None`` (default) runs zero new code -- byte-identical.
 
     ``host_hook`` (optional): called once per step AFTER fuse/observe/tilt and BEFORE the
     snapshot, as ``host_hook(t, Pi, h, Pi_prior, h_prior, w_obs, o)`` with numpy arrays
@@ -420,6 +525,16 @@ def run_simulation(scenario: Scenario, graph: graphs.Graph, spec: AgentSpec, *,
                                  "disagreement gates trust)")
             social_ix = jnp.asarray(np.asarray(social_idx, dtype=int))
         A_self = jnp.asarray((np.asarray(graph.A) > 0).astype(float) + np.eye(N))
+
+    if gate_mode not in ("conviction", "cost"):
+        raise ValueError(f"gate_mode must be 'conviction'|'cost', got {gate_mode!r}")
+    if trust_memory is not None:
+        if social_nu is None:
+            raise ValueError("trust_memory requires social_nu (it accumulates the "
+                             "trust gate's z2 statistic)")
+        if not 0.0 < float(trust_memory) < 1.0:
+            raise ValueError(f"trust_memory must be in (0, 1), got {trust_memory}")
+    Z2_mem = None                          # trust track record (EMA of pairwise z2)
 
     # initial belief: the scenario's base prior, scaled per agent by conservatism.
     if spec.precision_scale is None:
@@ -473,6 +588,17 @@ def run_simulation(scenario: Scenario, graph: graphs.Graph, spec: AgentSpec, *,
     snap_t, kept_t, revolted_t, m_t, snap_Pi, snap_h, gamma_t = [], [], [], [], [], [], []
     last_dF = last_pruned = None
 
+    # APPLIED BMR state (opt-in; see the docstring): the live toggle-delta each agent's
+    # net (and anchor) currently carries, and the flags that produced it.
+    bmr_dPi = bmr_dh = bmr_flags = ps_arr = None
+    applied_t: list = []
+    if bmr_every is not None:
+        bmr_dPi = np.zeros((N, d, d))
+        bmr_dh = np.zeros((N, d))
+        bmr_flags = np.zeros((N, n_edges), dtype=bool)
+        ps_arr = (np.ones(N) if spec.precision_scale is None
+                  else np.asarray(spec.precision_scale, dtype=float))
+
     def snapshot(t):
         e = int(epoch_t[t])
         dF = np.asarray(_dF_NE(Pi, h, Pi0[e], h0[e], Pi0r[e], h0r[e]))   # (N,E)
@@ -509,14 +635,21 @@ def run_simulation(scenario: Scenario, graph: graphs.Graph, spec: AgentSpec, *,
             ent = ent / (ent.max(axis=1, keepdims=True) + EPS)             # per-agent norm
             g_gain = jnp.clip(g_gain + cd.eps * ent - cd.decay * g_gain, 0.0, cd.g_max)
             u_agent = u_base * (1.0 + g_gain)
-        if endogenous_gamma and disc_arr.size:   # conviction silences its own disc channels (E2)
-            Ug = conviction_field(Pi, h, scenario.names, u_agent, scenario.conviction_alpha)
-            proj = jnp.abs(Ug @ H[disc_idx].T)                          # (N, n_disc)
-            w_disc = jnp.clip(jnp.exp(-gate_strength * proj), w_floor, 1.0)
+        if endogenous_gamma and disc_arr.size:   # the sensory gate (E2): what closes a channel
+            # is gate_mode -- conviction (wishful: |U.H|) or cost (dogmatic: kappa.|H|).
+            Ug = (None if gate_mode == "cost" else
+                  conviction_field(Pi, h, scenario.names, u_agent, scenario.conviction_alpha))
+            kap = (None if gate_mode == "conviction" else
+                   cost_field_live(Pi, scenario.conviction_alpha))
+            w_disc = rel.gate_weights(Ug, kap, H[disc_idx], gate_mode, gate_strength, w_floor)
             w_obs = w_obs_base.at[:, disc_idx].set(w_disc)
         key, sk = jax.random.split(key)
         keys = jax.random.split(sk, N)
-        J_all, j_all, o_all = _deposit_all(H, phi, keys, sigma_o, w_obs)
+        if reliability_nu is not None:   # inferred per-channel reliability (Student-t)
+            J_all, j_all, o_all = _deposit_all_gated(H, phi, keys, sigma_o, w_obs,
+                                                     Pi, h, reliability_nu)
+        else:
+            J_all, j_all, o_all = _deposit_all(H, phi, keys, sigma_o, w_obs)
         if gate_sqrt is not None:                # conservatism gates the revision rate (E1)
             J_all = gate_sqrt[None, :, None] * J_all * gate_sqrt[None, None, :]
             j_all = gate_sqrt[None, :] * j_all
@@ -524,9 +657,12 @@ def run_simulation(scenario: Scenario, graph: graphs.Graph, spec: AgentSpec, *,
         if social_nu is not None:            # content-gated trust: this round's W from gamma
             if social_gate == "structure":
                 z2 = rel.pairwise_structure_z2(Pi, social_pairs_arr, social_scale_floor)
-                gamma = rel.student_t_weight(z2, social_nu)
             else:
-                gamma = rel.social_gamma(Pi, h, social_ix, social_nu)
+                z2 = rel.social_z2(Pi, h, social_ix)
+            if trust_memory is not None:     # trust as a track record (EMA on z2)
+                Z2_mem = rel.trust_memory_update(Z2_mem, z2, trust_memory)
+                z2 = Z2_mem
+            gamma = rel.student_t_weight(z2, social_nu)
             W_t = trust_weights(A_self, gamma)
             Wo = W_t * (1.0 - jnp.eye(N))
             Woff_t = Wo / (Wo.sum(axis=1, keepdims=True) + EPS)
@@ -551,10 +687,34 @@ def run_simulation(scenario: Scenario, graph: graphs.Graph, spec: AgentSpec, *,
                 h = jnp.asarray(upd.get("h", h))
                 Pi_prior = jnp.asarray(upd.get("Pi_prior", Pi_prior))
                 h_prior = jnp.asarray(upd.get("h_prior", h_prior))
+        if bmr_every is not None and t > 0 and t % bmr_every == 0:
+            # APPLY the reduction (the crisis check executed): score on the same ledger
+            # the snapshot reads, then swap in the exact Savage-Dickey reduced posterior
+            # (joint reduced prior + untouched deposit) as a toggle-delta, anchor included.
+            e = int(epoch_t[t])
+            dF_a = np.asarray(_dF_NE(Pi, h, Pi0[e], h0[e], Pi0r[e], h0r[e]))     # (N,E)
+            U_a = conviction_field(Pi, h, scenario.names, u_agent,
+                                   scenario.conviction_alpha)
+            dU_a = np.asarray(_dU_NE(Pi, h, Pi0[e], h0[e], Pi0r[e], h0r[e], U_a))
+            F = (dF_a + lam[:, None] * dU_a) > 0.0                               # (N,E)
+            R, r = _joint_reduced(scenario, e, F)                       # (N,d,d),(N,d)
+            dPi_new = R - np.asarray(Pi0[e])
+            dh_new = r - np.asarray(h0[e])
+            Pi = jnp.asarray(np.asarray(Pi) + (dPi_new - bmr_dPi))
+            h = jnp.asarray(np.asarray(h) + (dh_new - bmr_dh))
+            # the anchor gets the SAME (precision-scaled) edit: omega < 1 then relaxes a
+            # pruned coupling toward 0, not back toward the old prior value.
+            Pi_prior = jnp.asarray(np.asarray(Pi_prior)
+                                   + ps_arr[:, None, None] * (dPi_new - bmr_dPi))
+            h_prior = jnp.asarray(np.asarray(h_prior)
+                                  + ps_arr[:, None] * (dh_new - bmr_dh))
+            bmr_dPi, bmr_dh, bmr_flags = dPi_new, dh_new, F
         if (t % snapshot_every == 0) or (t == n_steps - 1):
             last_dF, last_pruned = snapshot(t)
             if conviction_dynamics is not None:
                 u_gain_t.append(np.asarray(g_gain))
+            if bmr_every is not None:
+                applied_t.append(bmr_flags.copy())
 
     snap_Pi_arr = np.stack(snap_Pi)                                       # (S,N,d,d)
     disagreement_t = shells.residual_disagreement(snap_Pi_arr)           # (S,)
@@ -562,6 +722,9 @@ def run_simulation(scenario: Scenario, graph: graphs.Graph, spec: AgentSpec, *,
     extra = {}
     if conviction_dynamics is not None:
         extra["u_gain_t"] = np.stack(u_gain_t)            # (S, N, d) accreted gain
+    if bmr_every is not None:
+        extra["applied_pruned_t"] = np.stack(applied_t)   # (S, N, E) bool, applied state
+        extra["bmr_every"] = bmr_every
     return {
         **extra,
         "snap_t": np.asarray(snap_t),

@@ -92,12 +92,19 @@ def run(out_dir, params: dict) -> None:
     cfg_gat = dataclasses.replace(cfg_fix, social_nu=params["SOCIAL_NU"])
 
     precs = list(params["PREC_SCALES"])
+    # Pre-fusion inter-camp gap: stances are +/-1 on the disagreement nodes
+    # (step._group_prior writes the stance straight into the prior mean), so the
+    # camps start exactly 2.0 apart. Normalizing the logged traces by their own
+    # first sample is wrong for the fixed-trust arm: one uniform fusion step
+    # collapses the gap before the first log, so D[0] ~ 1e-3 and the ratio is
+    # noise over noise.
+    D0 = 2.0
     frac_gated, frac_fixed = [], []
     for prec in precs:
         Dg = _run_one(cfg_gat, float(prec), n1, n2)
         Df = _run_one(cfg_fix, float(prec), n1, n2)
-        frac_gated.append(float(Dg[-1] / Dg[0]))
-        frac_fixed.append(float(Df[-1] / Df[0]))
+        frac_gated.append(float(Dg[-1] / D0))
+        frac_fixed.append(float(Df[-1] / D0))
         print(f"  prec={prec:5.1f}: surviving disagreement gated {frac_gated[-1]:.3f}  "
               f"fixed {frac_fixed[-1]:.3f}", flush=True)
 

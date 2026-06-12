@@ -15,10 +15,20 @@ the missing shape endogenously:
      community discounts the instruments before it revises the theory.
   2. CRISIS-AS-DELAY: updating on the contested channels is throttled, so the
      conversion stalls at the old paradigm long after the world has flipped.
-  3. REVOLUTION: the trickle of discounted evidence still moves the belief;
-     as the belief approaches the data, the surprise falls, ``lambda``
-     REHABILITATES, the update gain returns -- and the conversion completes in
-     a late, fast cascade (slow-then-sudden, not a smooth slide).
+  3. REHABILITATION: the trickle of discounted evidence still moves the
+     belief; as the belief approaches the data, surprise falls, ``lambda``
+     recovers, and the update gain returns -- the channels the community
+     condemned are rehabilitated and conversion completes.
+
+Shape, stated honestly: the channel gate THROTTLES, it does not break. The
+gated conversion is a stretched, decelerating slide (max slope at the flip; no
+interior slope maximum at nu = 2, 1, or 0.5; harsher gates just stretch it
+further and leave it incomplete) -- so this experiment shows denial and delay,
+not slow-then-sudden. The SUDDEN half of the Kuhnian shape appears one level
+up, in the social trust gate (``lockin_inferred_trust``): there the feedback
+is collective (any leak shrinks the inter-camp gap, which reopens the gate,
+which accelerates the leak), and the laggards' merge has a genuine interior
+slope maximum late in the run.
 
 The lambda trace reported here is the per-step EXPECTED reliability read off the
 logged beliefs at the noise-free observation ``o = H phi_true(t)`` -- a
@@ -86,7 +96,7 @@ def fig_trace(t_shift, base, robust, path) -> dict:
     a0.plot(range(T), oxy_b, lw=2.2, color="#7f8c8d", ls="--",
             label="fixed precision: the smooth slide")
     a0.plot(range(T), oxy_r, lw=2.4, color="#1a5276",
-            label="inferred reliability: denial, then cascade")
+            label="inferred reliability: denial, then a throttled conversion")
     a0.axvline(t_shift, color="k", lw=0.8)
     a0.text(t_shift + 1, 0.05, "the world flips", fontsize=8)
     a0.set_ylabel("oxygen index (population)"); a0.set_ylim(-0.04, 1.04)
@@ -144,12 +154,14 @@ def run(out_dir, params: dict) -> None:
                "final_lambda_disagree": float(lam_dis[-1]),
                "denial_lag_ratio": float((th_r - t_shift) / max(th_b - t_shift, 1))}
     (out_dir / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
-    print(f"HEADLINE: with inferred channel reliability the Kuhn cycle gets its missing shape "
+    print(f"HEADLINE: with inferred channel reliability the Kuhn cycle gets denial and delay "
           f"-- at the regime flip the community infers the anomalous channels unreliable "
-          f"(lambda falls to {lam_dis.min():.2f}: denial), the conversion stalls "
-          f"{summary['denial_lag_ratio']:.1f}x longer than the fixed-precision slide, and the "
-          f"channels are rehabilitated (final lambda {lam_dis[-1]:.2f}) as the late, fast "
-          f"cascade completes: doubt the instruments first, the theory later, then all at once.")
+          f"(lambda falls to {lam_dis.min():.2f}: denial, selective -- agreement channels stay "
+          f"trusted), conversion is throttled to {summary['denial_lag_ratio']:.1f}x the "
+          f"fixed-precision lag, and the channels are rehabilitated (final lambda "
+          f"{lam_dis[-1]:.2f}) as the belief catches up: doubt the instruments first, the "
+          f"theory later. The gate stretches the conversion, it does not break it -- the "
+          f"sudden half of the cycle lives in the social gate (lockin_inferred_trust).")
 
 
 register(ExperimentSpec(
@@ -157,12 +169,13 @@ register(ExperimentSpec(
     name="crisis_trace",
     description="The Kuhn cycle with inferred channel reliability (reliability_nu) on the "
                 "step.py population: at the regime flip the anomalous channels are inferred "
-                "unreliable (denial), the conversion stalls (crisis-as-delay), and the gate "
-                "rehabilitates as the belief catches up (late fast cascade) -- the "
-                "slow-then-sudden shape the fixed-precision regime provably cannot produce.",
+                "unreliable (denial, selective), conversion is throttled ~2.6x "
+                "(crisis-as-delay), and the gate rehabilitates as the belief catches up. The "
+                "channel gate stretches the conversion rather than breaking it; the "
+                "slow-then-sudden merge lives in the social gate (lockin_inferred_trust).",
     run=run,
     out_dir="crisis_trace",
-    params=dict(N_AGENTS=20, N_STEPS=500, T_SHIFT=40, SIGMA_O=0.5, NU=2.0, SEED=0),
+    params=dict(N_AGENTS=20, N_STEPS=800, T_SHIFT=40, SIGMA_O=0.5, NU=2.0, SEED=0),
     seeds=(0,),
     canonical=False,
     consumes=dict(figures=["fig_crisis_trace"]),

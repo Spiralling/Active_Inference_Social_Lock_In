@@ -105,6 +105,39 @@ def conviction_field(Pi: jax.Array, h: jax.Array, names: tuple[str, ...],
     return jax.vmap(one_u)(Pi, h, u_arr)
 
 
+def cost_field_live(Pi: jax.Array, alpha: float = 0.5) -> jax.Array:
+    """The revision-cost field ``kappa = T 1 - 1`` for a *stack* of belief nets, read from
+    each net's *live* couplings.
+
+    The paper's revision cost is the propagation operator applied to the unit source,
+    ``kappa = T 1``: how much downstream mass must re-equilibrate when a commitment moves.
+    Crucially this must be computed on the UNNORMALIZED coupling mass ``A = |Pi| (1 - I)``:
+    the row-stochastic operator used for the conviction field would give ``T 1 =
+    1/(1-alpha) 1`` -- constant across nodes, carrying no information. Here each agent's
+    ``A`` is rescaled by ``alpha / rho(A)`` (``rho`` the Perron root via ``eigvalsh``; ``A``
+    symmetric nonnegative), which (i) makes the resolvent well-defined for any live ``Pi``
+    (spectral radius exactly ``alpha < 1``), and (ii) makes ``kappa`` invariant to the
+    global ``|Pi|`` growth the forgetting equilibrium produces -- the same invariance
+    argument as ``reliability.pairwise_structure_z2``. The identity term is subtracted so
+    a node with no couplings (e.g. a pinned, not-yet-awakened slot) reads exactly ``0``.
+
+    ``Pi`` (N, d, d) -> ``kappa`` (N, d), nonnegative, monotone in coupling mass: a hub
+    propagating many strong chains costs more to revise than a belt node."""
+    Pi_arr = jnp.asarray(Pi)
+    d = Pi_arr.shape[-1]
+    eye = jnp.eye(d, dtype=Pi_arr.dtype)
+    ones = jnp.ones((d,), dtype=Pi_arr.dtype)
+
+    def one(Pi_i):
+        A = jnp.abs(Pi_i) * (1.0 - eye)
+        A = 0.5 * (A + A.T)
+        rho = jnp.max(jnp.linalg.eigvalsh(A))
+        B = (alpha / jnp.maximum(rho, 1e-12)) * A
+        return jnp.linalg.solve(eye - B, ones) - 1.0
+
+    return jax.vmap(one)(Pi_arr)
+
+
 @dataclass(frozen=True)
 class ScoreBreakdown:
     delta_F: jax.Array

@@ -38,6 +38,13 @@ working ``nu`` range is ~an order of magnitude below the plan's prior expectatio
 world: the "lacking" couplings sit at the shared prior wiring scale (|Pi| ~ 4.0), far above
 any reasonable floor.
 
+Applied-BMR coda (probe, seed 0): the bmr conditions ask whether in-loop model reduction
+(``bmr_every``) makes the fabricated wiring answerable to evidence. It does NOT, and the
+invariance is the finding: the dm reference prior's contested couplings are ~0, the
+pluralism is ~100% attention-driven deposit, and Savage-Dickey reduction removes prior
+structure while keeping the data -- so the couplings are unchanged to one decimal.
+Deletion adjudicates believed PRIOR structure; it cannot un-run your experiments.
+
 Honest three-camps note (the prediction was REFUTED and is reported as found): a camp
 valuing the commitment the 50/50 blend does NOT support still consolidates its wiring at
 full strength, because the Gaussian Fisher deposit ``J = H^T diag(w) H / sigma^2`` never
@@ -62,6 +69,10 @@ from experiments.registry import ExperimentSpec, register
 # ----------------------------------------------------------------------
 
 _WORLD: dict = {}
+
+# Commitment of each contested edge (COSMOLOGY_EDGES is commitment-major: two anomaly
+# couplings per commitment, in COMMITS order).
+EDGE_COMMIT = np.array([0, 0, 1, 1, 2, 2])
 
 
 def _world(p: dict):
@@ -130,6 +141,12 @@ def _measure(r: dict, edges_ij, camp: np.ndarray, p: dict) -> dict:
     for kind, tag in (("fro", "fro"), ("jaccard", "jac"), ("spectral", "spec")):
         out[f"cross_{tag}"] = disp[kind]["cross"]                  # (S,)
         out[f"within_{tag}"] = disp[kind]["within"].mean(axis=1)   # (S,)
+    if "applied_pruned_t" in r:                # applied-BMR telemetry (bmr conditions)
+        flags = np.asarray(r["applied_pruned_t"][-1])              # (N, 6)
+        out["bmr_flags_by_camp"] = np.stack([
+            [float(flags[camp == b][:, EDGE_COMMIT == k].mean()) for k in range(3)]
+            for b in range(n_camps)])                              # (B, 3)
+        out["min_eig"] = float(min(np.linalg.eigvalsh(Q).min() for Q in P))
     return out
 
 
@@ -160,6 +177,8 @@ def _one_job(cfg: dict) -> dict:
                        social_idx=tuple(range(len(scn.names))))
     if p.get("fuse_mode"):
         gate_kw["fuse_mode"] = p["fuse_mode"]
+    if p.get("bmr"):
+        gate_kw["bmr_every"] = int(p["bmr"])
     r = run_condition(scn, w, edges_ij, graph, int(p["seed"]), n=n, omega=p["OMEGA"],
                       snapshot_every=p["SNAPSHOT_EVERY"], **gate_kw)
     row = _measure(r, edges_ij, camp, p)
@@ -294,6 +313,31 @@ def _fig_gate_strength(rows, nus, disc, fixed_ret, nu_star, out_path):
     plt.tight_layout(); plt.savefig(out_path, dpi=130); plt.close(fig)
 
 
+def _fig_bmr(rows, bmr_every, prior_by_commit, out_path):
+    """Camp C (values the unsupported theory) with and without applied BMR, plus the
+    reference-prior coupling tick -- the ONLY part Savage-Dickey reduction can remove."""
+    c0 = _mean(rows, "three_camps", "c_t")[1, -1]                   # (3,) final
+    c1 = _mean(rows, "three_camps_bmr", "c_t")[1, -1]
+    fig, ax = plt.subplots(figsize=(7.2, 4.6))
+    x = np.arange(3); w = 0.38
+    ax.bar(x - w / 2, c0, w, color="#95a5a6", label="no BMR")
+    ax.bar(x + w / 2, c1, w, color="#1e8449", hatch="//",
+           label=f"applied BMR (every {bmr_every} steps)")
+    for k in range(3):
+        ax.plot([k - w, k + w], [prior_by_commit[k]] * 2, color="black", lw=2.5,
+                label="reference-prior coupling\n(all a prune can remove)" if k == 0
+                else None)
+    ax.set_xticks(x)
+    ax.set_xticklabels(["dark\nmatter", "mod. gravity\n(unsupported, valued)",
+                        "scale\nvariant"])
+    ax.set_ylabel("camp C learned coupling  |Pi[anomaly, commitment]|")
+    ax.set_title("applied BMR cannot touch fabricated wiring: the coupling is\n"
+                 "~100% experiment deposit, and Savage-Dickey reduction removes\n"
+                 "only PRIOR structure (black tick ~ 0)", fontsize=10)
+    ax.legend(fontsize=8)
+    plt.tight_layout(); plt.savefig(out_path, dpi=130); plt.close(fig)
+
+
 def _fig_connectivity(rows, fixed_pts, gated_pts, disc, out_path):
     fig, ax = plt.subplots(figsize=(6.8, 4.4))
     for pts, color, lab in ((fixed_pts, "#922b21", "fixed trust"),
@@ -343,6 +387,11 @@ def run(out_dir, params: dict) -> None:
            if p["INCLUDE_THREE_CAMPS"] else [])
         + (jobs_for("connected_bayesnet", "complete", fuse_mode="bayesnet")
            if p["INCLUDE_BAYESNET"] else [])
+        # applied-BMR conditions: does evidence-driven pruning touch the pluralism?
+        + jobs_for("disconnected_bmr", "community", inter=0.0, bmr=p["BMR_EVERY"])
+        + (jobs_for("three_camps_bmr", "community", camps=3, inter=0.0,
+                    bmr=p["BMR_EVERY"])
+           if p["INCLUDE_THREE_CAMPS"] else [])
     )
 
     rows: list[dict] = []
@@ -360,9 +409,12 @@ def run(out_dir, params: dict) -> None:
         disc = _final_cross(rows, "disconnected")
         nu_star = float(max(nus, key=lambda nu: _final_cross(rows, f"gated_nu={nu}")))
         print(f"\nNU_STAR = {nu_star} (best retention of sweep A)")
-        phase2 = [j for it in inters
-                  for j in jobs_for(f"gated_inter={it}", "community", gate=gate,
-                                    nu=nu_star, inter=float(it))]
+        phase2 = ([j for it in inters
+                   for j in jobs_for(f"gated_inter={it}", "community", gate=gate,
+                                     nu=nu_star, inter=float(it))]
+                  # the full open-endedness stack: structure gate + applied BMR
+                  + jobs_for("gated_bmr", "complete", gate=gate, nu=nu_star,
+                             bmr=p["BMR_EVERY"]))
         for row in pool.map(_one_job, phase2, chunksize=1):
             rows.append(row)
             print(f"  {row['name']:>22} seed={row['seed']}: "
@@ -411,6 +463,29 @@ def run(out_dir, params: dict) -> None:
         print("three camps (final |coupling| by commitment, camps A/C/B): "
               + "  ".join(f"camp{b}={np.round(c3[b, -1], 1)}" for b in range(3)))
 
+    # ---- applied-BMR read-outs (printed before asserting) ----
+    from experiments.structural_pluralism import build, structure, by_commitment
+    scn0, edges0, _ = build(n=p["N"], n_steps=p["N_STEPS"], commits=commits,
+                            value_a=p["VALUE_A"], value_b=p["VALUE_B"],
+                            w_hi=p["W_HI"], w_lo=p["W_LO"])
+    prior_by_commit = by_commitment(structure(np.asarray(scn0.Pi0[0]), edges0))
+    bmr_pairs = [("disconnected", "disconnected_bmr")]
+    if p["INCLUDE_THREE_CAMPS"]:
+        bmr_pairs.append(("three_camps", "three_camps_bmr"))
+    bmr_delta, bmr_flags = {}, {}
+    for base, bm in bmr_pairs:
+        d = float(np.abs(_mean(rows, bm, "c_t")[:, -1]
+                         - _mean(rows, base, "c_t")[:, -1]).max())
+        bmr_delta[bm] = d
+        bmr_flags[bm] = _mean(rows, bm, "bmr_flags_by_camp")
+        print(f"applied BMR {bm}: max |coupling| change vs {base} = {d:.3f}  "
+              f"(flags per camp, dm/mg/sv: {np.round(bmr_flags[bm], 2).tolist()})")
+    gated_bmr_cross = _final_cross(rows, "gated_bmr")
+    print(f"gate + applied BMR retention: {gated_bmr_cross / disc:.1%} "
+          f"(gate alone: {gated / disc:.1%})")
+    print(f"reference-prior couplings by commitment (all a prune can remove): "
+          f"{np.round(prior_by_commit, 2).tolist()}")
+
     # ---- assertions ----
     # A1 replicate structural_pluralism's claim on its own measure
     assert rel_d > 3.0 * rel_f + 1e-6, \
@@ -450,6 +525,16 @@ def run(out_dir, params: dict) -> None:
         f"A8: sweep-B fixed retention should be non-increasing in lambda2 ({rf_sorted})"
     assert all(rg >= rf - 0.02 for rf, rg in zip(ret_fixed, ret_gated)), \
         "A8: gated retention should dominate fixed at every lambda2"
+    # B-series: applied BMR (probe-calibrated; the INVARIANCE is the finding)
+    for bm, d in bmr_delta.items():
+        assert d < 0.5, \
+            f"B1: BMR should leave deposit-built couplings unchanged ({bm}: {d:.3f})"
+    assert max(fl.max() for fl in bmr_flags.values()) > 0.05, \
+        "B2: the ledger should flag at least some zero-prior edges (Occam)"
+    assert all(r["min_eig"] > 0.0 for r in rows if "min_eig" in r), \
+        "B3: applied-BMR nets must stay positive-definite"
+    assert gated_bmr_cross >= 0.5 * disc, \
+        f"B4: gate + BMR should still retain the pluralism ({gated_bmr_cross / disc:.1%})"
 
     # ---- figures ----
     _fig_traces(rows, trio, out_dir / "fig_divergence_traces.png")
@@ -462,6 +547,9 @@ def run(out_dir, params: dict) -> None:
                        out_dir / "fig_gate_strength.png")
     _fig_connectivity(rows, fixed_pts, gated_pts, disc,
                       out_dir / "fig_connectivity_boundary.png")
+    if p["INCLUDE_THREE_CAMPS"]:
+        _fig_bmr(rows, p["BMR_EVERY"], prior_by_commit,
+                 out_dir / "fig_bmr_three_camps.png")
 
     # ---- save ----
     snap_t = _rows(rows, "disconnected")[0]["snap_t"]
@@ -519,8 +607,28 @@ def run(out_dir, params: dict) -> None:
                        "precision-pattern edge; the data's verdict on an unsupported "
                        "theory lives in the potential h (the means), not in |Pi|. "
                        "Structure-as-precision-pattern is attention-driven in this "
-                       "model class -- a scope condition on the pluralism results.",
+                       "model class -- a scope condition on the pluralism results; "
+                       "see 'applied_bmr': in-loop model reduction does not remove "
+                       "it either.",
         }
+    summary["applied_bmr"] = {
+        "bmr_every": p["BMR_EVERY"],
+        "max_coupling_change": bmr_delta,
+        "flags_by_camp": {bm: fl.tolist() for bm, fl in bmr_flags.items()},
+        "gated_bmr_retention": gated_bmr_cross / disc,
+        "prior_coupling_by_commitment": np.asarray(prior_by_commit).tolist(),
+        "finding": "applied Savage-Dickey BMR leaves this pluralism numerically "
+                   "unchanged (max coupling change "
+                   f"{max(bmr_delta.values()):.3f}): the contested couplings are "
+                   "~100% attention-driven experiment DEPOSIT, and the reference "
+                   "prior's contested couplings are ~0, so the prune -- which by "
+                   "construction removes PRIOR structure while keeping the data -- "
+                   "has nothing to bite. The scope condition, made precise: "
+                   "evidence-driven deletion adjudicates believed prior structure; "
+                   "it cannot un-run your experiments. Evidence-accountability for "
+                   "deposit-built structure needs a deposit-level mechanism "
+                   "(retrospective reweighting / forgetting), not model reduction.",
+    }
     with (out_dir / "summary.json").open("w", encoding="utf-8") as fh:
         json.dump(summary, fh, indent=2)
 
@@ -560,11 +668,15 @@ register(ExperimentSpec(
         # calibrated seed-0 disconnected: median |Pi| valued 40.17, rival 4.00
         EDGE_THRESHOLD=12.7,    # sqrt(40.17 * 4.00)
         PROBE_MEANS_NU=0.5,
+        # CALIB (probe, seed 0): the dm reference prior's contested couplings are
+        # ~[-0.45, -0.35, 0, 0, 0, 0], so the fabricated wiring is ~100% deposit and
+        # applied BMR is an INVARIANCE check here; lam (0.2) is irrelevant (dU ~ 0).
+        BMR_EVERY=10,
         SNAPSHOT_EVERY=5, MAX_WORKERS=6,
         INCLUDE_THREE_CAMPS=True, INCLUDE_BAYESNET=False,
     ),
     seeds=(0, 1, 2, 3, 4),
     consumes=dict(figures=["fig_divergence_traces", "fig_contested_portrait",
                            "fig_collective_vs_individual", "fig_gate_strength",
-                           "fig_connectivity_boundary"]),
+                           "fig_connectivity_boundary", "fig_bmr_three_camps"]),
 ))

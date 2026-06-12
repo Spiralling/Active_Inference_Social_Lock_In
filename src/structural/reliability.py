@@ -157,3 +157,71 @@ def pairwise_structure_z2(Pi: jax.Array, pairs: jax.Array,
     scale = jnp.maximum(0.5 * (x[:, None, :] ** 2 + x[None, :, :] ** 2),
                         scale_floor ** 2)                           # (N, N, k)
     return (diff ** 2 / scale).sum(axis=-1)                         # (N, N)
+
+
+def gate_weights(U: jax.Array | None, kappa: jax.Array | None, H_disc: jax.Array,
+                 gate_mode: str, gate_strength: float, w_floor: float) -> jax.Array:
+    """Sensory gate on the disconfirming channels: what an agent lets the world
+    tell it, and WHY it stops listening.
+
+    Two modes, separating two hypotheses about lock-in that a single gate
+    conflates (the conviction field ``U = T u`` and the cost field ``kappa =
+    T 1 - 1`` are linearly independent unless ``u prop 1`` -- the paper's
+    two-fields decoupling):
+
+    - ``"conviction"`` (wishful): ``proj = |U @ H_disc^T|`` -- a channel is
+      silenced in proportion to how directly it bears on what the agent WANTS
+      true. Op-for-op the legacy inline expression => byte-identical default.
+    - ``"cost"`` (dogmatic): ``proj = kappa @ |H_disc|^T`` -- a channel is
+      silenced in proportion to the re-equilibration mass of the commitments
+      it addresses ("accepting this forces my whole web to re-equilibrate").
+      ``|H|``: cost is sign-blind -- it does not care which way the evidence
+      points, only how much would have to move.
+
+    No combined mode: the two fields are different *kinds* of quantity, and a
+    composition would presume an interaction hypothesis the model does not
+    hold. ``gate_strength`` is a scalar or a per-agent ``(N,)`` array -- the
+    cost projection is community-blind (kappa reads the shared prior, where the
+    conviction projection reads ``u_agent``), so per-community gating asymmetry
+    in cost mode must enter through the strength. ``U``/``kappa`` (N, d) (the
+    unused one may be ``None``), ``H_disc`` (n_disc, d) -> weights
+    (N, n_disc) in ``[w_floor, 1]``."""
+    if gate_mode == "conviction":
+        proj = jnp.abs(U @ H_disc.T)
+    elif gate_mode == "cost":
+        proj = kappa @ jnp.abs(H_disc).T
+    else:
+        raise ValueError(f"unknown gate_mode: {gate_mode!r} "
+                         "(expected 'conviction' or 'cost')")
+    g = jnp.asarray(gate_strength)
+    if g.ndim == 1:
+        g = g[:, None]                      # per-agent strength broadcasts over channels
+    return jnp.clip(jnp.exp(-g * proj), w_floor, 1.0)
+
+
+def social_z2(Pi: jax.Array, h: jax.Array, measured_idx: jax.Array) -> jax.Array:
+    """The ``z_ij^2`` half of ``social_gamma``, exposed so a trust MEMORY can
+    accumulate the sufficient statistic upstream of the Student-t weight.
+    ``Pi`` (N, d, d), ``h`` (N, d) -> (N, N) symmetric with zero diagonal."""
+    mu = jax.vmap(jnp.linalg.solve)(Pi, h)                          # (N, d)
+    return pairwise_disagreement_z2(mu, Pi, measured_idx)
+
+
+def trust_memory_update(Z2_prev: jax.Array | None, z2: jax.Array,
+                        omega_T: float) -> jax.Array:
+    """Trust as a TRACK RECORD: exponential moving average of the pairwise
+    disagreement statistic,
+
+        Z2_t = omega_T * Z2_{t-1} + (1 - omega_T) * z2_t,
+
+    with ``Z2_prev None => Z2_0 = z2_0`` (first step instantaneous: no warm-up
+    bias). Downstream, ``gamma = student_t_weight(Z2_t, nu)`` turns the
+    accumulated record into the trust precisions -- so a neighbour who has
+    *kept* disagreeing stays discounted after one agreeable step, and trust is
+    re-earned at the memory's timescale rather than snapping back. Sits on the
+    z2 sufficient statistic, so it composes with both the means-reading and the
+    structure-reading gates by construction. ``omega_T -> 0`` recovers the
+    instantaneous gate."""
+    if Z2_prev is None:
+        return z2
+    return omega_T * Z2_prev + (1.0 - omega_T) * z2

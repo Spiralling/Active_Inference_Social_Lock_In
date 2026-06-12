@@ -161,6 +161,27 @@ def phlogiston_scenario(cfg: StructuralConfig, *, sub: Substrate | None = None,
     order_fn = partial(_phlog_order_parameter, names=names,
                        mass_nodes=DISAGREEMENT_NODES,
                        mu_phlog=cfg.mu_phlog_mass, mu_oxy=cfg.mu_oxy_mass)
+
+    # APPLIED-BMR joint reducer (``run_simulation(bmr_every=...)``): the reference prior
+    # with ALL flagged edges removed AT ONCE -- mask the CPD weights, recompile (PD by
+    # construction). One-hot flags reproduce ``sub.Pi0r[k]`` / ``h0r[k]`` exactly (it is
+    # the same ``prune_edge`` -> ``to_info`` operation); the joint compile is REQUIRED
+    # here because the belt edges share the child ``calx_heavier_than_metal``, so summing
+    # per-edge prior deltas would double-subtract the co-parent fill-in term.
+    idx = {n: i for i, n in enumerate(names)}
+    edge_ci = tuple((idx[c], idx[p]) for (p, c) in sub.edges)   # B[child, parent] slots
+    B_full = np.asarray(sub.over.B)
+
+    def _reduce(epoch: int, flags) -> tuple[jnp.ndarray, jnp.ndarray]:
+        B = B_full.copy()
+        for k, on in enumerate(np.asarray(flags, dtype=bool)):
+            if on:
+                c, p = edge_ci[k]
+                B[c, p] = 0.0
+        red = LinearGaussianBN(B=jnp.asarray(B), b=sub.over.b, s=sub.over.s,
+                               names=names).to_info()
+        return red.Pi, red.h
+
     return Scenario(
         name="phlogiston",
         names=names,
@@ -183,6 +204,7 @@ def phlogiston_scenario(cfg: StructuralConfig, *, sub: Substrate | None = None,
         conviction_alpha=0.5,
         order_fn=order_fn,
         lstar=sub.lstar,
+        reduce_fn=_reduce,
     )
 
 
@@ -320,7 +342,9 @@ def cosmology_scenario(*, n_steps: int = 180, t1: int = 60, t2: int = 120,
     operator is :func:`cosmology_H` (relational anomaly-balance rows so the contested couplings
     learn). Agents start from the incumbent (dark-matter) theory prior; the prune read-out is
     re-armed against the *current epoch's* theory prior, so structure that fit epoch 0 but not
-    epoch 1 reads as stale. The conviction utility favours the incumbent (the bloc that gets
+    epoch 1 reads as stale. ``reduce_fn`` is left ``None``: the contested reductions are
+    disjoint ``zero_edge_prior`` edits, so the engine's per-edge delta-sum fallback for
+    applied BMR (``bmr_every``) is already exact here. The conviction utility favours the incumbent (the bloc that gets
     "stuck"); per-community direction/strength is supplied via the ``AgentSpec``."""
     basis = cosmology_basis() if basis is None else basis
     names = tuple(basis.names)

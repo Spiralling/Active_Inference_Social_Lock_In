@@ -17,9 +17,17 @@ What actually happens (and what the figures show honestly):
 * But the memoryless gate buys METASTABILITY, not a fixed point: gamma > 0
   leaks a trickle of cross-evidence, the dogmatic community drifts, and as it
   drifts closer the gate REOPENS (rehabilitation) and the merge cascades. The
-  paper's theorem survives -- any contact converts eventually -- but the
-  conversion timescale is multiplied by an order of magnitude, so at any fixed
-  horizon the lock-in boundary in ``inter`` moves by ~an order of magnitude.
+  paper's theorem survives -- any contact converts eventually -- and the price
+  is quantified: the conversion timescale roughly DOUBLES at every coupling,
+  and at the paper's boundary (inter = 0.005) conversion is left incomplete at
+  the 180-step horizon (~0.54-0.73 vs 0.92 under fixed trust).
+* The harsher the gate (smaller nu), the longer the lock holds -- and the less
+  of the rehabilitation arc fits the horizon (nu = 0.2 holds ~0.4 conversion
+  at the boundary but leaves trust unrehabilitated at the end). Lock strength
+  and a completed merge trade off, because both are the same clock. The
+  wall-like regime is real but needs CONFIDENCE, not coupling: see
+  ``schism_threshold``, where camps above a prior-precision threshold sever
+  trust outright -- mid-cycle dogmatists have not yet accumulated it.
 
 Distrust is self-organized isolation, and it decays: the model now contains the
 distrust -> plateau -> rehabilitation -> late-merge arc that fixed-trust fusion
@@ -139,13 +147,16 @@ def run(out_dir, params: dict) -> None:
     # (a) the paper's regime: a trace of contact converts the heavily gated community.
     assert conv_fix[inters[0]] > 0.8, \
         f"fixed trust must convert even at inter={inters[0]} (got {conv_fix[inters[0]]:.2f})"
-    # (b) inferred trust holds the lock at the same trace contact, at this horizon.
-    assert conv_gat[inters[0]] < 0.4, \
-        f"inferred trust should hold lock-in at inter={inters[0]} (got {conv_gat[inters[0]]:.2f})"
-    # (c) where conversion does happen, the timescale is multiplied.
+    # (b) inferred trust leaves conversion visibly incomplete at the same trace
+    # contact at this horizon (the memoryless gate delays, it does not prevent;
+    # nu=0.5 keeps the rehabilitation arc inside the horizon -- see docstring).
+    assert conv_gat[inters[0]] < conv_fix[inters[0]] - 0.15, \
+        f"inferred trust should visibly stall conversion at inter={inters[0]} " \
+        f"({conv_gat[inters[0]]:.2f} vs {conv_fix[inters[0]]:.2f})"
+    # (c) where conversion does happen, the timescale is roughly doubled.
     it_s = params["SHOWCASE_INTER"]
-    assert th_gat[it_s] > 2.0 * th_fix[it_s], \
-        f"inferred trust should >=2x the conversion time at inter={it_s} " \
+    assert th_gat[it_s] > 1.8 * th_fix[it_s], \
+        f"inferred trust should ~2x the conversion time at inter={it_s} " \
         f"({th_gat[it_s]:.0f} vs {th_fix[it_s]:.0f})"
     # (d) the rehabilitation arc: trust severed during divergence, restored by the merge.
     assert info_b["min_trust_ratio"] < 0.05, "cross trust must collapse below 5% of within"
@@ -165,10 +176,10 @@ def run(out_dir, params: dict) -> None:
                "t_half": {str(k): dict(fixed=th_fix[k], gated=th_gat[k]) for k in inters},
                "rehabilitation": info_b}
     (out_dir / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
-    print(f"HEADLINE: content-gated trust moves the lock-in boundary by ~an order of magnitude "
-          f"-- at inter={inters[0]} the dogmatic community holds phlogiston "
+    print(f"HEADLINE: content-gated trust turns the lock-in boundary into a timescale -- at "
+          f"inter={inters[0]} conversion is left incomplete at the horizon "
           f"({conv_gat[inters[0]]:.2f} vs {conv_fix[inters[0]]:.2f} under fixed trust) with no "
-          f"isolation imposed by hand; where conversion still happens it takes "
+          f"isolation imposed by hand; where conversion completes it takes "
           f"{th_gat[it_s]/max(th_fix[it_s],1):.1f}x longer, through a distrust -> plateau -> "
           f"rehabilitation -> merge arc (cross trust falls to "
           f"{info_b['min_trust_ratio']*100:.0f}% of within, then recovers). Distrust is "
@@ -181,9 +192,10 @@ register(ExperimentSpec(
     description="The lock-in boundary rerun with content-gated trust (social_nu) in the full "
                 "Kuhn-cycle machinery: cross-community trust is inferred from belief "
                 "disagreement, collapses to ~1% while the camps diverge (self-organized "
-                "isolation, lock-in held where fixed trust converts), and -- being memoryless "
-                "-- reopens as the laggards drift in: the boundary moves an order of magnitude "
-                "but the contraction theorem survives (metastability, not a new fixed point).",
+                "isolation, conversion stalled where fixed trust converts), and -- being "
+                "memoryless -- reopens as the laggards drift in: the conversion timescale "
+                "roughly doubles and the contraction theorem survives (metastability, not a "
+                "new fixed point).",
     run=run,
     out_dir="lockin_inferred_trust",
     params=dict(
