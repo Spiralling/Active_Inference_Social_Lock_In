@@ -1,0 +1,44 @@
+{
+  "experiment": "gated_divergence",
+  "git": {
+    "sha": "db1e89aaea02f7044cef2f933c6c3420353c3e1e",
+    "branch": "production/structural-minimal",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-06-12T09:16:54+00:00",
+  "seeds": [
+    0
+  ],
+  "params": {
+    "N_AGENTS": 20,
+    "N_STEPS": 80,
+    "SIGMA_O": 4.0,
+    "T_SHIFT": 10000,
+    "SEED": 0,
+    "STANCE": 1.0,
+    "PREC_SCALE": 40.0,
+    "SOCIAL_NU": 0.5
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.0",
+    "jaxlib": "0.9.0",
+    "numpy": "2.3.4",
+    "equinox": "0.13.6",
+    "networkx": "3.5",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.7"
+  },
+  "outputs": {
+    "simulation_arrays.npz": {
+      "arrays": {
+        "D_gated": "bb57fea9999972a81e572944c8eaf613ff02fec7e1031198c47c1233b776de25",
+        "D_uniform": "8c796e34fcda69d0fdd33a087c36eda4f2a586128529a1b66aaa5f1524063397",
+        "gamma_final": "b64211fc840a2c157da2028d656bcbec999b736e1ee8b8206f4c7207ce28208b"
+      }
+    },
+    "summary.json": "012bc49e285d9bf7603b35478729108bbecb05f36fd98fe8cb7e1cf70b90446b"
+  },
+  "runner_version": 1
+}

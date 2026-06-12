@@ -37,6 +37,7 @@ from src.structural.world import fisher_deposit, fisher_deposit_weighted, sample
 from src.structural import observables as obs
 from src.structural import precision as P
 from src.structural import efe
+from src.structural import reliability as rel
 from src.structural import bmr, linalg
 
 
@@ -307,6 +308,13 @@ def _fuse_then_observe(Pi: jax.Array, h: jax.Array, W: jax.Array, key: jax.Array
 
     def observe_one(Pi_i, h_i, k, w):
         o = sample_o(H, phi, cfg.sigma_o, k)
+        # INFERRED RELIABILITY (Student-t scale mixture): discount each channel by
+        # the agent's own surprise at o, read against the post-fusion PRE-deposit
+        # belief (Pi_i, h_i). Static branch on the frozen cfg => None (DEFAULT) is
+        # byte-identical; the RNG call order above is untouched either way.
+        if cfg.reliability_nu is not None:
+            w = w * rel.channel_reliability(Pi_i, h_i, H, o, cfg.sigma_o,
+                                            cfg.reliability_nu)
         J, j = fisher_deposit_weighted(H, o, cfg.sigma_o, w)
         return Pi_i + J, h_i + j
 
@@ -333,14 +341,35 @@ def _observe_pooled(Pi: jax.Array, h: jax.Array, W: jax.Array, key: jax.Array,
     subs = jnp.stack(subs)
     Wt = _channel_weights(Pi, h, W, cfg)                         # (N, m) from own belief
 
-    def deposit_one(k, w):
+    def deposit_one(Pi_i, h_i, k, w):
         o = sample_o(H, phi, cfg.sigma_o, k)
+        # INFERRED RELIABILITY: z^2 against the agent's OWN belief (no fused belief
+        # exists in this mode). On the default path (Pi_i, h_i) pass through the vmap
+        # unused, which changes no numbers -- byte-identical.
+        if cfg.reliability_nu is not None:
+            w = w * rel.channel_reliability(Pi_i, h_i, H, o, cfg.sigma_o,
+                                            cfg.reliability_nu)
         return fisher_deposit_weighted(H, o, cfg.sigma_o, w)     # (d,d), (d,)
 
-    Js, js = jax.vmap(deposit_one)(subs, Wt)                     # (N,d,d), (N,d)
+    Js, js = jax.vmap(deposit_one)(Pi, h, subs, Wt)              # (N,d,d), (N,d)
     Js_pool = jnp.einsum("ij,jab->iab", W, Js)                   # trust-weighted obs pool
     js_pool = W @ js
     return Pi + Js_pool, h + js_pool, key
+
+
+def _gated_W(Pi: jax.Array, h: jax.Array, W: jax.Array,
+             cfg: StructuralConfig) -> jax.Array:
+    """Content-gated fusion weights: re-derive ``W`` from the Student-t trust
+    precisions ``gamma_ij`` (``reliability.social_gamma``) over the *support* of
+    the carried ``W``. The support recovery ``A_self = (W > 0)`` is exact because
+    ``trust_weights`` output is positive exactly on the closed neighbourhood, so
+    the topology is respected while the trust follows belief content -- agents who
+    have diverged stop averaging with each other (camps). Pure function of the
+    scan carry ``(Pi, h, W)`` => scan-safe; no signature changes anywhere."""
+    measured_idx = jnp.asarray(
+        [cfg.node_names.index(n) for n in ph.measured_nodes(cfg)])
+    gamma = rel.social_gamma(Pi, h, measured_idx, cfg.social_nu)
+    return trust_weights((W > 0).astype(W.dtype), gamma)
 
 
 def _transition(Pi: jax.Array, h: jax.Array, W: jax.Array, key: jax.Array,
@@ -353,6 +382,14 @@ def _transition(Pi: jax.Array, h: jax.Array, W: jax.Array, key: jax.Array,
     applies the conviction tilt. ``cfg.precision_mode`` selects the per-channel gain; the
     default ``'heuristic', experiment_bias=0`` gives all-ones weights (plain ``fisher_deposit``).
     """
+    # CONTENT-GATED TRUST: recompute the fusion weights each round from the current
+    # belief disagreement (gamma), over the carried W's support. Host-side static
+    # branch => None (DEFAULT) keeps the uniform W, byte-identical. Every run_*
+    # (incl. the schedule variants) and the kernel facade inherit this. Note: in
+    # precision_mode='efe' the gated W also feeds the social drive via
+    # _channel_weights -- one trust object governs both fusion and attention.
+    if cfg.social_nu is not None:
+        W = _gated_W(Pi, h, W, cfg)
     if cfg.sharing_mode == "observation":
         Pi_new, h_new, key = _observe_pooled(Pi, h, W, key, cfg, phi)
     else:

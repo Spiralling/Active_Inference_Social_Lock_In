@@ -1,0 +1,17 @@
+{
+  "config": {
+    "N_AGENTS": 20,
+    "N_STEPS": 80,
+    "SIGMA_O": 4.0,
+    "T_SHIFT": 10000,
+    "SEED": 0,
+    "STANCE": 1.0,
+    "PREC_SCALE": 40.0,
+    "SOCIAL_NU": 0.5
+  },
+  "D0": 2.0,
+  "D_final_uniform": 0.0017235378036275506,
+  "D_final_gated": 0.9505343437194824,
+  "gamma_within_mean": 2.924501657485962,
+  "gamma_cross_mean": 0.024370817467570305
+}

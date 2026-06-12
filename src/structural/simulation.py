@@ -44,7 +44,8 @@ import jax
 import jax.numpy as jnp
 
 from src.structural import graphs, linalg, shells
-from src.structural.step import fuse
+from src.structural import reliability as rel
+from src.structural.step import fuse, trust_weights
 from src.structural.world import sample_o, fisher_deposit_weighted
 from src.structural.dual_field import conviction_field
 from src.structural.bayesnet import from_info as bn_from_info, to_info as bn_to_info
@@ -355,6 +356,11 @@ def run_simulation(scenario: Scenario, graph: graphs.Graph, spec: AgentSpec, *,
                    forgetting: float = 1.0,
                    endogenous_gamma: bool = False, gate_strength: float = 1.0,
                    w_floor: float = 0.0, deposit_gate: jax.Array | None = None,
+                   social_nu: float | None = None,
+                   social_idx: tuple[int, ...] | None = None,
+                   social_gate: str = "means",
+                   social_pairs: tuple | None = None,
+                   social_scale_floor: float = 0.1,
                    host_hook: Callable | None = None,
                    conviction_dynamics: ConvictionDynamics | None = None,
                    snapshot_every: int = 5, seed: int = 0) -> dict:
@@ -385,6 +391,35 @@ def run_simulation(scenario: Scenario, graph: graphs.Graph, spec: AgentSpec, *,
     W = graph.trust_W()                                  # (N,N) row-stochastic
     Woff = np.asarray(W) * (1.0 - np.eye(N))
     Woff = jnp.asarray(Woff / (Woff.sum(axis=1, keepdims=True) + EPS))
+
+    # CONTENT-GATED TRUST (opt-in; mirrors step._gated_W): with ``social_nu`` set, the
+    # fusion weights are recomputed each round from the Student-t trust precisions
+    # ``gamma_ij = (nu_s+1)/(nu_s+z_ij^2)`` over the STATIC graph support -- the topology
+    # is respected, but agents who have diverged stop averaging with each other (camps).
+    # WHAT the gate reads is ``social_gate``:
+    #   "means"     (default) : disagreement of the posterior MEANS on the ``social_idx``
+    #                           nodes (``reliability.social_gamma``) -- what opinions you hold;
+    #   "structure"           : disagreement of the contested COUPLINGS ``Pi[a, c]`` over
+    #                           ``social_pairs`` (``reliability.pairwise_structure_z2``) --
+    #                           trust by HOW YOU WIRE THE WORLD, not what opinions or values
+    #                           you hold. The gate that can protect a pluralism living in the
+    #                           wiring when both camps agree in means.
+    # ``social_nu=None`` (DEFAULT) keeps the static ``W`` above, byte-identical.
+    A_self = social_ix = social_pairs_arr = None
+    if social_nu is not None:
+        if social_gate not in ("means", "structure"):
+            raise ValueError(f"social_gate must be 'means'|'structure', got {social_gate!r}")
+        if social_gate == "structure":
+            if social_pairs is None:
+                raise ValueError("social_gate='structure' requires social_pairs (the "
+                                 "contested (i, j) couplings whose divergence gates trust)")
+            social_pairs_arr = jnp.asarray(np.asarray(social_pairs, dtype=int))
+        else:
+            if not social_idx:
+                raise ValueError("social_nu requires social_idx (node indices whose "
+                                 "disagreement gates trust)")
+            social_ix = jnp.asarray(np.asarray(social_idx, dtype=int))
+        A_self = jnp.asarray((np.asarray(graph.A) > 0).astype(float) + np.eye(N))
 
     # initial belief: the scenario's base prior, scaled per agent by conservatism.
     if spec.precision_scale is None:
@@ -485,11 +520,21 @@ def run_simulation(scenario: Scenario, graph: graphs.Graph, spec: AgentSpec, *,
         if gate_sqrt is not None:                # conservatism gates the revision rate (E1)
             J_all = gate_sqrt[None, :, None] * J_all * gate_sqrt[None, None, :]
             j_all = gate_sqrt[None, :] * j_all
+        W_t, Woff_t = W, Woff
+        if social_nu is not None:            # content-gated trust: this round's W from gamma
+            if social_gate == "structure":
+                z2 = rel.pairwise_structure_z2(Pi, social_pairs_arr, social_scale_floor)
+                gamma = rel.student_t_weight(z2, social_nu)
+            else:
+                gamma = rel.social_gamma(Pi, h, social_ix, social_nu)
+            W_t = trust_weights(A_self, gamma)
+            Wo = W_t * (1.0 - jnp.eye(N))
+            Woff_t = Wo / (Wo.sum(axis=1, keepdims=True) + EPS)
         if fuse_mode == "posterior_masked":
             mk = jnp.ones((N, d)) if fuse_mask is None else jnp.asarray(fuse_mask)
-            Pi, h = _fuse_masked(Pi, h, J_all, j_all, W, mk)
+            Pi, h = _fuse_masked(Pi, h, J_all, j_all, W_t, mk)
         else:
-            Pi, h = _fuse_observe(Pi, h, J_all, j_all, W, Woff, eta, fuse_mode)
+            Pi, h = _fuse_observe(Pi, h, J_all, j_all, W_t, Woff_t, eta, fuse_mode)
         if tilt is not None:                            # the conviction lever (off by default)
             U = conviction_field(Pi, h, scenario.names, u_agent, scenario.conviction_alpha)
             h = h + tilt[:, None] * U

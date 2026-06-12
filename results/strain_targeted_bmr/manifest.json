@@ -1,0 +1,45 @@
+{
+  "experiment": "strain_targeted_bmr",
+  "git": {
+    "sha": "db1e89aaea02f7044cef2f933c6c3420353c3e1e",
+    "branch": "production/structural-minimal",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-06-12T09:17:01+00:00",
+  "seeds": [],
+  "params": {
+    "T": 80,
+    "BURN_IN": 10,
+    "SIGMA_O": 1.0,
+    "DIAG": 1.5,
+    "COUPLING": -0.7,
+    "PHI": [
+      1.5,
+      1.5,
+      -3.0
+    ]
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.0",
+    "jaxlib": "0.9.0",
+    "numpy": "2.3.4",
+    "equinox": "0.13.6",
+    "networkx": "3.5",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.7"
+  },
+  "outputs": {
+    "simulation_arrays.npz": {
+      "arrays": {
+        "dF_AB": "3450d7a15826584c6ff736188f4b7941d732ceb3152c1e20c6972a35d315375a",
+        "dF_BC": "2250f63f6eb97ab69c4185709e3904dbe9d3fc1025cd1e8efd89f25e38d8be33",
+        "strain_AB": "0f639b93a308fee2d1e9ac2ab58f05cb1185805a8e7af165b0275aa847e1d007",
+        "strain_BC": "bb581ef2265113a988bf2e5dbc5af660f73c1a72819fa3d684bf30d2909004e5"
+      }
+    },
+    "summary.json": "7833c59fe85dbe1091b4e627642bf6cb6d3197617039518e2877d006fdef266f"
+  },
+  "runner_version": 1
+}

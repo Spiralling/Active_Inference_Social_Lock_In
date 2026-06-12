@@ -1,0 +1,20 @@
+{
+  "config": {
+    "T": 80,
+    "BURN_IN": 10,
+    "SIGMA_O": 1.0,
+    "DIAG": 1.5,
+    "COUPLING": -0.7,
+    "PHI": [
+      1.5,
+      1.5,
+      -3.0
+    ]
+  },
+  "frac_BC_top_strain": 1.0,
+  "final_dF_BC": 3.1920166015625,
+  "final_dF_AB": -1.3414306640625,
+  "t_strain": 0,
+  "t_dF": 0,
+  "lead_time": 0
+}

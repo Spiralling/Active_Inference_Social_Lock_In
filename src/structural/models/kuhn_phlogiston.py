@@ -572,6 +572,7 @@ def single_run(*, N: int = 80, inter: float = 0.05, intra: float = 0.4,
                candidate_accept: str = "best",
                conviction_eps: float = 0.0, conviction_decay: float = 0.01,
                entrenchment_mode: str = "fisher_diag", conviction_gmax: float = 10.0,
+               social_nu: float | None = None,
                seed: int = 0, snapshot_every: int = 2) -> dict:
     """N agents, two equal communities (open vs dogmatic), through the deterministic regime
     flip. ``proposal_rate=None`` => deterministic expansion attempts (headline mode);
@@ -630,8 +631,13 @@ def single_run(*, N: int = 80, inter: float = 0.05, intra: float = 0.4,
         conv_dyn = ConvictionDynamics(eps=conviction_eps, decay=conviction_decay,
                                       entrenchment=entrenchment_mode,
                                       g_max=conviction_gmax)
+    # CONTENT-GATED TRUST (opt-in): disagreement on the mass-law (disagreement) nodes
+    # gates the fusion weights via reliability.social_gamma. None => static W, byte-identical.
+    social_idx = (tuple(scn.names.index(n) for n in DISAGREEMENT_NODES)
+                  if social_nu is not None else None)
     r = run_simulation(scn, graph, spec, fuse_mode=fuse_mode, forgetting=omega,
                        endogenous_gamma=(gate_strength > 0), gate_strength=gate_strength,
+                       social_nu=social_nu, social_idx=social_idx,
                        host_hook=hook, conviction_dynamics=conv_dyn,
                        snapshot_every=snapshot_every, seed=seed)
 

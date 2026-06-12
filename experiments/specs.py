@@ -11,6 +11,7 @@ from experiments import endogenous_gamma  # noqa: F401  (registration side effec
 from experiments import staircase_gate  # noqa: F401  (registration side effect)
 from experiments import meanmatched_structure  # noqa: F401  (registration side effect)
 from experiments import structural_pluralism  # noqa: F401  (registration side effect)
+from experiments import divergent_wiring  # noqa: F401  (registration side effect)
 from experiments import kuhn_phlogiston  # noqa: F401  (registration side effect)
 from experiments import hawkes_rescue  # noqa: F401  (registration side effect)
 from experiments import adaptive_rate  # noqa: F401  (registration side effect)
@@ -20,6 +21,12 @@ from experiments import precrisis_check  # noqa: F401  (registration side effect
 from experiments import multi_candidate  # noqa: F401  (registration side effect)
 from experiments import lakatos_conviction  # noqa: F401  (registration side effect)
 from experiments import combined_mechanisms  # noqa: F401  (registration side effect)
+from experiments import abc_conflict  # noqa: F401  (registration side effect)
+from experiments import gated_divergence  # noqa: F401  (registration side effect)
+from experiments import strain_targeted_bmr  # noqa: F401  (registration side effect)
+from experiments import lockin_inferred_trust  # noqa: F401  (registration side effect)
+from experiments import crisis_trace  # noqa: F401  (registration side effect)
+from experiments import schism_threshold  # noqa: F401  (registration side effect)
 
 # --- cosmology model ---
 from experiments import cosmology_tracking  # noqa: F401  (registration side effect)

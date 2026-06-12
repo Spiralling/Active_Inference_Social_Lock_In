@@ -23,6 +23,7 @@ import numpy as np
 
 from src.structural.belief import GaussianBeliefNet
 from src.structural.bmr import carryover
+from src.structural import linalg
 
 
 def _name_indices(names: tuple[str, ...], subset: tuple[str, ...]) -> jax.Array:
@@ -120,3 +121,69 @@ def time_to_half(m_t, level: float = 0.5) -> int:
     m = np.asarray(m_t, dtype=float)
     reached = np.nonzero(m >= level)[0]
     return int(reached[0]) if reached.size else int(m.shape[0])
+
+
+# ----------------------------------------------------------------------
+# Strain: WHERE is the model misspecified? -- node-splitting conflict measures
+# (Presanis et al. 2013) as read-only diagnostics on a belief net. The idea:
+# split the information feeding a node (or flowing across an edge) into two
+# independent sources, and score the calibrated discrepancy of the two implied
+# marginals, z^2 = delta^T (Sigma_1 + Sigma_2)^{-1} delta -- for 1-D Gaussian
+# marginals simply (mu_1 - mu_2)^2 / (var_1 + var_2). z^2 ~ 1 is consistency;
+# z^2 >> 1 localizes the conflict. ``edge_strain`` scores exactly the edit BMR
+# would make (zero one prior edge, Savage-Dickey deposit swap), so it can
+# *target* the existing pruning machinery (action.reduction_score) instead of
+# scanning all edges. No dynamics here -- pure read-offs.
+# ----------------------------------------------------------------------
+
+
+def node_marginal(Pi: jax.Array, h: jax.Array, v: int
+                  ) -> tuple[jax.Array, jax.Array]:
+    """Exact 1-D marginal ``(mu_v, var_v)`` of node ``v``: ``schur_marginalize``
+    onto the singleton ``{v}`` (all other nodes integrated out). ``v`` is a
+    host-side int (these are post-hoc read-offs, not scan bodies)."""
+    d = Pi.shape[-1]
+    keep = jnp.asarray([v], dtype=jnp.int32)
+    drop = jnp.asarray([i for i in range(d) if i != v], dtype=jnp.int32)
+    Pi_m, h_m = linalg.schur_marginalize(Pi, h, keep, drop)
+    var = 1.0 / Pi_m[0, 0]
+    return h_m[0] * var, var
+
+
+def gaussian_conflict_z2(mu1, var1, mu2, var2):
+    """The calibrated conflict between two 1-D Gaussian sources for the same
+    quantity: ``z^2 = (mu1 - mu2)^2 / (var1 + var2)`` -- the node-splitting
+    discrepancy statistic (Presanis et al. 2013), ~chi^2_1 under consistency."""
+    return (mu1 - mu2) ** 2 / (var1 + var2)
+
+
+def node_split_strain(Pi_rest: jax.Array, h_rest: jax.Array,
+                      prec_direct: float, mean_direct: float, v: int):
+    """Node-splitting strain at node ``v``: the conflict between what the REST of
+    the model implies about ``v`` (the marginal of ``(Pi_rest, h_rest)``, which
+    must exclude the direct channel's deposit) and the DIRECT evidence channel
+    summarised as ``N(mean_direct, 1/prec_direct)``. Large => the model's web and
+    the node's own data disagree -- the misspecification lives at (or near) ``v``."""
+    mu_r, var_r = node_marginal(Pi_rest, h_rest, v)
+    return gaussian_conflict_z2(mu_r, var_r, mean_direct, 1.0 / prec_direct)
+
+
+def edge_strain(Pi_post: jax.Array, h_post: jax.Array,
+                Pi0: jax.Array, h0: jax.Array, u: int, v: int):
+    """Edge strain (the zero-edge variant): how much the prior edge ``(u, v)`` is
+    *fighting the data*, scored as the calibrated displacement of the endpoint
+    marginals when the edge is removed from the prior under the SAME deposit.
+
+    The reduced posterior is the Savage-Dickey swap (no logZ needed):
+    ``Pi_red = zero_edge_prior(Pi0, u, v) + (Pi_post - Pi0)``, ``h_red = h_post``
+    (the edge edit touches only ``Pi``). The strain is the max over the two
+    endpoints of ``gaussian_conflict_z2`` between the full and reduced marginals.
+    Consistent data leave the marginals where they were (z^2 < 1); a misspecified
+    edge that drags an endpoint against its evidence snaps back on removal
+    (z^2 >> 1). Scores exactly the edit ``bmr.prune_edge_prior`` /
+    ``action.reduction_score`` would price -- so strain *targets* BMR."""
+    Pi_red = linalg.zero_edge_prior(Pi0, u, v) + (Pi_post - Pi0)
+    z = [gaussian_conflict_z2(*node_marginal(Pi_post, h_post, w),
+                              *node_marginal(Pi_red, h_post, w))
+         for w in (u, v)]
+    return jnp.maximum(z[0], z[1])

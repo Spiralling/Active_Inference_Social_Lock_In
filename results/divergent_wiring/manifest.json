@@ -1,0 +1,105 @@
+{
+  "experiment": "divergent_wiring",
+  "git": {
+    "sha": "db1e89aaea02f7044cef2f933c6c3420353c3e1e",
+    "branch": "production/structural-minimal",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-06-12T10:36:37+00:00",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "params": {
+    "N": 60,
+    "SEEDS": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "OMEGA": 0.9,
+    "N_STEPS": 120,
+    "W_HI": 1.0,
+    "W_LO": 0.1,
+    "VALUE_A": "dark_matter",
+    "VALUE_B": "scale_variant_laws",
+    "COMMITS": [
+      "dark_matter",
+      "modified_gravity",
+      "scale_variant_laws"
+    ],
+    "NU_SWEEP": [
+      0.02,
+      0.05,
+      0.1,
+      0.2,
+      0.5
+    ],
+    "INTER_SWEEP": [
+      0.0,
+      0.01,
+      0.05,
+      0.2
+    ],
+    "SOCIAL_GATE": "structure",
+    "SCALE_FLOOR": 0.1,
+    "EDGE_THRESHOLD": 12.7,
+    "PROBE_MEANS_NU": 0.5,
+    "SNAPSHOT_EVERY": 5,
+    "MAX_WORKERS": 6,
+    "INCLUDE_THREE_CAMPS": true,
+    "INCLUDE_BAYESNET": false
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.0",
+    "jaxlib": "0.9.0",
+    "numpy": "2.3.4",
+    "equinox": "0.13.6",
+    "networkx": "3.5",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.7"
+  },
+  "outputs": {
+    "simulation_arrays.npz": {
+      "arrays": {
+        "c_t_connected_fixed": "4f1b233d06fc4922ad3985adf4e9c62143bb7eda5cedcead817861e6c6a67682",
+        "c_t_disconnected": "956accc577d5553c1d8edc90d31c9d6d1e81ee2f3084c97082f2ecb9e0459405",
+        "c_t_gated_nu=0.02": "2cd1f41a97d543f3d24589053c8340ba7fe84b6f827740b339c1367ed5ebeb2e",
+        "commits": "bb9f01c2bc429484ed41fdb4a11cfd3cb777df2a1dfead576ebb6113c99e3a83",
+        "cross_fro_connected_fixed": "4637ea6c9f140d3b44008b3944f04f1d6932aa16fdc674baafaa9f6694e387db",
+        "cross_fro_disconnected": "eba3e8b1729ea564f4327ce6be80a3e6afef28babb1a12a08c85aa56968a278d",
+        "cross_fro_gated_nu=0.02": "8ea062263b842131010d85431ebb51e1bdce47d9f2e4acfbe6925495ab74dd55",
+        "cross_jac_connected_fixed": "b2f382a5bf99ea56b88a1f690a9740b85ee75024f2137d2f225df2b7cc08e724",
+        "cross_jac_disconnected": "47497f9d45a63c148ea5be0e4740887a328e129843b48a6a531ff785eb3dacb7",
+        "cross_jac_gated_nu=0.02": "47497f9d45a63c148ea5be0e4740887a328e129843b48a6a531ff785eb3dacb7",
+        "cross_spec_connected_fixed": "a167706aa19b056049c04fccf565ded487937503265eb213c86978f6cdb4309d",
+        "cross_spec_disconnected": "5eed9f515907dfa8c7cf49945141d753d71d7f45638ac4995df983a521ed8571",
+        "cross_spec_gated_nu=0.02": "cb1828c0dc07ea59a52b314cb3dd3dd45480611722e9323bb9c10e6642c7c769",
+        "lambda2_fixed": "628824c64a6e0888e88f7fb223ab5a12e1303852fc057e5acfa3a3ed9cf406e5",
+        "nu_sweep": "0743e5ea223f4c9e5f5074d56e7f928af835a7a96c3f36ee09e36995b361e5f0",
+        "retention_fixed": "fc217e0571d931ead91180e0fab06d9cfaa2883a40500ce2193e79f414e904dc",
+        "retention_gated": "b2675ccf293288266873b93416b0ae9296d997fbcec457c5ddc37af7e4b233a6",
+        "retention_vs_nu": "e7e2b39c3a56a2f88bbc4829630792d09fa517e4b276d176d851ede1ebb54961",
+        "snap_t": "2d530352227c6bc9558ec610965064b4f74d5d752e2455a3096a188d166703f5",
+        "within_fro_connected_fixed": "b2f382a5bf99ea56b88a1f690a9740b85ee75024f2137d2f225df2b7cc08e724",
+        "within_fro_disconnected": "b2f382a5bf99ea56b88a1f690a9740b85ee75024f2137d2f225df2b7cc08e724",
+        "within_fro_gated_nu=0.02": "b2f382a5bf99ea56b88a1f690a9740b85ee75024f2137d2f225df2b7cc08e724",
+        "within_jac_connected_fixed": "b2f382a5bf99ea56b88a1f690a9740b85ee75024f2137d2f225df2b7cc08e724",
+        "within_jac_disconnected": "b2f382a5bf99ea56b88a1f690a9740b85ee75024f2137d2f225df2b7cc08e724",
+        "within_jac_gated_nu=0.02": "b2f382a5bf99ea56b88a1f690a9740b85ee75024f2137d2f225df2b7cc08e724",
+        "within_spec_connected_fixed": "b2f382a5bf99ea56b88a1f690a9740b85ee75024f2137d2f225df2b7cc08e724",
+        "within_spec_disconnected": "b2f382a5bf99ea56b88a1f690a9740b85ee75024f2137d2f225df2b7cc08e724",
+        "within_spec_gated_nu=0.02": "b2f382a5bf99ea56b88a1f690a9740b85ee75024f2137d2f225df2b7cc08e724"
+      }
+    },
+    "summary.json": "8270862f80514328b8a3de6b8e5022cbca5a703a0fc8cdd20686671bc6b938b2"
+  },
+  "runner_version": 1
+}

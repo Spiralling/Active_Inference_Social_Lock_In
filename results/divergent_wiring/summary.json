@@ -1,0 +1,139 @@
+{
+  "config": {
+    "N": 60,
+    "SEEDS": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "OMEGA": 0.9,
+    "N_STEPS": 120,
+    "W_HI": 1.0,
+    "W_LO": 0.1,
+    "VALUE_A": "dark_matter",
+    "VALUE_B": "scale_variant_laws",
+    "COMMITS": [
+      "dark_matter",
+      "modified_gravity",
+      "scale_variant_laws"
+    ],
+    "NU_SWEEP": [
+      0.02,
+      0.05,
+      0.1,
+      0.2,
+      0.5
+    ],
+    "INTER_SWEEP": [
+      0.0,
+      0.01,
+      0.05,
+      0.2
+    ],
+    "SOCIAL_GATE": "structure",
+    "SCALE_FLOOR": 0.1,
+    "EDGE_THRESHOLD": 12.7,
+    "PROBE_MEANS_NU": 0.5,
+    "SNAPSHOT_EVERY": 5,
+    "MAX_WORKERS": 6,
+    "INCLUDE_THREE_CAMPS": true,
+    "INCLUDE_BAYESNET": false
+  },
+  "nu_star": 0.02,
+  "final_cross_fro": {
+    "disconnected": 71.99976348876953,
+    "connected_fixed": 7.19999885559082,
+    "connected_gated": 67.88195037841797
+  },
+  "retention": {
+    "fixed": 0.10000031259427498,
+    "structure_gated": 0.9428079633762428,
+    "means_gated": 0.10186860777821446
+  },
+  "probe_means_gate": {
+    "nu": 0.5,
+    "cross": 7.33451566696167,
+    "retention": 0.10186860777821446,
+    "finding": "trust that reads opinions cannot protect a pluralism that lives in wiring: the camps agree in means (both fit the same blended data), so the means-gate collapses like fixed trust"
+  },
+  "reldist": {
+    "disconnected": 1.253461241722107,
+    "connected_fixed": 0.1603379100561142
+  },
+  "collective_vs_individual": {
+    "disconnected": {
+      "union": 4.0,
+      "best_individual": 2.0,
+      "consensus": 4.0,
+      "dilution_ratio": 0.5522271990776062,
+      "synergy": 0
+    },
+    "connected_fixed": {
+      "union": 4.0,
+      "best_individual": 4.0,
+      "consensus": 4.0,
+      "dilution_ratio": 0.9249942302703857,
+      "synergy": 0
+    },
+    "gated_nu=0.02": {
+      "union": 4.0,
+      "best_individual": 2.0,
+      "consensus": 4.0,
+      "dilution_ratio": 0.5667403340339661,
+      "synergy": 0
+    }
+  },
+  "sweep_A_retention_vs_nu": {
+    "0.02": 0.9428079633762428,
+    "0.05": 0.8544337471269142,
+    "0.1": 0.6902999241402571,
+    "0.2": 0.14872369346984202,
+    "0.5": 0.11150714627600082
+  },
+  "sweep_B": {
+    "lambda2": [
+      -1.7763568394002505e-15,
+      0.6867654248519324,
+      3.384356033615615,
+      10.485475926134573,
+      59.9999999999999
+    ],
+    "retention_fixed": [
+      1.0,
+      0.8301368537735904,
+      0.507098221253804,
+      0.26858327930044157,
+      0.10000031259427498
+    ],
+    "retention_gated": [
+      1.0,
+      0.9993074182436165,
+      0.9965377270030484,
+      0.9894734142807687,
+      0.9428079633762428
+    ]
+  },
+  "mechanism": "same Student-t trust gate, pointed at the coupling pattern (wiring) instead of the posterior means (opinions); bistable in nu -- divergence must bootstrap before fusion erases it",
+  "three_camps": {
+    "final_by_commitment": {
+      "camp_0": [
+        80.79972839355469,
+        7.999974250793457,
+        7.999974250793457
+      ],
+      "camp_1": [
+        8.799972534179688,
+        79.99974060058594,
+        7.999974250793457
+      ],
+      "camp_2": [
+        8.799972534179688,
+        7.999974250793457,
+        79.99974060058594
+      ]
+    },
+    "finding": "PREDICTION REFUTED (reported honestly): the camp valuing the unsupported theory (modified_gravity) consolidates its wiring exactly as strongly as the supported camps. In linear-Gaussian Fisher learning the deposit J = H^T diag(w) H / sigma^2 never sees the observation, so attention alone fabricates the precision-pattern edge; the data's verdict on an unsupported theory lives in the potential h (the means), not in |Pi|. Structure-as-precision-pattern is attention-driven in this model class -- a scope condition on the pluralism results."
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "config": {
+    "T": 120,
+    "T_CONFLICT": 30,
+    "NU": 4.0,
+    "EMA_BETA": 0.9,
+    "SIGMA_O": 0.5,
+    "DIAG": 1.0,
+    "COUPLING": -0.6,
+    "PHI_PRE": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "PHI_POST": [
+      -3.0,
+      1.0,
+      1.0
+    ]
+  },
+  "baseline_final_mu_A": -1.9945987462997437,
+  "robust_min_lambda_A": 0.15519241988658905,
+  "robust_var_A_peak": 0.038002435117959976,
+  "robust_var_A_peak_step": 38,
+  "post_conflict_strain_AB": 0.002907300087261117,
+  "post_conflict_strain_BC": 0.0005464426070425866
+}

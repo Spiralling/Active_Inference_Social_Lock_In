@@ -167,6 +167,27 @@ class StructuralConfig:
     conviction_alpha: float = 0.5    # propagation strength of the conviction field (alpha in
     #   the (I - alpha W) u_eff = u solve of dual_field.effective_utility).
 
+    # --- inferred reliability / content-gated trust (src/structural/reliability.py) ---
+    reliability_nu: float | None = None   # nu: Student-t dof for per-channel evidence
+    #   reliability. Gaussian likelihoods are outlier-resistant the wrong way round
+    #   (O'Hagan 1979): conflicting evidence is averaged into a *confident compromise*
+    #   and leaves no trace. Modelling each channel's noise as a Student-t scale
+    #   mixture and inferring the scale per step gives lambda_k = (nu+1)/(nu+z_k^2),
+    #   with z_k the one-step residual standardized by the agent's own pre-deposit
+    #   predictive variance. lambda multiplies the existing channel weights Wt, so it
+    #   COMPOSES with every precision_mode (a deposit gate, like attention -- but
+    #   inferred from surprise, not chosen). Small nu => quick to call an outlier;
+    #   large nu => Gaussian trust recovered. None (DEFAULT) => off, byte-identical.
+    social_nu: float | None = None        # nu_s: content-gated trust. Uniform fusion is
+    #   a contraction -- inter-agent divergence is impossible by construction. Gate it:
+    #   gamma_ij = (nu_s+1)/(nu_s+z_ij^2) with z_ij^2 the diagonal-approx Mahalanobis
+    #   disagreement between i's and j's posteriors SUMMED over the measured nodes
+    #   (summed, not meaned: a localized disagreement must be able to sever trust).
+    #   W is recomputed each round from gamma over the carried W's support, so the
+    #   topology is respected but trust follows content -- agents who have diverged
+    #   stop averaging with each other (camps). None (DEFAULT) => uniform trust,
+    #   byte-identical.
+
     # --- social sharing channel (what a peer transmits across the trust graph) ---
     sharing_mode: str = "posterior"  # "posterior" (DEFAULT): peers transmit their WHOLE
     #   belief net and the receiver fuses by precision addition -- a conclusion propagates,
