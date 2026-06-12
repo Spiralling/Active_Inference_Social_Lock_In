@@ -1,0 +1,43 @@
+{
+  "experiment": "crisis_trace",
+  "git": {
+    "sha": "d562e69d2608f19962152b590f63908d0e2ab1cf",
+    "branch": "production/structural-minimal",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-06-12T11:47:16+00:00",
+  "seeds": [
+    0
+  ],
+  "params": {
+    "N_AGENTS": 20,
+    "N_STEPS": 800,
+    "T_SHIFT": 40,
+    "SIGMA_O": 0.5,
+    "NU": 2.0,
+    "SEED": 0
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.0",
+    "jaxlib": "0.9.0",
+    "numpy": "2.3.4",
+    "equinox": "0.13.6",
+    "networkx": "3.5",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.7"
+  },
+  "outputs": {
+    "simulation_arrays.npz": {
+      "arrays": {
+        "lam_agree": "7cda498d8a55dc15ae1d19b29596c5768c31db7fc89be9ca70c9768b01a38157",
+        "lam_disagree": "ad36456962dd9e4c0441265119aeafa9a5f31ed304ba681367e3ba2656ea3046",
+        "oxy_base": "52deddb65934e0bcd2690ad981daf27112c201aa4f6c86feab8645f7a9b91608",
+        "oxy_robust": "b392dd65e34dccc587018e1c6eefe2d9c5a1fe889ab873bd977a455b0dd4ed4e"
+      }
+    },
+    "summary.json": "af743ecc5f5ddc7188208cbe5d65e6fbc87e65af60f91d2184c1aa54088725be"
+  },
+  "runner_version": 1
+}

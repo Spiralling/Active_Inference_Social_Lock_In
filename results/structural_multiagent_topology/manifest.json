@@ -1,11 +1,11 @@
 {
   "experiment": "multiagent_topology",
   "git": {
-    "sha": "008fc50b3e662a5b7d56fac47e43dc63872026b4",
+    "sha": "d562e69d2608f19962152b590f63908d0e2ab1cf",
     "branch": "production/structural-minimal",
     "dirty": true
   },
-  "timestamp_utc": "2026-06-09T16:32:59+00:00",
+  "timestamp_utc": "2026-06-12T11:34:40+00:00",
   "seeds": [
     0
   ],
@@ -37,32 +37,32 @@
       "arrays": {
         "bridge_inter": "3e13742416710db10916672757404e677787a919a8cdd1276ca1b3fcb56245b9",
         "bridge_lambda2": "3bac1ba82ef5bcc989bc0d12734f53a915fabd8a39bdbf0961ad68849c3fbe80",
-        "bridge_revolted": "9d5467404ecdf14e62bb31b346a3ce50058e558b632cdc3f58022eed9493168e",
+        "bridge_revolted": "99dda4b010159cad0f6166711b2cbf9d2da2aa307f6c8be0a2aa8a1ef64f19e6",
         "mode_labels": "8c23254ccf1f0820d3aac4babab06e3dcfddd41448627e0e7f70d8a335541176",
-        "mode_revolted": "d000a99765f0198ef3ff50366b505657473d3b3b013af9b7d0d2ba00d2a583d2",
+        "mode_revolted": "caf544bde39c59498eaaedbb38c230861888d17419f91465ebb42d262750274c",
         "panel_disagreement_t": "c2b14750a4bba025d43733d9771f9c623e09aa1cb10cdd24be486beb00c8b4e4",
-        "panel_kept_final": "d2fd0fb66646f61421d97f65ba1d8859926030981b6dc3f82fdb5c4dae8e18bf",
-        "panel_kept_t": "bbfb40bc12bc177f6a611209741e621302318955d00a49327aac2b89425846ad",
+        "panel_kept_final": "a859071a1244f90c4d9a284ff4969f64046cfe8ce080faa2c1116ed8cf54b2e4",
+        "panel_kept_t": "0c3d6c7980f3b895099ba6085843d8161d353fab78a94b2bdd6a57a1a1bf8fae",
         "panel_labels": "42297e1a4669ddad888f89826271815f5004b4fca0e3d5960a258124b20ac082",
         "panel_lambda2": "a7f06a204a964dbb6e229b83a53400c726028f7c89bf43a47e656969302cbe0c",
         "panel_m_t": "a46ef6487f3cd567a60e3a8edaf5e96b1c63ec0050815377ddeedfbf6e08bd11",
         "panel_mean_degree": "d3f723f3bcbb19278eaae00f03a61e90f3d08200011977c37f4f1da70333af55",
-        "panel_revolted": "bf87727783663181663bd6f086d60bdfbe29e9d35691279dd199cf27fef9151a",
+        "panel_revolted": "143cef3ac4164a01d7905fc2b53891ef1efd4233892042ecf1be322961e37d7a",
         "panel_snap_t": "2d530352227c6bc9558ec610965064b4f74d5d752e2455a3096a188d166703f5",
         "place_central": "4769157a1840cbafc3d18ac4a9351ede3a9ed6fa55f3f3d3306d3bf9948d9707",
-        "place_central_revolted_t": "48af534438d1e83a6e134d086b27f85120594abef97d91d26311b2913749b251",
-        "place_peripheral": "670395db573400b2daf62d915821bdcd596c70d98544447a7d6328710ff38699",
-        "place_peripheral_revolted_t": "2b2d6a5b502b01caddd02eb9754e26fdc54df5db01f93942ec9723ebbf8c7b4e",
+        "place_central_revolted_t": "78a8b14aa3293764b8edea14453aa9f437aecf8d7559397c66b8b4be308d8026",
+        "place_peripheral": "4769157a1840cbafc3d18ac4a9351ede3a9ed6fa55f3f3d3306d3bf9948d9707",
+        "place_peripheral_revolted_t": "7f086a1b2e5578564590c3018ff1561227e0c53f2a9fc8d4c62543fe3cfce0fd",
         "rep_edges": "994e49a21d8de869e11088832b3ff84d672b0870b48935a89e9707ee809bcdfa",
         "rep_is_vanguard": "f02034b996db08a18bdf4fcfaf4a46efc181a09c76f2f5af7a047e0ee4a60664",
-        "rep_kept_t": "92df5443716f801418556798405fcb18f6b394c99471e916405ad89abba286c5",
+        "rep_kept_t": "ef230c50d08121b6ec565cfcced86f1ed189d197699a99a79c8ede7d021b9011",
         "rep_lam": "539b34c9f2fab600e68ec4d208fc8fc76b7013629caeae7192bdec7a8b8223df",
-        "rep_revolted_t": "6a4ed4ebd9bb5febd6926bac7fd2eba1944cc26fa2a429d05a7f05d33945cb47",
+        "rep_revolted_t": "b4e6b622f2025259d1aaa1c0ab716008e004c8cd045ee4c590bf1fb79541a5fb",
         "rep_snap_t": "2d530352227c6bc9558ec610965064b4f74d5d752e2455a3096a188d166703f5",
         "rep_v_e": "03c53b30a0bdcd3eea4ff4b548db4c3002953768cb13fabb38ada74a3a9c26b8"
       }
     },
-    "summary.json": "9bd70a5c2e36f070ed42f17aa0b31ba8361c13e003792e796eb4991e01c54ac4"
+    "summary.json": "3d6cf4e80b2a87b8e13efa640a634fd8e45358c6cb1d1afe939beb53b3392cae"
   },
   "runner_version": 1
 }

@@ -1,0 +1,15 @@
+{
+  "config": {
+    "N_AGENTS": 20,
+    "N_STEPS": 800,
+    "T_SHIFT": 40,
+    "SIGMA_O": 0.5,
+    "NU": 2.0,
+    "SEED": 0
+  },
+  "t_half_baseline": 79,
+  "t_half_robust": 208,
+  "min_lambda_disagree": 0.17148859798908234,
+  "final_lambda_disagree": 1.273044466972351,
+  "denial_lag_ratio": 4.3076923076923075
+}

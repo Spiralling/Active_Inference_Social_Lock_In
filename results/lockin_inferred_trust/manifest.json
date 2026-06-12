@@ -1,0 +1,59 @@
+{
+  "experiment": "lockin_inferred_trust",
+  "git": {
+    "sha": "d562e69d2608f19962152b590f63908d0e2ab1cf",
+    "branch": "production/structural-minimal",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-06-12T11:35:10+00:00",
+  "seeds": [
+    0,
+    1
+  ],
+  "params": {
+    "N_AGENTS": 80,
+    "N_STEPS": 180,
+    "S_DOGMA": 6.0,
+    "PROPOSAL_RATE": 0.08,
+    "INTERS": [
+      0.005,
+      0.02,
+      0.05,
+      0.2
+    ],
+    "SOCIAL_NU": 0.5,
+    "SHOWCASE_INTER": 0.05,
+    "SEEDS": [
+      0,
+      1
+    ]
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.0",
+    "jaxlib": "0.9.0",
+    "numpy": "2.3.4",
+    "equinox": "0.13.6",
+    "networkx": "3.5",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.7"
+  },
+  "outputs": {
+    "simulation_arrays.npz": {
+      "arrays": {
+        "conv_fixed": "3a027052869a79fadaf6eaa46886515cf3599419f862f4125210e7c0cbf0e402",
+        "conv_gated": "ded37dd93b281d74002ca558f15b1aabd16d37bcc906505bb51a2db08f1298cf",
+        "inters": "24ca65f8bcdfd21d4693f485746b4e593d7dc117355ea1c6c7c7194e73f2dd66",
+        "showcase_gamma_cross": "4154f6b696ad74ce670f7a703464b5f1954e04989d11821a34eaae7769d5a365",
+        "showcase_gamma_within": "1ec3e9700cf4b04546f0b828fcb6c784021ab85b306e07a30867badb3e381d20",
+        "showcase_oxy": "e568f66a7cb6cd207564501953d31f36663af0b4193a3bab59fd95d6cd3c1881",
+        "showcase_snap_t": "7b2e35ad41591a7b41cf39bf71d6c720ef0b71012c9143eb24ac10e73d0f7bb9",
+        "t_half_fixed": "5331cdc974f1d78677da03d26a28494203085a6da9988a1e08109a9556ec2681",
+        "t_half_gated": "f8de22dfa2f2217ba9b1aeaabe8050ab16d1d08fcfde902b40f0d57e19ce9890"
+      }
+    },
+    "summary.json": "f1ae43b05f1c3879c1b57aabf28a7b37b11533ab3def21f6de30ff6b8f8d47c4"
+  },
+  "runner_version": 1
+}

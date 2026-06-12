@@ -1,0 +1,67 @@
+{
+  "experiment": "applied_bmr",
+  "git": {
+    "sha": "d562e69d2608f19962152b590f63908d0e2ab1cf",
+    "branch": "production/structural-minimal",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-06-12T11:28:59+00:00",
+  "seeds": [
+    1,
+    2,
+    3
+  ],
+  "params": {
+    "N": 48,
+    "T_SHIFT": 40,
+    "N_STEPS": 160,
+    "SIGMA_O": 0.5,
+    "GAMMA": 0.98,
+    "OMEGA": 0.92,
+    "BMR_EVERY": 10,
+    "LAM_LOW": 0.05,
+    "LAMBDAS": [
+      0.05,
+      0.1,
+      0.2,
+      0.5,
+      1.0,
+      2.0,
+      4.0
+    ],
+    "SNAPSHOT_EVERY": 5,
+    "SEEDS": [
+      1,
+      2,
+      3
+    ],
+    "MAX_WORKERS": 6
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.0",
+    "jaxlib": "0.9.0",
+    "numpy": "2.3.4",
+    "equinox": "0.13.6",
+    "networkx": "3.5",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.7"
+  },
+  "outputs": {
+    "simulation_arrays.npz": {
+      "arrays": {
+        "belt_cpl_applied": "b551b378d72229bf50a83c492ebffe6403a08dd1bf4735d92d531d7a37154802",
+        "belt_cpl_readout": "aa026eff57db953e2690d26fa451a2ab16c8a79accf229d0422026ca729268a5",
+        "lambdas": "03d8c04595b726f153928f55654454bda8e0a4cdac0dfbe09dcbe2059796a563",
+        "rem_belt_by_lambda": "736b109547007f1407b7390f05c0aa83073bd098290c9145bf6633881ccd976b",
+        "rem_belt_t": "da1fc1f8310d27503f9a02ea041a006c094a5feb3fed4aafc421d159ddd06164",
+        "rem_core_t": "32ca184097d98dc044ef50b021adb26f37515f8488c716fd3a3d02484ae860ae",
+        "rem_spur_t": "b7e4c86949241d36b11b04c314275eec7cdc5ebc51a225f2e166fa7b6f4e9c9a",
+        "snap_t": "d2ed9b61f12d3248b5daec794c47dbb335e7e2ca44af7afab1d90dc60e1527e4"
+      }
+    },
+    "summary.json": "909b4884e75debcd7937a649c636527af2103ffbccb599840a5f98fc29cbf13b"
+  },
+  "runner_version": 1
+}

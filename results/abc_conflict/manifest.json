@@ -1,11 +1,11 @@
 {
   "experiment": "abc_conflict",
   "git": {
-    "sha": "db1e89aaea02f7044cef2f933c6c3420353c3e1e",
+    "sha": "d562e69d2608f19962152b590f63908d0e2ab1cf",
     "branch": "production/structural-minimal",
     "dirty": true
   },
-  "timestamp_utc": "2026-06-12T09:16:48+00:00",
+  "timestamp_utc": "2026-06-12T12:40:37+00:00",
   "seeds": [],
   "params": {
     "T": 120,

@@ -1,0 +1,50 @@
+{
+  "experiment": "schism_threshold",
+  "git": {
+    "sha": "d562e69d2608f19962152b590f63908d0e2ab1cf",
+    "branch": "production/structural-minimal",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-06-12T11:22:28+00:00",
+  "seeds": [
+    0
+  ],
+  "params": {
+    "N_AGENTS": 20,
+    "N_STEPS": 80,
+    "SIGMA_O": 4.0,
+    "SOCIAL_NU": 0.5,
+    "PREC_SCALES": [
+      2.0,
+      5.0,
+      10.0,
+      20.0,
+      30.0,
+      40.0,
+      80.0
+    ],
+    "SEED": 0
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.0",
+    "jaxlib": "0.9.0",
+    "numpy": "2.3.4",
+    "equinox": "0.13.6",
+    "networkx": "3.5",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.7"
+  },
+  "outputs": {
+    "simulation_arrays.npz": {
+      "arrays": {
+        "frac_fixed": "1970a168b4beaa0126a710301499b7793b97e1a1c743bd0f8556d9d30185a3ec",
+        "frac_gated": "0202755a3ea2d9acb476294c29b57ceb2f484274a656537bb5d3167e569442b3",
+        "prec_scales": "8e51084afc1476f34d4253ee80fcfeb7ece32febef7e582ad9776bb1560fa181"
+      }
+    },
+    "summary.json": "4ea219479c1391b9b1782bf338b70c4bf3bcda3f48c3119b7c931dcf94ddbe50"
+  },
+  "runner_version": 1
+}

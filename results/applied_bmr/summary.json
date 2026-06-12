@@ -1,0 +1,50 @@
+{
+  "config": {
+    "N": 48,
+    "T_SHIFT": 40,
+    "N_STEPS": 160,
+    "SIGMA_O": 0.5,
+    "GAMMA": 0.98,
+    "OMEGA": 0.92,
+    "BMR_EVERY": 10,
+    "LAM_LOW": 0.05,
+    "LAMBDAS": [
+      0.05,
+      0.1,
+      0.2,
+      0.5,
+      1.0,
+      2.0,
+      4.0
+    ],
+    "SNAPSHOT_EVERY": 5,
+    "SEEDS": [
+      1,
+      2,
+      3
+    ],
+    "MAX_WORKERS": 6
+  },
+  "belt_coupling_final": {
+    "readout": 2.7999868392944336,
+    "applied_lam_low": 0.9999942183494568,
+    "applied_lam_high": 2.7999868392944336
+  },
+  "removal_onset": {
+    "belt": 70,
+    "spurious": 10,
+    "t_shift": 40
+  },
+  "lambda_sweep_belt_removal": {
+    "0.05": 1.0,
+    "0.1": 1.0,
+    "0.2": 1.0,
+    "0.5": 0.5,
+    "1.0": 0.0,
+    "2.0": 0.0,
+    "4.0": 0.0
+  },
+  "occam_core_removal_at_lam_low": 1.0,
+  "spurious_partial_regrowth": 0.75,
+  "mechanism": "the crisis check executed: every BMR_EVERY steps the ledger-flagged edges are removed by the exact Savage-Dickey reduced posterior (joint reduced prior + untouched deposit, anchor included); reversible -- a cleared flag restores the edge"
+}

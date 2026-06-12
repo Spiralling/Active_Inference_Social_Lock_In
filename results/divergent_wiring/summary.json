@@ -36,6 +36,7 @@
     "SCALE_FLOOR": 0.1,
     "EDGE_THRESHOLD": 12.7,
     "PROBE_MEANS_NU": 0.5,
+    "BMR_EVERY": 10,
     "SNAPSHOT_EVERY": 5,
     "MAX_WORKERS": 6,
     "INCLUDE_THREE_CAMPS": true,
@@ -134,6 +135,51 @@
         79.99974060058594
       ]
     },
-    "finding": "PREDICTION REFUTED (reported honestly): the camp valuing the unsupported theory (modified_gravity) consolidates its wiring exactly as strongly as the supported camps. In linear-Gaussian Fisher learning the deposit J = H^T diag(w) H / sigma^2 never sees the observation, so attention alone fabricates the precision-pattern edge; the data's verdict on an unsupported theory lives in the potential h (the means), not in |Pi|. Structure-as-precision-pattern is attention-driven in this model class -- a scope condition on the pluralism results."
+    "finding": "PREDICTION REFUTED (reported honestly): the camp valuing the unsupported theory (modified_gravity) consolidates its wiring exactly as strongly as the supported camps. In linear-Gaussian Fisher learning the deposit J = H^T diag(w) H / sigma^2 never sees the observation, so attention alone fabricates the precision-pattern edge; the data's verdict on an unsupported theory lives in the potential h (the means), not in |Pi|. Structure-as-precision-pattern is attention-driven in this model class -- a scope condition on the pluralism results; see 'applied_bmr': in-loop model reduction does not remove it either."
+  },
+  "applied_bmr": {
+    "bmr_every": 10,
+    "max_coupling_change": {
+      "disconnected_bmr": 0.0,
+      "three_camps_bmr": 0.0
+    },
+    "flags_by_camp": {
+      "disconnected_bmr": [
+        [
+          0.0,
+          0.17333333333333334,
+          0.17333333333333334
+        ],
+        [
+          0.0,
+          0.21333333333333332,
+          0.21333333333333332
+        ]
+      ],
+      "three_camps_bmr": [
+        [
+          0.0,
+          0.22000000000000003,
+          0.22000000000000003
+        ],
+        [
+          0.0,
+          0.22000000000000003,
+          0.22000000000000003
+        ],
+        [
+          0.0,
+          0.2899999999999999,
+          0.2899999999999999
+        ]
+      ]
+    },
+    "gated_bmr_retention": 0.9428079633762428,
+    "prior_coupling_by_commitment": [
+      0.7999999523162842,
+      0.0,
+      0.0
+    ],
+    "finding": "applied Savage-Dickey BMR leaves this pluralism numerically unchanged (max coupling change 0.000): the contested couplings are ~100% attention-driven experiment DEPOSIT, and the reference prior's contested couplings are ~0, so the prune -- which by construction removes PRIOR structure while keeping the data -- has nothing to bite. The scope condition, made precise: evidence-driven deletion adjudicates believed prior structure; it cannot un-run your experiments. Evidence-accountability for deposit-built structure needs a deposit-level mechanism (retrospective reweighting / forgetting), not model reduction."
   }
 }

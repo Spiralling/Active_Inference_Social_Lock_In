@@ -1,11 +1,11 @@
 {
   "experiment": "kuhn_phlogiston",
   "git": {
-    "sha": "a40ac529b87dc1c3875f486c57ba1f0160d07a68",
+    "sha": "d562e69d2608f19962152b590f63908d0e2ab1cf",
     "branch": "production/structural-minimal",
     "dirty": true
   },
-  "timestamp_utc": "2026-06-11T09:45:02+00:00",
+  "timestamp_utc": "2026-06-12T12:33:34+00:00",
   "seeds": [
     0,
     1,

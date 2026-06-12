@@ -1,11 +1,11 @@
 {
   "experiment": "divergent_wiring",
   "git": {
-    "sha": "db1e89aaea02f7044cef2f933c6c3420353c3e1e",
+    "sha": "d562e69d2608f19962152b590f63908d0e2ab1cf",
     "branch": "production/structural-minimal",
     "dirty": true
   },
-  "timestamp_utc": "2026-06-12T10:36:37+00:00",
+  "timestamp_utc": "2026-06-12T12:41:11+00:00",
   "seeds": [
     0,
     1,
@@ -50,6 +50,7 @@
     "SCALE_FLOOR": 0.1,
     "EDGE_THRESHOLD": 12.7,
     "PROBE_MEANS_NU": 0.5,
+    "BMR_EVERY": 10,
     "SNAPSHOT_EVERY": 5,
     "MAX_WORKERS": 6,
     "INCLUDE_THREE_CAMPS": true,
@@ -99,7 +100,7 @@
         "within_spec_gated_nu=0.02": "b2f382a5bf99ea56b88a1f690a9740b85ee75024f2137d2f225df2b7cc08e724"
       }
     },
-    "summary.json": "8270862f80514328b8a3de6b8e5022cbca5a703a0fc8cdd20686671bc6b938b2"
+    "summary.json": "0654239009f1d10b002a2ba404db69abebf7a67c3332f5ae45e1c920dc79cc4f"
   },
   "runner_version": 1
 }
