@@ -1,0 +1,69 @@
+{
+  "experiment": "kuhnian_transition",
+  "git": {
+    "sha": "65d48f2ee1990240ca5c17ae8f299e4146cba241",
+    "branch": "production/structural-minimal",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-06-12T14:34:17+00:00",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "params": {
+    "T_SHIFT": 80,
+    "T_TRANS": 480,
+    "SIGMA_TRANS": 1.0,
+    "OMEGA_TRANS": 0.9,
+    "N_VAN": 8,
+    "N_CONS": 16,
+    "GAMMA_TRICKLE": 0.99,
+    "BETAS": [
+      0.0,
+      0.003,
+      0.01,
+      0.03,
+      0.1,
+      0.2,
+      0.3
+    ],
+    "T_LADDER": 800,
+    "SIGMA_LADDER": 0.5,
+    "OMEGA_LADDER": 0.5,
+    "N_LADDER": 16,
+    "PLATEAU_MIN": 100,
+    "ALPHA_M": 0.02,
+    "Q_LOCK": 0.9,
+    "SEEDS": [
+      0,
+      1,
+      2
+    ]
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.0",
+    "jaxlib": "0.9.0",
+    "numpy": "2.3.4",
+    "equinox": "0.13.6",
+    "networkx": "3.5",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.7"
+  },
+  "outputs": {
+    "simulation_arrays.npz": {
+      "arrays": {
+        "betas": "3e067e270bb0aaa3c85c48724f051bd850821af6ecaa109a4aa58f902ecf9686",
+        "bridges": "65dd679f08f71e246783e5a315fe2538b3ae5e501fb847ac8c16c043b86fbd8f",
+        "lambda2": "ff6d67bca592635f0a090f783f6c364fb329fb6acc5405eb6b39744c7e0ce8b9",
+        "q_end_clean": "b256f12a192932ebd218a4554beaf35d2890f3d936a88ea3090a629979e22891",
+        "q_end_trickle": "96d26e11effae0a1df44eee13ec6b984c07352fe161b2db1cc43d6571c074ecb",
+        "q_ladder": "adf678883391858e881970f9c8dff0157ea74a2a5246cefde1de82a040700636"
+      }
+    },
+    "summary.json": "b5d430d2ce4610459b2ded6faa0b4d7773f01f23f47163217a4529e2d67a158d"
+  },
+  "runner_version": 1
+}

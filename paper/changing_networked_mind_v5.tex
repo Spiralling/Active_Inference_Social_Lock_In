@@ -103,28 +103,19 @@
 \maketitle
 
 \begin{abstract}
-How does a scientific community change its mind---not about a fact, but about the \emph{frame} its
-facts live in? We model a paradigm as a directed network of commitments and a community as bounded
-active-inference agents who must \emph{learn} that network's structure while valuing some
-conclusions over others and pooling beliefs with peers. Driving this community through the full
-Kuhnian cycle, one signature organizes everything we find: \emph{conflict
-resolves into confident compromise}. Valuing a conclusion shifts where beliefs settle but never
-delays their yielding; under any contact, communities converge; the lone discoverer of a new
-dimension is averaged away. These are theorems of the regime, not accidents of
-parameters---Gaussian beliefs under precision-weighted pooling can neither reject a conflicting
-source nor sustain a school. Two results measure the regime and its boundary. First, the
-\emph{homogeneity effect}: in a world that genuinely supports two readings, separated
-communities learn two crisply different paradigm networks, and contact under default pooling
-collapses them into one blurry compromise net no member holds---averaging can never create an
-edge absent from every individual. Second, infer the one quantity the defaults hold
-constant---each source's \emph{reliability}, read off surprise---and distinctness returns: an
-agent's confidence can fall under contradiction, and two wirings survive full contact, provided
-trust reads \emph{wiring} rather than opinions. But the gate adds no new fixed point, so what it
-buys, it buys as time: schools become metastable, never stable. What buys a wall is
-representational: agents that carry candidate wirings and a posterior over them---fusing
-within frames, communicating hypotheses rather than averaging them---hold two internally
-certain camps at a genuine fixed point. Gates buy time; represented rivals buy walls.
-Averaging refines a frame; it cannot grow a new one.
+How does a scientific community change its mind---not about a fact, but about the \emph{frame}
+its facts live in? We model a paradigm as a directed network of commitments and a community as
+bounded active-inference agents who learn that network's structure while valuing some
+conclusions over others and pooling beliefs with peers. Two classical theorems make this
+community a null regime: Gaussian beliefs under precision-weighted pooling can neither reject a
+conflicting source nor sustain a school. Result 1 measures the consequence, the
+\emph{homogeneity effect}: communities that would learn two crisply different wirings apart
+collapse, under any contact, into one compromise net no member holds. Result 2 measures the
+repair, in two stages: infer each source's \emph{reliability} from surprise and distinctness
+returns as a timescale; \emph{represent the rival}---candidate wirings, a posterior over them,
+hypotheses communicated rather than averaged---and it returns as a wall, two internally certain
+camps at a genuine fixed point. Gates buy time; represented rivals buy walls. Averaging refines
+a frame; it cannot grow a new one.
 
 \keywords{Active inference \and Structure learning \and Belief sharing \and Paradigm change \and Social epistemology}
 \end{abstract}
@@ -134,41 +125,33 @@ Averaging refines a frame; it cannot grow a new one.
 \label{sec:background}
 % ======================================================================
 
-If we want science to keep going well, goodwill is not enough: we need to know how science
-\emph{works}---what kind of agent can do science at all, how a community comes to represent a
-genuinely new dimension of the world, and how it loses information it once held. The question has
-lately acquired a second audience, because communities of reasoning agents are no longer only
-studied but \emph{built}---machine-mediated research pipelines, automated literature synthesis,
-multi-agent learning systems---and every such community commits, in its aggregation step, to an
-answer it rarely examines: what happens to the member who disagrees. Machine learning has begun
-to name the property at stake \emph{open-endedness}, the capacity of a system to keep producing
-artifacts that are novel and learnable, identified both as a grand challenge
-\citep{stanley2017oe} and as an essential ingredient of any general intelligence
-\citep{hughes2024}; social epistemology has long catalogued its failure modes, echo chambers
-\citep{nguyen2018} and premature consensus \citep{zollman2010}. What neither supplies is a
-foundation: a model of a \emph{community} of structure-learning agents explicit enough that one
-can prove which aggregation dynamics preserve open-endedness and which foreclose it. This paper
-builds that foundation, and its central result is a negative one with constructive content: the
-most natural baseline---Gaussian beliefs under precision-weighted pooling---provably lacks the
-capacity, and even the cheapest repair the failure itself names---inferring each source's
-reliability from surprise---restores distinctness only as a timescale, never as a wall; a wall
-appears only when the rival itself is represented, which we demonstrate at the smallest scale
-that exhibits it. Averaging refines a frame; it cannot grow a new one.
+If we want science to keep going well, we need to know how it \emph{works}: what kind of agent
+can do science at all, how a community comes to represent a genuinely new dimension of the
+world, and how it loses information it once held. The question has a second audience, because
+communities of reasoning agents are now \emph{built} as well as studied, and every such
+community commits, in its aggregation step, to an answer it rarely examines: what happens to
+the member who disagrees. Machine learning names the property at stake \emph{open-endedness}
+\citep{stanley2017oe,hughes2024}; social epistemology catalogues its failure modes
+\citep{nguyen2018,zollman2010}. What neither supplies is a foundation: a model of a
+\emph{community} of structure-learning agents explicit enough that one can prove which
+aggregation dynamics preserve open-endedness and which foreclose it. This paper builds that
+foundation, and its central result is a negative one with constructive content: the most
+natural baseline---Gaussian beliefs under precision-weighted pooling---provably lacks the
+capacity, and even the cheapest repair the failure names---reliability inferred from
+surprise---restores distinctness only as a timescale; a wall appears only when the rival itself
+is represented, which we demonstrate at the smallest scale that exhibits it. Averaging refines
+a frame; it cannot grow a new one.
 
 To change one's mind about a fact is to update a belief; to change a paradigm is to change the
-\emph{frame} in which beliefs are posed. A frame is not a credence but a \emph{structure}: a
-network of conditional dependencies through which information propagates. A community that revised
-only its credences, leaving the network fixed, could never change frame at all. This is the
-phenomenon Kuhn named but could not run forward \citep{kuhn1962}: nothing in \emph{The Structure of
-Scientific Revolutions} says, mechanistically, why a community holds a structure of commitments
-long past the first disconfirming evidence, nor what finally makes the holding give way.
-
-When the chemical community gave up phlogiston it did not revise a single credence. It rewrote a
-network of commitments in which combustion, calcination, respiration, and the theory of acids were
-all load-bearing on a hub that had to go: late-phlogistic theorists proposed cascading revisions that
-proved mutually incompatible \citep{blumenthal2017,holmes2000}, defending less a hypothesis about
-combustion than a constellation of entangled commitments \citep{boantza2011}. Phlogiston was
-load-bearing for too much.
+\emph{frame} in which beliefs are posed---not a credence but a \emph{structure}, a network of
+conditional dependencies through which information propagates. This is the phenomenon Kuhn
+named but could not run forward \citep{kuhn1962}: nothing in \emph{The Structure of Scientific
+Revolutions} says, mechanistically, why a community holds a structure of commitments past the
+first disconfirming evidence, nor what finally makes the holding give way. When the chemical
+community gave up phlogiston it did not revise a single credence: it rewrote a network in which
+combustion, calcination, respiration, and the theory of acids were all load-bearing on a hub
+that had to go \citep{blumenthal2017,holmes2000,boantza2011}. Phlogiston was load-bearing for
+too much.
 
 Network epistemology, the dominant formalism for such communities, cannot represent this case:
 its agents hold a scalar credence in a fixed proposition and update it on a trust graph
@@ -186,27 +169,17 @@ different \emph{kinds} of world.
 
 This paper lets a piece of \emph{structure} travel, so that one agent can come to represent a
 commitment its peers do not. Its agents carry a directed network of commitments and learn that
-network by Bayesian model reduction---expansion is deferred by scope
-(\S\ref{sec:structurelearning}), so novelty, where the experiments need it, is supplied rather
-than conceived; they are \emph{bounded}, sampling a complex
+network by Bayesian model \emph{reduction}---and by reduction only: expansion is deferred by
+scope (\S\ref{sec:structurelearning}), so novelty, where the experiments need it, is supplied
+rather than conceived. They are \emph{bounded}, sampling a complex
 world through narrow channels, valuing some conclusions over others, and judging what they
 receive against their own model. Section~\ref{sec:bmebmr} assembles this community from the
-field's own default choices; Section~\ref{sec:results} measures it---the full Kuhnian cycle of
-normal science, anomaly, crisis, reduction and discovery runs in the appendix sweep
-(Appendix~\ref{app:null})---and opens with why one signature
-had to organize everything found there: two classical theorems under which the regime can neither
-reject a conflicting source nor sustain a school, so that \emph{conflict resolves into confident
-compromise}. Two results then measure the regime and its boundary: the \emph{homogeneity
-effect}---separated communities learn genuinely different paradigm networks, and any contact
-under default pooling collapses them into a compromise no one holds---and its repair, in two
-stages: track each source's reliability as a latent and distinctness returns as a timescale;
-represent the rival itself---candidate wirings, a posterior over them, hypotheses communicated
-rather than averaged---and it returns as a wall. The discussion draws the map: what filling
-the representational slot bought, and what remains.
-The story, compactly, is about averaging---what belief revision is when value enters as a tilt
-rather than a stiffness, what propagation-by-averaging does to a population of structure
-learners, and what it takes for multi-agent structure learning to be \emph{open-ended} rather
-than self-sealing.
+field's own default choices; Section~\ref{sec:results} opens with the two theorems under which
+those defaults can neither reject a conflicting source nor sustain a school---\emph{conflict
+resolves into confident compromise}---and reports two results: the homogeneity effect, and its
+two-stage repair, reliability inferred from surprise (a timescale) and represented rivals (a
+wall). The discussion draws the map: what filling the representational slot bought, and what
+remains.
 
 % ======================================================================
 \section{What a model of science must contain}
@@ -265,7 +238,7 @@ and~\ref{eq:U} below). Figure~\ref{fig:population} draws the picture.
 
 \begin{figure}[h!]
 \centering
-\resizebox{0.78\linewidth}{!}{%
+\resizebox{0.68\linewidth}{!}{%
 \begin{tikzpicture}[
   n/.style={circle,draw=black!70,line width=0.4pt,fill=costc!35,minimum size=5.5mm,inner sep=0pt},
   nb/.style={circle,draw=black!70,line width=0.4pt,fill=costc!10,minimum size=5.5mm,inner sep=0pt},
@@ -323,16 +296,15 @@ $\Delta F$ (Eq.~\ref{eq:bmr}).}
 \label{fig:population}
 \end{figure}
 
-Two kinds of things propagate on this underlying network. Beliefs and accumulated precisions are
-fused across trust edges in information form---a precision-weighted pooling of posteriors in which
-an agent's own evidence and its neighbours' carry weight in proportion to trust, the
-information-form counterpart of trust-weighted averaging in opinion dynamics
-\citep{degroot1974,acemoglu2011}. And---this part is not standard---\emph{structure} spreads the
-same way: an agent whose neighbour has awakened a new node receives the proposal and scores it
-against its own model (\S\ref{sec:structurelearning}). What travels on the trust graph is not only
-a number but a piece of structure, evaluated against wiring the sender does not see.
+Two kinds of things propagate on this underlying network. Beliefs and accumulated precisions
+are fused across trust edges in information form---an agent's own evidence and its neighbours'
+weighted in proportion to trust, the information-form counterpart of trust-weighted averaging
+in opinion dynamics \citep{degroot1974,acemoglu2011}. And---not standard---\emph{structure}
+spreads the same way: a neighbour's newly awakened node arrives as a proposal, scored against
+the receiver's own model (\S\ref{sec:structurelearning})---not only a number but a piece of
+structure, evaluated against wiring the sender does not see.
 
-What does one of those private networks hold? Begin concretely. The
+What does one of those private networks hold? The
 phlogiston paradigm, at its smallest, is three commitments wired together:
 combustion releases phlogiston; calcination is combustion, slowed; respiration is combustion,
 tamed. Each commitment conditions the next, evidence for any one bears on all, and the question
@@ -375,9 +347,9 @@ not a disposition assigned by hand.
 What we add to this inherited machine comes in two layers. The first is contact with the world. The
 dense, high-precision interior of the network is the \emph{core}; the sparse periphery in contact
 with observation is the \emph{belt}, each belt node reading the world through a sensory channel of
-precision $\rho_k$---Lakatos's hard core and protective belt \citep{lakatos1970}, here properties
-the precision geometry determines rather than roles assigned by fiat. The core carries no direct
-sensory channel: an interior commitment is revised only by error propagated inward from the belt,
+precision $\rho_k$---Lakatos's hard core and protective belt \citep{lakatos1970}, here
+determined by the precision geometry rather than decreed. The core carries no direct sensory
+channel: an interior commitment is revised only by error propagated inward from the belt,
 through the same operator---costly by Eq.~\eqref{eq:kappa} and insulated by position, which is
 what makes it slow.
 
@@ -398,7 +370,7 @@ linearly independent unless $u\propto\bone$, so the two fields need not align---
 be central yet value-neutral, cheap yet strongly held (Fig.~\ref{fig:twofields},
 Appendix~\ref{app:operator}).
 
-\subsection{Motivated revision and the lock-in parameter}
+\subsection{Motivated revision, structure learning, and forgetting}
 \label{sec:revision}
 
 The bounded agent revises its belief $q(x)$ over the whole network by the motivated trade of
@@ -436,22 +408,17 @@ is the \emph{lock-in parameter}. Nothing is silenced by hand: each round channel
 weight $w_k=\exp(-g\,|U\!\cdot\!H_k|)$---the more directly a channel bears on valued
 commitments, the less the agent listens, with $g$ setting how strongly caring becomes
 not-listening. Note what this mechanism \emph{is}: a displacement of where beliefs come to
-rest---under forgetting a \emph{saturating} one (\S\ref{sec:temporal}) while evidence keeps
-arriving. A bias, not a resistance; the results make that distinction load-bearing.
+rest---under the forgetting below, a \emph{saturating} one while evidence keeps arriving. A
+bias, not a resistance; the results make that distinction load-bearing.
 
-\subsection{Structure learning: reduction, with expansion deferred}
-\label{sec:structurelearning}
-
-Structure learning revises $G$ itself---the first requirement of \S\ref{sec:hidden}, that
-structure be the \emph{object} of inference. Of its two asymmetric operations
-\citep{friston2017curiosity,smith2020structure}---the formal counterpart of normal versus
-revolutionary science---this paper models the exact half.
-
-\emph{Reduction} is the exact half. Each edge is parameterized by a prior precision $\alpha_e$
-($\alpha_e\to\infty$ pins the edge's parameter to zero; $\alpha_e\to0$ frees it), the
-automatic-relevance-determination parameterization of sparse Bayesian learning
-\citep{mackay1992,tipping2001}. Bayesian model reduction \citep{friston2011,friston2018bmr} scores any
-pruning in closed form from the already-inverted posterior,
+\label{sec:structurelearning}%
+Structure learning revises $G$ itself---the first requirement of \S\ref{sec:hidden}. Two
+asymmetric operations exist \citep{friston2017curiosity,smith2020structure}, the formal
+counterpart of normal versus revolutionary science; \emph{the model in this paper runs only
+reduction}. \emph{Reduction} is the exact half: each edge carries
+an automatic-relevance prior precision \citep{mackay1992,tipping2001}, and Bayesian model
+reduction \citep{friston2011,friston2018bmr} scores any pruning in closed form from the
+already-inverted posterior,
 \begin{equation}
 \frac{p(o\mid\tilde M)}{p(o\mid M)}=\Eq{p(\theta\mid o)}{\frac{\tilde p(\theta)}{p(\theta)}},
 \label{eq:bmr}
@@ -460,31 +427,26 @@ the Savage--Dickey ratio in general form: one inversion scores every candidate r
 without re-touching the data.
 
 \emph{Expansion}---entertaining a commitment no one has represented
-\citep{friston2017curiosity}---is deliberately not modelled here. The reason is scope, not
-principle: expansion is not closed-form (a new node may enlarge the likelihood's support and
-requires a real inversion), the arrival of candidates raises Stanford's problem of unconceived
-alternatives \citep{stanford2006}, and an honest treatment is a paper of its own. The question
-this paper asks comes first in the pipeline: a community running Bayesian model \emph{reduction}
-must aggregate its members' Bayes nets, and everything below turns on whether that aggregation
-can keep two structures distinct at all. The experiments therefore hold the model class fixed,
-and where novelty is needed it is induced by hand---the rival candidates of \S\ref{sec:rivals}
-are supplied, not discovered. (The phlogiston prototype of Appendix~\ref{app:null} does run a
-Poisson-arrival expansion check for the full Kuhnian cycle, derived in
-Appendix~\ref{app:crisis-discovery}; no main-text result rests on it.)
+\citep{friston2017curiosity}---is deliberately not modelled, and nothing below runs it. The
+reason is scope, not principle: expansion is not closed-form (a new node may enlarge the
+likelihood's support and requires a real inversion), the arrival of candidates raises
+Stanford's problem of unconceived alternatives \citep{stanford2006}, and an honest treatment
+is a paper of its own. The question here comes first in the pipeline: a community running
+Bayesian model \emph{reduction} must aggregate its members' Bayes nets, and everything below
+turns on whether that aggregation can keep two structures distinct at all. Where an experiment
+needs novelty it is supplied by hand---the rival candidates of \S\ref{sec:rivals} are given,
+not discovered. (The phlogiston prototype of Appendix~\ref{app:null} retains a Poisson-arrival
+expansion check for the full Kuhnian cycle, derived in Appendix~\ref{app:crisis-discovery}; no
+main-text result rests on it.)
 
-\subsection{Forgetting}
-\label{sec:temporal}
-
-Without forgetting, $\kappa=\Top\bone$ can only grow as learning adds edges: a paradigm is a
-ratchet, and lock-in under it is automatic rather than earned. We import the standard remedy
-unmodified: accumulated precision relaxes toward the prior, $\Pi\leftarrow\Pi_0+\omega(\Pi-\Pi_0)$
-with forgetting factor $\omega\in(0,1]$ \citep{friston2017process,smith2022tutorial}---the
-agent's prior on the world's structural drift; one forgets at the rate one believes the
-structure is moving \citep{mathys2011}. The operator inherits the time index, and a once-central
-node whose couplings go unreinforced relaxes back toward cheapness. With forgetting, the value
-tilt saturates at $\lambda U/(1-\omega)$ against also-saturated per-step evidence, so conviction
-holds only above a threshold---motivated persistence turned from a posited bias into a threshold
-conviction must clear.
+\label{sec:temporal}%
+Finally, \emph{forgetting}: accumulated precision relaxes toward the prior,
+$\Pi\leftarrow\Pi_0+\omega(\Pi-\Pi_0)$, $\omega\in(0,1]$
+\citep{friston2017process,smith2022tutorial}---one forgets at the rate one believes the world's
+structure is moving \citep{mathys2011}. Without it $\kappa=\Top\bone$ can only grow and lock-in
+is automatic rather than earned; with it, the value tilt saturates at $\lambda U/(1-\omega)$
+against also-saturated per-step evidence, so conviction holds only above a threshold it must
+clear.
 
 \subsection{Reliability as a latent}
 \label{sec:reliability}
@@ -540,15 +502,11 @@ Appendix~\ref{app:reliability}).
 \label{sec:model}
 % ======================================================================
 
-The pieces are now all on the table: the population of \S\ref{sec:carryover}, each agent revising
-under conviction (\S\ref{sec:revision}), pruning structure (\S\ref{sec:structurelearning}), and
-forgetting (\S\ref{sec:temporal}), with reliability (\S\ref{sec:reliability}) and rivals
-(\S\ref{sec:rivals}) as the two opt-in repairs. The main-text experiments run small worlds built
-to isolate single claims (\S\ref{sec:results}); the appendix sweep instantiates the full
-phlogiston world---a hub-structured paradigm net whose core commitment is load-bearing for
-combustion, calcination and respiration, until the world's regime flips and the truth acquires a
-dimension (oxygen) in no agent's network (Appendix~\ref{app:null}). One round of the simulation,
-for every agent:
+The sweep of Appendix~\ref{app:null} instantiates the phlogiston world: a hub-structured
+paradigm net in which one core commitment is load-bearing for combustion, calcination and
+respiration; at a fixed step the world flips (the calx is heavier---the gravimetric anomaly),
+and the truth thereafter contains a dimension (oxygen) in \emph{no agent's network}. One round
+of the simulation, for every agent:
 
 \begin{enumerate}\itemsep1pt
 \item \textbf{Observe.} The world emits observations at the belt; disconfirming channels carry
@@ -568,11 +526,12 @@ protocol choice with consequences (Appendix~\ref{app:null}).
 \end{enumerate}
 
 Crisis and reduction are thus not stipulated events but threshold crossings of the model's own
-evidence; Appendix~\ref{app:crisis-discovery} derives the check from the single tilted objective
-and lists explicitly what remains a modelling commitment. There is no expansion step: by the
-scope choice of \S\ref{sec:structurelearning}, novelty in the main text is supplied, never
-conceived, and only the appendix's phlogiston prototype runs the full cycle with a
-Poisson-arrival expansion check.
+evidence; Appendix~\ref{app:crisis-discovery} derives the check from the single tilted
+objective and lists explicitly what remains a modelling commitment. Note what the loop does
+\emph{not} contain: an expansion step. By the scope choice of \S\ref{sec:structurelearning},
+the model only ever prunes; novelty in the main text is supplied, never conceived, and only
+the appendix's phlogiston prototype runs the full cycle with a Poisson-arrival expansion
+check.
 Table~\ref{tab:dials} (Appendix~\ref{app:null}) lists the dials swept; everything else is held
 fixed, and all code is seeded and ships its own null and positive controls.
 
@@ -631,19 +590,16 @@ world the same way, large when they wire it differently. The question is whether
 population can come to hold both readings.
 
 Kept apart, it can (Fig.~\ref{fig:res-divergence}, blue): each community settles on its own
-wiring---agents within a community agree (dashed, at zero) while the distance between the two
-communities grows large and stays there. Run the same world with the communities connected,
-pooling beliefs every round (red), and the divergence never forms: each fusion step averages
-the two half-formed wirings into one compromise network that neither community's evidence
-supports, and the final distance between the camps is a tenth of what isolation produced. This
-is Result 1, the \emph{homogeneity effect}: under default pooling, a connected population ends
-up holding one network, whatever diversity its members were learning---not because any dial
-was set against pluralism, but because the contraction theorem leaves the dynamics nowhere
-else to go.
+wiring, and the distance between them grows large and stays. Connected, pooling every round
+(red), the divergence never forms: each fusion step averages the two half-formed wirings into
+a compromise network neither community's evidence supports---a tenth of the disconnected
+distance. This is Result 1, the \emph{homogeneity effect}: under default pooling a connected
+population holds one network, whatever diversity its members were learning, because the
+contraction theorem leaves the dynamics nowhere else to go.
 
 \begin{figure}[h!]
 \centering
-\includegraphics[width=0.8\linewidth]{fig_divergence_traces.png}
+\includegraphics[width=0.7\linewidth]{fig_divergence_traces.png}
 \caption{The paper's two results in one experiment (a structurally underdetermined world;
 cross-community distance on the contested couplings, mean $\pm$ s.d., 5 seeds; dashed:
 within-community, ${\sim}0$ throughout). Apart (blue): two crisply different wirings.
@@ -654,74 +610,53 @@ divergence, the homogeneity effect (Result 1). Connected, wiring-reading trust (
 \end{figure}
 
 The phlogiston sweep (Appendix~\ref{app:null}) finds the same effect at every level of the
-model. \emph{Conviction does not protect:} valuing a conclusion shifts where an agent's
-beliefs settle, never when they yield \citep{hyland2025}; the only thing conviction can do is
-make an agent stop listening to its own disconfirming channels. \emph{Isolation is the only
-protection, and it is fragile:} at \emph{inter}$=0.005$---trust toward outsiders two hundred
-times weaker than trust within the community---$92\%$ of a dogmatic community converts,
-because what arrives from a neighbour is \emph{evidence}, and an agent can silence its own
-instruments but not its neighbours'. \emph{Discovery does not survive company:} a new concept
-woken by a single agent is averaged away, because peers who lack the concept treat ``has no
-such variable'' as ``certainly zero.'' \emph{No added mechanism escapes:} adequacy-driven
-exploration, social excitation, audited curiosity, and value accretion each re-time the
-passage to consensus or synchronize the population for it; none lets two connected communities
-holding the same data stay in disagreement. The effect even has a one-line algebraic face:
+model. \emph{Conviction does not protect:} valuing a conclusion shifts where beliefs settle,
+never when they yield \citep{hyland2025}. \emph{Isolation is the only protection, and it is
+fragile:} at \emph{inter}$=0.005$---trust toward outsiders two hundred times weaker than
+within---$92\%$ of a dogmatic community converts, because an agent can silence its own
+instruments but not its neighbours'. \emph{Discovery does not survive company:} a concept
+woken by a single agent is averaged away by peers who treat ``has no such variable'' as
+``certainly zero.'' \emph{No added mechanism escapes:} adequacy-driven exploration, social
+excitation, audited curiosity, and value accretion each re-time the passage to consensus or
+synchronize the population for it. The effect even has a one-line algebraic face:
 $|\,\mathrm{mean}_i\,\Pi_i\,|\le\max_i|\Pi_i|$ entrywise, so an average can never
-\emph{create} an edge absent from every individual (measured synergy exactly zero)---whatever
-a collective knows beyond its members lives in the \emph{union} of their networks, never in
-their average.
+\emph{create} an edge absent from every individual---whatever a collective knows beyond its
+members lives in the \emph{union} of their networks, never in their average.
 
 \subsection{Result 2: distinctness returns---gates buy time, represented rivals buy walls}
 \label{sec:res-distinct}
 
 The same setups, the same evidence; what changes is only what the agents \emph{represent}.
-First, switch on the gate of \S\ref{sec:reliability}, so that each source's reliability is
-tracked as a latent instead of held constant.
-Within an agent, the smallest possible setting already shows what changes
-(Fig.~\ref{fig:res-variance}). One agent holds a three-commitment chain; at step $30$ one
-channel turns persistently contradictory. The Gaussian baseline does what Theorem 2 says it
-must: it settles confidently between the channel's report and what its own couplings imply, its
-variance falling monotonically throughout---the conflict leaves \emph{no trace} in the belief
-state. The gated agent instead infers the channel unreliable ($\eta$ falls to $0.16$), and
-its uncertainty does something no light-tailed posterior can: it \emph{rises} while evidence
-accumulates, peaking eight steps after the conflict begins, before the belief reorganizes
-around the discounted channel and reliability recovers. There is now a slot in the belief
-state for being torn---crisis as suspended confidence, rendered as a posterior.
+First, switch on the gate of \S\ref{sec:reliability}. Within an agent, one channel of a
+three-commitment chain turns persistently contradictory at step $30$: the Gaussian baseline
+does what Theorem 2 says it must---it settles confidently between the channel's report and its
+own couplings, variance falling monotonically, the conflict leaving \emph{no trace}---while
+the gated agent infers the channel unreliable ($\eta\to0.16$) and its uncertainty does what no
+light-tailed posterior can: it \emph{rises} while evidence accumulates, peaking before the
+belief reorganizes around the discounted channel (Fig.~\ref{fig:res-variance},
+Appendix~\ref{app:reliability}). There is now a slot in the belief state for being
+torn---crisis as suspended confidence, rendered as a posterior.
 
-\begin{figure}[h!]
-\centering
-\includegraphics[width=0.52\linewidth]{fig_abc_variance.png}
-\caption{Conflict as suspended confidence. A channel turns contradictory at step 30. The
-Gaussian baseline (dashed) grows monotonically more certain---Theorem 2's confident
-compromise; the gated agent's variance (solid) shows an interior maximum: doubt rises while
-data accumulate, then resolves.}
-\label{fig:res-variance}
-\end{figure}
-
-Between communities, point the same functional at the \emph{wiring}---the contested coupling
-entries of $\Pi$---and the collapse of Fig.~\ref{fig:res-divergence} reverses (green curve):
-two crisp wirings survive full contact, $94\%$ of the disconnected divergence retained where
-fixed trust keeps $10\%$. What the gate \emph{reads} decides the outcome: pointed at
-\emph{opinions} it never fires here ($10.2\%$, indistinguishable from fixed trust), because
-both camps fit the same blended data and so agree in their means---a pluralism that lives in
-wiring is invisible to a trust that reads opinions.
+Between communities, point the same functional at the \emph{wiring}---the contested couplings
+of $\Pi$---and the collapse of Fig.~\ref{fig:res-divergence} reverses (green): $94\%$ of the
+disconnected divergence survives full contact where fixed trust keeps $10\%$. What the gate
+\emph{reads} decides: pointed at \emph{opinions} it never fires here ($10.2\%$), because both
+camps fit the same blended data and agree in their means---a pluralism that lives in wiring is
+invisible to a trust that reads opinions.
 
 But the gate is memoryless and its weights stay strictly positive, so the contraction theorem
-still owns $t\to\infty$: every school the gate sustains is metastability relative to a
-horizon, not a new fixed point. Figure~\ref{fig:res-walls} makes the full hierarchy visible on
-one long run. Two camps in full contact, each running only its own commitment's
-experiment---theory-laden evidence, the Kuhnian condition---compared across three
-architectures on byte-identical observation streams. Plain fusion collapses the disagreement
-within a few steps: the theorem. The trust gate, at its best calibration, holds the gap for
-hundreds of steps and then visibly decays: time, bought and spent. The rival layer of
-\S\ref{sec:rivals} holds a flat gap to $t=1500$ with each camp internally certain of its own
-theory ($q_{\mathrm{own}}=1.0$ on both sides): a wall---a fixed point of the damped
-hypothesis-pooling dynamics, not a slow leak (the tail slope is non-eroding;
-Appendix~\ref{app:reliability}).
+still owns $t\to\infty$: every school it sustains is metastable. Figure~\ref{fig:res-walls}
+makes the hierarchy visible on one long run---two camps in full contact, each running only its
+own commitment's experiment (theory-laden evidence, the Kuhnian condition), three
+architectures on byte-identical streams. Plain fusion collapses within a few steps: the
+theorem. The trust gate holds the gap for hundreds of steps, then visibly decays: time, bought
+and spent. The rival layer of \S\ref{sec:rivals} holds a flat gap to $t=1500$, each camp
+internally certain of its own theory: a wall---a fixed point of the damped hypothesis-pooling
+dynamics, not a slow leak (Appendix~\ref{app:reliability}).
 
 \begin{figure}[h!]
 \centering
-\includegraphics[width=0.7\linewidth]{fig_walls_vs_time.png}
+\includegraphics[width=0.62\linewidth]{fig_walls_vs_time.png}
 \caption{Same setups, same evidence---only the representation differs (two camps, full
 contact, theory-laden streams; inter-camp distance $D(t)$, mean $\pm$ s.d., 5 seeds, log--log).
 Plain fusion collapses (the theorem); the Student-$t$ gate decays (time, bought and spent);
@@ -731,18 +666,15 @@ represented rivals hold (a wall). Each architecture runs its own best memory set
 \end{figure}
 
 Boundaries, stated plainly. The demonstrations are deliberately small---one agent, $N=60$,
-then $N=16$, on hand-wired worlds---existence proofs that the wall was representational rather
-than parametric, not sweeps of social topologies. The rival mechanism is \emph{given} its
-candidates: no model expansion runs anywhere in the main text (\S\ref{sec:structurelearning}),
-the $K$ wirings are supplied, not discovered, and anchored forgetting on the
-candidate nets is part of the mechanism---keeping a rival represented means not letting
-accumulated evidence drown it (Appendix~\ref{app:reliability}). And what the mechanism does
-not yet do is named, not hidden: under log-linear hypothesis pooling a lone discoverer's
-candidate is majority-swamped---the discoverer problem returns one level up---and no agent yet
-\emph{acts} on where its candidates disagree, the crucial experiment. Controls ship with each
-experiment: a world that never shifts produces neither doubt nor variance inflation; gates and
-rivals off reproduce the null regime byte-identically ($K=1$ is plain fusion); and no
-acceptance bar is tuned anywhere (Appendix~\ref{app:reliability}).
+then $N=16$, on hand-wired worlds---existence proofs that the wall was representational, not
+sweeps of social topologies. No model expansion runs anywhere in the main text
+(\S\ref{sec:structurelearning}): the rival mechanism is \emph{given} its $K$ candidates, and
+anchored forgetting on the candidate nets is part of the mechanism---keeping a rival
+represented means not letting accumulated evidence drown it. What it does not yet do is named:
+under log-linear pooling a lone discoverer's candidate is majority-swamped, and no agent yet
+\emph{acts} on where its candidates disagree---the crucial experiment. Controls: a world that
+never shifts produces no doubt; gates and rivals off reproduce the null regime
+byte-identically; no bar is tuned (Appendix~\ref{app:reliability}).
 
 % ======================================================================
 \section{Discussion}
@@ -750,91 +682,48 @@ acceptance bar is tuned anywhere (Appendix~\ref{app:reliability}).
 % ======================================================================
 
 Taken together, the results say the homogenization is a failure of \emph{representation}, not
-of tuning---and each repair confirms the diagnosis by what it buys. Result 1 is the theorems
-made visible: a community built from its field's default choices is the formalism's
-\emph{normal-science} limit---smooth, cumulative refinement within a frame, consensus under
-contact---and nothing in it entrenches, diverges, or breaks. Result 2 shows the wall stands
-exactly where the theorems put it: make reliability a latent and an agent can at last be
-surprised into doubt, a community can at last hold two wirings under contact---yet consensus
-remains the only fixed point, so every protection the gate wins is a clock; represent the
-rival itself and a wall finally stands. The characterization is of a stylized object---the
-nets are hand-wired, the dials swept rather than inferred from data. What paradigm dynamics
-still require, the measurement locates precisely, and its two nearest requirements are two
-readings of one word.
-
-\paragraph{Value as precision.}
-The conviction field enters the dynamics as a tilt of the potential $h$: it represents
-\emph{wanting}, and it buys displacement, not defense (Appendix~\ref{app:null}). The dogmatism
-Kuhn describes---a commitment that resists revision because much is staked on it---is a statement
-about stiffness, and stiffness lives in $\Pi$: value would have to enter as precision, a
-convinced agent depositing internal evidence on the commitment it rehearses. The prediction is
-concrete: lock-in becomes a race between internal rehearsal and pooled external evidence, so the
-isolation boundary of Fig.~\ref{fig:res-lockin} should move with rehearsal rate instead of
-pinning to zero contact.
+of tuning. Result 1 is the theorems made visible: a community built from its field's defaults
+is the formalism's \emph{normal-science} limit, and nothing in it entrenches, diverges, or
+breaks. Result 2 shows the wall stands exactly where the theorems put it: make reliability a
+latent and an agent can be surprised into doubt, a community can hold two wirings under
+contact---yet every protection the gate wins is a clock; represent the rival itself and a wall
+finally stands.
 
 \paragraph{Trust as inferred precision---now measured, and bounded.}
-Result 2 is the conflict-resolution literature's canonical repair \citep{ohagan2012}, run at
-both levels of the model, and its verdict anchors the discussion. Within an agent it buys heavy
-tails, rejection, and falling confidence under contradiction---crisis rendered as a posterior;
-between agents it makes stable schools \emph{attainable} on a connected graph holding shared
-data, the configuration fixed trust forbids. But everything it buys, it buys as \emph{time}:
-the gate is memoryless, its weights stay strictly positive, and consensus remains the only
-place the dynamics can rest. The protection paradigm dynamics still lack is not a slower clock.
+The gate is the conflict-resolution literature's canonical repair \citep{ohagan2012}: within
+an agent it buys crisis rendered as a posterior; between agents, stable schools on a connected
+graph holding shared data. But everything it buys, it buys as \emph{time}: the gate is
+memoryless and its weights stay strictly positive, so consensus remains the only place the
+dynamics can rest.
 
 \paragraph{The missing slot is representational---and fillable.}
-There is no coordinate in $(\Pi,h)$ whose value can mean \emph{torn between two hypotheses}: a
-Gaussian belief net stores one mean and one always-unimodal precision, conflict arrives as
-growing confidence (the theorems of \S\ref{sec:results}), and fusion erases who disagreed about
-what---sources are anonymous once averaged. This is impoverishment by representation, not by
-parameters, which is why no dial of the sweep escaped it and why the gate could only slow it.
+There is no coordinate in $(\Pi,h)$ whose value can mean \emph{torn between two hypotheses}:
+conflict arrives as growing confidence, and fusion erases who disagreed about what. This
+impoverishment is by representation, not parameters---why the gate could only slow it.
 The rival layer of \S\ref{sec:rivals} is that diagnosis made executable, and the wall of
-Fig.~\ref{fig:res-walls} is what filling the slot buys: \emph{(i)} multiple structural
-hypotheses per agent---$q_i(x,m)$ over candidate wirings, so an agent can be genuinely torn;
-\emph{(ii)} divergence as state---the gap between an agent's live candidates is a quantity it
-can compute and, in principle, act on; \emph{(iii)} communication of hypotheses---parameter
-fusion within frames, log-linear pooling of hypothesis weights between them, never averaging
-across frames. What remains open is named, not hidden: under log-linear pooling a lone
-discoverer's candidate is majority-swamped---the discoverer problem returns one level up---and
-no agent yet \emph{chooses} the experiment on which its live candidates disagree most, the
-crucial experiment. Gates buy time; represented rivals buy walls; the next step is an agent
-that acts on its rivals---and, on an aggregation that can hold branches, the model expansion
-this paper deferred.
+Fig.~\ref{fig:res-walls} is what filling the slot buys: multiple structural hypotheses per
+agent (a genuinely torn agent), divergence between live candidates as a computable state, and
+communication of hypotheses---fusion within frames, never averaging across them. What remains
+open is named: a lone discoverer's candidate is majority-swamped under log-linear pooling, and no agent yet
+\emph{chooses} the experiment on which its candidates disagree most. Gates buy time;
+represented rivals buy walls---and on an aggregation that can hold branches, the model
+expansion this paper deferred becomes worth building.
 
-The model's relation to Kuhn can now be stated without allegory. The regime \emph{holds} normal
-science, with a hard core and protective belt that are derived rather than decreed
-\citep{lakatos1970}. Of the revolutionary remainder, inferred reliability \emph{supplies} crisis
-as suspended confidence (the interior variance maximum of \S\ref{sec:res-distinct}) and renders
-incommensurability \citep{kuhn1983} a timescale---a property of two histories' accumulated
-confidence, not of two ideas. With rivals represented, incommensurability becomes a
-\emph{state}: two camps internally certain of different wirings at a fixed point, not a
-failure to converge---and the gestalt switch acquires its slot, a $q(m)$ that flips between
-represented wirings when the prequential evidence turns. And one piece comes back as protocol
-rather than representation: the fusion that crushes a staggered discovery vanishes when agents
-abstain on dimensions they do not represent (Appendix~\ref{app:null})---real communities sit
-somewhere between absence-as-denial and full abstention, an empirical question the model
-converts from a confession into a measurement.
+The relation to Kuhn is now allegory-free: the regime \emph{holds} normal science (the derived
+core and belt of \S\ref{sec:carryover}).
+Of the revolutionary remainder, inferred reliability \emph{supplies} crisis as suspended
+confidence and renders incommensurability \citep{kuhn1983} a timescale, while represented
+rivals make it a \emph{state}: two camps internally certain of different wirings at a fixed
+point, the gestalt switch given its slot (a $q(m)$ that flips on prequential evidence).
 
-Any epistemic community whose aggregation step averages rather than gates inherits the regime's
-signature, whatever the sophistication of its members. Aggregation by consensus-trained models is
-precision-weighted pooling at scale: to the extent that machine-mediated science inserts such
-aggregators into its loop, it will refine frames and never grow one. The model makes this
-testable; it does not yet establish it. The same statement is a foundation for multi-agent active
-inference at large: a population of structure learners is only as \emph{open-ended} as its
-pooling permits---and as what its pooling \emph{reads}: a gate on opinions preserved nothing of
-a pluralism that lived in wiring (\S\ref{sec:res-distinct}). Open-endedness is a property of the
-protocol, to be designed in---not an emergent grace of scale.
-
-The deepest exit lies beyond the present model class. Everything revolutionary must eventually
-pass through the model expansion this paper deferred (\S\ref{sec:structurelearning}), and even
-that step edits the prior over a fixed likelihood---while a
-genuinely new \emph{instrument} enlarges the likelihood's own support. Structure learning over
-latent structure is closed-loop; structure learning over the sensorium is not, and we know of no
-agnostic stand-in for it as clean as the Poisson rate was for unconceived latents. This is the
-formal face of the limit Stanford named: one cannot place a posterior over the unconceived
-\citep{stanford2006}, only over whether one's model has missed something---enough to set how hard
-an agent looks, never where (Appendix~\ref{app:closing}). What a community controls is how hard
-it looks---and, these results say above all, what its pooling does to the member who finds it
-first.
+Any community whose aggregation step averages rather than gates inherits the regime's
+signature, whatever the sophistication of its members: a population of structure learners is
+only as \emph{open-ended} as its pooling permits---and as what its pooling \emph{reads}
+(\S\ref{sec:res-distinct})---a property of the protocol, designed in rather than an emergent
+grace of scale. The deepest exit lies beyond the model class---a
+genuinely new \emph{instrument} enlarges the likelihood's own support, and one cannot place a
+posterior over the unconceived \citep{stanford2006}. What a community controls is how hard it
+looks---and, above all, what its pooling does to the member who finds it first.
 
 % ======================================================================
 \begin{thebibliography}{99}
@@ -1349,8 +1238,8 @@ This appendix carries the quantitative characterization of the default (fixed-re
 community summarized in \S\ref{sec:res-homogeneity}: the full Kuhnian-cycle sweep on the
 phlogiston world---normal science, the gravimetric anomaly, crisis, reduction, discovery of
 oxygen, every phase a threshold crossing of the agents' own evidence, none stipulated---over
-the dials of Table~\ref{tab:dials}, spanning the baseline and every mechanism of
-Appendix~\ref{app:closing}.
+the dials of Table~\ref{tab:dials}, spanning the baseline and four added mechanisms
+(Table~\ref{tab:escapes}).
 
 \begin{table}[h!]
 \centering\footnotesize
@@ -1369,7 +1258,7 @@ Channel reliability & $\nu$ & Student-$t$ gate on the agent's own channels (off 
 Social trust & $\nu_s$ & Student-$t$ gate on the fusion weights (off $=$ fixed trust) \\
 Fusion protocol & --- & pool all dimensions (delta) vs.\ jointly represented (abstention) \\
 Closed-loop mechanisms & $\beta,\tau,\kappa_r,\lambda_c,\epsilon$ & adequacy-driven rate, social
-excitation, audit credit, value accretion (Appendix~\ref{app:closing}) \\
+excitation, audit credit, value accretion (Table~\ref{tab:escapes}) \\
 \hline
 \end{tabular}
 \caption{The dials swept in the experiments; all other quantities are held fixed. The last two
@@ -1410,7 +1299,7 @@ the picture. \emph{Right:} the run-to-run spread spikes in a narrow band around
 
 \paragraph{Pooling kills the lone discoverer---by protocol, not by principle.}
 Discovery means waking a node---oxygen---that no agent's network yet contains; candidates arrive
-at random (Poisson rate $r$, Appendix~\ref{app:crisis-discovery}), and the fraction that discovers
+at random (Poisson rate $r$, \S\ref{sec:structurelearning}), and the fraction that discovers
 follows the waiting-time law $1-(1-r)^T$. What the rate governs is survival: under the baseline
 fusion, a discovery made by one agent at a time is averaged away every time, because delta
 pooling reads \emph{has no such variable}---a fact about an agent's model class---as
@@ -1435,8 +1324,8 @@ concepts.}
 \end{figure}
 
 \paragraph{Every escape goes around the averaging, never through it.}
-The sweep's remaining mechanisms sharpen the same conclusion (Table~\ref{tab:escapes}; full
-results in Appendix~\ref{app:closing}). None of them lets two connected communities holding the
+The sweep's remaining mechanisms sharpen the same conclusion (Table~\ref{tab:escapes}).
+None of them lets two connected communities holding the
 same data \emph{remain} in disagreement: each either re-times the passage through the consensus
 bottleneck or synchronizes the population for it.
 
@@ -1457,7 +1346,7 @@ prevented & buys time, not immunity \\
 \hline
 \end{tabular}
 \caption{Four mechanisms layered on the fixed-reliability baseline, none of which opens the
-consensus engine (Appendix~\ref{app:closing}).}
+consensus engine.}
 \label{tab:escapes}
 \end{table}
 
@@ -1511,6 +1400,16 @@ $\Pi_{ik}\leftarrow\Pi_{0k}+\omega(\Pi_{ik}-\Pi_{0k})$, is part of the mechanism
 every candidate's precision grows without bound and their predictive densities converge. $K=1$
 reduces exactly to plain fuse-then-observe, which is how the Gaussian baselines run on
 byte-identical observation streams; each architecture runs its own best memory setting.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.52\linewidth]{fig_abc_variance.png}
+\caption{Conflict as suspended confidence (\S\ref{sec:res-distinct}). A channel turns
+contradictory at step 30. The Gaussian baseline (dashed) grows monotonically more
+certain---Theorem 2's confident compromise; the gated agent's variance (solid) shows an
+interior maximum: doubt rises while data accumulate, then resolves.}
+\label{fig:res-variance}
+\end{figure}
 
 \paragraph{The experiments.}
 Table~\ref{tab:rel-experiments} lists the gated configurations; all are seeded,
@@ -1592,116 +1491,6 @@ them. This refuted our own prediction, and it is the right caveat on every wirin
 % ======================================================================
 % The crisis and discovery checks, derived from the ledger (+ the
 % exploration-as-social-process mechanism readings at its tail).
-\input{appendix_crisis_discovery_v3}
-
-% ======================================================================
-\section{Closed-loop mechanisms: quantitative results}
-\label{app:closing}
-% ======================================================================
-
-The baseline model holds four quantities fixed that admit treatment as beliefs or protocols: the
-proposal rate, the acceptance of a wake, the conviction source $u$, and the pooling rule. The
-inferential readings that license each mechanism are derived in
-Appendix~\ref{app:exploration-future}; this appendix reports what each does to the population
-results. Every mechanism defaults to ``off''---constant rate, one-shot accept, static $u$, delta
-pooling---reproducing the baseline exactly, and each comparison below is run against that
-baseline with its own control.
-
-\paragraph{The rate as a posterior over model adequacy.}
-The agent tracks its residual floor---the leading eigenvalue of the windowed prediction-error
-second moment, the error no within-model update can absorb---with a fixed-gain filter
-$s \leftarrow (1-\rho)\,s + \rho\cdot\mathrm{floor}$ and reads its proposal rate off the
-posterior, $r(t) = r_0 + \kappa_r \max(s - s_{\mathrm{ref}}, 0)$. The result
-(Fig.~\ref{fig:res-rateposterior}) has the signature a posterior should have and a dial cannot:
-flat at $r_0$ through normal science, surging after the agent's own crisis exposes the residual
-(to an effective $0.34$ from $r_0=0.01$), and decaying once the woken node explains it. The
-crisis-to-discovery delay falls from $55$ to $29$ steps---but the control that matters is the
-fixed rate it \emph{matches}: a constant-rate agent given the adaptive run's realized mean rate
-achieves the same delay ($27$ steps). The gain is not more exploration; it is exploration when
-the agent's own evidence calls for it. Stanford's constraint survives: only the \emph{propensity
-to look} is inferred, never a direction.
-
-\begin{figure}[h!]
-\centering
-\includegraphics[width=\linewidth]{fig_rate_posterior.png}
-\caption{The proposal rate as a posterior over model adequacy. \emph{Left:} the per-agent rate
-(blue, mean and 10--90\% band) is flat at the base rate $r_0$ through normal science, rises with
-the post-crisis residual floor (amber, right axis)---the evidence of model-class inadequacy the
-within-model updates cannot absorb---and decays once the woken node explains it. \emph{Right:}
-crisis-to-discovery delay. The adaptive agent (left bar) matches a fixed-rate control given its
-realized mean rate (right bar) while idling at $r_0$ when the model is adequate: the gain is
-rate-when-needed, not more rate.}
-\label{fig:res-rateposterior}
-\end{figure}
-
-\paragraph{Social excitation rescues the staggered discovery.}
-Filtering neighbours' discovery events through the trust weights, under an
-exponentially-correlated prior on the latent inadequacy, yields a posterior intensity of exactly
-the linear self-exciting (Hawkes) form \citep{hawkes1971},
-\begin{equation}
-r_i(t) \;=\; r_0 \;+\; \sum_{j\in\partial i} T_{ij} \sum_{t_j<t} \beta\, e^{-(t-t_j)/\tau},
-\label{eq:hawkes}
-\end{equation}
-with $t_j$ the neighbours' discovery times, $\beta$ the trust-scaled evidential weight of one
-observed discovery, and $\tau$ the assumed correlation time of inadequacy
-(Appendix~\ref{app:exploration-future}). Under Eq.~\eqref{eq:hawkes} the first discovery raises
-the whole neighbourhood's propensity to look; the cascade compresses the community's wakings from
-a dispersion of $64$ steps to $2$, and---because survival is \emph{completeness}-driven (a single
-still-pinned peer holds the fused slot precision enormous for every neighbour)---the completed
-cascade lets the anchored couplings consolidate. Survival rises monotonically in $\beta$ from
-exactly zero at $\beta=0$ to $0.88$--$0.95$ at $\beta=1.5$ across base rates
-$r_0\in\{0.005,0.01,0.02\}$ at which an unexcited community essentially never completes
-(Fig.~\ref{fig:res-hawkes}; 32 seeds per cell). The branching ratio of Eq.~\eqref{eq:hawkes} is
-the model's quantitative answer to how much social excitement a revolution needs. One qualifier:
-survival is completeness-driven and therefore horizon-bound---a constant-rate community given a
-high enough rate and a long enough horizon also completes its cascade; what excitation adds is
-the mechanism by which a community reaches near-simultaneity at rates serendipity alone
-essentially never does.
-
-\begin{figure}[h!]
-\centering
-\includegraphics[width=0.62\linewidth]{fig_kuhn_hawkes.png}
-\caption{Social excitation rescues the staggered discovery (sweep panel E, 32 seeds per cell).
-Fraction of the open community whose oxygen concept survives fusion, versus the excitation
-$\beta$ of Eq.~\eqref{eq:hawkes}, at three base rates. At $\beta=0$ (the constant rate) survival
-is exactly zero: staggered wakings are crushed one at a time. Excitation compresses the
-community's wakings in time, the cascade completes, no pinned peer remains in the fusion average,
-and survival rises to $0.88$--$0.95$---the near-simultaneity that survival requires, manufactured
-by the community itself.}
-\label{fig:res-hawkes}
-\end{figure}
-
-\paragraph{The audited wake-then-prune cycle.}
-Accepting wakes on the full ledger $\Delta F + \Delta G > 0$ lets curiosity adopt structure the
-data do not yet hold, and the audit of Appendix~\ref{app:exploration-future} pays that debt: in a
-null world that never shifts, curiosity wakes structure in $100\%$ of agents and the audit
-re-pins $100\%$ of those wakes, exactly; in the flip world the genuine hub is woken everywhere
-and never pruned (Fig.~\ref{fig:wakeprune}). Two companion measurements close two more
-commitments. Widening the search---three eigen-hub candidates, each with its own dormant slot,
-plus the three largest residual couplings, $1{,}140$ candidates priced on the same ledger---does
-not dilute discovery: the true cause wins $53$ of $60$ acceptances (median cosine $0.999$ against
-the rank-one baseline). And running the identical discovery check \emph{before} each agent's
-crisis, at every step, the ledger rejects $13{,}180$ of $13{,}185$ pre-crisis agent-steps: the
-crisis-before-expansion ordering is enforced by the evidence, not by fiat---the intact paradigm
-absorbs the residual, so there is nothing for the check to find until reduction exposes it.
-
-\paragraph{Value accretion (Lakatos, run forward).}
-Letting $u$ accrete onto the commitments the agent's own evidence deposit has entrenched
-(Appendix~\ref{app:exploration-future}) closes the loop through the gate of
-Eq.~\eqref{eq:gamma}: a maturing programme increasingly silences its own disconfirming channels
-($\gamma$ climbs from $0.72$ to $0.97$ as $\epsilon$ rises), conversion at the lock-in boundary
-falls from $0.94$ to $0.67$, and at very weak coupling the dogmatic community's conversion is
-\emph{delayed} roughly $2.2$-fold rather than prevented (Fig.~\ref{fig:lakatos}). Conviction that
-grows from the inside still loses to connection: it buys the old paradigm time, not immunity---a
-fair gloss of a degenerating problemshift.
-
-\paragraph{The mechanisms compose.}
-With the adequacy-posterior rate, social excitation, the expiring-credit audit, abstention
-pooling and value accretion all enabled in one population, the full arc still runs---crisis at
-$t\approx67$, discovery at $t\approx69$, the rate surging $0.02\to0.77$ and decaying back to
-base, zero false prune-backs, concept survival complete, and the never-shifting null world silent
-in every channel. No mechanism breaks another, because none adds a new objective: each routes a
-quantity the ledger already computes---residual, epistemic gain, evidence, deposit---back into a
-parameter that had been a constant.
+\input{appendix_crisis_discovery_v5}
 
 \end{document}

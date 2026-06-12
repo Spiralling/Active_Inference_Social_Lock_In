@@ -226,6 +226,16 @@ def complete(n: int) -> Graph:
     return Graph(A=_from_nx(g, n), kind="complete")
 
 
+def wheel(n: int) -> Graph:
+    """Wheel graph: an ``(n-1)``-cycle of rim nodes plus one hub joined to every
+    rim node (node ``0`` is the hub). Zollman's "royal family" topology -- the
+    intermediate-connectivity reference between the sparse :func:`ring` (cycle) and
+    the dense :func:`complete` graph, used for the speed/accuracy comparison
+    (Zollman 2007). Its Fiedler value ``lambda_2`` sits between the two."""
+    g = nx.wheel_graph(n)                              # networkx: node 0 is the hub
+    return Graph(A=_from_nx(g, n), kind="wheel")
+
+
 # ----------------------------------------------------------------------
 # Spectral read-outs: the connectivity axis of the Zollman transient.
 # ----------------------------------------------------------------------

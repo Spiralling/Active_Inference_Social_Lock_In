@@ -1,0 +1,70 @@
+{
+  "config": {
+    "T_SHIFT": 80,
+    "T_TRANS": 480,
+    "SIGMA_TRANS": 1.0,
+    "OMEGA_TRANS": 0.9,
+    "N_VAN": 8,
+    "N_CONS": 16,
+    "GAMMA_TRICKLE": 0.99,
+    "BETAS": [
+      0.0,
+      0.003,
+      0.01,
+      0.03,
+      0.1,
+      0.2,
+      0.3
+    ],
+    "T_LADDER": 800,
+    "SIGMA_LADDER": 0.5,
+    "OMEGA_LADDER": 0.5,
+    "N_LADDER": 16,
+    "PLATEAU_MIN": 100,
+    "ALPHA_M": 0.02,
+    "Q_LOCK": 0.9,
+    "SEEDS": [
+      0,
+      1,
+      2
+    ]
+  },
+  "transition": {
+    "order_parameter_clean": {
+      "0.0": 1.4300168826864024e-09,
+      "0.003": 9.719315130496398e-08,
+      "0.01": 3.6025401944546806e-06,
+      "0.03": 0.0036639356209586063,
+      "0.1": 0.36672600110371906,
+      "0.2": 0.9999940792719523,
+      "0.3": 1.0
+    },
+    "width_decades": 0.6376332658025277,
+    "verdict": "moderate",
+    "criterion": "sharp <= 0.5 decades (10%-90% crossings in log10 beta)"
+  },
+  "immunization": {
+    "order_parameter_trickle": {
+      "0.0": 0.9951993425687155,
+      "0.003": 0.023853244880835216,
+      "0.01": 0.03271715280910333,
+      "0.03": 0.27750808993975323,
+      "0.1": 0.9230817357699076,
+      "0.2": 0.9999998807907104,
+      "0.3": 1.0
+    },
+    "finding": "non-monotone contact for a trickle-source community: isolated converts by itself; weakly bridged NEVER converts -- hypothesis-aligned net fusion imports the vanguard's accommodated incumbent parameters, which explain away the community's own anomalies (weak contact immunizes, strong contact converts)"
+  },
+  "ladder": {
+    "pre_full_min": 1.0,
+    "t_belt_sacrificed": 157,
+    "plateau_steps": 373,
+    "t_core_abandoned": 530,
+    "final_q": [
+      0.0,
+      0.0016297114780172706,
+      0.998370349407196
+    ],
+    "finding": "the belt/core staircase replicated as a sequence of MODEL retreats: fast mean-evidence flip to the articulated incumbent (anomaly accommodated, core kept), slow structure-evidence flip to the rival core -- Lakatos's protective belt, measured"
+  }
+}
