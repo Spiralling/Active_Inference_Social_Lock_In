@@ -97,7 +97,7 @@ def _calibrate(params: dict) -> dict:
 def _one_job(job: dict) -> dict:
     r = single_run(**job["kwargs"])
     dd = r["community"] == 1
-    return dict(arm=job["arm"], mode=job["mode"],
+    return dict(arm=job["arm"], mode=job["mode"], level=job.get("level"),
                 inter=float(job["kwargs"]["inter"]), seed=int(job["kwargs"]["seed"]),
                 memory=job["kwargs"].get("trust_memory"),
                 conv=float(r["oxy_index_sc"][-1, 1]),
@@ -178,6 +178,26 @@ def fig_boundary(boundaries: dict, path):
     plt.tight_layout(); plt.savefig(path, dpi=130); plt.close(fig)
 
 
+def fig_saturation(sat, levels, arm3_inters, sep3, path):
+    fig, axs = plt.subplots(1, len(arm3_inters), figsize=(5.4 * len(arm3_inters), 4.2),
+                            sharey=True)
+    axs = np.atleast_1d(axs)
+    x = np.arange(len(levels))
+    for ax, it in zip(axs, arm3_inters):
+        for mode in ("conviction", "cost"):
+            ax.plot(x, sat[(mode, it)], "-o", lw=2.2, color=_COLORS[mode],
+                    label=f"{mode} gate")
+        ax.set_xticks(x); ax.set_xticklabels([str(l) for l in levels])
+        ax.set_xlabel("dogmatic initial mean silencing target $w$")
+        ax.set_title(f"inter = {it}  (max separation {sep3[it]:.3f})", fontsize=9.5)
+        ax.set_ylim(-0.04, 1.04)
+    axs[0].set_ylabel("dogmatic community conversion")
+    axs[0].legend(fontsize=8)
+    fig.suptitle("Does WHAT the gate reads matter once silencing is not saturated? "
+                 "(profiles anti-correlated, r = -0.87)", fontsize=10)
+    plt.tight_layout(rect=[0, 0, 1, 0.92]); plt.savefig(path, dpi=130); plt.close(fig)
+
+
 def fig_earned_trust(rows, inters, boundaries, path):
     fig, ax = plt.subplots(figsize=(7.2, 4.4))
     series, rows_by = {}, {}
@@ -233,6 +253,24 @@ def run(out_dir, params: dict) -> None:
                 if mem is not None:
                     kw["trust_memory"] = float(mem)
                 jobs.append(dict(arm=2, mode="conviction", kwargs=kw))
+    # ---- Arm 3: the saturation sweep. Arm 1's dogmatic gates saturate (w ~ 1e-4), where
+    # profile differences CANNOT matter; here the dogmatic community's initial mean
+    # silencing is swept through unsaturated levels (open vanguard fixed at its standard
+    # light gating), sealed and near the boundary -- the regime where the anti-correlated
+    # projections could finally express themselves.
+    g_open = {"conviction": cal["conviction"], "cost": cal["cost_open"]}
+    proj_d = {"conviction": np.asarray(cal["proj_conv_dogma"]),
+              "cost": np.asarray(cal["proj_cost"])}
+    for mode in ("conviction", "cost"):
+        for lvl in params["TARGET_LEVELS"]:
+            g_d = _bisect_match(proj_d[mode], float(lvl))
+            arr = np.concatenate([np.full(n_open, g_open[mode]),
+                                  np.full(params["N_AGENTS"] - n_open, g_d)])
+            for it in params["ARM3_INTERS"]:
+                for s in seeds:
+                    jobs.append(dict(arm=3, mode=mode, level=float(lvl), kwargs=dict(
+                        base, inter=float(it), seed=int(s),
+                        gate_strength=arr, gate_mode=mode)))
 
     with ProcessPoolExecutor(max_workers=params["MAX_WORKERS"]) as pool:
         rows = list(pool.map(_one_job, jobs, chunksize=1))
@@ -243,16 +281,29 @@ def run(out_dir, params: dict) -> None:
 
     arm1 = [r for r in rows if r["arm"] == 1]
     arm2 = [r for r in rows if r["arm"] == 2]
+    arm3 = [r for r in rows if r["arm"] == 3]
     curves = {m: _curve(arm1, inters, mode=m) for m in ("conviction", "cost")}
     bounds = {m: _boundary(inters, curves[m]) for m in curves}
     curve2 = {"instantaneous": _curve(arm2, inters, memory=None),
               "earned": _curve(arm2, inters, memory=params["TRUST_MEMORY"])}
     bounds2 = {k: _boundary(inters, v) for k, v in curve2.items()}
+    levels = list(params["TARGET_LEVELS"])
+    sat = {}
+    for mode in ("conviction", "cost"):
+        for it in params["ARM3_INTERS"]:
+            sat[(mode, it)] = np.array([
+                np.mean([r["conv"] for r in arm3 if r["mode"] == mode
+                         and r["level"] == lvl and r["inter"] == it])
+                for lvl in levels])
+    sep3 = {it: float(np.max(np.abs(sat[("conviction", it)] - sat[("cost", it)])))
+            for it in params["ARM3_INTERS"]}
 
     fig_conversion(arm1, inters, out_dir / "fig_gate_conversion.png")
     fig_boundary({"conviction gate": bounds["conviction"], "cost gate": bounds["cost"]},
                  out_dir / "fig_gate_boundary.png")
     fig_earned_trust(arm2, inters, bounds2, out_dir / "fig_earned_trust_boundary.png")
+    fig_saturation(sat, levels, params["ARM3_INTERS"], sep3,
+                   out_dir / "fig_gate_saturation.png")
 
     # ---- honest findings first, assertions second ----
     sep = float(np.max(np.abs(curves["conviction"] - curves["cost"])))
@@ -265,6 +316,11 @@ def run(out_dir, params: dict) -> None:
           flush=True)
     print(f"A5 (earned trust): boundary instantaneous={bounds2['instantaneous']:.4g} "
           f"earned={bounds2['earned']:.4g}", flush=True)
+    for it in params["ARM3_INTERS"]:
+        print(f"A7 (saturation sweep, inter={it}): conv per target {levels} -- "
+              f"conviction {np.round(sat[('conviction', it)], 3).tolist()} vs "
+              f"cost {np.round(sat[('cost', it)], 3).tolist()}; "
+              f"max separation {sep3[it]:.3f}", flush=True)
     verdict = (f"population-INDISTINGUISHABLE (max curve separation {sep:.3f}; boundaries "
                f"{bounds['conviction']:.4g} vs {bounds['cost']:.4g}, within seed noise)"
                if sep < 0.05 else
@@ -306,7 +362,12 @@ def run(out_dir, params: dict) -> None:
                "boundaries": bounds,
                "earned_trust_curves": {k: v.tolist() for k, v in curve2.items()},
                "earned_trust_boundaries": bounds2,
-               "max_mode_separation": sep}
+               "max_mode_separation": sep,
+               "saturation_curves": {f"{m}@inter={it}": sat[(m, it)].tolist()
+                                     for m in ("conviction", "cost")
+                                     for it in params["ARM3_INTERS"]},
+               "saturation_separation": {str(it): sep3[it]
+                                         for it in params["ARM3_INTERS"]}}
     (out_dir / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
 
 
@@ -326,9 +387,10 @@ register(ExperimentSpec(
         LAM_OPEN=0.10, LAM_DOGMA=0.35, GATE_STRENGTH=1.0, S_OPEN=0.3, S_DOGMA=6.0,
         INTERS=(0.0, 0.002, 0.005, 0.01, 0.05, 0.2), SEEDS=(0, 1, 2),
         SOCIAL_NU=1.0, TRUST_MEMORY=0.9, MAX_WORKERS=6,
+        TARGET_LEVELS=(0.9, 0.5, 0.1, 1e-4), ARM3_INTERS=(0.0, 0.002),
     ),
     seeds=(0, 1, 2),
     canonical=False,
     consumes=dict(figures=["fig_gate_conversion", "fig_gate_boundary",
-                           "fig_earned_trust_boundary"]),
+                           "fig_earned_trust_boundary", "fig_gate_saturation"]),
 ))

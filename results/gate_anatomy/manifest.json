@@ -1,11 +1,11 @@
 {
   "experiment": "gate_anatomy",
   "git": {
-    "sha": "d562e69d2608f19962152b590f63908d0e2ab1cf",
+    "sha": "3d89f5b5488b088c16a05398147ea70e9cf5cdaf",
     "branch": "production/structural-minimal",
     "dirty": true
   },
-  "timestamp_utc": "2026-06-12T12:36:11+00:00",
+  "timestamp_utc": "2026-06-12T13:08:32+00:00",
   "seeds": [
     0,
     1,
@@ -37,7 +37,17 @@
     ],
     "SOCIAL_NU": 1.0,
     "TRUST_MEMORY": 0.9,
-    "MAX_WORKERS": 6
+    "MAX_WORKERS": 6,
+    "TARGET_LEVELS": [
+      0.9,
+      0.5,
+      0.1,
+      0.0001
+    ],
+    "ARM3_INTERS": [
+      0.0,
+      0.002
+    ]
   },
   "env": {
     "python": "3.13.3",
@@ -58,13 +68,13 @@
         "conv_trust_earned": "cfaf7ebcd1ee590abc75ddbe0b490391eac1b9cab1f7b50c8542f523dbd128d4",
         "conv_trust_inst": "73975cd0e3bd35d6bd4cba26f9fff3e0283e495f11105049bd7c29cba11063c3",
         "inters": "800e7251d44e9bf0bf561279a209219b342de5c9063c15ad5012804a1c2134e1",
-        "rows_arm": "b58f808b387e80be7865fc5880695fecd4253e6d39ae00ff14bb0d172883895c",
-        "rows_conv": "e3ed354d1422ddbad48c78dd7d3caa02208ae7c20c12d1a5e61c1b114fca1cd6",
-        "rows_inter": "72141c8a1f04b442f484eecc7701ef589ca46faec43a2d3ed5c17a81611101ea",
-        "rows_seed": "94a9db0ad5a03c8aa5f64c6c3856b8cb497f01df783b0d6c88d2f5045fdedaac"
+        "rows_arm": "9d71e7a35b10168c226870d857529c3cda4c988382c72a78dab239542f7cd744",
+        "rows_conv": "a64f70bcfe9c54a83ede001e67fb25a80357e05bb2c9e28ea8764e41bb16a98a",
+        "rows_inter": "15fc63e4893d9917e3990795a4059b406937bff6a5e4d60d61656c68d90a3fee",
+        "rows_seed": "307fedd731f629e43ac7022804a410682a6393bf3c458bc0c1f2411b3839b111"
       }
     },
-    "summary.json": "6397fd0e9c733017839711bc040a3eebae5c4ea9b8f152bbd6552562b8812b81"
+    "summary.json": "75187a773921011daafd78c7efefdfa8f775c57415fc524415991ad3b641ec47"
   },
   "runner_version": 1
 }
