@@ -1,0 +1,53 @@
+{
+  "config": {
+    "SIGMA_O": 1.0,
+    "T_SHIFT": 80,
+    "T_CYCLE": 240,
+    "T_LOCK": 480,
+    "N_CYCLE": 16,
+    "N_MIXED": 24,
+    "OMEGA": 0.9,
+    "ALPHA_M": 0.02,
+    "GAMMAS": [
+      0.0,
+      0.5,
+      0.9,
+      0.99,
+      1.0
+    ],
+    "VANGUARD_FRAC": 0.25,
+    "GAMMA_CONS": 0.99,
+    "H_CRISIS": 0.35,
+    "Q_LOCK": 0.9,
+    "SEEDS": [
+      0,
+      1,
+      2
+    ]
+  },
+  "cycle": {
+    "normal_max_q_oxy": 4.036581231048331e-06,
+    "crisis_onset": 117,
+    "crisis_width": 33,
+    "revolution_t": 160,
+    "new_normal_q": 0.9999749064445496
+  },
+  "denial_lockin": {
+    "0.0": 86,
+    "0.5": 72,
+    "0.9": 94,
+    "0.99": 357,
+    "1.0": -1
+  },
+  "social_revolution": {
+    "vanguard_flip": 95,
+    "conservatives_flip": 212,
+    "lag": 117,
+    "q_cons_no_pooling": 0.013566751033067703
+  },
+  "honest_findings": [
+    "two-phase design required: censoring the disconfirming channel from t=0 weakens the LOCK as much as the overturn (pre-shift the channel supports the incumbent) and inverts the denial story",
+    "the 1/(1-gamma) delay prediction is refuted at mid gamma: delay is flat to gamma=0.9 then explodes -- the incumbent candidate ADAPTS to the anomaly under high attention (Quine-Duhem accommodation), so lock-in is a sharp threshold, not a smooth divergence"
+  ],
+  "mechanism": "K=2 candidate paradigms per agent (hub wiring vs no-hub), prequential q(m), damped log-linear hypothesis pooling; crisis = the entropy of q(m); denial = attention cutting the evidence source; social revolution = the vanguard's log-odds propagating to agents who never ran the experiment"
+}

@@ -1,11 +1,11 @@
 {
   "experiment": "divergent_wiring",
   "git": {
-    "sha": "d562e69d2608f19962152b590f63908d0e2ab1cf",
+    "sha": "3d89f5b5488b088c16a05398147ea70e9cf5cdaf",
     "branch": "production/structural-minimal",
     "dirty": true
   },
-  "timestamp_utc": "2026-06-12T12:41:11+00:00",
+  "timestamp_utc": "2026-06-12T12:58:28+00:00",
   "seeds": [
     0,
     1,

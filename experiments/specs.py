@@ -13,6 +13,8 @@ from experiments import meanmatched_structure  # noqa: F401  (registration side 
 from experiments import structural_pluralism  # noqa: F401  (registration side effect)
 from experiments import divergent_wiring  # noqa: F401  (registration side effect)
 from experiments import applied_bmr  # noqa: F401  (registration side effect)
+from experiments import represented_rivals  # noqa: F401  (registration side effect)
+from experiments import rival_kuhn  # noqa: F401  (registration side effect)
 from experiments import kuhn_phlogiston  # noqa: F401  (registration side effect)
 from experiments import hawkes_rescue  # noqa: F401  (registration side effect)
 from experiments import adaptive_rate  # noqa: F401  (registration side effect)

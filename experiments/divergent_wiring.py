@@ -214,21 +214,28 @@ def _final_cross(rows, name) -> float:
 # ----------------------------------------------------------------------
 
 def _fig_traces(rows, trio, out_path):
-    fig, axes = plt.subplots(1, 3, figsize=(15, 4.4), sharey=True)
-    for ax, (name, title) in zip(axes, trio):
+    """One axes, three colours: the three conditions' cross-community divergence
+    overlaid (solid, with seed bands); within-community as thin dashed lines in
+    the matching colour (all ~0). Replaces the unreadable 1x3 panel layout."""
+    colors = ("#2c6fbb", "#c0392b", "#27ae60")
+    labels = ("disconnected", "connected, fixed trust",
+              "connected, wiring-gated trust")
+    fig, ax = plt.subplots(figsize=(7.6, 4.8))
+    for (name, _), color, lab in zip(trio, colors, labels):
         t = _rows(rows, name)[0]["snap_t"]
-        for key, ls, lab in (("cross_fro", "-", "cross-community"),
-                             ("within_fro", "--", "within-community")):
-            m, s = _mean(rows, name, key), _std(rows, name, key)
-            ax.plot(t, m, ls, color="#2c3e50", lw=2, label=lab)
-            ax.fill_between(t, m - s, m + s, color="#2c3e50", alpha=0.15)
-        ax.set_title(title, fontsize=10)
-        ax.set_xlabel("step")
-    axes[0].set_ylabel("structure distance on contested couplings (fro)")
-    axes[0].legend(fontsize=8)
-    fig.suptitle("Structural pluralism under contact: cross- vs within-community "
-                 "wiring distance", fontsize=12)
-    plt.tight_layout(); plt.savefig(out_path, dpi=130); plt.close(fig)
+        m, s = _mean(rows, name, "cross_fro"), _std(rows, name, "cross_fro")
+        ax.plot(t, m, "-", color=color, lw=2.4, label=lab)
+        ax.fill_between(t, m - s, m + s, color=color, alpha=0.15)
+        ax.plot(t, _mean(rows, name, "within_fro"), "--", color=color,
+                lw=1.0, alpha=0.6)
+    ax.plot([], [], "--", color="grey", lw=1.0, label="within-community (all)")
+    ax.set_xlabel("step", fontsize=11)
+    ax.set_ylabel("cross-community structure distance\non contested couplings (fro)",
+                  fontsize=11)
+    ax.set_title("Structural pluralism under contact", fontsize=12)
+    ax.legend(fontsize=10, loc="center right")
+    ax.tick_params(labelsize=10)
+    plt.tight_layout(); plt.savefig(out_path, dpi=150); plt.close(fig)
 
 
 def _fig_portrait(rows, panels, commits, value_a, value_b, out_path,

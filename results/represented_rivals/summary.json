@@ -1,0 +1,51 @@
+{
+  "config": {
+    "SIGMA_O": 0.5,
+    "SEEDS": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "A_T": 400,
+    "A_OMEGA": 0.3,
+    "B_N": 16,
+    "B_T": 1500,
+    "B_SOCIAL_NU": 0.01,
+    "B_GATED_OMEGA": 0.95,
+    "B_RIVAL_OMEGA": 0.3,
+    "B_ALPHA_M": 0.02
+  },
+  "demo_A": {
+    "q_M1_final": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "rate_nats_per_step": 0.13162793219089508,
+    "pool_blur_drift": 0.0,
+    "map_rel_err_vs_M1": 0.0
+  },
+  "demo_B": {
+    "peak": {
+      "plain": 0.6054238677024841,
+      "gated": 3.2602035999298096,
+      "rival": 3.25032114982605
+    },
+    "end": {
+      "plain": 0.0002466168371029198,
+      "gated": 0.07492778450250626,
+      "rival": 2.794557809829712
+    },
+    "wall_predicted_nats": 18.538147509098053,
+    "wall_realized_nats": 110.40546875,
+    "tail_slope": 0.01642830877908464,
+    "qA_own": 1.0,
+    "qB_own": 1.0,
+    "gated_floor_note": "the gated tail converges to a small flat floor (~0.08) rather than 0: a Friedkin-Johnsen-type equilibrium from the per-camp anchors (stubborn priors), amplified ~3x by the gate. Controls (probe, seed 0): bare gate omega=1 -> 0.000; anchors alone -> ~0.03; gate+anchors -> ~0.09. Parameter-level disagreement, vs the rival wall's categorical certainty 35x higher."
+  },
+  "mechanism": "K candidate wirings per agent + prequential model posterior (the structure-discriminating evidence the deposit erases now accumulates in L) + hypothesis-aligned fusion (no cross-frame averaging) + damped log-linear hypothesis pooling (wall height ~ source / (2 alpha_m), predicted before measured)"
+}

@@ -1,0 +1,58 @@
+{
+  "experiment": "represented_rivals",
+  "git": {
+    "sha": "0c990ab5cc1f70b0983e22bee3a4136cfee6fdf7",
+    "branch": "production/structural-minimal",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-06-12T13:22:39+00:00",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "params": {
+    "SIGMA_O": 0.5,
+    "SEEDS": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "A_T": 400,
+    "A_OMEGA": 0.3,
+    "B_N": 16,
+    "B_T": 1500,
+    "B_SOCIAL_NU": 0.01,
+    "B_GATED_OMEGA": 0.95,
+    "B_RIVAL_OMEGA": 0.3,
+    "B_ALPHA_M": 0.02
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.0",
+    "jaxlib": "0.9.0",
+    "numpy": "2.3.4",
+    "equinox": "0.13.6",
+    "networkx": "3.5",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.7"
+  },
+  "outputs": {
+    "simulation_arrays.npz": {
+      "arrays": {
+        "D_gated": "b69d8d0f6aa4836b31b0d16d76d1c6a77dab3467271bac22a4190dc6fcb01e42",
+        "D_plain": "70c631a16d9d8917f4e2bbd88af1bb6b10b59d5bfb59891792256d74dcffd424",
+        "D_rival": "3cfd27a00f8ea3becb1600b9e3f353f671b464c1e6c25fbfc17a1d950c7b5bf6",
+        "g_t": "0b38731ec8f419d6bac13bb7b5c2b18a7ee2ae0130e72037ad7c8d16d0a06b64",
+        "qA_t": "c6f9589bf8c99a5e05b7a5161b4413ad54bc0f2642d9a42f0a81a1d7aeed7829"
+      }
+    },
+    "summary.json": "cb4f614383db16d6b255d4100f182a5577015c8db3d7f23baf5012b1d20e77c9"
+  },
+  "runner_version": 1
+}

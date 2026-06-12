@@ -1,0 +1,66 @@
+{
+  "experiment": "rival_kuhn",
+  "git": {
+    "sha": "0c990ab5cc1f70b0983e22bee3a4136cfee6fdf7",
+    "branch": "production/structural-minimal",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-06-12T14:10:32+00:00",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "params": {
+    "SIGMA_O": 1.0,
+    "T_SHIFT": 80,
+    "T_CYCLE": 240,
+    "T_LOCK": 480,
+    "N_CYCLE": 16,
+    "N_MIXED": 24,
+    "OMEGA": 0.9,
+    "ALPHA_M": 0.02,
+    "GAMMAS": [
+      0.0,
+      0.5,
+      0.9,
+      0.99,
+      1.0
+    ],
+    "VANGUARD_FRAC": 0.25,
+    "GAMMA_CONS": 0.99,
+    "H_CRISIS": 0.35,
+    "Q_LOCK": 0.9,
+    "SEEDS": [
+      0,
+      1,
+      2
+    ]
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.0",
+    "jaxlib": "0.9.0",
+    "numpy": "2.3.4",
+    "equinox": "0.13.6",
+    "networkx": "3.5",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.7"
+  },
+  "outputs": {
+    "simulation_arrays.npz": {
+      "arrays": {
+        "delays": "28646aa66812c04fd96120ce1bab1b10c9027e41daed855b8cdd46a85b4e10ff",
+        "entropy_cycle": "7b5ce943d70671edea3941181d350477620104476f0c1ddad8cd92afd9d3978f",
+        "gammas": "9d68b195caaffb56e6c95dab5466ed8f7f9b6adf6e792fffd8871ba600063b82",
+        "q_cons_isolated": "9a37250bb20fcd5ea1f132f6e8ca6c83f537d7daa506779b9a2a98dffe969b8c",
+        "q_cons_pooled": "6f661fa879227360892213f0f3430aa89e2ccbd627cf5c29ce3ecce63ccdcf9b",
+        "q_oxy_cycle": "2e9d0e51f12e623400ad04a01d424a662ccdbb21da2ddfe497fc8bf9296b8bb7",
+        "q_vanguard": "d95839dd7b4aceddcddf7b34ba2971a7b0cbe9e8adf5e5ad96364d0d4660599f"
+      }
+    },
+    "summary.json": "882b7b3995ceadc88dbd2f999cf3b06f8fdc9133eec5a9899859cca479713303"
+  },
+  "runner_version": 1
+}
