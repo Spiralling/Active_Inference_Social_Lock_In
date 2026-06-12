@@ -134,48 +134,54 @@ community pools, not in its concepts.
 % ======================================================================
 
 To change one's mind about a fact is to update a belief; to change a paradigm is to change the
-\emph{frame} in which beliefs are posed. Such a frame is not a credence but a \emph{structure}: a
-network of conditional dependencies through which information propagates. A community that only
-revised its credences, leaving the network fixed, could not change frame at all. This is the
+\emph{frame} in which beliefs are posed. A frame is not a credence but a \emph{structure}: a
+network of conditional dependencies through which information propagates. A community that revised
+only its credences, leaving the network fixed, could never change frame at all. This is the
 phenomenon Kuhn named but could not run forward \citep{kuhn1962}: nothing in \emph{The Structure of
-Scientific Revolutions} tells us, mechanistically, why a community holds a structure of commitments
+Scientific Revolutions} says, mechanistically, why a community holds a structure of commitments
 long past the first disconfirming evidence, nor what finally makes the holding give way.
 
-When the chemical community released phlogiston it did not revise a single credence. It rewrote a
+When the chemical community gave up phlogiston it did not revise a single credence. It rewrote a
 network of commitments in which combustion, calcination, respiration, and the theory of acids were
 all load-bearing on a hub that had to go: late-phlogistic theorists proposed cascading revisions that
 proved mutually incompatible \citep{blumenthal2017,holmes2000}, defending less a hypothesis about
-combustion than a constellation of entangled commitments \citep{boantza2011}---phlogiston was
+combustion than a constellation of entangled commitments \citep{boantza2011}. Phlogiston was
 load-bearing for too much.
 
-The dominant formalism for such communities, network epistemology, cannot represent this case. Its
-agents hold a scalar credence in a fixed proposition and update on a trust graph
-\citep{zollman2010,oconnor2019,zollman2013}, a programme that has produced striking results on
-transient diversity, polarization, and the division of cognitive labour
-\citep{jonard2025,michelini2023,kitcher1990,strevens2003}---but the phlogiston puzzle is not a failure
-to converge on a number. The commitments were \emph{entangled}: revising any one forced a re-reading
-of the others, and the disagreement was about which entanglements to keep. Thagard's ECHO
-\citep{thagard1989,thagard1990} captures the structural intuition as undirected coherence; it lacks
+Network epistemology, the dominant formalism for such communities, cannot represent this case. Its
+agents hold a scalar credence in a fixed proposition and update it on a trust graph
+\citep{zollman2010,oconnor2019,zollman2013}---a programme with striking results on transient
+diversity, polarization, and the division of cognitive labour
+\citep{jonard2025,michelini2023,kitcher1990,strevens2003}, but the phlogiston puzzle is not a failure
+to converge on a number. The commitments were \emph{entangled}: revising one forced a re-reading of
+the others, and the dispute was over which entanglements to keep. Thagard's ECHO
+\citep{thagard1989,thagard1990} captures the structural intuition as undirected coherence, but lacks
 the directed dependencies, the carry-over cost of mind-change, and the expand/reduce asymmetry we
-derive below. Active-inference accounts of epistemic communities supply an endogenous precision-based
-lock-in mechanism \citep{albarracin2022} and warn that naive aggregation degrades collective precision
+derive below. Active-inference accounts supply an endogenous, precision-based lock-in mechanism
+\citep{albarracin2022} and warn that naive aggregation degrades collective precision
 \citep{friston2023federated,waade2025}; the variational cost of mind-change has been formalized for a
 single agent as a motivated trade between revision cost and the utility of a held belief
-\citep{hyland2025}. What none of these does is treat \emph{belief structure itself} as the object of
-inference: they retain a fixed menu of hypotheses, and a scalar credence over a menu cannot say how
-revising one commitment forces a re-reading of the rest, nor how a community arrives at a \emph{new}
-way of carving up the world. When only a number moves on the trust graph, a community can converge
-on it, herd on it, or split over it---but its members can never come to hold different \emph{kinds}
-of world, only different values on a shared one. The question, made concrete in \S\ref{sec:model},
-is therefore what moves: this paper lets a piece of \emph{structure} travel, so that one agent can
-come to represent a commitment its peers do not.
+\citep{hyland2025}. What none of these does is make \emph{belief structure itself} the object of
+inference. A scalar credence over a fixed menu of hypotheses cannot say how revising one commitment
+forces a re-reading of the rest, nor how a community arrives at a \emph{new} way of carving up the
+world: its members can herd on a number or split over it, but they can never come to hold different
+\emph{kinds} of world---only different values on a shared one.
 
-We make structure the object. Agents carry a directed network of commitments, learn its structure by
-Bayesian model expansion and reduction, and are \emph{bounded}: they sample a complex world through
-narrow channels, value some conclusions over others, and judge what they receive against their own
-model. Section~\ref{sec:bmebmr} builds the model and states the simulation loop explicitly;
-Section~\ref{sec:results} reports a single-agent dark-energy net and a 1{,}816-run population sweep
-through the full Kuhnian cycle on the phlogiston world.
+This paper lets a piece of \emph{structure} travel, so that one agent can come to represent a
+commitment its peers do not. Its agents carry a directed network of commitments and learn that
+network by Bayesian model expansion and reduction. They are also \emph{bounded}: they sample a
+complex world through narrow channels, value some conclusions over others, and judge what they
+receive against their own model. One operator does most of the work. Applied to two sources, the
+network's propagation operator gives both the \emph{conservatism} of a commitment, the cost of
+revising what depends on it, and the \emph{conviction} an agent attaches to holding it.
+Section~\ref{sec:bmebmr} builds the model and states the simulation loop; Section~\ref{sec:results}
+reports a single-agent dark-energy net and a 2{,}488-run population sweep that drives the full
+Kuhnian cycle, from normal science through anomaly, crisis, reduction, and discovery, on the
+phlogiston world. That sweep also closes a loop the first draft left open. The proposal rate is no
+longer a dial but a \emph{posterior}: each agent infers it from its own residual and from its
+neighbours' discoveries. Structures are entertained on expiring epistemic credit and audited by the
+same ledger that admitted them. And incommensurability, it turns out, lives in how a community
+\emph{pools} its beliefs, not in its concepts.
 
 % ======================================================================
 \section{Why paradigms are networks under structure learning}
@@ -199,8 +205,8 @@ exploration is no longer a tuned bonus but the epistemic value of expanding the 
 commitment not yet in it \citep{friston2015,friston2017curiosity}; what stays free is only the
 \emph{rate} at which proposals arrive. The complementary operation is Bayesian model reduction:
 pruning structure the data do not support, in closed form, at the slowest timescale of the learning
-hierarchy \citep{friston2018bmr,smith2022plos}. Existing applications of this machinery run on single
-agents \citep{smith2022plos,priorelli2023} or define ``group'' as between-subject neuroimaging
+hierarchy \citep{friston2018bmr,neacsu2022}. Existing applications of this machinery run on single
+agents \citep{neacsu2022,priorelli2023} or define ``group'' as between-subject neuroimaging
 \citep{friston2016peb}; treating a paradigm as the object a \emph{community} jointly reduces and
 expands is the open move this paper makes.
 
@@ -1292,10 +1298,10 @@ T.~D.~Ullman and J.~B.~Tenenbaum.
 Bayesian models of conceptual development: learning as building models of the world.
 \emph{Annual Review of Developmental Psychology}, 2:533--558, 2020.
 
-\bibitem[Smith et al.(2022b)]{smith2022plos}
-R.~Smith, V.~Neacsu, M.~B.~Mirza, R.~A.~Adams, and K.~J.~Friston.
-Simulating empirical phenomena of inference under active learning and active selection through
-{Bayesian} model reduction. \emph{PLOS ONE}, 17(12):e0277199, 2022.
+\bibitem[Neacsu et al.(2022)]{neacsu2022}
+V.~Neacsu, M.~B.~Mirza, R.~A.~Adams, and K.~J.~Friston.
+Structure learning enhances concept formation in synthetic active inference agents.
+\emph{PLOS ONE}, 17(11):e0277199, 2022.
 
 \bibitem[Priorelli and Stoianov(2023)]{priorelli2023}
 M.~Priorelli and I.~P.~Stoianov.
