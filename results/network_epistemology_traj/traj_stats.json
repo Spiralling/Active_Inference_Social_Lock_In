@@ -1,0 +1,22 @@
+{
+  "cycle": {
+    "flip_median": 488.0,
+    "flip_stagger_iqr": 101.5,
+    "final_cons_mean": 0.9872268438339233
+  },
+  "wheel": {
+    "flip_median": 232.0,
+    "flip_stagger_iqr": 10.625,
+    "final_cons_mean": 1.0
+  },
+  "community": {
+    "flip_median": 453.0,
+    "flip_stagger_iqr": 57.25,
+    "final_cons_mean": 0.9999976754188538
+  },
+  "complete": {
+    "flip_median": 220.0,
+    "flip_stagger_iqr": 4.0,
+    "final_cons_mean": 1.0
+  }
+}

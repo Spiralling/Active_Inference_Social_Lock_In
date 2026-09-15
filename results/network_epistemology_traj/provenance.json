@@ -1,0 +1,96 @@
+{
+  "script": "scripts/run_traj_provenance.py",
+  "params": {
+    "N": 24,
+    "N_VAN": 4,
+    "T_SHIFT": 80,
+    "T": 600,
+    "SIGMA_O": 1.0,
+    "OMEGA": 0.9,
+    "ALPHA_M": 0.02,
+    "CONVICTION": 2.0,
+    "Q_CONS": 0.9,
+    "GAMMA_HARD": 1.0,
+    "GAMMA_EASY": 0.99,
+    "Z_BETA": 0.06,
+    "R": 100,
+    "R_HEAT": 30,
+    "R_SWEEP": 40,
+    "R_TRAJ": 50,
+    "SWEEP_BETAS": [
+      0.0,
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.08,
+      0.1,
+      0.12,
+      0.15,
+      0.2,
+      0.25,
+      0.3
+    ],
+    "H_BETAS": [
+      0.0,
+      0.01,
+      0.03,
+      0.06,
+      0.12,
+      0.25
+    ],
+    "H_GAMMAS": [
+      0.9,
+      0.97,
+      0.99,
+      1.0
+    ],
+    "MAX_WORKERS": 4
+  },
+  "git": {
+    "sha": "85ec4c9b59894e775f61255a143003a3da96c4eb",
+    "branch": "wip/publication-worktree-2026-09-15",
+    "dirty": true
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "machine": "AMD64",
+    "jax": "0.9.0",
+    "numpy": "2.3.4",
+    "scipy": "1.16.3",
+    "equinox": "0.13.6",
+    "networkx": "3.5",
+    "matplotlib": "3.10.7"
+  },
+  "comparison_to_original": {
+    "png_sha256_new": "c8a861c095bef158896a772755ef909f4ae959df783d44c1118ea0e74c9b6b31",
+    "png_sha256_original": "c8a861c095bef158896a772755ef909f4ae959df783d44c1118ea0e74c9b6b31",
+    "png_identical": true,
+    "traj_stats_identical": true,
+    "traj_stats_original": {
+      "cycle": {
+        "flip_median": 488.0,
+        "flip_stagger_iqr": 101.5,
+        "final_cons_mean": 0.9872268438339233
+      },
+      "wheel": {
+        "flip_median": 232.0,
+        "flip_stagger_iqr": 10.625,
+        "final_cons_mean": 1.0
+      },
+      "community": {
+        "flip_median": 453.0,
+        "flip_stagger_iqr": 57.25,
+        "final_cons_mean": 0.9999976754188538
+      },
+      "complete": {
+        "flip_median": 220.0,
+        "flip_stagger_iqr": 4.0,
+        "final_cons_mean": 1.0
+      }
+    }
+  }
+}
