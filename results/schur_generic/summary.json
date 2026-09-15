@@ -1,0 +1,10 @@
+{
+  "collider": {
+    "prior_r": -1.1102230246251565e-16,
+    "given_y_r": -0.5
+  },
+  "common_cause": {
+    "given_b_r": 0.0,
+    "marginalized_r": 0.3333333333333333
+  }
+}

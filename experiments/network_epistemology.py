@@ -73,7 +73,8 @@ _WORLD: dict = {}
 
 
 def _world(p):
-    key = (p["N"], p["T"], p["T_SHIFT"], p["SIGMA_O"], p["OMEGA"], p["ALPHA_M"])
+    key = (p["N"], p["T"], p["T_SHIFT"], p["SIGMA_O"], p["OMEGA"], p["ALPHA_M"],
+           p["CONVICTION"])
     if key not in _WORLD:
         import numpy as _np
         import jax.numpy as jnp
@@ -84,8 +85,8 @@ def _world(p):
         from experiments.rival_kuhn import oxygen_bn
         cfg = StructuralConfig(regime_schedule="step", t_shift=p["T_SHIFT"],
                                n_steps=p["T"], sigma_o=p["SIGMA_O"])
-        inc = phlogiston_bn(cfg, conviction=2.0).to_info()
-        oxy = oxygen_bn(cfg).to_info()
+        inc = phlogiston_bn(cfg, conviction=p["CONVICTION"]).to_info()
+        oxy = oxygen_bn(cfg, conviction=p["CONVICTION"]).to_info()
         H = gravimetric_H(cfg)
         rows = gravimetric_rows(cfg)
         disc = [i for i, r in enumerate(rows)
@@ -673,6 +674,9 @@ register(ExperimentSpec(
     out_dir="network_epistemology",
     params=dict(
         N=24, N_VAN=4, T_SHIFT=80, T=600, SIGMA_O=1.0, OMEGA=0.9, ALPHA_M=0.02,
+        # prior precision scale on BOTH candidate nets (was a hardcoded literal in
+        # _world, invisible to the manifest -- promoted so the record is complete)
+        CONVICTION=2.0,
         Q_CONS=0.9,
         # CALIB (probe): gamma=1.0 zero-source => accuracy threshold (complete/wheel
         # convert, cycle/community never); gamma=0.99 trickle => all convert, speed

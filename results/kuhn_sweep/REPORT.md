@@ -1,13 +1,15 @@
-# kuhn_phlogiston overnight sweep
+# kuhn_phlogiston sweep
 
-2488 healthy runs. One figure per panel:
+2488 healthy runs (`python scripts/run.py run kuhn_sweep`; resumable via
+rows.jsonl). One figure per panel:
 
 - **figA_vanguard.png** -- the critical-mass curve: even a 5% open vanguard lifts population
   conversion once coupled, and coupling spreads the CRISIS itself, so the dogmatic majority
   ends up making its own discovery.
-- **figB_lockin_boundary.png** -- the lock-in boundary sits at VERY weak coupling
-  (inter ~ 0.0005-0.002, where the run-to-run susceptibility peaks); neither the conviction
-  gate nor the prune threshold moves it far. Only isolation protects the paradigm.
+- **figB_lockin_boundary.png** (paper: fig_kuhn_lockin_boundary) -- the lock-in boundary
+  sits at VERY weak coupling (inter ~ 0.0005-0.002, where the run-to-run susceptibility
+  peaks); neither the conviction gate nor the prune threshold moves it far. Only isolation
+  protects the paradigm.
 - **figC_waiting_time.png** -- per-agent discovery follows the waiting-time law
   1-(1-lambda)^T (44% at rate 0.01 -> 100% at 0.16), but the population's FIRST discovery is
   not rate-limited at all: with ~40 parallel draws an attempt arrives almost immediately, and
@@ -28,3 +30,8 @@
   factor. A community that never forgets still sees its paradigm die; it loses the capacity
   to grow the successor. (No trigger constant exists to calibrate: the Bayes factor is the
   sole expansion accept test.)
+- **figE_hawkes.png** -- the Hawkes rescue at sweep scale: social excitation manufactures
+  the near-simultaneity that concept survival requires.
+- **figF_fusion.png** (paper: fig_kuhn_fusion) -- the survival threshold moves with the
+  pooling rule: dimension-aware masked fusion shifts concept survival from 'critical mass
+  in time' toward 'conceive it at all'.

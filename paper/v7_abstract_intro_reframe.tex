@@ -1,0 +1,199 @@
+% ======================================================================
+% v7 DRAFT: abstract + Section 1 + Section 2, rewritten from the reframe
+% (motivation that keeps a paradigm is a commitment to a generative model,
+% not a preference over its conclusions). Drop-in replacement for the
+% corresponding blocks of changing_networked_mind_v6.tex; everything from
+% \section{The model} onward is unchanged.
+%
+% Each paragraph is tagged: [KEPT] = v6 text, at most lightly edited;
+% [REFRAMED] = v6 material, reordered and rewritten; [NEW] = not in v6.
+% Two new bib keys at the bottom (nielsen2022, quine1978): VERIFY before use.
+% Bib keys feyerabend1975, lehrer1981, laudan1977 already exist in v6 and
+% were never cited in its text; they are cited here.
+% ======================================================================
+
+\begin{abstract}
+% [REFRAMED] Opens with the question rather than the Kuhn thesis; keeps the
+% core/belt-from-geometry sentence, the contraction sentence and the closing
+% sentence; adds the tilt finding and the proliferation line.
+To change a paradigm is to change the frame in which beliefs are posed, not a credence
+within it. Peripheral commitments drift under accumulating evidence while central ones
+resist, and when they give way they give way quickly. We ask what lets a community of
+bounded reasoners hold a structure of commitments past disconfirming evidence, and what
+finally makes the holding give way. We model this within active inference, building on a
+recent account of belief updating as motivated inference subject to a cost of changing
+one's mind. Each agent's commitments form a directed web of belief in which the cost of
+revising a commitment is the surrounding inference that must re-equilibrate when it moves,
+so Lakatos's hard core and protective belt fall out of the precision geometry rather than
+being decreed. Agents exchange beliefs, and pieces of structure, over a communication
+network. Characterising the dynamics analytically and in simulation, we find two things.
+First, the field's default aggregation step, precision-weighted averaging, cannot reproduce
+the signature of paradigm change: it contracts the community onto a compromise no member
+holds, whatever the parameters. Second, the familiar explanation of resistance, attachment
+to the conclusions one wants true, contributes only timing: entered as a value that tilts
+inference, it shifts when a transition arrives, not whether. What holds a paradigm is a
+commitment to a structure. Giving each agent a posterior over rival wirings, each anchored
+to its own prior, restores the capacity the default lacks and recovers the Kuhn cycle with
+crisis as a measurable state of belief: normal science, crisis, revolution, new normal.
+This is Feyerabend's principle of proliferation made computational: without a represented
+rival, an anomaly cannot register as crisis. We close by discussing implications for
+engineered communities of reasoning agents, whose aggregation protocols decide the same
+question by design.
+
+\keywords{Active inference \and Structure learning \and Belief sharing \and Paradigm change \and Social epistemology}
+\end{abstract}
+
+% ======================================================================
+\section{Introduction: changing a frame, not a credence}
+\label{sec:background}
+% ======================================================================
+
+% [REFRAMED] v6's second paragraph, promoted to open the paper; the three
+% philosophers from v6's first sentence are folded in with one clause each.
+% "What his account leaves open is a mechanism" is gone (reviewer 53cW).
+To change one's mind about a fact is to update a belief; to change a paradigm is to change
+the \emph{frame} in which beliefs are posed: not a credence but a \emph{structure}, a
+network of conditional dependencies through which information propagates. When the chemical
+community of the late eighteenth century gave up phlogiston, it did not revise a single
+credence: it rewrote a network in which combustion, calcination, respiration, and the theory
+of acids were all load-bearing on a hub that had to go
+\citep{blumenthal2017,holmes2000,boantza2011}. Phlogiston was load-bearing for too much.
+Kuhn described this cycle historically \citep{kuhn1962}; Lakatos gave the held structure a
+shape, a hard core and a protective belt \citep{lakatos1970}; Quine gave it a name, a web of
+belief that meets experience only as a whole \citep{quine1951}. This paper asks what it
+takes for a community of bounded reasoners to run that cycle: which representation lets it
+hold a structure of commitments past the first disconfirming evidence, and what finally
+makes the holding give way.
+
+% [NEW] The attachment paragraph: the tempting answer, built in, found wanting.
+The familiar answer is attachment. A result on which a career rests is held more tightly
+than its evidence warrants \citep{kitcher1990,strevens2003}; a paradigm, on this view, is
+held by wanting it true. We build that answer into the model, as an intrinsic value on each
+commitment that propagates through the web and tilts inference toward preferred conclusions
+\citep{hyland2025}, and we find that its measured contribution is timing: it shifts when a
+transition arrives, not whether. What holds a paradigm in the model is something else. It is
+a generative model of one's own to reason from, and a rule for sharing beliefs that does not
+average that model away. Attachment to conclusions is not enough; commitment to a structure
+is what survives contact with a rival. Philosophy of science has long drawn the distinction
+in words, between preferring a theory and seeing the world through it
+\citep{kuhn1962,feyerabend1975}; the model draws it in mechanism, and finds only the second
+causally effective.
+
+% [REFRAMED] v6's third paragraph (network epistemology, ECHO, active inference),
+% now opened by the Feyerabend ancestor and the three named couplings; ECHO's
+% shortfall is spelled out (reviewer HadU); Lehrer & Wagner cited as the default.
+The result has an ancestor. Feyerabend argued that the evidence against a theory often
+cannot be seen until an alternative is on the table: it takes a rival to turn a puzzle into
+an anomaly \citep{feyerabend1975}. In the model this is literal. Without a represented rival
+the community has no belief state that means \emph{torn}, and the world's turn arrives as
+growing confidence in a compromise no one holds. The rest of the model's vocabulary is drawn
+from the same tradition, and we say so as we build it: Quine's maxim of minimum mutilation
+is the cost agents pay to revise their web \citep{quine1978}; Lakatos's negative heuristic,
+reason from the core and let the evidence land in the belt, is the anchoring that keeps a
+candidate alive \citep{lakatos1970}; and the sharing rule we begin from is the rational
+consensus of Lehrer and Wagner \citep{lehrer1981,degroot1974}, so the contraction result
+below is a result about that tradition. The social side belongs to formal social
+epistemology, which asks when a community converges too soon
+\citep{zollman2010,zollman2013,oconnor2019,jonard2025,michelini2023}. That literature, in
+its standard form, updates a scalar credence in a fixed proposition on a trust graph. It can
+say that a community herds on a number or splits over it; it cannot say how revising one
+commitment forces a re-reading of the rest, because its agents cannot hold different kinds
+of world. Thagard's ECHO \citep{thagard1989,thagard1990} comes closest, representing a
+theory as a coherence network, but its dependencies are undirected, it carries no cost of
+changing one's mind, and it models one reasoner rather than a community. Active inference
+supplies the missing pieces one at a time: precision-based lock-in \citep{albarracin2022},
+warnings that naive aggregation degrades collective precision
+\citep{friston2023federated,waade2025}, and a single-agent cost of mind-change
+\citep{hyland2025}. What none of them does is make belief structure itself the object of
+inference within a community.
+
+% [KEPT] v6's second-audience material, from its first paragraph, with the
+% metascience citation added.
+The question has a second audience. Communities of reasoning agents are now built as well
+as studied, and every such community commits, in its aggregation step, to an answer it
+rarely examines: what happens to the member who disagrees. The social processes of science
+are themselves increasingly treated as designable \citep{nielsen2022}. Machine learning
+names the property at stake \emph{open-endedness} \citep{stanley2017oe,hughes2024}; social
+epistemology catalogues its failure modes \citep{nguyen2018,zollman2010}. What neither
+supplies is a foundation: a model of a community of structure-learning agents explicit
+enough that one can prove which aggregation dynamics preserve open-endedness and which
+foreclose it. The problem, throughout, is averaging: taking the mean refines the frame
+everyone shares, and can never grow a new one.
+
+% [REFRAMED] v6's closing paragraph; adds the "names the idea it instantiates"
+% promise for Section 3 and the three-homes-of-motivation sentence.
+This paper lets a piece of structure travel, so that one agent can come to represent a
+commitment its peers do not. Its agents carry a directed network of commitments and revise
+it by Bayesian model reduction; expansion, the conceiving of a commitment no one yet holds,
+is deferred by scope (\S\ref{sec:structurelearning}), but when agents are given new
+structures they can take them up. They are bounded, sampling a complex world through narrow
+channels, valuing some conclusions over others, and judging what they receive against their
+own model. Section~\ref{sec:bmebmr} assembles this community from the field's own default
+choices and names, for each choice, the idea from philosophy of science it instantiates.
+Section~\ref{sec:results} shows what those defaults force: pooling is a contraction, so a
+conflicting source is never rejected, only averaged in; and what undoes it: agents that
+represent rival structures, each anchored to its own prior, keep different readings of the
+same world apart and run the Kuhn cycle with crisis as a state of the belief. The same
+experiments let us read off the three places motivation can enter a bounded reasoner, the
+mean, the precision, and the model index, and only the last holds. The discussion draws the
+map: what filling the representational slot bought, and what remains.
+
+% ======================================================================
+\section{Desiderata for a structural model of science}
+\label{sec:hidden}
+% ======================================================================
+
+% [KEPT] First ingredient unchanged.
+A structural model of science needs at least three ingredients, and each has a default
+formalization so natural it is hardly ever examined. First, structure as the object of
+inference: a scientist confronting a new domain is not given the right variables, let alone
+the dependencies among them; frames differ in kind, not in degree, so credences over a fixed
+menu cannot carry them \citep{ullman2020,kemp2008form,ullman2012}. Active inference can
+model this: when structure is the object of inference, exploration need not be added by
+hand, as the $\epsilon$ of an $\epsilon$-greedy algorithm is \citep{zollman2010,oconnor2019};
+it can be cast as the epistemic value of expanding the model to entertain a commitment not
+yet in it \citep{friston2015,friston2017curiosity}, with Bayesian model reduction as its
+complement, pruning what the data abandon in closed form \citep{friston2018bmr,neacsu2022}.
+To model structure learning, then, is to model how a Bayes net learns to change itself over
+time. The default is a precision-weighted Gaussian model over the network.
+
+% [REFRAMED] The value ingredient now states the three levels; the default is
+% named as the first of them.
+Second, \emph{value}, or motivated belief updating: the commitments a scientist already has
+about what they care about. A result on which a career rests is held more tightly than its
+evidence warrants \citep{kitcher1990,strevens2003}, and attitudes demonstrably live on
+networks of exactly this kind \citep{dalege2016}. Value can enter a bounded reasoner at three
+levels: as a preference over conclusions, tilting the mean of a belief; as attention,
+deciding which evidence is weighed; or as a commitment to a structure, deciding which model
+one reasons from. The default puts it at the first level: a utility that tilts the prior
+\citep{hyland2025}. Kuhn's values for theory choice, simplicity, scope, consistency,
+fruitfulness, live at the third \citep{kuhn1977}; part of what the experiments below
+measure is the distance between the two.
+
+% [KEPT] Third ingredient, with Lehrer & Wagner added to the default.
+Third, communication, because science is social: beliefs travel a trust graph and must
+somehow be combined when they meet. The default is precision-weighted averaging, the
+information form of classical opinion pooling and of rational consensus
+\citep{degroot1974,genest1986,lehrer1981}. Section~\ref{sec:bmebmr} builds the community
+out of exactly these defaults, on purpose. The question the rest of the paper asks is
+whether such a community can ever do more than refine: whether agents built this way can
+grow a frame, and not merely polish the one they hold; and, where they cannot, which of the
+three defaults has to change.
+
+% ======================================================================
+% NEW BIB ENTRIES (append inside \begin{thebibliography}); VERIFY all three.
+% ======================================================================
+% \bibitem[Nielsen and Qiu(2022)]{nielsen2022}
+% M.~Nielsen and K.~Qiu.
+% A vision of metascience: an engine of improvement for the social processes of science.
+% Essay, 2022. https://scienceplusplus.org/metascience/
+%
+% \bibitem[Quine and Ullian(1978)]{quine1978}
+% W.~V.~O.~Quine and J.~S.~Ullian.
+% \emph{The Web of Belief}, 2nd edition. Random House, 1978.
+% (The maxim of minimum mutilation; also stated in Quine, \emph{Philosophy of Logic}, 1970.)
+%
+% \bibitem[Kuhn(1977)]{kuhn1977}
+% T.~S.~Kuhn.
+% Objectivity, value judgment, and theory choice.
+% In \emph{The Essential Tension}, pages 320--339. University of Chicago Press, 1977.

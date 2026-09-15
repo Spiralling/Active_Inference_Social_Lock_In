@@ -1,0 +1,49 @@
+{
+  "experiment": "schur_generic",
+  "git": {
+    "sha": "3bfd1b06132b0f23c5cafbf0a08521e507828496",
+    "branch": "refactor/publication",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-08-14T06:34:28+00:00",
+  "seeds": [],
+  "params": {
+    "COLLIDER_NOISE_PRECISIONS": [
+      2.0,
+      2.0,
+      2.0
+    ],
+    "PI_COMMON_CAUSE": [
+      [
+        2.0,
+        0.0,
+        1.0
+      ],
+      [
+        0.0,
+        2.0,
+        1.0
+      ],
+      [
+        1.0,
+        1.0,
+        2.0
+      ]
+    ]
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.2",
+    "jaxlib": "0.9.2",
+    "numpy": "2.4.4",
+    "equinox": "0.13.8",
+    "networkx": "3.6.1",
+    "scipy": "1.17.1",
+    "matplotlib": "3.10.9"
+  },
+  "outputs": {
+    "summary.json": "22ae17768c0309a04a8f4b4d1154883dac474234f2c60526bdf7b3c825008c06"
+  },
+  "runner_version": 1
+}

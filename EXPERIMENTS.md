@@ -132,6 +132,15 @@ The chemical revolution, endogenously: population + Bayesian model reduction + e
 - **Figures:** kuhn_phlogiston_timeline, kuhn_phlogiston_phase
 - **Seeds:** [0, 1, 2]
 
+### `kuhn_sweep`
+
+The kuhn_phlogiston sweep, six panels feeding six figures: critical-mass vanguard curve, the lock-in boundary at fine coupling (paper: fig_kuhn_lockin_boundary), discovery as a waiting time, robustness over forgetting x noise, the Hawkes rescue, and the pooling rule as an axis (paper: fig_kuhn_fusion). Resumable via rows.jsonl; job hashes are backward-compatible with the original scripts/sweep_kuhn cache.
+
+- **Run:** `python scripts/run.py run kuhn_sweep`
+- **Outputs:** `results/kuhn_sweep/`
+- **Figures:** figA_vanguard, figB_lockin_boundary, figC_waiting_time, figD_robustness, figE_hawkes, figF_fusion
+- **Seeds:** [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31]
+
 ### `kuhnian_transition`
 
 The Kuhnian transition on real community topology (conversion vs bridge density, with the measured transition width deciding whether 'phase transition' is earned) plus the discovered immunization effect (weak contact spreads the accommodated incumbent), and the K=3 Lakatos ladder: belt-first core-last as a sequence of model retreats.
@@ -347,6 +356,13 @@ The existence proof that model uncertainty buys walls: agents that hold K candid
 - **Outputs:** `results/represented_rivals/`
 - **Figures:** fig_blur_vs_crisp, fig_walls_vs_time
 - **Seeds:** [0, 1, 2, 3, 4]
+
+### `schur_generic`
+
+The Schur residue on the smallest nets that show it (paper: fig_schur_generic): conditioning on a shared effect anti-couples the parents; marginalizing a shared cause couples the children -- a coupling appears where the joint precision had a zero. Deterministic closed-form linear algebra; the generic geometry behind the dark-energy banana.
+
+- **Run:** `python scripts/run.py run schur_generic`
+- **Outputs:** `results/schur_generic/`
 
 ## landscape
 

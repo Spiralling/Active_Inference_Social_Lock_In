@@ -1,0 +1,161 @@
+{
+  "experiment": "kuhn_sweep",
+  "git": {
+    "sha": "3bfd1b06132b0f23c5cafbf0a08521e507828496",
+    "branch": "refactor/publication",
+    "dirty": true
+  },
+  "timestamp_utc": "2026-08-14T06:34:39+00:00",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31
+  ],
+  "params": {
+    "DEFAULTS": {
+      "N": 80,
+      "inter": 0.0,
+      "intra": 0.4,
+      "frac_open": 0.5,
+      "lam_open": 0.1,
+      "lam_dogma": 0.35,
+      "gate_strength": 1.0,
+      "s_open": 0.3,
+      "s_dogma": 3.0,
+      "omega": 0.97,
+      "sigma_o": 0.5,
+      "t_shift": 40,
+      "n_steps": 180,
+      "proposal_rate": 0.08,
+      "snapshot_every": 4
+    },
+    "A_FRACS": [
+      0.05,
+      0.1,
+      0.2,
+      0.35,
+      0.5
+    ],
+    "A_INTERS": [
+      0.0,
+      0.002,
+      0.005,
+      0.01,
+      0.05,
+      0.2
+    ],
+    "B_INTERS": [
+      0.0,
+      0.0005,
+      0.001,
+      0.002,
+      0.005,
+      0.01,
+      0.02,
+      0.05
+    ],
+    "B_SDOGMA": [
+      1.0,
+      3.0,
+      6.0,
+      10.0
+    ],
+    "B_LAM": [
+      0.35,
+      0.8
+    ],
+    "C_RATES": [
+      0.01,
+      0.02,
+      0.04,
+      0.08,
+      0.16,
+      null
+    ],
+    "D_OMEGA": [
+      0.9,
+      0.95,
+      0.97,
+      0.99,
+      1.0
+    ],
+    "D_SIGMA": [
+      0.25,
+      0.5,
+      1.0
+    ],
+    "E_BETAS": [
+      0.0,
+      0.25,
+      0.5,
+      1.0,
+      1.5
+    ],
+    "E_R0S": [
+      0.005,
+      0.01,
+      0.02
+    ],
+    "E_STEPS": 320,
+    "F_MODES": [
+      "posterior",
+      "posterior_masked"
+    ],
+    "F_RATES": [
+      0.005,
+      0.01,
+      0.02
+    ],
+    "SEEDS_A": 16,
+    "SEEDS_B": 16,
+    "SEEDS_C": 32,
+    "SEEDS_D": 8,
+    "SEEDS_E": 32,
+    "SEEDS_F": 32,
+    "WORKERS": 10
+  },
+  "env": {
+    "python": "3.13.3",
+    "platform": "win32",
+    "jax": "0.9.2",
+    "jaxlib": "0.9.2",
+    "numpy": "2.4.4",
+    "equinox": "0.13.8",
+    "networkx": "3.6.1",
+    "scipy": "1.17.1",
+    "matplotlib": "3.10.9"
+  },
+  "outputs": {
+    "summary.json": "be39f980660c8d26488309472297e622430c9f64d823f7d1b5d272679e4225a1"
+  },
+  "runner_version": 1
+}

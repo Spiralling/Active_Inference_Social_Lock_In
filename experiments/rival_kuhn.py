@@ -87,8 +87,8 @@ def _build(p, n_steps):
         phi_true_at, DISAGREEMENT_NODES)
     cfg = StructuralConfig(regime_schedule="step", t_shift=p["T_SHIFT"],
                            n_steps=n_steps, sigma_o=p["SIGMA_O"])
-    inc = phlogiston_bn(cfg, conviction=2.0).to_info()
-    oxy = oxygen_bn(cfg, conviction=2.0).to_info()
+    inc = phlogiston_bn(cfg, conviction=p["CONVICTION"]).to_info()
+    oxy = oxygen_bn(cfg, conviction=p["CONVICTION"]).to_info()
     H = gravimetric_H(cfg)
     rows = gravimetric_rows(cfg)
     disc = [i for i, r in enumerate(rows)
@@ -342,6 +342,9 @@ register(ExperimentSpec(
         # omega flips too sharply for a visible crisis); normal science locks ~21
         # nats by the shift; gamma=1 never flips (no structure-drift escape).
         OMEGA=0.9, ALPHA_M=0.02,
+        # prior precision scale on BOTH candidate nets (was a hardcoded literal in
+        # _build, invisible to the manifest -- promoted so the record is complete)
+        CONVICTION=2.0,
         GAMMAS=(0.0, 0.5, 0.9, 0.99, 1.0),
         VANGUARD_FRAC=0.25, GAMMA_CONS=0.99,
         H_CRISIS=0.35, Q_LOCK=0.9,

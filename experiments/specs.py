@@ -33,6 +33,7 @@ from experiments import lockin_inferred_trust  # noqa: F401  (registration side 
 from experiments import crisis_trace  # noqa: F401  (registration side effect)
 from experiments import schism_threshold  # noqa: F401  (registration side effect)
 from experiments import gate_anatomy  # noqa: F401  (registration side effect)
+from experiments import kuhn_sweep  # noqa: F401  (registration side effect)
 
 # --- cosmology model ---
 from experiments import cosmology_tracking  # noqa: F401  (registration side effect)
@@ -45,6 +46,7 @@ from experiments import cosmology_regrowth  # noqa: F401  (registration side eff
 from experiments import cosmology_poisson  # noqa: F401  (registration side effect)
 from experiments import cosmology_twofield  # noqa: F401  (registration side effect)
 from experiments import kuhn_cycle  # noqa: F401  (registration side effect)
+from experiments import schur_generic  # noqa: F401  (registration side effect)
 
 # --- landscape group (cosmology-adjacent) ---
 from experiments import landscape_simulation  # noqa: F401  (registration side effect)
