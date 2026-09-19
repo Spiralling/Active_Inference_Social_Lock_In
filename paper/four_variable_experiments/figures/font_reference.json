@@ -1,0 +1,9 @@
+{
+  "renderer": "LaTeX via text.usetex",
+  "text_family": "Computer Modern / CM-Super",
+  "text_encoding": "T1",
+  "math_family": "Computer Modern",
+  "preamble": "\\usepackage[T1]{fontenc}",
+  "reference_manuscript": "paper/reproduction/reference/main.tex",
+  "reference_manuscript_sha256": "e0ead24eac02d104d25933bafffa243e5bc699d0f1f835d1624b721e51242ba4"
+}

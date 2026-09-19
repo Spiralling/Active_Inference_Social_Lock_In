@@ -1,0 +1,14 @@
+{
+  "project_id": "49b2c5d7-2a4b-4c60-8487-589091edec33",
+  "experiment_id": "78bf7816-b882-4d39-8fed-e4c74aa250b7",
+  "run_id": "8fcbd7ad-02ab-43c9-8b1b-a45fcc0cb11f",
+  "branch": "orx/four-variable-fixed-assessment",
+  "source_commit": "463b003",
+  "backend": "local",
+  "local_run_directory": "/Users/davand/.local/share/openresearch/local-runs/8fcbd7ad-02ab-43c9-8b1b-a45fcc0cb11f",
+  "run_output_directory": "/Users/davand/.local/share/openresearch/local-runs/8fcbd7ad-02ab-43c9-8b1b-a45fcc0cb11f/repo/paper/four_variable_experiments/runs/assessment-2026-09-19",
+  "unrun_provisional_registration": "28e1ec13-da9a-4cf5-a257-de7cb111dd66",
+  "status": "complete",
+  "conditions": 29,
+  "elapsed_seconds": 198.0872313331347
+}

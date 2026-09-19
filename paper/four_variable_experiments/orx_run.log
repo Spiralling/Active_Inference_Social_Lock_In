@@ -1,0 +1,297 @@
+FROZEN PROTOCOL
+{
+  "name": "interpretable-four-variable-first-assessment",
+  "description": "Fixed first assessment, no outcome-directed parameter selection. P/O explanatory commitment plus C/G/M. Same accepted inference engine, new candidate prior family.",
+  "source_export": "paper/four_variable_experiments/engine",
+  "jax_enable_x64": true,
+  "sigma_cycle": 1.0,
+  "sigma_wall": 0.5,
+  "omega_cycle": 0.9,
+  "alpha_m": 0.02,
+  "rho_L": 0.0,
+  "shift": 80,
+  "cycle_N": 16,
+  "cycle_T": 240,
+  "network_N": 24,
+  "network_T": 600,
+  "informed_nodes": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "restricted_diagnostic_weight": 0.01,
+  "network_graphs": [
+    "cycle",
+    "wheel",
+    "community",
+    "complete"
+  ],
+  "network_weights": "Original fixed adjacencies; W=(A+I)/row_sum(A+I).",
+  "cycle_seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49
+  ],
+  "network_seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49
+  ],
+  "wall_N": 16,
+  "wall_T": 1500,
+  "wall_long_continuation_T": 3500,
+  "wall_seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19
+  ],
+  "wall_world": [
+    0.0,
+    1.0,
+    -1.0,
+    1.0
+  ],
+  "wall_attention": "Camp A observes G=-1 only; camp B observes M=+1 only. Neither candidate reference mean matches the complete mixed world.",
+  "wall_conditions": [
+    {
+      "name": "plain_original",
+      "K": 1,
+      "omega": 1.0,
+      "gate": false,
+      "anchor": "camp"
+    },
+    {
+      "name": "gated_original",
+      "K": 1,
+      "omega": 0.95,
+      "gate": true,
+      "anchor": "camp"
+    },
+    {
+      "name": "rivals_original",
+      "K": 2,
+      "omega": 0.3,
+      "gate": false,
+      "anchor": "candidate"
+    },
+    {
+      "name": "plain_matched",
+      "K": 1,
+      "omega": 0.9,
+      "gate": false,
+      "anchor": "camp"
+    },
+    {
+      "name": "gated_matched",
+      "K": 1,
+      "omega": 0.9,
+      "gate": true,
+      "anchor": "camp"
+    },
+    {
+      "name": "rivals_matched",
+      "K": 2,
+      "omega": 0.9,
+      "gate": false,
+      "anchor": "candidate"
+    },
+    {
+      "name": "plain_shared",
+      "K": 1,
+      "omega": 0.9,
+      "gate": false,
+      "anchor": "shared"
+    },
+    {
+      "name": "gated_shared",
+      "K": 1,
+      "omega": 0.9,
+      "gate": true,
+      "anchor": "shared"
+    },
+    {
+      "name": "rivals_no_forgetting",
+      "K": 2,
+      "omega": 1.0,
+      "gate": false,
+      "anchor": "candidate"
+    },
+    {
+      "name": "rivals_hypothesis_off",
+      "K": 2,
+      "omega": 0.3,
+      "gate": false,
+      "anchor": "candidate",
+      "alpha_m": 0.0
+    },
+    {
+      "name": "rivals_all_social_off",
+      "K": 2,
+      "omega": 0.3,
+      "gate": false,
+      "anchor": "candidate",
+      "alpha_m": 0.0,
+      "fuse_nets": false
+    }
+  ],
+  "social_nu": 0.01,
+  "source_off_T": 400,
+  "adaptation_T": 1500,
+  "adaptation_sigma": 1.0,
+  "adaptation_omega": 0.9,
+  "adaptation_reference": "Each reference agent observes both diagnostic coordinates on its own paired noise stream, with all sharing disabled. It is a full-information individual reference, not a pooled community oracle.",
+  "threshold": 0.9,
+  "heldout_samples_per_agent_step": 4,
+  "bootstrap_replicates": 2000,
+  "bootstrap_seed": 20260919,
+  "baseline": "K=1 uses observable marginal priors only; an independent unobserved dummy coordinate keeps array dimensions fixed. No averaging of P and O semantics.",
+  "intervention_pairing": "Network sharing and attention controls share an identical full-attention pre-shift state on the same base graph. Adaptation controls share one pre-shift state. Phase 2 resets observation RNG to seed+1000.",
+  "readouts": "q, raw log scores, MAP and mixture observable means, noiseless observable MSE, held-out full-observation Gaussian-mixture negative log density. Candidate-specific hidden means are never mixed or compared.",
+  "scope": "World is a prescribed persistent signal with independent observation noise, not fresh samples from either DAG. No utility, endogenous discovery, pruning, or retrospective reliability update. Direct observations deposit diagonal Fisher information."
+}
+CYCLE: full attention, same paired observations, no utility
+cycle: {"seeds": 50, "steps": 240, "final_mse": 0.008589612587118024, "tail_mse": 0.008600599397941631, "tail_heldout_nll": 4.277313674755329, "final_mean_probability": 0.9999412968101022, "peak_mean_individual_entropy": 0.5629377894158469, "pre_shift_probability": 0.006545192630143257, "post_shift_peak_entropy": 0.5629377894158469, "truth": "reference mean change at 80", "group_crossings": {"events": 50, "total": 50, "censored": 0, "median_among_events": 116.0}}
+cycle_no_shift: {"seeds": 50, "steps": 240, "final_mse": 0.009291513091191054, "tail_mse": 0.009110410760623893, "tail_heldout_nll": 4.278329842621602, "final_mean_probability": 4.6614348270724974e-05, "peak_mean_individual_entropy": 0.4076024958590928, "pre_shift_probability": 0.006545192630143257, "post_shift_peak_entropy": 0.03621639877394935, "truth": "unchanged", "group_crossings": {"events": 0, "total": 50, "censored": 50, "median_among_events": null}}
+cycle_no_forgetting: {"seeds": 50, "steps": 240, "final_mse": 0.2955121158771235, "tail_mse": 0.39125447293692406, "tail_heldout_nll": 4.848413054087144, "final_mean_probability": 0.8774291117079869, "peak_mean_individual_entropy": 0.6894891420726778, "pre_shift_probability": 0.04091840576121708, "post_shift_peak_entropy": 0.6894891420726778, "truth": "reference mean change at 80", "group_crossings": {"events": 0, "total": 50, "censored": 50, "median_among_events": null}}
+cycle_single_gaussian: {"seeds": 50, "steps": 240, "final_mse": 0.022965353605245785, "tail_mse": 0.02281461646851499, "tail_heldout_nll": 4.297335325193723, "truth": "reference mean change at 80"}
+NETWORK: original graphs; branch controls from identical pre-shift states
+network_cycle: {"seeds": 50, "steps": 600, "final_mse": 0.006294382239373806, "tail_mse": 0.0062893047122129335, "tail_heldout_nll": 4.360508762133659, "final_mean_probability": 0.9996708911497443, "peak_mean_individual_entropy": 0.5325116249854746, "pre_shift_probability": 0.008056607419226737, "post_shift_peak_entropy": 0.5325116249854746, "diagnostic_attention": 0.01, "intervention": "post-shift only; common prehistory within base graph", "group_crossings": {"events": 50, "total": 50, "censored": 0, "median_among_events": 392.0}}
+network_wheel: {"seeds": 50, "steps": 600, "final_mse": 0.011794908063906326, "tail_mse": 0.010763157328660207, "tail_heldout_nll": 4.296525608677009, "final_mean_probability": 1.0, "peak_mean_individual_entropy": 0.5982844314756603, "pre_shift_probability": 0.008477227255904808, "post_shift_peak_entropy": 0.5982844314756603, "diagnostic_attention": 0.01, "intervention": "post-shift only; common prehistory within base graph", "group_crossings": {"events": 50, "total": 50, "censored": 0, "median_among_events": 186.0}}
+network_community: {"seeds": 50, "steps": 600, "final_mse": 0.0038048855528680786, "tail_mse": 0.003544169970493614, "tail_heldout_nll": 4.3555148416852045, "final_mean_probability": 0.9999985323454388, "peak_mean_individual_entropy": 0.5965325619013558, "pre_shift_probability": 0.006871463841224054, "post_shift_peak_entropy": 0.5965325619013558, "diagnostic_attention": 0.01, "intervention": "post-shift only; common prehistory within base graph", "group_crossings": {"events": 50, "total": 50, "censored": 0, "median_among_events": 329.5}}
+network_complete: {"seeds": 50, "steps": 600, "final_mse": 0.005584751155436604, "tail_mse": 0.004948121447895182, "tail_heldout_nll": 4.306269452359501, "final_mean_probability": 1.0, "peak_mean_individual_entropy": 0.6775887324848999, "pre_shift_probability": 0.006879981632482329, "post_shift_peak_entropy": 0.6775887324848999, "diagnostic_attention": 0.01, "intervention": "post-shift only; common prehistory within base graph", "group_crossings": {"events": 50, "total": 50, "censored": 0, "median_among_events": 180.0}}
+network_hypothesis_off: {"seeds": 50, "steps": 600, "final_mse": 0.244514415883574, "tail_mse": 0.3212825143753207, "tail_heldout_nll": 4.640592688576333, "final_mean_probability": 0.4603553477731409, "peak_mean_individual_entropy": 0.49548652893178635, "pre_shift_probability": 0.006879981632482329, "post_shift_peak_entropy": 0.49295305949277646, "diagnostic_attention": 0.01, "intervention": "post-shift only; common prehistory within base graph", "group_crossings": {"events": 0, "total": 50, "censored": 50, "median_among_events": null}}
+network_all_social_off: {"seeds": 50, "steps": 600, "final_mse": 0.014872798422445363, "tail_mse": 0.014321045147051141, "tail_heldout_nll": 4.418154268472199, "final_mean_probability": 0.99996935383476, "peak_mean_individual_entropy": 0.5671574861307794, "pre_shift_probability": 0.006879981632482329, "post_shift_peak_entropy": 0.5671574861307794, "diagnostic_attention": 0.01, "intervention": "post-shift only; common prehistory within base graph", "group_crossings": {"events": 50, "total": 50, "censored": 0, "median_among_events": 347.5}}
+network_wheel_rim: {"seeds": 50, "steps": 600, "final_mse": 0.0056044456126747594, "tail_mse": 0.005353424031396291, "tail_heldout_nll": 4.322424561968799, "final_mean_probability": 0.9999999901674531, "peak_mean_individual_entropy": 0.5398707681716737, "pre_shift_probability": 0.008580856237891734, "post_shift_peak_entropy": 0.5398707681716737, "diagnostic_attention": 0.01, "intervention": "post-shift only; common prehistory within base graph", "group_crossings": {"events": 50, "total": 50, "censored": 0, "median_among_events": 314.0}}
+network_zero_direct: {"seeds": 50, "steps": 600, "final_mse": 0.005732317522741294, "tail_mse": 0.005088631456635084, "tail_heldout_nll": 4.3084361046936, "final_mean_probability": 1.0, "peak_mean_individual_entropy": 0.6794166589684214, "pre_shift_probability": 0.006879981632482329, "post_shift_peak_entropy": 0.6794166589684214, "diagnostic_attention": 0.0, "intervention": "post-shift only; common prehistory within base graph", "group_crossings": {"events": 50, "total": 50, "censored": 0, "median_among_events": 185.0}}
+network_full_attention: {"seeds": 50, "steps": 600, "final_mse": 0.00830621634703953, "tail_mse": 0.007936054844539952, "tail_heldout_nll": 4.276193244377608, "final_mean_probability": 0.9999999999999974, "peak_mean_individual_entropy": 0.5697338550118954, "pre_shift_probability": 0.006879981632482329, "post_shift_peak_entropy": 0.5697338550118954, "diagnostic_attention": 1.0, "intervention": "post-shift only; common prehistory within base graph", "group_crossings": {"events": 50, "total": 50, "censored": 0, "median_among_events": 115.0}}
+WALL: mixed world, observe G vs M; track q alongside mean distance
+wall_plain_original: {"seeds": 20, "steps": 1500, "final_mse": 0.06355190753869225, "tail_mse": 0.06354709006736867, "tail_heldout_nll": 2.5519132641437765, "condition": {"name": "plain_original", "K": 1, "omega": 1.0, "gate": false, "anchor": "camp"}, "mu_map": {"final_mean_distance": 0.0002472616430465415, "tail_mean_distance": 0.0003388533887343476}, "mu_mixture": {"final_mean_distance": 0.0002472616430465415, "tail_mean_distance": 0.0003388533887343476}}
+wall_gated_original: {"seeds": 20, "steps": 1500, "final_mse": 0.06943769870612804, "tail_mse": 0.06894976267804183, "tail_heldout_nll": 2.59996054622484, "condition": {"name": "gated_original", "K": 1, "omega": 0.95, "gate": true, "anchor": "camp"}, "mu_map": {"final_mean_distance": 0.07994183830428721, "tail_mean_distance": 0.08971085783405763}, "mu_mixture": {"final_mean_distance": 0.07994183830428721, "tail_mean_distance": 0.08971085783405763}}
+wall_rivals_original: {"seeds": 20, "steps": 1500, "final_mse": 0.698912873903945, "tail_mse": 0.6974076462505654, "tail_heldout_nll": 4.329504829621009, "final_mean_probability": 1.0390522976059176e-123, "peak_mean_individual_entropy": 0.3480247946684215, "condition": {"name": "rivals_original", "K": 2, "omega": 0.3, "gate": false, "anchor": "candidate"}, "mu_map": {"final_mean_distance": 0.7274648527129866, "tail_mean_distance": 0.7352301223969313}, "mu_mixture": {"final_mean_distance": 0.7274648527129866, "tail_mean_distance": 0.7352301223969313}, "model_odds": {"tail_gap_mean": -135.14492386013646, "tail_global_source_mean": -0.23693896894719654, "tail_source_by_camp": [-1.5876787862779413, 1.1138008483835478], "final_oxygen_probability_by_camp": [2.697262596711211e-181, 2.0781045952118353e-123]}, "group_crossings": {"events": 0, "total": 20, "censored": 20, "median_among_events": null}}
+wall_plain_matched: {"seeds": 20, "steps": 1500, "final_mse": 0.08130543633836403, "tail_mse": 0.07970208883710399, "tail_heldout_nll": 2.6687763684585932, "condition": {"name": "plain_matched", "K": 1, "omega": 0.9, "gate": false, "anchor": "camp"}, "mu_map": {"final_mean_distance": 0.06675897716952374, "tail_mean_distance": 0.07179490082618609}, "mu_mixture": {"final_mean_distance": 0.06675897716952374, "tail_mean_distance": 0.07179490082618609}}
+wall_gated_matched: {"seeds": 20, "steps": 1500, "final_mse": 0.6665628863386808, "tail_mse": 0.676577512522945, "tail_heldout_nll": 4.444846673625019, "condition": {"name": "gated_matched", "K": 1, "omega": 0.9, "gate": true, "anchor": "camp"}, "mu_map": {"final_mean_distance": 1.945697236972757, "tail_mean_distance": 1.9753766533301027}, "mu_mixture": {"final_mean_distance": 1.945697236972757, "tail_mean_distance": 1.9753766533301027}}
+wall_rivals_matched: {"seeds": 20, "steps": 1500, "final_mse": 0.05869528273128414, "tail_mse": 0.05752989858836538, "tail_heldout_nll": 2.5986017520813687, "final_mean_probability": 2.0927598094177418e-41, "peak_mean_individual_entropy": 0.3593195588640034, "condition": {"name": "rivals_matched", "K": 2, "omega": 0.9, "gate": false, "anchor": "candidate"}, "mu_map": {"final_mean_distance": 0.04309140765563059, "tail_mean_distance": 0.04838942940338492}, "mu_mixture": {"final_mean_distance": 0.04309140765563059, "tail_mean_distance": 0.04838942940338492}, "model_odds": {"tail_gap_mean": -6.804517097315776, "tail_global_source_mean": -0.06280280115198231, "tail_source_by_camp": [-0.13055789622148126, 0.004952293917516655], "final_oxygen_probability_by_camp": [2.4205170629893204e-43, 4.161314448205591e-41]}, "group_crossings": {"events": 0, "total": 20, "censored": 20, "median_among_events": null}}
+wall_plain_shared: {"seeds": 20, "steps": 1500, "final_mse": 0.08121150841348031, "tail_mse": 0.07961996292086518, "tail_heldout_nll": 2.6677046768673947, "condition": {"name": "plain_shared", "K": 1, "omega": 0.9, "gate": false, "anchor": "shared"}, "mu_map": {"final_mean_distance": 0.050166167082452265, "tail_mean_distance": 0.05502505467552913}, "mu_mixture": {"final_mean_distance": 0.050166167082452265, "tail_mean_distance": 0.05502505467552913}}
+wall_gated_shared: {"seeds": 20, "steps": 1500, "final_mse": 0.15241335079744256, "tail_mse": 0.152760992595948, "tail_heldout_nll": 2.9660215618606096, "condition": {"name": "gated_shared", "K": 1, "omega": 0.9, "gate": true, "anchor": "shared"}, "mu_map": {"final_mean_distance": 0.6056661633234404, "tail_mean_distance": 0.6228058116072522}, "mu_mixture": {"final_mean_distance": 0.6056661633234404, "tail_mean_distance": 0.6228058116072522}}
+wall_rivals_no_forgetting: {"seeds": 20, "steps": 1500, "final_mse": 0.05332343874472485, "tail_mse": 0.05329603543686893, "tail_heldout_nll": 2.5313418810905213, "final_mean_probability": 0.09918218777383249, "peak_mean_individual_entropy": 0.4071070919153451, "condition": {"name": "rivals_no_forgetting", "K": 2, "omega": 1.0, "gate": false, "anchor": "candidate"}, "mu_map": {"final_mean_distance": 0.0002524853577578706, "tail_mean_distance": 0.00034431325743252577}, "mu_mixture": {"final_mean_distance": 0.00025918574215959685, "tail_mean_distance": 0.0003491365279421406}, "model_odds": {"tail_gap_mean": -0.00023636869133733854, "tail_global_source_mean": 4.464752240443071e-06, "tail_source_by_camp": [8.929790432991059e-06, -2.8595210491699775e-10], "final_oxygen_probability_by_camp": [0.09928820557753162, 0.09907616997013333]}, "group_crossings": {"events": 0, "total": 20, "censored": 20, "median_among_events": null}}
+wall_rivals_hypothesis_off: {"seeds": 20, "steps": 1500, "final_mse": 1.0496673481892127, "tail_mse": 1.049007377459235, "tail_heldout_nll": 5.250569477360626, "final_mean_probability": 0.5, "peak_mean_individual_entropy": 0.3480247946684215, "condition": {"name": "rivals_hypothesis_off", "K": 2, "omega": 0.3, "gate": false, "anchor": "candidate", "alpha_m": 0.0}, "mu_map": {"final_mean_distance": 2.3672309146118584, "tail_mean_distance": 2.379489371819002}, "mu_mixture": {"final_mean_distance": 2.3672309146118584, "tail_mean_distance": 2.379489371819002}, "model_odds": {"tail_gap_mean": -3555.93014181073, "tail_global_source_mean": -0.23693896894719546, "tail_source_by_camp": [-1.5876787862779402, 1.1138008483835493], "final_oxygen_probability_by_camp": [0.0, 1.0]}, "group_crossings": {"events": 0, "total": 20, "censored": 20, "median_among_events": null}}
+wall_rivals_all_social_off: {"seeds": 20, "steps": 1500, "final_mse": 1.3480906637340553, "tail_mse": 1.3524304553930342, "tail_heldout_nll": 5.6576784552059936, "final_mean_probability": 0.5, "peak_mean_individual_entropy": 0.34802479466842173, "condition": {"name": "rivals_all_social_off", "K": 2, "omega": 0.3, "gate": false, "anchor": "candidate", "alpha_m": 0.0, "fuse_nets": false}, "mu_map": {"final_mean_distance": 2.805624055783194, "tail_mean_distance": 2.8273211242768332}, "mu_mixture": {"final_mean_distance": 2.805624055783194, "tail_mean_distance": 2.8273211242768332}, "model_odds": {"tail_gap_mean": -2014.8655693245073, "tail_global_source_mean": -0.018999752507464072, "tail_source_by_camp": [-0.7836782223486671, 0.7456787173337389], "final_oxygen_probability_by_camp": [0.0, 1.0]}, "group_crossings": {"events": 0, "total": 20, "censored": 20, "median_among_events": null}}
+wall_sources_off: {"seeds": 20, "steps": 400, "final_mse": 0.5687745630696448, "tail_mse": 0.5687745630696448, "tail_heldout_nll": 4.154534690632665, "final_mean_probability": 3.369664312698971e-154, "peak_mean_individual_entropy": 6.897084886508747e-122, "condition": {"sources": "off", "omega": 1.0}, "mu_map": {"final_mean_distance": 0.0, "tail_mean_distance": 0.0}, "mu_mixture": {"final_mean_distance": 0.0, "tail_mean_distance": 0.0}, "model_odds": {"tail_gap_mean": -0.13385876000433863, "tail_global_source_mean": -6.0218496855668495e-16, "tail_source_by_camp": [-1.4459544672718038e-15, 2.415845301584341e-16], "final_oxygen_probability_by_camp": [3.298855467908363e-154, 3.4404731574895787e-154]}, "max_contraction_error": 1.5418777365994174e-12, "group_crossings": {"events": 0, "total": 20, "censored": 20, "median_among_events": null}}
+wall_rivals_continuation: {"seeds": 20, "steps": 3500, "final_mse": 0.6980173177405167, "tail_mse": 0.6975599611530622, "tail_heldout_nll": 4.330968630764501, "final_mean_probability": 0.0, "peak_mean_individual_entropy": 7.986295283509205e-121, "condition": {"continuation_start_index": 1500, "omega": 0.3}, "mu_map": {"final_mean_distance": 0.6895834624977131, "tail_mean_distance": 0.7353742186474118}, "mu_mixture": {"final_mean_distance": 0.6895834624977131, "tail_mean_distance": 0.7353742186474118}, "model_odds": {"tail_gap_mean": -135.12886035169683, "tail_global_source_mean": -0.23832749272535522, "tail_source_by_camp": [-1.5897060402986951, 1.1130510548479846], "final_oxygen_probability_by_camp": [0.0, 0.0]}, "group_crossings": {"events": 0, "total": 20, "censored": 20, "median_among_events": null}}
+ADAPTATION: same prehistory; candidate-consistent post-shift signals
+adaptation_social: {"seeds": 20, "steps": 1500, "final_mse": 0.008534132931670367, "tail_mse": 0.007956432858161399, "tail_heldout_nll": 4.329398446232821, "final_mean_probability": 1.0, "peak_mean_individual_entropy": 0.5354124608721957, "pre_shift_probability": 0.006405662967277619, "post_shift_peak_entropy": 0.5354124608721957, "reference_type": "G-only or M-only after shift", "intervention": "post-shift only", "group_crossings": {"events": 20, "total": 20, "censored": 0, "median_among_events": 130.5}}
+adaptation_isolated: {"seeds": 20, "steps": 1500, "final_mse": 0.022872925854490366, "tail_mse": 0.021347299516433896, "tail_heldout_nll": 4.370456038538579, "final_mean_probability": 1.0, "peak_mean_individual_entropy": 0.5514758135597895, "pre_shift_probability": 0.006405662967277619, "post_shift_peak_entropy": 0.5514758135597895, "reference_type": "G-only or M-only after shift", "intervention": "post-shift only", "group_crossings": {"events": 20, "total": 20, "censored": 0, "median_among_events": 251.5}}
+adaptation_reference: {"seeds": 20, "steps": 1500, "final_mse": 0.03425658968107844, "tail_mse": 0.035292550464067214, "tail_heldout_nll": 4.312147635156403, "final_mean_probability": 1.0, "peak_mean_individual_entropy": 0.5609161488776493, "pre_shift_probability": 0.006405662967277619, "post_shift_peak_entropy": 0.5609161488776493, "reference_type": "independent full-observation agent", "intervention": "post-shift only", "group_crossings": {"events": 20, "total": 20, "censored": 0, "median_among_events": 113.0}}
+ASSESSMENT COMPLETE {"conditions": 29, "elapsed_seconds": 198.0872313331347, "output": "/Users/davand/.local/share/openresearch/local-runs/8fcbd7ad-02ab-43c9-8b1b-a45fcc0cb11f/repo/paper/four_variable_experiments/runs/assessment-2026-09-19"}
