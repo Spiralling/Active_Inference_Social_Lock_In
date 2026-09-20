@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "files": {
+    "adaptation_isolated.npz": "db537fbd8598307083e49a074749c2a7b70dbcb463a484d661ea72e1d2c358e1",
+    "adaptation_reference.npz": "6d2f33d8a9eb055fc74ebd9c7e38727d82f1fbf68769fe587858fcfdec78fb84",
+    "adaptation_social.npz": "b7218e7be1aed1a906de418304981a0d3445f2eed6fddb19f3882116605c1945",
+    "cycle.npz": "a4c7559e18ebdf69d3aab42c2ed45776d378974beb6a9b48bf238ca01902462a",
+    "graphs.npz": "1e9b59b8fbddd57149cb5436523201a71f5dd37acf88659cfc6c1eaed9137014",
+    "network_community.npz": "ab437129027611c1dc7876268607c33945d6e7e073b47ac3771cd12645f2d66f",
+    "network_complete.npz": "5a45e3c0c93a5b6c5924e15264db76983b0080b9ea09f0fbf1242992131e25f6",
+    "network_cycle.npz": "d6dbfedc33e541e00ec0d6818e522f0e96c5ee12682f4d8b9cb36261a21eb797",
+    "network_wheel.npz": "bdac69fec5c6c22f22bf397575ccd69620e2757b243303e2dfe79b3b03cc4e65",
+    "protocol.json": "4d8b728ad3bab5e22c37715ccff0205d8d7e4df1ffccf105bde0d6e3206405ed",
+    "structural_check.npz": "cf9f686988ecd891130cdf1b8af37a4977364ccd6639ceb5bc34823440b274e4",
+    "wall_gated_original.npz": "e3eacf53f991c69cd2500eded5ab8f27b01020b08dbdc93634d3c94be950d3f0",
+    "wall_plain_original.npz": "e9833726129dc270ce69255055e2a9f73286d43b90da554beb07e7c0cb52fbb9",
+    "wall_rivals_original.npz": "1b6896d6a9f5f04acb92ef94004cf8bcef994e099eb19a664fbf3c237f5121a9",
+    "world.npz": "89aae43e89a75e2544aa2bcfede5b1279f5077b5175c8aef9bc5a68b68f55cf5"
+  },
+  "provenance": {
+    "raw_sha256": {
+      "cycle": "590357501f145dd486098c898fd3f1d169d0ab8c38837f818fe0a726bc42ad5c",
+      "wall_plain_original": "6944accacfa8c0b566abb2fea9cf817b2ab43f36178ddd4969d70b58dc789692",
+      "wall_gated_original": "1d7d8663b6fd67b6b1f7a996886b34c1063397b3c1a119e1dfb98434d23afc9d",
+      "wall_rivals_original": "8544b632f799c2313659594c5744fad12b59ba22a309564ee78e33ba40c91cbb",
+      "network_cycle": "77a4c0c77ce331d188752090dd9290693c59bab93fe4fdc14d7a1f8b7e926ee6",
+      "network_wheel": "7f2a37aa0759540393f19dd161de37b84fc6040e8cb91223af8225d7f9575988",
+      "network_community": "625570b551b998bfc1b99f45f64c5fae553adc99d2fea9186fa8c3f508d95fac",
+      "network_complete": "716314a79497bea1b26cffaf7c7e5b77a648ebfe0c41e4b5000fff09ec336b5a",
+      "adaptation_social": "5f5c4ca661c52a779ae8b28595de96b94ac3dd2dc31a63dc332de6a21df33ea4",
+      "adaptation_isolated": "61002e1e99299105265f431b1115396c5211c8841d2a7587343b646f5765ea08",
+      "adaptation_reference": "7dce7c52b10f4a62c71127f521411d0366636032175523b45b1249a6fd048145",
+      "structural_check": "a061d02bfae7a4a88b29a8dfa3745f439948b4ca769e077c341e23dd5aff2d43",
+      "world": "89aae43e89a75e2544aa2bcfede5b1279f5077b5175c8aef9bc5a68b68f55cf5",
+      "graphs": "1e9b59b8fbddd57149cb5436523201a71f5dd37acf88659cfc6c1eaed9137014"
+    },
+    "reduction": "Only figure-used arrays; wall distances and measured structural prefixes reduced without rounding.",
+    "raw_protocol_sha256": "49705fd75c4061feefbbff6d7987c5abe1b41ebcc1a3923231240d975edd1866"
+  },
+  "note": "Unsmoothed per-seed inputs. No outcome-based seed selection; see figure-specific methods."
+}

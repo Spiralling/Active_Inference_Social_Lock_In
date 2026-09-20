@@ -1,0 +1,9 @@
+{
+  "status": "complete",
+  "conditions": 4,
+  "chunks": 800,
+  "seed_condition_histories": 200,
+  "independent_seed_streams": 50,
+  "elapsed_seconds": 98.92983675003052,
+  "protocol_sha256": "6b00201c5884099a7e64a2685ef69aeb319bfe157f8e390d6aaad761e3d79e82"
+}

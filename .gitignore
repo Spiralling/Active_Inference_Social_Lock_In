@@ -1,54 +1,14 @@
-# Python
 __pycache__/
 *.py[cod]
-*$py.class
 .venv/
-venv/
+.matplotlib-cache/
+.pytest_cache/
 *.egg-info/
-.ipynb_checkpoints/
-
-# Results (large artifacts) — recursive (**) so dumps in subdirs
-# (e.g. big_sweep/traj/) are caught too, not just files directly under results/.
-# Figures (*.png), JSON manifests, REPORT.md and rows.jsonl stay tracked.
-results/**/*.npz
-results/**/*.csv
-results/**/*.pkl
-# Per-run trajectory dumps from the big sweep (regenerable by re-running the harness)
-results/big_sweep/traj/
-
-# One-off dev-script output dumps (generators live in scripts/)
-nb_extract.txt
-audit_output.txt
-output.log
-pipeline.log
-cluster_smoke.png
-
-# LaTeX build artifacts (repo-wide — these are regenerable from .tex sources)
+build/
+runs/
 *.aux
-*.bbl
-*.blg
 *.log
+!checks/*.log
 *.out
-*.toc
-*.nav
-*.snm
-*.vrb
-*.fdb_latexmk
-*.fls
 *.synctex.gz
-# Regenerable compile-output PDFs (the live builds). Dated PDFs under any
-# */_archive/ or notes/archive/ are an intentional record and stay tracked.
-paper/main.pdf
-notes/background_drafts/_build/main.pdf
-
-# DOUBLE-BLIND: real author block must never be committed
-paper/authors-deanon.tex
-
-# OS
 .DS_Store
-Thumbs.db
-
-# IDE
-.vscode/
-.idea/
-*.swp

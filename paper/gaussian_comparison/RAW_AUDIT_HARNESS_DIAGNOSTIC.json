@@ -1,6 +1,0 @@
-{
-  "status": "audit-only implementation defect",
-  "failure": "First raw chunk stopped before numerical update comparison: vectorized NumPy einsum used b for both batch and matrix coordinate.",
-  "fix": "Use distinct s batch label in independent vectorized equations. No producer or raw-data changes; unchanged mathematical expectations and tolerances.",
-  "initial_log": "initial_raw_audit.log"
-}

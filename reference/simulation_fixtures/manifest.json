@@ -1,0 +1,74 @@
+[
+  {
+    "family": "communication",
+    "condition": "C10",
+    "seed": 10000,
+    "start_step": 0,
+    "steps": 12,
+    "file": "C10.npz",
+    "sha256": "1b59ea1659e741521659c2c35038c86c9bcddec3a2e387b24fb87a41296acc1c",
+    "source_chunk": "C10/seeds-10000-10004_updates-00001-00250.npz",
+    "source_chunk_sha256": "acf4e51752aa48e38300167521fc52e126271733762a9ac20315c9ecb521aed1",
+    "selection": "Preselected first seed, first 12 rounds of the declared chunk; preserves exact entering random state."
+  },
+  {
+    "family": "communication",
+    "condition": "C11",
+    "seed": 10000,
+    "start_step": 0,
+    "steps": 12,
+    "file": "C11.npz",
+    "sha256": "e77a12a91ff5da0af9bbe95fc2e8ce2319023f1c93a17fb03af939cc6fab23d1",
+    "source_chunk": "C11/seeds-10000-10004_updates-00001-00250.npz",
+    "source_chunk_sha256": "789f72017e0f885a91191231b64f8efc4ca5693ff44b1686bb98cdb848c14e45",
+    "selection": "Preselected first seed, first 12 rounds of the declared chunk; preserves exact entering random state."
+  },
+  {
+    "family": "communication",
+    "condition": "S_enable_weights",
+    "seed": 10000,
+    "start_step": 1500,
+    "steps": 12,
+    "file": "S_enable_weights.npz",
+    "sha256": "5f3f0768730525101257edd33a9aa247879002158709c56e6a1ccee782853391",
+    "source_chunk": "S_enable_weights/seeds-10000-10004_updates-01501-01750.npz",
+    "source_chunk_sha256": "0a84875038c270ab58b47c39cef652b9c8a1e3d6f2b64e5fefe81479f24cd7f3",
+    "selection": "Preselected first seed, first 12 rounds of the declared chunk; preserves exact entering random state."
+  },
+  {
+    "family": "communication",
+    "condition": "N11",
+    "seed": 0,
+    "start_step": 80,
+    "steps": 12,
+    "file": "N11.npz",
+    "sha256": "1499689f9c5f0cc27a1dacbde1dc38db377c5df98f141e19b4d7fdeb49c23ce0",
+    "source_chunk": "N11/seeds-0-4_updates-00081-00330.npz",
+    "source_chunk_sha256": "23f49c40019f74948be7242964404cddc0ce11d04f8de2ecb23ea07f12cd702b",
+    "selection": "Preselected first seed, first 12 rounds of the declared chunk; preserves exact entering random state."
+  },
+  {
+    "family": "gaussian",
+    "condition": "G_gated_info",
+    "seed": 10000,
+    "start_step": 0,
+    "steps": 12,
+    "file": "G_gated_info.npz",
+    "sha256": "1683794acf164a0da8450bf66cee70d16de6287c6e69d6eaca7eab922e966ab9",
+    "source_chunk": "G_gated_info/seeds-10000-10004_updates-00001-00250.npz",
+    "source_chunk_sha256": "2e0e03fec791ef188c244a5cc0bfcfd8ab297c13038fa985f559459efa5965f3",
+    "selection": "Preselected first seed, first 12 rounds of the declared chunk; preserves exact entering random state."
+  },
+  {
+    "family": "gaussian",
+    "condition": "G_gated_moment",
+    "seed": 10000,
+    "start_step": 4750,
+    "steps": 12,
+    "file": "G_gated_moment.npz",
+    "sha256": "91e9e717a902c29a50f78ebe6a7e4cfb0a12af9ff33935d954a0041ccf28d0cb",
+    "source_chunk": "G_gated_moment/seeds-10000-10004_updates-04751-05000.npz",
+    "source_chunk_sha256": "d9fac2cec7622cf63c2225b03ae444373612524ffb2e1710fa02943bf3d6a69c",
+    "selection": "Preselected first seed, first 12 rounds of the declared chunk; preserves exact entering random state."
+  }
+]

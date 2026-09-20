@@ -1,0 +1,109 @@
+{
+  "camera": {
+    "archive": "IWAI2026_camera_ready_source.zip",
+    "archive_sha256": "ce89bacb39a8cfceeb5a39074c66182de67e6a75889aec46493a919481b15e75",
+    "figures": [
+      {
+        "file": "fig01_general_representation.pdf",
+        "sha256": "b61065e87e97ddd7d50ced0555c478f5ca4676786204606cedaaabc958f85495",
+        "bytes": 110974
+      },
+      {
+        "file": "fig02_precision_pool.pdf",
+        "sha256": "2132db4407841328817cae73e5da54b2ff56869ce345686303b7a74dcc1de23b",
+        "bytes": 92038
+      },
+      {
+        "file": "fig03_camp_distance.pdf",
+        "sha256": "cf5284c76547eaaaefef31fb4536d90aa05da6f05e5f62f426586e39fc92c5ce",
+        "bytes": 664610
+      },
+      {
+        "file": "fig04_cycle.pdf",
+        "sha256": "f3713b0fbe5e92551714891f25bb59ec4f1bf3284893cbbcd73a483ce2bce8ab",
+        "bytes": 247114
+      },
+      {
+        "file": "fig06_topology.pdf",
+        "sha256": "682c2c523e13e7fa07d1627c3d9c31eca1554ad49c70c565823a71659e493a94",
+        "bytes": 465052
+      },
+      {
+        "file": "fig_adaptation.pdf",
+        "sha256": "a786b2f4183efa3b61f33999dbd51423abdab2d16f1c5bb2dcd8d37e87857592",
+        "bytes": 524332
+      },
+      {
+        "file": "fig_camp_choices.pdf",
+        "sha256": "4e2e1758f3f78266f3654bee7796e91d04c6824d415af36b758addf97a704c3b",
+        "bytes": 456795
+      },
+      {
+        "file": "fig_identifiability.pdf",
+        "sha256": "e6c562cc136b8d89c773ac0e5ce76e24d3375b53233eafaa6c1f42031f3e37b5",
+        "bytes": 445319
+      },
+      {
+        "file": "fig_model.pdf",
+        "sha256": "7657add7368538b5a7ca4ade31e794812a02cd5e75e55e2019b3649535f007ea",
+        "bytes": 64762
+      }
+    ]
+  },
+  "layout": {
+    "archive": "IWAI2026_figure_layout_source.zip",
+    "archive_sha256": "4e99cd349001fe91d019df12f9c15914e4eb0080b428650575f10eb74d6cb795",
+    "figures": [
+      {
+        "file": "fig04_cycle.pdf",
+        "sha256": "f3713b0fbe5e92551714891f25bb59ec4f1bf3284893cbbcd73a483ce2bce8ab",
+        "bytes": 247114
+      },
+      {
+        "file": "fig06_topology.pdf",
+        "sha256": "682c2c523e13e7fa07d1627c3d9c31eca1554ad49c70c565823a71659e493a94",
+        "bytes": 465052
+      },
+      {
+        "file": "fig_camp_channels.pdf",
+        "sha256": "eff0aae2752971e86a6f56ce18533105f8455b0b3fcf11ad554770e36a84c07c",
+        "bytes": 832174
+      },
+      {
+        "file": "fig_graphical_abstract.pdf",
+        "sha256": "287e64538bbb9e4a5e1301269bc6e2f25544df525ccdb6bd9231028889ed1060",
+        "bytes": 302820
+      },
+      {
+        "file": "fig_matched_camp_diagnostics.pdf",
+        "sha256": "daa7c3fd4da42c72766e62446f6f5d8988847be2798d4022b4164b713653433b",
+        "bytes": 1765527
+      },
+      {
+        "file": "fig_matched_camp_models.pdf",
+        "sha256": "54a6ce0112867c5bdc09522f0e84d37b9c3450311d1dd78a6efc3481fbee88af",
+        "bytes": 1179319
+      },
+      {
+        "file": "fig_model.pdf",
+        "sha256": "7657add7368538b5a7ca4ade31e794812a02cd5e75e55e2019b3649535f007ea",
+        "bytes": 64762
+      },
+      {
+        "file": "fig_network_channels.pdf",
+        "sha256": "b836b4616920498d366f73c69295ec48957a5d77a34f42a09e65b54b99ee77c9",
+        "bytes": 471037
+      },
+      {
+        "file": "fig_reference_diagnostics.pdf",
+        "sha256": "ec29b626bc2ca73def2b41aca1d9f827331fcdf96ffa38b7a19da56c23c5567a",
+        "bytes": 465322
+      },
+      {
+        "file": "fig_weight_sharing_intervention.pdf",
+        "sha256": "b23b43fb3d2551e2b6299c5f1ebdd93eab91f204f012cff247f5e53c56b23938",
+        "bytes": 489998
+      }
+    ]
+  }
+}

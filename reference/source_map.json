@@ -1,0 +1,127 @@
+{
+  "role_to_sources": {
+    "engine.py": [
+      {
+        "repository_path": "paper/four_variable_experiments/engine/src/structural/rival.py",
+        "sha256": "ed449c0cf97694ca4785489e1dc8a80e7a92a30ff23f38965a874c06e25adf2f"
+      },
+      {
+        "repository_path": "paper/four_variable_experiments/engine/src/structural/reliability.py",
+        "sha256": "906bf0458af8b293f076086449a913eb07bea38de7c5023b8f10039a629156b2"
+      },
+      {
+        "repository_path": "paper/four_variable_experiments/engine/src/structural/world.py",
+        "sha256": "e2ffba90a096a5127507432b4a320e41982a6c4ac7ae7f6d0419850e77b6b574"
+      },
+      {
+        "repository_path": "paper/four_variable_experiments/engine/src/structural/step.py",
+        "sha256": "2936a1ea9b5ef3e7baa3248208aa2c7fd9357f667ef47a054afca485de44b715"
+      },
+      {
+        "repository_path": "paper/four_variable_experiments/engine/src/structural/bayesnet.py",
+        "sha256": "ed4d1af8eef878b585805184334a6254845a8d66cafdc6ab05502dd84fec5294"
+      },
+      {
+        "repository_path": "paper/four_variable_experiments/engine/src/structural/linalg.py",
+        "sha256": "66487c82e951e7ca88d6ab9f8ad9f230d7e2f5a229be1e03b56205ef985935da"
+      }
+    ],
+    "world.py": [
+      {
+        "repository_path": "paper/combustion_experiments/world.py",
+        "sha256": "dd227ae6e0e20e653b979a329fdce5eb389afb2fc491365b10f506ce6889dee1"
+      }
+    ],
+    "camera.py": [
+      {
+        "repository_path": "paper/combustion_experiments/run.py",
+        "sha256": "0d3f99cb65f4a729825e7e7240b389db201b596a8596ed44c5cba2201ca37e67"
+      }
+    ],
+    "structural_check.py": [
+      {
+        "repository_path": "paper/combustion_experiments/structural_check.py",
+        "sha256": "a328a6bed99ac26c04d379aa593ccca949e2abcb9f2c550f0938429c322ce9a2"
+      }
+    ],
+    "communication.py / simulation.py": [
+      {
+        "repository_path": "paper/communication_experiments/run.py",
+        "sha256": "40a2c5485f8c93c00ec1506818bdc91f426ccbb2982c9ec3d8611c17ef4a49f4"
+      }
+    ],
+    "gaussian.py": [
+      {
+        "repository_path": "paper/gaussian_comparison/run.py",
+        "sha256": "5773cb806ef4359d689678d235c8ecc68c7c9ea25faf86f1f36d7a89cf332e8e"
+      }
+    ],
+    "reduce.py": [
+      {
+        "repository_path": "paper/communication_experiments/analyze.py",
+        "sha256": "12424fb7ff679c5ca1857501bb0e9353eb5fc1b875ec4bb37b03c49a18cee80a"
+      },
+      {
+        "repository_path": "paper/gaussian_comparison/analyze.py",
+        "sha256": "40b13556268c0d4544207d182adb53d9d81619396c0aada0d451a28e2fd7b144"
+      },
+      {
+        "repository_path": "paper/combustion_technical_note/figures/renderer_support.py",
+        "sha256": "c8b16d3d4ef8cfd5a648d336689bcc1f6303eaa8f7f298288f622524bf58dd4a"
+      }
+    ],
+    "plotting/camera.py / topology.py": [
+      {
+        "repository_path": "paper/combustion_technical_note/figures/plot_figures.py",
+        "sha256": "9c1ef775c51631c3f667673bc0055369fffcc315ddc43c7b2debac1cfe186323"
+      },
+      {
+        "repository_path": "paper/combustion_technical_note/figures/renderer_support.py",
+        "sha256": "c8b16d3d4ef8cfd5a648d336689bcc1f6303eaa8f7f298288f622524bf58dd4a"
+      },
+      {
+        "repository_path": "paper/combustion_technical_note/figures/publication_topology.py",
+        "sha256": "051aaa206ffa908adf6d515ab0154338e005fbf841038184322a21dab7e11257"
+      }
+    ],
+    "plotting/communication.py": [
+      {
+        "repository_path": "paper/communication_experiments/figures/plot_figures.py",
+        "sha256": "b7583ddf67c4caf37a7e5b6250019f8d0eb036a110e2f53495b573768c483cfa"
+      }
+    ],
+    "plotting/gaussian.py": [
+      {
+        "repository_path": "paper/gaussian_comparison/figures/plot_figures.py",
+        "sha256": "d67f904d60659192f133e137cbc40529f213fc21500a17de33a49a243d2662ec"
+      }
+    ],
+    "plotting/abstract.py": [
+      {
+        "repository_path": "scripts/plot_publication_schematics.py",
+        "sha256": "217f8ea40a9771d872e83f0353121ff192f624cfbbc80f60bb4aad51c8cc39f7"
+      }
+    ],
+    "plotting/style.py": [
+      {
+        "repository_path": "paper/combustion_technical_note/figures/publication_style.py",
+        "sha256": "8a429a8c65030c8fd432f467c063d39f6f69c564c0b9ca351970b2eb477c033e"
+      },
+      {
+        "repository_path": "paper/communication_experiments/figures/publication_style.py",
+        "sha256": "8a429a8c65030c8fd432f467c063d39f6f69c564c0b9ca351970b2eb477c033e"
+      },
+      {
+        "repository_path": "paper/gaussian_comparison/figures/publication_style.py",
+        "sha256": "8a429a8c65030c8fd432f467c063d39f6f69c564c0b9ca351970b2eb477c033e"
+      }
+    ]
+  },
+  "source_runs": {
+    "camera": "12048402-ea93-4028-bfbe-9fff80fbd00b",
+    "communication": "ccaba0e8-39ca-4993-a219-64ce4cd09de5",
+    "gaussian": "84d916ef-d0b4-42b6-b245-9ad6855fd35e"
+  },
+  "parent_delivery_commit": "d1134558771d9ae2581c4b547d503375350afa7a",
+  "note": "Sources are content-addressed because some exact camera plotting fixes lived in the original working tree. These are historical provenance paths, not runtime dependencies."
+}

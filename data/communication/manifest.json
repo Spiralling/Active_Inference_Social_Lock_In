@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "files": {
+    "C00.npz": "e8ded11b60d0aee8dafdc7cbd96ffbfae6c3b925e871c1c3cf2ef950606f7501",
+    "C01.npz": "6eb196be85620cc1617342832bedcda6deafa922b7f841e79c1662684cae4620",
+    "C10.npz": "8d2d0ce08e9180ca7665895cdb7af416ab1b62f831573fb7936c47282503364d",
+    "C10_beta50.npz": "4e1b03d2b1fa49532901f63f6b4b2b8f176a3a7f4c28c4aa3d17451f7f2e861a",
+    "C10_gasvar_matched.npz": "cb9476fd18be29f8c926ef349e01a8769a4979aabf1a3dfcbae5bcbb8502ea8b",
+    "C10_omega90.npz": "badfc8fad88638603158473e1231eb94e885a1388e077428795ff798fee43c3e",
+    "C11.npz": "8e4550a13689993489b39400575c189b49857397a0bfd2719295d12098147148",
+    "N00.npz": "8361c065a93cd0ce9873fcf1cebc7df2c5c3ad190003c7a156272806f1d36628",
+    "N01.npz": "7580f2f4cf5cb62dbbf563ce2c09bd81e5b8cd933b99b065018b3324a7823162",
+    "N10.npz": "d2cfe718b42ee783631096850174e4d27fa30ddc8bdf0ed3b29cce27e142be97",
+    "N11.npz": "711d425783277bfcc1d6587367c37a87f7fa1c5c4b10c78ce93206dc77485287",
+    "S_enable_weights.npz": "baa3256f7372eb97a4adb7966896ca4a5325bfc757b074839acaa1491f73e07e",
+    "S_keep_private.npz": "11fb9b8771939f856a88caf710821e4a46ca6fd72ebd0e01591832d9e9503826",
+    "common.npz": "688e0e3db5c9c55e3fcb90d217482a74ad94292e91aa97ae605286c8ddeb9d83",
+    "protocol.json": "f303aa4c0acc77250d89eeb9f2a917a61b761a03b8d491257ab48ce674d7553f",
+    "summary.json": "3e2c60a26e1331e4fa9489dc2bdf268610aa7f3b12c7a543944542c99f3a9bd5"
+  },
+  "provenance": {
+    "raw_manifest_sha256": "8944584e86eb400c3feab8d84e2ad1bcf46c1f1898a3f68926366a0211a00c9f",
+    "bootstrap_seed": 20260920,
+    "bootstrap_replicates": 2000
+  },
+  "note": "Unsmoothed per-seed inputs. No outcome-based seed selection; see figure-specific methods."
+}

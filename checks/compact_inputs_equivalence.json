@@ -1,0 +1,13 @@
+{
+  "communication": {
+    "exact_original_plot_arrays": 76,
+    "new_reduced_scalar_keys": []
+  },
+  "gaussian": {
+    "exact_original_plot_arrays": 18,
+    "exact_summary_metrics": 35,
+    "exact_additional_seed_reductions": 35
+  },
+  "status": "passed",
+  "scope": "Frozen compact reductions versus the original communication and Gaussian plotting inputs. Figures are checked separately in archived_input_figures.json."
+}

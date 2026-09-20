@@ -1,0 +1,26 @@
+{
+  "status": "passed",
+  "independent_tests": 9,
+  "elapsed_seconds": 16.644,
+  "log": "checks/independent_tests.log",
+  "log_sha256": "eb9b61e628eaaff64997b9081212b53765588e8c7289ec022cd3ee69598acdf7",
+  "source_sha256": {
+    "configs/camera.json": "35f44cf9c5410778f79c24257777eea80fbb51df8b95848ac72a6fae23e42c4d",
+    "configs/communication.json": "9d4b4a846fd84a9fbfa6df7cfad2b00807a2de0a31f27741648e7c74b879211b",
+    "configs/gaussian.json": "6b00201c5884099a7e64a2685ef69aeb319bfe157f8e390d6aaad761e3d79e82",
+    "configs/graphs.npz": "61de8b55fa8791769779067078eb26cc5cff27d13349ae06768e87276bd260e3",
+    "src/iwai_figures/camera.py": "32603c69da3cddeba606cb478c50dc87ada4d0ff045551714cdd9cf02a81f6fd",
+    "src/iwai_figures/communication.py": "c15b878243de77b0b67ec915e6c16a0dc9a9b68c0504135bb661a37456cc2fb5",
+    "src/iwai_figures/engine.py": "648da14c07a41ebaa8c6ac7012bc9441463d656c91c027bad1e9dae80b66e86c",
+    "src/iwai_figures/experiments.py": "b600d2b5bb614100aa9e96ab60e90c6836f4f31b3a379e985eab181ecafe37d8",
+    "src/iwai_figures/gaussian.py": "a5bd42daef8eeb648a9103e7226ff12f6ad131411d364ac6748d9a93348a574e",
+    "src/iwai_figures/simulation.py": "93ac8587bc81b398e652ea4bf666f870c2cb45a979be13659cc50bbe143474ab",
+    "src/iwai_figures/structural_check.py": "56738446ecc81bbff6eec8704ad5d8b395ebe71ac05e64362348eb24312364bb",
+    "src/iwai_figures/world.py": "bf7ca183bc65233f08ad955f8d5a6a81d3102d820d1d9d25b57c7982da36ece2",
+    "tests/test_independent.py": "933bd36222b0e917c58f0090321486f1cda14e3322fcfd494c8b057a7565ae64"
+  },
+  "production_code_changed_by_reviewer": false,
+  "production_model_errors_found": 0,
+  "scope": "Independent NumPy covariance-form and SciPy likelihood oracle; mathematical invariances, paired intervention, exact restart, evaluation RNG independence, legacy phase reset; separate from full archived-output reproduction.",
+  "post_test_nonfunctional_edit": "Removed an unused json import from the independent test file; no assertions or executed code changed."
+}

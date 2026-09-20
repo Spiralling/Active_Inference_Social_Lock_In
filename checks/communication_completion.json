@@ -1,0 +1,8 @@
+{
+  "status": "complete",
+  "conditions": 13,
+  "logical_chunks": 1960,
+  "unique_data_files": 1670,
+  "elapsed_seconds": 148.71762204170227,
+  "protocol_sha256": "9d4b4a846fd84a9fbfa6df7cfad2b00807a2de0a31f27741648e7c74b879211b"
+}

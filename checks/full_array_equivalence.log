@@ -1,0 +1,35 @@
+camera: comparing 14 distinct scientific NPZ files
+camera: checked 14/14 files
+camera: exact; 166/166 arrays byte-identical
+communication: comparing 1837 distinct scientific NPZ files
+communication: checked 100/1837 files
+communication: checked 200/1837 files
+communication: checked 300/1837 files
+communication: checked 400/1837 files
+communication: checked 500/1837 files
+communication: checked 600/1837 files
+communication: checked 700/1837 files
+communication: checked 800/1837 files
+communication: checked 900/1837 files
+communication: checked 1000/1837 files
+communication: checked 1100/1837 files
+communication: checked 1200/1837 files
+communication: checked 1300/1837 files
+communication: checked 1400/1837 files
+communication: checked 1500/1837 files
+communication: checked 1600/1837 files
+communication: checked 1700/1837 files
+communication: checked 1800/1837 files
+communication: checked 1837/1837 files
+communication: exact; 28557/28557 arrays byte-identical
+gaussian: comparing 800 distinct scientific NPZ files
+gaussian: checked 100/800 files
+gaussian: checked 200/800 files
+gaussian: checked 300/800 files
+gaussian: checked 400/800 files
+gaussian: checked 500/800 files
+gaussian: checked 600/800 files
+gaussian: checked 700/800 files
+gaussian: checked 800/800 files
+gaussian: exact; 15200/15200 arrays byte-identical
+Overall: exact

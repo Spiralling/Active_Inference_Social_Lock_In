@@ -1,9 +1,0 @@
-{
-  "status": "passed",
-  "tests": 11,
-  "failures": 0,
-  "errors": 0,
-  "elapsed_seconds": 30.995770457899198,
-  "test_seeds": "900000..900009; never confirmation seeds",
-  "numpy_reference": "Independent affine update and full multivariate Gaussian pre-learning density; no production numerical helpers"
-}

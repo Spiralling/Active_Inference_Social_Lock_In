@@ -1,0 +1,128 @@
+{
+  "status": "passed",
+  "branch": "collaboration/iwai-figure-experiments",
+  "base_commit": "d1134558771d9ae2581c4b547d503375350afa7a",
+  "scope": "Collaborator explanation and faithful extraction of all 16 unique figure assets in the two supplied drafts; not the final publication reproduction release.",
+  "archives": {
+    "camera": {
+      "filename": "IWAI2026_camera_ready_source.zip",
+      "sha256": "ce89bacb39a8cfceeb5a39074c66182de67e6a75889aec46493a919481b15e75"
+    },
+    "layout": {
+      "filename": "IWAI2026_figure_layout_source.zip",
+      "sha256": "4e99cd349001fe91d019df12f9c15914e4eb0080b428650575f10eb74d6cb795"
+    }
+  },
+  "full_experiment_comparison": {
+    "families": [
+      "camera",
+      "communication",
+      "gaussian"
+    ],
+    "files_compared": 2651,
+    "arrays_compared": 43923,
+    "elements_compared": 1444739973,
+    "byte_exact_arrays": 43923,
+    "roundoff_only_arrays": 0,
+    "maximum_absolute_error": 0,
+    "report": "checks/full_array_equivalence.json"
+  },
+  "figure_comparison": {
+    "unique_assets": 16,
+    "from_included_compact_data_byte_identical": 16,
+    "from_fresh_full_runs_byte_identical": 16,
+    "pixel_text_dimensions_checks_passed": true,
+    "reports": [
+      "checks/archived_input_figures.json",
+      "checks/fresh_run_figures.json"
+    ]
+  },
+  "regression_checks": {
+    "independent_mathematical_tests_passed": 9,
+    "archived_trajectory_cases_passed": 6,
+    "archived_trajectory_test_methods": 1,
+    "short_old_new_rollouts_and_restarts": 29,
+    "short_equivalence_arrays": 525,
+    "production_model_errors_found_by_independent_review": 0
+  },
+  "integrity_checks": {
+    "reviewed_source_hashes_current": true,
+    "completion_protocol_hashes_current": true,
+    "all_compact_manifest_file_hashes_match": true,
+    "reference_pdf_hashes_match_both_comparisons": true
+  },
+  "source_config_and_test_sha256": {
+    "configs/camera.json": "35f44cf9c5410778f79c24257777eea80fbb51df8b95848ac72a6fae23e42c4d",
+    "configs/communication.json": "9d4b4a846fd84a9fbfa6df7cfad2b00807a2de0a31f27741648e7c74b879211b",
+    "configs/gaussian.json": "6b00201c5884099a7e64a2685ef69aeb319bfe157f8e390d6aaad761e3d79e82",
+    "configs/graphs.npz": "61de8b55fa8791769779067078eb26cc5cff27d13349ae06768e87276bd260e3",
+    "reproduce.py": "f3c2004f894900234f8ca2cc5579ef3c2fbf3e32ebf9ba692ce9f9f55ab27291",
+    "requirements.txt": "6b992b80b6cfe363eeb2649a3b6549ef04425c6a5a0de03413391a29a55a5af9",
+    "scripts/compare_archived_runs.py": "ac55ecbb2acc4e2806c78d52c5f80db64b72afda383edb95d179d7b5e229134e",
+    "src/iwai_figures/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/iwai_figures/camera.py": "32603c69da3cddeba606cb478c50dc87ada4d0ff045551714cdd9cf02a81f6fd",
+    "src/iwai_figures/communication.py": "c15b878243de77b0b67ec915e6c16a0dc9a9b68c0504135bb661a37456cc2fb5",
+    "src/iwai_figures/engine.py": "648da14c07a41ebaa8c6ac7012bc9441463d656c91c027bad1e9dae80b66e86c",
+    "src/iwai_figures/experiments.py": "b600d2b5bb614100aa9e96ab60e90c6836f4f31b3a379e985eab181ecafe37d8",
+    "src/iwai_figures/gaussian.py": "a5bd42daef8eeb648a9103e7226ff12f6ad131411d364ac6748d9a93348a574e",
+    "src/iwai_figures/plotting/__init__.py": "aa18081c668dba6a35af51c8d6c1f6a7874c7f5f95c0d00c69a876453c4fb3a6",
+    "src/iwai_figures/plotting/abstract.py": "b498f8130596dc580f7463bf8464267ed9e900c93d146e9f7af59eabea1429ac",
+    "src/iwai_figures/plotting/camera.py": "ee3dae616ab32b03308767790447f7b2ec25c04cb06a5576908a34650e57d85d",
+    "src/iwai_figures/plotting/communication.py": "04844e25adfa7eae8cc37f781918bf32d8a5e3605f0e95f12f803891353eb75e",
+    "src/iwai_figures/plotting/data.py": "48e9a860080b362642d09f9d03f599ee099bd2ec212059df145e1063dc082aa3",
+    "src/iwai_figures/plotting/fig01_general_representation.tex": "dfb95c30af202cae30665222c038b227d839c11c49bb80695eebeb24d1116023",
+    "src/iwai_figures/plotting/fig_model.tex": "e24c4fa4d3fd17cb497a4b4cb6e0a364859312bbf49c14b7196d1e250d012fde",
+    "src/iwai_figures/plotting/font_reference.json": "62c3c8be04fabf4f8a923eff12df9caa5b5dfa7d9ca6c1f11de8fc907a7e75c3",
+    "src/iwai_figures/plotting/gaussian.py": "f9a740ac14193b3811c300f1694255221619a41a9dc942ecd0832a09e1894372",
+    "src/iwai_figures/plotting/orx_figstyle.py": "9372d4ebbc32c9fdbb364adf76fdcf2b0708a4c50490fc639f06c9af360a61d9",
+    "src/iwai_figures/plotting/style.py": "93d4d87c817f323b01bfb15cdcc4ca490a4783e8e716719f8303e0a809b8c287",
+    "src/iwai_figures/plotting/topology.py": "0357c15034276686460a2a5a858487370959e56a62b846f1a7c3b84e08decc87",
+    "src/iwai_figures/reduce.py": "57fbc11bdc0bbb3bd0b52e89d7ec456680d6e4d6f0a55bf98c969195ebf6c564",
+    "src/iwai_figures/simulation.py": "93ac8587bc81b398e652ea4bf666f870c2cb45a979be13659cc50bbe143474ab",
+    "src/iwai_figures/structural_check.py": "56738446ecc81bbff6eec8704ad5d8b395ebe71ac05e64362348eb24312364bb",
+    "src/iwai_figures/validation.py": "b2917fc1cb10d4025a75cab52fde947bb4773b8d7cd8481846ca9aa74b56548d",
+    "src/iwai_figures/world.py": "bf7ca183bc65233f08ad955f8d5a6a81d3102d820d1d9d25b57c7982da36ece2",
+    "tests/test_archived_trajectories.py": "a3851fa7f3604d108042950bfc3152e062acd534bb80f748d8fad9bc4ae540f0",
+    "tests/test_independent.py": "933bd36222b0e917c58f0090321486f1cda14e3322fcfd494c8b057a7565ae64"
+  },
+  "compact_manifest_sha256": {
+    "data/camera/manifest.json": "184559933378a6af22b8a8bbe704a59abed4723afedf23771a8f2ec92b357b0b",
+    "data/communication/manifest.json": "afd17c968fc586ab64829bb1f7902098f2dd5e40be04926217f5227d120425b3",
+    "data/gaussian/manifest.json": "ceef05441d74276b6b3a1bf39ccea35c9cf707df31e0a552cec615be4bef4874"
+  },
+  "evidence_sha256": {
+    "checks/archived_input_figures.json": "aae4d7b000e487cfec0efe7bcbefd77a4577e5aace85785410ac21463cbec00b",
+    "checks/archived_trajectory_tests.log": "0d5a3b758f3b3fe43c6e712888addd527202b24f578ed6ed7d517aebee24b39c",
+    "checks/camera_completion.json": "a2cbf6aafa4bfc88eaf1afba733d934fe798cf340fd0fa503f9b412acefb1684",
+    "checks/communication_completion.json": "d69ecd4b52d060798a3a444501710791cd19ed33231b31e92ad27c0bc5d6a3d6",
+    "checks/compact_inputs_equivalence.json": "cf3ca99d62d7c4bd9ba0a2fb21af10210de65102d7db3fb42af7db3ad1933d7c",
+    "checks/environment.json": "25c19371c744882b2bad756a3c81db4113c692e34d8c9e92079f7f892a104c26",
+    "checks/fresh_figures.log": "5d28c72e57de6b5128020592b9120d71e1757b9c33bbcde8ecfb5bb7a8162161",
+    "checks/fresh_reduction.log": "2ec5b3ca2f4ef1a294d167c7417bdf7c71d13f669b4ed23908ffeb72511940a7",
+    "checks/fresh_run_figures.json": "aae4d7b000e487cfec0efe7bcbefd77a4577e5aace85785410ac21463cbec00b",
+    "checks/full_array_equivalence.json": "49f2efd3a492999bf341c8d2cb95366406749c8bf3862bfc13085371f0960e44",
+    "checks/full_array_equivalence.log": "30648732f008409deb17b23ef669b335ca87110a0d6615f2fa25d2676761d450",
+    "checks/gaussian_completion.json": "f7c3008eea2a019643d8113851d7e036a08f91bf47e7e7950c12d4ccccfcba52",
+    "checks/independent_review.json": "a884738f8a842e40b571f738bb4771366d1890d76f9d43a17106d25481b9a825",
+    "checks/independent_tests.log": "eb9b61e628eaaff64997b9081212b53765588e8c7289ec022cd3ee69598acdf7",
+    "checks/run_camera.log": "eea70435066b8b8744fbceba8380bdd713a907073fdb6948e52bd289a2ad2629",
+    "checks/run_communication.log": "534b06f0483e0d5b28777f31d53b2a7ff396c49f2202a183cde08c2a24b9a8fd",
+    "checks/run_gaussian.log": "663d084b2cd1b00700081b9d2e95c0aecdc5a868b3494e1ee9558948c034bde8",
+    "checks/short_equivalence.json": "e04da2478ec0d87d6761be671308c0285ab17176bee516a67ab53a4a41e7ed36"
+  },
+  "limits": [
+    "Bit identity is demonstrated on the recorded macOS arm64 CPU and pinned package/TeX environment, not guaranteed on every platform.",
+    "Undisplayed old conditions and prose-only results are not reproduced.",
+    "Full raw histories and generated outputs are ignored; checked compact per-seed plotting inputs and supplied comparison PDFs are included."
+  ],
+  "post_verification_nonfunctional_edit": {
+    "change": "Removed surplus EOF blank lines from README and four plotting modules; Python AST equality checked for every edited module. No executed code or scientific settings changed.",
+    "files": [
+      "README.md",
+      "src/iwai_figures/plotting/abstract.py",
+      "src/iwai_figures/plotting/camera.py",
+      "src/iwai_figures/plotting/communication.py",
+      "src/iwai_figures/plotting/gaussian.py"
+    ]
+  }
+}

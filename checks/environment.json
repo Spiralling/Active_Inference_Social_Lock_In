@@ -1,0 +1,23 @@
+{
+  "python": "3.12.9 (v3.12.9:fdb81425a9a, Feb  4 2025, 12:21:36) [Clang 13.0.0 (clang-1300.0.29.30)]",
+  "platform": "macOS-26.3-arm64-arm-64bit",
+  "backend": "cpu",
+  "jax_enable_x64": true,
+  "jax_default_prng_impl": "threefry2x32",
+  "jax_devices": [
+    "TFRT_CPU_0"
+  ],
+  "engine_file": "src/iwai_figures/engine.py",
+  "world_sha256": "bf7ca183bc65233f08ad955f8d5a6a81d3102d820d1d9d25b57c7982da36ece2",
+  "runner_sha256": "a5bd42daef8eeb648a9103e7226ff12f6ad131411d364ac6748d9a93348a574e",
+  "packages": {
+    "jax": "0.9.0",
+    "jaxlib": "0.9.0",
+    "numpy": "2.3.4",
+    "scipy": "1.16.3",
+    "networkx": "3.5",
+    "matplotlib": "3.10.7",
+    "PyMuPDF": "1.27.2.3",
+    "Pillow": "12.3.0"
+  }
+}

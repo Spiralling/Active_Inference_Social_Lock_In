@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "files": {
+    "C10.npz": "abc1bd814bf39bcb619cfce83225f972003125843bf8be195283203b571e9bb5",
+    "C10_gasvar_matched.npz": "54e7e1826a603a0c1387f8ab7801c3917f1abfc93917d129f74aae7ff3d66d97",
+    "C11.npz": "516dc79777f6a48388d985f706724f2bdd415d0f7af41f1986d61d89936a2a0a",
+    "G_gated_info.npz": "c797dfffeb15fb3b6a3025675e5233c8a452d4969990498202f7a9ccfb9e69e2",
+    "G_gated_moment.npz": "180f7e082e91b76e9fbb4f33d2337867f8d2ee4b2cfef2525bcd91bce4f280c5",
+    "G_plain_info.npz": "d6cb3ac09326a4178a7feaff6a7ecbf5e9f189b6fb9bb521d842aad4bdd0d695",
+    "G_plain_moment.npz": "ad91ffd45c35226e00985d9e35b61650e551f42d3e31d4b51ebc2eed49b34654",
+    "common.npz": "026048b8182995478661cd50c1ef5c910d1117a805651198cf3d0ceeef19a0e1",
+    "summary.json": "61f6e0d4550ba35af026394c3a94efc5ff4bce46da714481cce79472519fe8b1"
+  },
+  "provenance": {
+    "gaussian_manifest_sha256": "286556120c5f7f443581c7bdd4476f506ddf64171b2b2141ab0091d5f6bfbd71",
+    "candidate_manifest_sha256": "8944584e86eb400c3feab8d84e2ad1bcf46c1f1898a3f68926366a0211a00c9f",
+    "bootstrap_seed": 20260920,
+    "bootstrap_replicates": 2000
+  },
+  "note": "Unsmoothed per-seed inputs. No outcome-based seed selection; see figure-specific methods."
+}

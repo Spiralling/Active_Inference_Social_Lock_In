@@ -1,0 +1,774 @@
+{
+  "schema": 1,
+  "scope": "Read-only inventory of attached manuscript source figures, protocols and repository provenance; no experimental reruns in this inventory.",
+  "versions": {
+    "camera": {
+      "source_archive_name": "IWAI2026_camera_ready_source.zip",
+      "source_main_sha256": "362b5000f714ce99e7aca356b73380a9ae4bdd701af1625808609537a2cb186a",
+      "figures": [
+        {
+          "number": 1,
+          "labels": [
+            "fig:representation"
+          ],
+          "assets": [
+            "fig01_general_representation.pdf"
+          ],
+          "caption_tex": "Representation and communication. (a) Private observations are evaluated\n through candidate-specific likelihoods. (b) Agent $i$ retains conditional beliefs\n $\\rho_{ik}$ and model probabilities $q_{ik}$; two candidates are shown.\n (c) Contact edges permit exchange of these beliefs. Dashed lines magnify the\n selected agent. Candidate and contact graphs are schematic; time indices are\n omitted inside the agent.",
+          "main_tex_line": 128,
+          "section": "main",
+          "asset_sha256": {
+            "fig01_general_representation.pdf": "b61065e87e97ddd7d50ced0555c478f5ca4676786204606cedaaabc958f85495"
+          }
+        },
+        {
+          "number": 2,
+          "labels": [
+            "fig:model"
+          ],
+          "assets": [
+            "fig_model.pdf"
+          ],
+          "caption_tex": "Reference dependencies for the release (a) and oxygen (b) accounts.\n Dashed nodes are unobserved explanatory quantities. Arrows give regression\n coefficients with the displayed signs and magnitude $0.8$. Both accounts\n connect combustion to mass change through an explanatory substance. Variables\n are standardized schematic quantities.",
+          "main_tex_line": 266,
+          "section": "main",
+          "asset_sha256": {
+            "fig_model.pdf": "7657add7368538b5a7ca4ade31e794812a02cd5e75e55e2019b3649535f007ea"
+          }
+        },
+        {
+          "number": 3,
+          "labels": [
+            "fig:cycle"
+          ],
+          "assets": [
+            "fig04_cycle.pdf"
+          ],
+          "caption_tex": "Delayed revision in the two-candidate model ($N=16$, 50 seeds).\n Green shows mean oxygen probability on the left axis; grey shows mean individual\n entropy on the right. Narrow ribbons give pointwise 95\\% bootstrap intervals\n for seed means. The dotted line marks the first changed observation at $t=80$.\n The amber interval ($t=100$--$188$) marks mean individual entropy above $0.35$\n nats after the change; it is a descriptive threshold.",
+          "main_tex_line": 347,
+          "section": "main",
+          "asset_sha256": {
+            "fig04_cycle.pdf": "f3713b0fbe5e92551714891f25bb59ec4f1bf3284893cbbcd73a483ce2bce8ab"
+          }
+        },
+        {
+          "number": 4,
+          "labels": [
+            "fig:adaptation"
+          ],
+          "assets": [
+            "fig_adaptation.pdf"
+          ],
+          "caption_tex": "Adaptation after a common prehistory (20 seeds). (a,b) Mean oxygen\n probabilities by group for the first 500 of 1,500 rounds. ``Full information''\n denotes independent agents observing all three channels. (c,d) MSE and predictive\n NLL averaged over the final 375 rounds; lower is better. NLL is in nats per\n three-coordinate observation. Ribbons and whiskers give pointwise 95\\%\n whole-seed bootstrap intervals.",
+          "main_tex_line": 379,
+          "section": "main",
+          "asset_sha256": {
+            "fig_adaptation.pdf": "a786b2f4183efa3b61f33999dbd51423abdab2d16f1c5bb2dcd8d37e87857592"
+          }
+        },
+        {
+          "number": 5,
+          "labels": [
+            "fig:topology"
+          ],
+          "assets": [
+            "fig06_topology.pdf"
+          ],
+          "caption_tex": "Network comparison ($N=24$, 50 seeds). Black outlines mark the four\n fully observing agents. Heavy curves and pointwise 95\\% bootstrap bands summarize\n the restricted-group seed means; thin curves show its individual agents in seed\n 0. ``Cycle'' denotes the ring graph. The dotted line marks $t=80$.\n $\\lambda_2$ is the second eigenvalue of the unnormalized graph Laplacian, defined\n in Appendix~\\ref{app:networks}. The ring has no group crossing by $t=599$.",
+          "main_tex_line": 428,
+          "section": "main",
+          "asset_sha256": {
+            "fig06_topology.pdf": "682c2c523e13e7fa07d1627c3d9c31eca1554ad49c70c565823a71659e493a94"
+          }
+        },
+        {
+          "number": 6,
+          "labels": [
+            "fig:precision"
+          ],
+          "assets": [
+            "fig02_precision_pool.pdf"
+          ],
+          "caption_tex": "Construction of the shared single-Gaussian reference. Links show\n off-diagonal entries of the observable marginal precision matrices and their\n equal-weight average, rounded to three decimals. Solid blue and dashed orange\n links are negative and positive entries, respectively. Diagonals and information\n vectors are included in the calculation but omitted from the drawing.",
+          "main_tex_line": 864,
+          "section": "appendix",
+          "asset_sha256": {
+            "fig02_precision_pool.pdf": "2132db4407841328817cae73e5da54b2ff56869ce345686303b7a74dcc1de23b"
+          }
+        },
+        {
+          "number": 7,
+          "labels": [
+            "fig:camps-distance",
+            "fig:camps-choice"
+          ],
+          "assets": [
+            "fig03_camp_distance.pdf",
+            "fig_camp_choices.pdf"
+          ],
+          "caption_tex": "Constant-world comparison (20 seeds). Top: selected-candidate\n observable distance $D_t$, with retention rates in the legend and completed\n updates $t+1$ on the horizontal axis. References also differ across configurations.\n Bottom: candidate probabilities for the same two-candidate, $\\omega=0.3$ runs,\n over the first 150 rounds (a) and all 1,500 rounds (b). Both groups favour oxygen.\n Bands give pointwise 95\\% whole-seed bootstrap intervals.",
+          "main_tex_line": 1089,
+          "section": "appendix",
+          "asset_sha256": {
+            "fig03_camp_distance.pdf": "cf5284c76547eaaaefef31fb4536d90aa05da6f05e5f62f426586e39fc92c5ce",
+            "fig_camp_choices.pdf": "4e2e1758f3f78266f3654bee7796e91d04c6824d415af36b758addf97a704c3b"
+          }
+        },
+        {
+          "number": 8,
+          "labels": [
+            "fig:dependence"
+          ],
+          "assets": [
+            "fig_identifiability.pdf"
+          ],
+          "caption_tex": "Dependence-based discrimination. (a,b) Observable correlation matrices\n before measurement noise, with matched means and marginal variances.\n (c) Accuracy of the fixed-candidate classifier, with 200 sequences per generating\n candidate. $\\sigma$ denotes measurement-noise standard deviation. Bands give\n pointwise 95\\% seed-bootstrap intervals. The marginal-only classifier remains\n at chance. Sample counts are nested and noise conditions share underlying draws.",
+          "main_tex_line": 1268,
+          "section": "appendix",
+          "asset_sha256": {
+            "fig_identifiability.pdf": "e6c562cc136b8d89c773ac0e5ce76e24d3375b53233eafaa6c1f42031f3e37b5"
+          }
+        }
+      ],
+      "bundled_pdf_count": 9,
+      "unused_bundled_pdfs": []
+    },
+    "layout": {
+      "source_archive_name": "IWAI2026_figure_layout_source.zip",
+      "source_main_sha256": "761a581f3b9dcb36890a9c8e392384ca0acd8254ae888bdc79d5f90dab45f1a5",
+      "figures": [
+        {
+          "number": 1,
+          "labels": [
+            "fig:overview"
+          ],
+          "assets": [
+            "fig_graphical_abstract.pdf"
+          ],
+          "caption_tex": "Observations, candidate beliefs, and social communication. Agent $i$\n maintains beliefs within each candidate and probabilities over candidates,\n and exchanges these with neighbours. Here $m_1,m_2$ label the illustrated\n candidates and $A,B,C$ their schematic quantities. Subscripts on $y$ label\n observation channels; time indices are omitted.",
+          "main_tex_line": 102,
+          "section": "main",
+          "asset_sha256": {
+            "fig_graphical_abstract.pdf": "287e64538bbb9e4a5e1301269bc6e2f25544df525ccdb6bd9231028889ed1060"
+          }
+        },
+        {
+          "number": 2,
+          "labels": [
+            "fig:cycle"
+          ],
+          "assets": [
+            "fig04_cycle.pdf"
+          ],
+          "caption_tex": "Fully observing revision (50 seeds). Green shows mean oxygen probability\n on the left axis; grey shows mean individual entropy on the right. Ribbons give\n pointwise 95\\% whole-seed bootstrap intervals. The dotted line marks the first\n changed observation at round 80. The shaded interval denotes mean individual\n entropy above $0.35$ nats; it describes uncertainty and does not trigger an update\n change. The round index on the horizontal axis displays the resulting state.",
+          "main_tex_line": 302,
+          "section": "main",
+          "asset_sha256": {
+            "fig04_cycle.pdf": "f3713b0fbe5e92551714891f25bb59ec4f1bf3284893cbbcd73a483ce2bce8ab"
+          }
+        },
+        {
+          "number": 3,
+          "labels": [
+            "fig:topology"
+          ],
+          "assets": [
+            "fig06_topology.pdf"
+          ],
+          "caption_tex": "Network-dependent revision (50 runs). Black outlines mark the four\n fully observing agents. Heavy curves and bootstrap bands summarize the restricted\n group; thin curves show individual restricted agents in illustrative seed 0.\n ``Cycle'' denotes the ring. The round-indexed marker is the first changed\n observation at 80. The displayed $\\lambda_2$ is the second smallest eigenvalue\n of the unnormalized graph Laplacian, a descriptive connectivity measure.",
+          "main_tex_line": 327,
+          "section": "main",
+          "asset_sha256": {
+            "fig06_topology.pdf": "682c2c523e13e7fa07d1627c3d9c31eca1554ad49c70c565823a71659e493a94"
+          }
+        },
+        {
+          "number": 4,
+          "labels": [
+            "fig:matched"
+          ],
+          "assets": [
+            "fig_matched_camp_models.pdf"
+          ],
+          "caption_tex": "Matched comparison of numerical predictions and theory choices.\n All conditions use the same 50 camp streams, $\\beta=0.05$ and $\\omega=0.3$.\n (a) Observable group distance, using mixture means for candidate models;\n time is logarithmic and the distance axis includes zero. (b) Gas (solid) and\n mass (dotted) oxygen probabilities for candidate models only. (c) Full-observable\n MSE over states 3,751--5,000: gas circles and mass squares. Plain/Gate use a\n shared information-pooled Gaussian reference; Priv./Share retain private/shared\n candidate weights. Var. is the private-weight candidate control with matched\n gas reference variance. Candidate histories are reused, not independent replications.",
+          "main_tex_line": 360,
+          "section": "main",
+          "asset_sha256": {
+            "fig_matched_camp_models.pdf": "54a6ce0112867c5bdc09522f0e84d37b9c3450311d1dd78a6efc3481fbee88af"
+          }
+        },
+        {
+          "number": 5,
+          "labels": [
+            "fig:network-channels"
+          ],
+          "assets": [
+            "fig_network_channels.pdf"
+          ],
+          "caption_tex": "Changed-signal communication comparison (24 agents, 50 paired seeds).\n (a,b) Oxygen probability for four fully observing and twenty restricted agents.\n The dotted line marks the shared state 80, before the first changed observation.\n (c,d) MSE and predictive NLL over states 451--600, by observation group.\n The four conditions share the same prehistory and subsequent measurement streams.\n Restricted weights are $(1,0.01,0.01)$; $\\omega=0.9$ and $\\sigma=1$.",
+          "main_tex_line": 433,
+          "section": "main",
+          "asset_sha256": {
+            "fig_network_channels.pdf": "b836b4616920498d366f73c69295ec48957a5d77a34f42a09e65b54b99ee77c9"
+          }
+        },
+        {
+          "number": 6,
+          "labels": [
+            "fig:model"
+          ],
+          "assets": [
+            "fig_model.pdf"
+          ],
+          "caption_tex": "Reference dependencies for the release (a) and oxygen (b) accounts.\n Dashed nodes are unobserved explanatory quantities. Arrows give conditional-mean\n coefficients of magnitude $0.8$ and the displayed sign. Both accounts connect\n combustion to mass through an explanatory substance. Coordinates are\n standardized schematic quantities.",
+          "main_tex_line": 764,
+          "section": "appendix",
+          "asset_sha256": {
+            "fig_model.pdf": "7657add7368538b5a7ca4ade31e794812a02cd5e75e55e2019b3649535f007ea"
+          }
+        },
+        {
+          "number": 7,
+          "labels": [
+            "fig:camp-channels"
+          ],
+          "assets": [
+            "fig_camp_channels.pdf"
+          ],
+          "caption_tex": "Theory choices under four communication conditions (50 paired seeds).\n (a,b) Gas- and mass-group mean oxygen probabilities; the dotted line marks\n state 1,500. (c,d) Individual gas-observer probabilities at states 1,500 and\n 5,000: 400 values per condition, clustered within 50 runs. Jitter separates\n overlapping points; these strips have no inferential bands. Conditional-only\n exchange retains opposing preferences with $\\beta=0.05$, $\\omega=0.3$ and\n private model weights. Enabled model exchange uses $\\alpha_m=0.02$.",
+          "main_tex_line": 985,
+          "section": "appendix",
+          "asset_sha256": {
+            "fig_camp_channels.pdf": "eff0aae2752971e86a6f56ce18533105f8455b0b3fcf11ad554770e36a84c07c"
+          }
+        },
+        {
+          "number": 8,
+          "labels": [
+            "fig:reference-controls"
+          ],
+          "assets": [
+            "fig_reference_diagnostics.pdf"
+          ],
+          "caption_tex": "Controls on the gas group's reference-dependent preference (50 paired\n seeds). All conditions share conditional beliefs and keep model weights private.\n (a) Measured oxygen-minus-release score over states 3,751--5,000; grey ticks\n show stationary expectations calculated before confirmation. (b) Endpoint\n oxygen probabilities, not window averages. Primary settings are\n $\\beta=0.05$, $\\omega=0.3$. Other rows change only the named setting; variance\n matching changes the release gas residual from $0.5$ to $0.5448$.",
+          "main_tex_line": 1006,
+          "section": "appendix",
+          "asset_sha256": {
+            "fig_reference_diagnostics.pdf": "ec29b626bc2ca73def2b41aca1d9f827331fcdf96ffa38b7a19da56c23c5567a"
+          }
+        },
+        {
+          "number": 9,
+          "labels": [
+            "fig:gaussian-controls"
+          ],
+          "assets": [
+            "fig_matched_camp_diagnostics.pdf"
+          ],
+          "caption_tex": "Reference and readout sensitivity on the same 50 camp streams.\n (a) Plain and gated distances under information pooling (solid) and mixture\n moment matching (dashed). (b) Realized cross-group influence for each reference;\n gas/mass are solid/dotted and the horizontal dashed line is the base weight\n $0.05$. (c) Candidate distances from mixture means (solid) and highest-weight\n means (dashed). (d) Late-window instantaneous norms, norms after within-seed\n time averaging, and the descriptive norm after time and seed averaging.\n The last has no inferential interval. All comparisons exclude latent coordinates.",
+          "main_tex_line": 1045,
+          "section": "appendix",
+          "asset_sha256": {
+            "fig_matched_camp_diagnostics.pdf": "daa7c3fd4da42c72766e62446f6f5d8988847be2798d4022b4164b713653433b"
+          }
+        },
+        {
+          "number": 10,
+          "labels": [
+            "fig:intervention"
+          ],
+          "assets": [
+            "fig_weight_sharing_intervention.pdf"
+          ],
+          "caption_tex": "Enabling model-weight exchange from the same state 1,500 in all 50\n runs. Gas-group oxygen probability is shown over (a) the full continuation and\n (b) its first 100 updates. Zero denotes the shared pre-intervention state.\n The mass group remains at oxygen probability one to recorded precision.\n Conditional exchange, reference beliefs, observations, and local predictive\n scores are identical between the branches; only model-weight communication changes.",
+          "main_tex_line": 1079,
+          "section": "appendix",
+          "asset_sha256": {
+            "fig_weight_sharing_intervention.pdf": "b23b43fb3d2551e2b6299c5f1ebdd93eab91f204f012cff247f5e53c56b23938"
+          }
+        }
+      ],
+      "bundled_pdf_count": 10,
+      "unused_bundled_pdfs": []
+    }
+  },
+  "assets": {
+    "fig_graphical_abstract.pdf": {
+      "title": "Observations, agent and social graph",
+      "kind": "schematic",
+      "conditions": [],
+      "source": [
+        "scripts/plot_publication_schematics.py::figure1",
+        "scripts/publication_style.py"
+      ],
+      "setup": "Generic observations feed candidate beliefs within a magnified agent; links between agents depict permitted communication. Miniature candidate graphs use A,B,C and are schematic, not the combustion references.",
+      "results": "No simulated result. Layout restores an earlier graphical abstract byte-for-byte, renaming fig01_model.pdf.",
+      "interpretation": "Explains observations, within-candidate beliefs, model weights and contact network in one composition.",
+      "notes": [
+        "Exact source asset found at paper/publication_figures/figures/fig01_model.pdf; source is Matplotlib, not TikZ."
+      ],
+      "appearances": [
+        {
+          "version": "layout",
+          "figure": 1
+        }
+      ],
+      "sha256": {
+        "layout": "287e64538bbb9e4a5e1301269bc6e2f25544df525ccdb6bd9231028889ed1060"
+      }
+    },
+    "fig01_general_representation.pdf": {
+      "title": "Distributional model overview",
+      "kind": "schematic",
+      "conditions": [],
+      "source": [
+        "paper/combustion_technical_note/figures/plot_figures.py::diagram",
+        "paper/combustion_technical_note/figures/fig01_general_representation.tex"
+      ],
+      "setup": "Generic observations, two illustrated supplied candidates among K, and a contact graph; no Gaussian assumption in the schematic.",
+      "results": "No simulated result; vector TikZ schematic.",
+      "interpretation": "Makes candidate-conditional beliefs and categorical model probabilities distinct; no candidate discovery or active policy selection is illustrated.",
+      "notes": [],
+      "appearances": [
+        {
+          "version": "camera",
+          "figure": 1
+        }
+      ],
+      "sha256": {
+        "camera": "b61065e87e97ddd7d50ced0555c478f5ca4676786204606cedaaabc958f85495"
+      }
+    },
+    "fig_model.pdf": {
+      "title": "Combustion reference dependencies",
+      "kind": "reference-model schematic",
+      "conditions": [],
+      "source": [
+        "paper/combustion_technical_note/figures/plot_figures.py::diagram",
+        "paper/combustion_technical_note/figures/fig_model.tex",
+        "paper/combustion_experiments/world.py"
+      ],
+      "setup": "Release: C\u2192P\u2192M and C\u2192G, with P\u2192M coefficient \u2212.8. Oxygen: C\u2192O\u2192G and O\u2192M, all +.8. P/O are different hidden explanatory variables. Reference observable means (1,1,\u22121)/(1,1,1); residual variances hidden .25, each observed .5.",
+      "results": "No simulation; diagram agrees with the structural reference compiler.",
+      "interpretation": "A schematic motivating account, not calibrated chemistry. Both connect combustion to mass through their hidden substance. Full Gaussian learning does not constrain all subsequent precision updates to preserve the drawn reference DAG.",
+      "notes": [
+        "Identical PDF in both archives. Hidden P and O are never pooled or compared across candidates."
+      ],
+      "appearances": [
+        {
+          "version": "camera",
+          "figure": 2
+        },
+        {
+          "version": "layout",
+          "figure": 6
+        }
+      ],
+      "sha256": {
+        "camera": "7657add7368538b5a7ca4ade31e794812a02cd5e75e55e2019b3649535f007ea",
+        "layout": "7657add7368538b5a7ca4ade31e794812a02cd5e75e55e2019b3649535f007ea"
+      }
+    },
+    "fig02_precision_pool.pdf": {
+      "title": "Observable marginal precision pooling",
+      "kind": "closed-form calculation",
+      "conditions": [],
+      "source": [
+        "paper/combustion_technical_note/figures/plot_figures.py::precision_figure",
+        "paper/combustion_experiments/world.py"
+      ],
+      "setup": "Marginalize hidden variables from each reference covariance, invert observable C,G,M covariance, then average the two observable precisions with equal weight. Information vectors also pooled in actual shared reference but omitted from graphic.",
+      "results": "Release off-diagonals C\u2013G \u22121.6, C\u2013M +.969697, G\u2013M 0; oxygen \u2212.780488, \u2212.780488, \u2212.390244. Pool gives \u22121.190244, +.094605, \u2212.195122.",
+      "interpretation": "Demonstrates entrywise averaging and shared-zero preservation. The links are undirected conditional-dependence precision entries, not the directed regression arrows.",
+      "notes": [
+        "Camera Fig6 construction is not the group-specific reference used by its Fig7 Gaussian arms; it is the shared-reference construction used by separate controls and the later matched comparison."
+      ],
+      "appearances": [
+        {
+          "version": "camera",
+          "figure": 6
+        }
+      ],
+      "sha256": {
+        "camera": "2132db4407841328817cae73e5da54b2ff56869ce345686303b7a74dcc1de23b"
+      }
+    },
+    "fig04_cycle.pdf": {
+      "title": "Fully observing probability/entropy revision",
+      "kind": "simulation",
+      "conditions": [
+        "cycle"
+      ],
+      "source": [
+        "paper/combustion_technical_note/figures/plot_figures.py::cycle",
+        "paper/combustion_experiments/run.py"
+      ],
+      "setup": "16 fully observing agents, complete graph; 240 updates, seeds0\u201349, sensor SD1, omega .9, model sharing alpha_m .02. Signal (C,G,M)=(1,1,\u22121) changes only M to +1 at generating round80; fixed signal plus independent sensor noise, not fresh DAG samples.",
+      "results": "All50 group means cross oxygen .9; median round204.5 (completed state205.5). Final mean qO .968865. Maximum across-seed mean individual entropy .546870 nats. Displayed amber interval rounds100\u2013188 has mean individual entropy >.35.",
+      "interpretation": "Accumulated support delays revision, and revision passes through individual model uncertainty. The .35 entropy threshold is descriptive, not a crisis mechanism. Entropy averaged after computing per agent differs from entropy of the population mean.",
+      "notes": [
+        "Identical PDF across versions; stored round t shows resulting state t+1. Changed round80 therefore produces state81. Bootstrap is whole-seed percentile95%, not min\u2013max or mean\u00b1SD."
+      ],
+      "appearances": [
+        {
+          "version": "camera",
+          "figure": 3
+        },
+        {
+          "version": "layout",
+          "figure": 2
+        }
+      ],
+      "sha256": {
+        "camera": "f3713b0fbe5e92551714891f25bb59ec4f1bf3284893cbbcd73a483ce2bce8ab",
+        "layout": "f3713b0fbe5e92551714891f25bb59ec4f1bf3284893cbbcd73a483ce2bce8ab"
+      }
+    },
+    "fig06_topology.pdf": {
+      "title": "Topology and restricted-observer revision",
+      "kind": "simulation",
+      "conditions": [
+        "network_cycle",
+        "network_wheel",
+        "network_community",
+        "network_complete"
+      ],
+      "source": [
+        "paper/combustion_technical_note/figures/plot_figures.py::main",
+        "paper/combustion_technical_note/figures/renderer_support.py::topology_figure",
+        "paper/combustion_experiments/run.py",
+        "paper/combustion_experiments/runs/assessment-2026-09-19/graphs.npz"
+      ],
+      "setup": "24 agents, seeds0\u201349,600 updates; first80 full attention. Thereafter agents0\u20133 full attention and agents4\u201323 weights(1,.01,.01). SD1,omega.9,alpha_m.02. W=(A+I)/row_sum. Cycle/ring,wheel,community([4,20],intra1,inter.06,seed0),complete. Same changed mass signal as cycle.",
+      "results": "Restricted-group .9 crossings: complete50/50 median round248, wheel50/50 median261, community50/50 median530, ring0/50 by round599. Ring final qO .734864; community .9774. Thin curves all20 restricted agents in seed0, heavy curves mean over50 seeds.",
+      "interpretation": "Specified networks and source placements differ in finite-horizon adoption. Ring noncrossings are censored, not proof of permanent lock-in. Graph density and source placement co-vary with unnormalized Laplacian lambda2.",
+      "notes": [
+        "Identical PDF across versions. Cycle means ring topology, not probability/entropy cycle. The archive uses lambda2 of unnormalized L; dynamics use row-normalized self-plus-neighbor W."
+      ],
+      "appearances": [
+        {
+          "version": "camera",
+          "figure": 5
+        },
+        {
+          "version": "layout",
+          "figure": 3
+        }
+      ],
+      "sha256": {
+        "camera": "682c2c523e13e7fa07d1627c3d9c31eca1554ad49c70c565823a71659e493a94",
+        "layout": "682c2c523e13e7fa07d1627c3d9c31eca1554ad49c70c565823a71659e493a94"
+      }
+    },
+    "fig_adaptation.pdf": {
+      "title": "Communication under selective observation after a change",
+      "kind": "simulation",
+      "conditions": [
+        "adaptation_social",
+        "adaptation_isolated",
+        "adaptation_reference"
+      ],
+      "source": [
+        "paper/combustion_technical_note/figures/plot_figures.py::main",
+        "paper/combustion_technical_note/figures/renderer_support.py::adaptation_figure",
+        "paper/combustion_experiments/run.py"
+      ],
+      "setup": "16 agents,seeds0\u201319,1500 total updates,common80-update fully observing communicating prehistory. Branch after mass shift to gas-only/mass-only with sharing, same selective observations isolated, or independent full observations. SD1,omega.9; alpha_m.02 where enabled. Plot first500 rounds but losses average last375 updates.",
+      "results": "Sharing produces oxygen adoption in both groups; isolated gas endpoint qO .001444, mass \u22481. Full-observation independent agents both \u22481. Mean final-quarter MSE: network .00978759, isolated .68184001, full .03574773; NLL4.304792,4.935801,4.312920.",
+      "interpretation": "Communication passes useful mass evidence to gas observers. Full-information reference works independently, so it is not a matched information-budget centralized oracle.",
+      "notes": [
+        "An older repo RESULTS.md incorrectly says figure endpoints use last200 updates. Attached captions and actual renderer explicitly use last375; use the latter."
+      ],
+      "appearances": [
+        {
+          "version": "camera",
+          "figure": 4
+        }
+      ],
+      "sha256": {
+        "camera": "a786b2f4183efa3b61f33999dbd51423abdab2d16f1c5bb2dcd8d37e87857592"
+      }
+    },
+    "fig03_camp_distance.pdf": {
+      "title": "Original unequal-retention camp-distance comparison",
+      "kind": "simulation",
+      "conditions": [
+        "wall_plain_original",
+        "wall_gated_original",
+        "wall_rivals_original"
+      ],
+      "source": [
+        "paper/combustion_technical_note/figures/plot_figures.py::camps",
+        "paper/combustion_technical_note/figures/renderer_support.py::wall_distance",
+        "paper/combustion_experiments/run.py"
+      ],
+      "setup": "16 agents,seeds0\u201319,1500 updates,constant oxygen signal(1,1,1),SD.5,8 gas-only and8 mass-only. Complete uniform W=1/16. Plain K1 omega1, gated K1 omega.95, candidates K2 omega.3 and alpha_m.02. Gaussian groups begin at distinct release/oxygen marginal references and retain group-specific anchors. Candidates give both references to everyone. Distance is norm of group means of MAP-selected candidate observable means; log/log axes.",
+      "results": "Endpoint distance plain .000255737,gated .055324153,candidates .097303583; candidate late-window distance \u2248.1083. Both candidate groups ultimately qO=1; no opposing-camp event in any of20 seeds.",
+      "interpretation": "Different numerical predictions are not opposing theoretical commitments. Retention and references differ across configurations, so this is not an isolated representation-count ablation.",
+      "notes": [
+        "Camera Fig7 stacks this PDF above fig_camp_choices.pdf under a single figure number. Do not replace its data with layout Fig4 data while claiming exact reproduction."
+      ],
+      "appearances": [
+        {
+          "version": "camera",
+          "figure": 7
+        }
+      ],
+      "sha256": {
+        "camera": "cf5284c76547eaaaefef31fb4536d90aa05da6f05e5f62f426586e39fc92c5ce"
+      }
+    },
+    "fig_camp_choices.pdf": {
+      "title": "Actual theory choices accompanying old camp distance",
+      "kind": "simulation",
+      "conditions": [
+        "wall_rivals_original"
+      ],
+      "source": [
+        "paper/combustion_technical_note/figures/plot_figures.py::camp_choices",
+        "paper/combustion_experiments/run.py"
+      ],
+      "setup": "Exactly the same omega.3 candidate histories as fig03_camp_distance; zoom first150 and show entire1500 rounds. Constant world from outset, no step80 shift.",
+      "results": "Both gas and mass group endpoint mean qO=1. All20 seeds cross the population threshold, median round16; simultaneous opposed group criterion never holds.",
+      "interpretation": "Prevents interpreting a residual MAP prediction distance as a paradigm split.",
+      "notes": [
+        "This is the lower asset of camera Fig7, not an independent experiment or replication."
+      ],
+      "appearances": [
+        {
+          "version": "camera",
+          "figure": 7
+        }
+      ],
+      "sha256": {
+        "camera": "4e2e1758f3f78266f3654bee7796e91d04c6824d415af36b758addf97a704c3b"
+      }
+    },
+    "fig_identifiability.pdf": {
+      "title": "Fixed known-model discrimination from dependence",
+      "kind": "static Monte Carlo discrimination",
+      "conditions": [
+        "structural_check"
+      ],
+      "source": [
+        "paper/combustion_technical_note/figures/plot_figures.py::main",
+        "paper/combustion_technical_note/figures/renderer_support.py::structural_figure",
+        "paper/combustion_experiments/structural_check.py",
+        "paper/combustion_experiments/world.py"
+      ],
+      "setup": "Fresh iid draws from each candidate DAG,zero means,matched observable variances(.5,.8648,.8648). Release G residual changed .5\u2192.5448 for this check.200sequences per generating candidate; counts1,5,20,100,500 nested; sensorSD0,.5,1,2 sharing underlying draws. Known fixed Gaussian likelihoods and equal priors,no social/adaptive engine.",
+      "results": "Joint classifier accuracy after500 observations:100%,100%,100%,97% for listed SDs. AtSD1 accuracy83.75% after20 and99.75% after100. Product-of-marginal and duplicate controls stay at50%.",
+      "interpretation": "The two supplied distributions are discriminable from joint relationships after matching marginal distributions. This does not demonstrate graph discovery, unique causal identification, or structure-only performance of adaptive social experiments.",
+      "notes": [
+        "Bootstrap unit is one seed index retaining both source-candidate sequences,200 balanced pairs. Noise/sample-count settings are dependent, not independent replications."
+      ],
+      "appearances": [
+        {
+          "version": "camera",
+          "figure": 8
+        }
+      ],
+      "sha256": {
+        "camera": "e6c562cc136b8d89c773ac0e5ce76e24d3375b53233eafaa6c1f42031f3e37b5"
+      }
+    },
+    "fig_matched_camp_models.pdf": {
+      "title": "Matched Gaussian, gated Gaussian and candidate camp comparison",
+      "kind": "simulation",
+      "conditions": [
+        "G_plain_info",
+        "G_gated_info",
+        "C10",
+        "C11",
+        "C10_gasvar_matched"
+      ],
+      "source": [
+        "paper/gaussian_comparison/figures/plot_figures.py",
+        "paper/gaussian_comparison/run.py",
+        "paper/gaussian_comparison/analyze.py",
+        "paper/communication_experiments/run.py",
+        "paper/communication_experiments/analyze.py"
+      ],
+      "setup": "16agents,50 paired seeds10000\u201310049,5000 updates,constant(1,1,1),SD.5,omega.3,beta.05 total cross-group weight,8gas-only/8mass-only. K1 begins at one shared information-pooled observable reference for all agents. Gate nu.01 reweights and renormalizes weighted W. Candidate private C10 alpha_m0, shared C11 alpha_m.02, variance control retains privateweights. Main distance uses mixture predictive means. Losses states3751\u20135000.",
+      "results": "Late D:plain .502249,gate .526806,privatecandidates1.946371,sharedcandidates.105834,variancecontrol.111447. GasMSE respectively.355519,.368099,1.278857,.019563,.020661; massMSE.159392,.160097,.019634,.019634,.019634.",
+      "interpretation": "Continual selective observations plus reference anchoring sustain systematic Gaussian prediction differences. Gate modestly enlarges the gap and worsens prediction. Explicit opposing theory choices require privateweights here and are costly for gas observers. Model-weight sharing removes opposition.",
+      "notes": [
+        "Candidate histories reused from communication study, not new independent replications. Main distance changed from old MAP readout to mixture readout. Equal omega and access do not make single-Gaussian and mixture priors identical."
+      ],
+      "appearances": [
+        {
+          "version": "layout",
+          "figure": 4
+        }
+      ],
+      "sha256": {
+        "layout": "54a6ce0112867c5bdc09522f0e84d37b9c3450311d1dd78a6efc3481fbee88af"
+      }
+    },
+    "fig_network_channels.pdf": {
+      "title": "Separating conditional and model-weight exchange",
+      "kind": "simulation",
+      "conditions": [
+        "N00",
+        "N10",
+        "N01",
+        "N11"
+      ],
+      "source": [
+        "paper/communication_experiments/figures/plot_figures.py",
+        "paper/communication_experiments/run.py",
+        "paper/communication_experiments/analyze.py"
+      ],
+      "setup": "24agents,50 paired seeds0\u201349,600 updates,complete graph,common80-update prehistory.4 fully observing,20 weights(1,.01,.01).SD1,omega.9. Factorial neither/conditional only/modelweights only/both; enabled modelrate.02. All share postbranch measurement streams. Losses states451\u2013600.",
+      "results": "Restricted late qO .579145,.102894,.923908,1; MSE.325758,.287230,.030871,.004791; NLL4.665943,4.615481,4.422448,4.307251. Weight-only/both cross .9 in50/50seeds; neither/conditionalonly0/50. Median crossing completedstate496 vs249.",
+      "interpretation": "Sharing support alone transmits oxygen adoption; sharing conditional beliefs as well improves prediction and speeds adoption. Conditional-only can lower qO yet improve late prediction versus neither, so preference and prediction differ.",
+      "notes": [
+        "Three previously available network arms are extensions of archived seeds and reproduce earlier arrays; new model-weight-only arm completes comparison. Marker state80 is pre-change; first changed observation produces state81."
+      ],
+      "appearances": [
+        {
+          "version": "layout",
+          "figure": 5
+        }
+      ],
+      "sha256": {
+        "layout": "b836b4616920498d366f73c69295ec48957a5d77a34f42a09e65b54b99ee77c9"
+      }
+    },
+    "fig_camp_channels.pdf": {
+      "title": "Camp theory choices across two communication channels",
+      "kind": "simulation",
+      "conditions": [
+        "C00",
+        "C10",
+        "C01",
+        "C11"
+      ],
+      "source": [
+        "paper/communication_experiments/figures/plot_figures.py",
+        "paper/communication_experiments/run.py",
+        "paper/communication_experiments/analyze.py"
+      ],
+      "setup": "16agents,50 paired seeds10000\u201310049,5000 updates,constantoxygen signal,SD.5,omega.3,beta.05.8gas-only/8mass-only. Neither/conditionalonly/modelweightsonly/both. Enabled alpha_m.02. Groupcurves and individual gasprobabilitystrips states1500/5000;400valuespercondition nestedwithin50seeds.",
+      "results": "LategasqO: neither1.85e\u22129,conditionalonly6.21e\u22126,weightsonly1,both1. Mass\u22481. Primaryopposition occupancy passes50/50 for neither/conditionalonly and0/50 forweight-sharingarms at both reportinghorizons. Stricter unanimous criterion conditionalonly47/50 at1500,50/50 at5000.",
+      "interpretation": "Opposing preferences coexist with positive conditional communication under restricted influence and private model support. Conditional exchange does not create the split: isolation also separates. Finite-window survival is not permanent fixation.",
+      "notes": [
+        "400strip points are not400 independent replications. Do not claim a split under unrestricted sharing of both conditional beliefs and model weights."
+      ],
+      "appearances": [
+        {
+          "version": "layout",
+          "figure": 7
+        }
+      ],
+      "sha256": {
+        "layout": "eff0aae2752971e86a6f56ce18533105f8455b0b3fcf11ad554770e36a84c07c"
+      }
+    },
+    "fig_reference_diagnostics.pdf": {
+      "title": "Reference variance, retention and cross-group influence controls",
+      "kind": "simulation with analytic forecast",
+      "conditions": [
+        "C10",
+        "C10_beta50",
+        "C10_omega90",
+        "C10_gasvar_matched"
+      ],
+      "source": [
+        "paper/communication_experiments/figures/plot_figures.py",
+        "paper/communication_experiments/run.py",
+        "paper/communication_experiments/stationary_predictions.py",
+        "paper/communication_experiments/analyze.py"
+      ],
+      "setup": "Same campstreams/constantworld asC10,conditionalsharingonly/privateweights. Change one:beta.05\u2192.5,omega.3\u2192.9,releasegasresidual.5\u2192.5448. Panel(a) localprelearning oxygen-minus-release score states3751\u20135000; grey ticks stationarypreconfirmation forecasts. Panel(b)endpointqO.",
+      "results": "Gas late scores primary\u2212.003018703,beta.5+.013823549,omega.9+.001135666,matchedvariance+.001086645; corresponding forecasts\u2212.003022079,+.013773431,+.001130619,+.001078491. All controls remove primary opposition. Latewindow gasqO\u22481,.938449,.982782 for threecontrols (these numbers are not panelbendpointvalues).",
+      "interpretation": "Small reference-scale differences can accumulate into confident preferences. Matching gas variance reverses score sign. Stronger mixing or weaker anchoring likewise reverses preference. Separation is reference-dependent and not generically truth-tracking.",
+      "notes": [
+        "Means/graphsigns remain unchanged in variancecontrol; full precision/info rebuilt. Do not confuse scorewindow with endpoint probability."
+      ],
+      "appearances": [
+        {
+          "version": "layout",
+          "figure": 8
+        }
+      ],
+      "sha256": {
+        "layout": "ec29b626bc2ca73def2b41aca1d9f827331fcdf96ffa38b7a19da56c23c5567a"
+      }
+    },
+    "fig_matched_camp_diagnostics.pdf": {
+      "title": "Reference and readout sensitivity for matched comparison",
+      "kind": "simulation and estimator comparison",
+      "conditions": [
+        "G_plain_info",
+        "G_gated_info",
+        "G_plain_moment",
+        "G_gated_moment",
+        "C10",
+        "C11"
+      ],
+      "source": [
+        "paper/gaussian_comparison/figures/plot_figures.py",
+        "paper/gaussian_comparison/run.py",
+        "paper/gaussian_comparison/analyze.py"
+      ],
+      "setup": "Same50campstreams,5000updates. AlternativeK1reference matches equal-mixture first/secondmoments including betweenmeanvariance after marginalization. Shows informationvs momentdistance, realizedcrossgroupweights, candidateMAPvsmixturedistance, and three orders of averaging signedgap/norm.",
+      "results": "Momentplain/gated lateD.701686/.759441 vsinfoplain/gated.502249/.526806. Gated realizedcrossweight info gas/mass.006389/.006869, moment.007398/.008809 versusbase.05. SharedcandidateDinstant.105834,meanwithinseedtimeaveragednorm.003850,descriptiveacrossseed/timegapnorm.0000441.",
+      "interpretation": "Referencecompression matters more here than gateincrement. Larger separation can improve MSE under one compression change and worsen it under gating, so distance is not quality. Sharedcandidate residual instantaneousD is largely noisy privateupdates, not stable directionalopposition.",
+      "notes": [
+        "Info reference mean(.623448,.644510,.008680) differs frommomentmean(1,1,0). Across-seednorm has no inferentialinterval; signedcoordinateintervals are the appropriate directionalcheck."
+      ],
+      "appearances": [
+        {
+          "version": "layout",
+          "figure": 9
+        }
+      ],
+      "sha256": {
+        "layout": "daa7c3fd4da42c72766e62446f6f5d8988847be2798d4022b4164b713653433b"
+      }
+    },
+    "fig_weight_sharing_intervention.pdf": {
+      "title": "Enable model-weight exchange at a fixed state",
+      "kind": "paired continuation",
+      "conditions": [
+        "S_keep_private",
+        "S_enable_weights"
+      ],
+      "source": [
+        "paper/communication_experiments/figures/plot_figures.py",
+        "paper/communication_experiments/run.py",
+        "paper/communication_experiments/analyze.py"
+      ],
+      "setup": "EveryC10 seed branches at exactstate1500. Continueprivateweights or enablealpha_m.02; allconditionalstates/referencebeliefs/trainingRNG/localpredictivescores remain identical. PlotgasqO full3500-updatecontinuation andfirst100updates;zero is preinterventionstate1500.",
+      "results": "Enabling weight exchange removes established gas/massopposition rapidly; privatebranch retains it. Mass remains qO=1 to recordedprecision. Conditionalstates andscores are unchanged because they do not depend on categoricalweights in thisengine.",
+      "interpretation": "A direct intervention isolates model-support communication within this experiment. Established opposition survives neither unrestricted support exchange nor all tested reference controls.",
+      "notes": [
+        "All50seeds used atfixedbranchstate; no selection of onlysuccessful splitseeds. Primary sustained-loss event requires20consecutive nonopposed states; distinguish first eventstart from detection19updateslater."
+      ],
+      "appearances": [
+        {
+          "version": "layout",
+          "figure": 10
+        }
+      ],
+      "sha256": {
+        "layout": "b23b43fb3d2551e2b6299c5f1ebdd93eab91f204f012cff247f5e53c56b23938"
+      }
+    }
+  },
+  "notes": [
+    "18 numbered figure appearances (8 camera +10 layout),19 asset appearances,16 unique PDF assets. All bundled figure PDFs are used. Camera Fig7 contains2assets; threeassets are identical acrossversions (model,cycle,topology).",
+    "Older and newer campfigures are different experiments, not competing renderings of the same arrays. Preserve both recipe names, initialization,retention,social weights,seeds,horizons,and readout definitions.",
+    "The main dynamic experiments observe a prescribed signal plus independent sensor noise. Only the separate identifiabilitycheck samples iid from candidateDAGs. Claims of structuraldiscovery or ecologicalrealism would exceed evidence.",
+    "Initial reference DAGs define Gaussianmeans/covariances, not persistent constrainedcausalgraphs. LearnedGaussianprecisionmatrices can acquire entries through genericBayesian updating/socialpooling.",
+    "Published layout captures private-supportconditionalexchange separation but also includes controls demonstrating its sensitivity and reversal. Opposedchoices are not synonymous with positivecontinuous campdistance.",
+    "No beliefutility,sensory adaptivegate,candidategeneration,pruning,or actionpolicy is used. GatedGaussiancomparison gates conditional socialinfluence only.",
+    "Old plots use generatingroundt forpostupdatestate t+1; newerplots usecompletedstate n. Marker80 therefore denotes different plottingcoordinate conventions. Layoutmethods explain this; reproductionmustnot silentlyshiftaxes.",
+    "Source filenames are not paperfigurenumbers. fig04_cycle is cameraFig3/layoutFig2; fig06_topology is cameraFig5/layoutFig3.",
+    "Older combustionRESULTS.md contains a stale last200adaptation-window sentence; actual attachedPDFcaption andrenderer use375. The manuscriptpaper says375 consistently.",
+    "TopologyPDF reports lambda2 descriptively; cannot interpret topologycomparison as isolated spectralmechanism becausegraphdensity andsourceposition covary.",
+    "Schematicrestoration comes from an older renderer outside the combustiontechnicalnote directory. Its exactPDFmatches scripts/plot_publication_schematics.py generated fig01_model.pdf, not combustion fig_model.pdf.",
+    "Strict figure reproduction requires12old numericalfiles includingstructuralcheck,11communicationconditions plusinterventioncontinuations,4Gaussianconditions,3schematic/analytic assets; rendering whole legacyreview also generates unusedplots and is unnecessary."
+  ]
+}

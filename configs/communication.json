@@ -1,0 +1,417 @@
+{
+  "schema": 1,
+  "name": "communication-channel-confirmation",
+  "date": "2026-09-20",
+  "network_seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49
+  ],
+  "camp_seeds": [
+    10000,
+    10001,
+    10002,
+    10003,
+    10004,
+    10005,
+    10006,
+    10007,
+    10008,
+    10009,
+    10010,
+    10011,
+    10012,
+    10013,
+    10014,
+    10015,
+    10016,
+    10017,
+    10018,
+    10019,
+    10020,
+    10021,
+    10022,
+    10023,
+    10024,
+    10025,
+    10026,
+    10027,
+    10028,
+    10029,
+    10030,
+    10031,
+    10032,
+    10033,
+    10034,
+    10035,
+    10036,
+    10037,
+    10038,
+    10039,
+    10040,
+    10041,
+    10042,
+    10043,
+    10044,
+    10045,
+    10046,
+    10047,
+    10048,
+    10049
+  ],
+  "network_T": 600,
+  "network_shift": 80,
+  "network_N": 24,
+  "camp_N": 16,
+  "camp_T": 5000,
+  "branch_start": 1500,
+  "heldout_draws": 4,
+  "batch_seeds": 5,
+  "chunk_steps": 250,
+  "conditions": [
+    {
+      "name": "N00",
+      "family": "network",
+      "fuse_nets": false,
+      "alpha_m": 0.0,
+      "omega": 0.9,
+      "sigma_o": 1.0,
+      "beta": 0.5,
+      "gasvar_matched": false
+    },
+    {
+      "name": "N10",
+      "family": "network",
+      "fuse_nets": true,
+      "alpha_m": 0.0,
+      "omega": 0.9,
+      "sigma_o": 1.0,
+      "beta": 0.5,
+      "gasvar_matched": false
+    },
+    {
+      "name": "N01",
+      "family": "network",
+      "fuse_nets": false,
+      "alpha_m": 0.02,
+      "omega": 0.9,
+      "sigma_o": 1.0,
+      "beta": 0.5,
+      "gasvar_matched": false
+    },
+    {
+      "name": "N11",
+      "family": "network",
+      "fuse_nets": true,
+      "alpha_m": 0.02,
+      "omega": 0.9,
+      "sigma_o": 1.0,
+      "beta": 0.5,
+      "gasvar_matched": false
+    },
+    {
+      "name": "C00",
+      "family": "camp",
+      "fuse_nets": false,
+      "alpha_m": 0.0,
+      "omega": 0.3,
+      "sigma_o": 0.5,
+      "beta": 0.05,
+      "gasvar_matched": false
+    },
+    {
+      "name": "C10",
+      "family": "camp",
+      "fuse_nets": true,
+      "alpha_m": 0.0,
+      "omega": 0.3,
+      "sigma_o": 0.5,
+      "beta": 0.05,
+      "gasvar_matched": false
+    },
+    {
+      "name": "C01",
+      "family": "camp",
+      "fuse_nets": false,
+      "alpha_m": 0.02,
+      "omega": 0.3,
+      "sigma_o": 0.5,
+      "beta": 0.05,
+      "gasvar_matched": false
+    },
+    {
+      "name": "C11",
+      "family": "camp",
+      "fuse_nets": true,
+      "alpha_m": 0.02,
+      "omega": 0.3,
+      "sigma_o": 0.5,
+      "beta": 0.05,
+      "gasvar_matched": false
+    },
+    {
+      "name": "C10_beta50",
+      "family": "camp",
+      "fuse_nets": true,
+      "alpha_m": 0.0,
+      "omega": 0.3,
+      "sigma_o": 0.5,
+      "beta": 0.5,
+      "gasvar_matched": false
+    },
+    {
+      "name": "C10_omega90",
+      "family": "camp",
+      "fuse_nets": true,
+      "alpha_m": 0.0,
+      "omega": 0.9,
+      "sigma_o": 0.5,
+      "beta": 0.05,
+      "gasvar_matched": false
+    },
+    {
+      "name": "C10_gasvar_matched",
+      "family": "camp",
+      "fuse_nets": true,
+      "alpha_m": 0.0,
+      "omega": 0.3,
+      "sigma_o": 0.5,
+      "beta": 0.05,
+      "gasvar_matched": true
+    }
+  ],
+  "engine": "src/iwai_figures/engine.py",
+  "world_source": "src/iwai_figures/world.py",
+  "dtype": "float64",
+  "jax_enable_x64": true,
+  "rho_L": 0.0,
+  "social_gate": null,
+  "model_gate": null,
+  "utility": "absent",
+  "candidate_order": [
+    "release",
+    "oxygen"
+  ],
+  "observable_coordinates": [
+    "C",
+    "G",
+    "M"
+  ],
+  "candidate_hidden_coordinates": [
+    "P",
+    "O"
+  ],
+  "residual_variances": [
+    0.25,
+    0.5,
+    0.5,
+    0.5
+  ],
+  "matched_release_gas_residual_variance": 0.5448,
+  "initial_probabilities": [
+    0.5,
+    0.5
+  ],
+  "network_phase2_seed_offset": 1000,
+  "network_fully_observing_ids": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "network_restricted_attention": [
+    1.0,
+    0.01,
+    0.01
+  ],
+  "network_prehistory_attention": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "network_signals": [
+    [
+      0.0,
+      1.0,
+      1.0,
+      -1.0
+    ],
+    [
+      0.0,
+      1.0,
+      1.0,
+      1.0
+    ]
+  ],
+  "camp_signal": [
+    0.0,
+    1.0,
+    1.0,
+    1.0
+  ],
+  "camp_attention_A": [
+    0.0,
+    1.0,
+    0.0
+  ],
+  "camp_attention_B": [
+    0.0,
+    0.0,
+    1.0
+  ],
+  "branch_conditions": [
+    "S_keep_private",
+    "S_enable_weights"
+  ],
+  "branch_policy": "Every C10 seed branches at exact state1500. Keep-private reuses continuation after exact restart validation; enable alpha_m=.02 without changing conditional states or RNG.",
+  "seed_policy": "Fresh camp seeds10000..10049 reserved after scanning existing local protocol/seed declarations; no known use in available registry. External pilot samples unavailable. Network same-seed paired extension, not independent confirmation of old arms.",
+  "random_conventions": {
+    "training": "JAX PRNGKey(seed), engine splits entering key into nextkey/subkey, split subkey N ways; explicit carried keys at restart",
+    "network": "Common80-roundprehistory once; clone Pi,h,L and reset phase2 keys to PRNGKey(seed+1000) as archived",
+    "evaluation": "fold_in(entering training key,314159); jax.random.normal((N,4,3),float64); independent replicate of current signal, never fed back"
+  },
+  "analysis": {
+    "seed": 20260920,
+    "bootstrap_replicates": 2000,
+    "bootstrap_unit": "whole independent seed; same resample indices across paired arms",
+    "confidence_interval": "pointwise95%percentile bootstrap for means/paired contrasts; Wilson95% for pass fractions",
+    "windows": {
+      "network_tail": [
+        450,
+        600
+      ],
+      "camp_1500_tail": [
+        1125,
+        1500
+      ],
+      "camp_5000_tail": [
+        3750,
+        5000
+      ]
+    },
+    "endpoints_separate": true,
+    "primary_opposition": "mean_A(qO)<.1 and mean_B(qO)>.9 within each seed and state",
+    "primary_seed_pass": "opposition occupancy>=.9 within reporting window",
+    "secondary_opposition": "fraction_A(qO<.1)>=.9 and fraction_B(qO>.9)>=.9 (all8each)",
+    "event_dwell_updates": 20,
+    "event_times": "Record initial state of interval and detection state=start+19; no event means rightcensored,neverimpute horizon as event",
+    "network_crossings": "first postchange round t>=80, plus completedstate n=t+1",
+    "branch_loss": "20consecutive nonopposing states after1500; allseed primary, branchoppositioncounts separately",
+    "prediction": "post-update mixture mean MSE vs noiseless signal; mixture NLL averaged4full noisy independent observations peragent then averageagents",
+    "factorial_contrasts": [
+      "01-00",
+      "11-10",
+      "10-00",
+      "11-01",
+      "(11-10)-(01-00)"
+    ],
+    "metrics": [
+      "probability",
+      "MSE",
+      "NLL",
+      "score",
+      "rawlogodds",
+      "individualentropy",
+      "betweenagentdisagreement",
+      "observablemeanandMAPdistances"
+    ]
+  },
+  "stationary_forecasts": {
+    "C10": [
+      -0.003022079,
+      0.582598809
+    ],
+    "C10_beta50": [
+      0.013773431,
+      0.931656831
+    ],
+    "C10_omega90": [
+      0.001130619,
+      0.014425528
+    ],
+    "C10_gasvar_matched": [
+      0.001078491,
+      0.582569828
+    ]
+  },
+  "figure_rule": {
+    "main_candidates": [
+      "network_channel_comparison",
+      "camp_channel_comparison",
+      "reference_and_memory_diagnostics",
+      "fixed_time_sharing_intervention"
+    ],
+    "illustrative_seed": 10000,
+    "selection": "All specified conditions; every seed retained; no outcome-based selection. Up to4conditionspertrajectorypanel; controls in aligned separatepanels.",
+    "style": "orx publication figure rules, real LaTeX T1 Computer Modern per user,4.8inLNCSwidth,vectorPDF+SVG,PNGpreview",
+    "bands": "pointwise95%whole-seed bootstrap of means; no smoothing; probability and entropy intervals bounded by construction",
+    "branch_display": "Full continuation states1500..5000 plus first100updates; specified before outcomes using analytical expectation of rapid support transfer."
+  },
+  "deferred": [
+    "negative-gas world",
+    "changed reference means",
+    "model-score forgetting",
+    "belief-dependent trust",
+    "different camp priors",
+    "additional candidates",
+    "large K1 comparison",
+    "sensitivity grids"
+  ],
+  "interpretation_limits": [
+    "prescribed groups and fixedattention",
+    "constant signal with private noise,not DAGsamples",
+    "private modelweights in primary C10",
+    "modelchoices supplied,not discovered",
+    "finitewindow occupancy,not permanent fixation",
+    "candidate preference is not causalgraphrecovery or guaranteedpredictionbenefit"
+  ],
+  "confirmation_disclosure": "Analytically selected beta=.05 and prior external pilot were known before this confirmation; protocolfreeze is not a claim of retrospective preregistration.",
+  "condition_workers": 3
+}

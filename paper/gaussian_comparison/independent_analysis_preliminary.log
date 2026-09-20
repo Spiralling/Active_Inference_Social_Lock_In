@@ -1,8 +1,0 @@
-Independently verified G_plain_info portable inputs
-Independently verified G_gated_info portable inputs
-Independently verified G_plain_moment portable inputs
-Independently verified G_gated_moment portable inputs
-Independently verified C10 portable inputs
-Independently verified C11 portable inputs
-Independently verified C10_gasvar_matched portable inputs
-PASS {"bootstrap_seed_indices": 100000, "public_state_axis": 5000, "portable_distance_from_observable_difference": 3500000, "all_seed_window_metrics": 22200, "portable_seed_window_metrics": 22200, "all_summary_intervals": 1332, "descriptive_ensemble_norm_order": 28, "all_plotted_curve_means": 80000, "fixed_state_curve_intervals": 624, "all_paired_seed_differences": 18800, "all_paired_contrast_intervals": 1128}
