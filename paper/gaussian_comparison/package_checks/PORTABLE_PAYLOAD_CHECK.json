@@ -1,0 +1,177 @@
+{
+  "status": "passed",
+  "extraction_directory": "/private/var/folders/4j/0mg6l_gd2k7bwqy4zsfy3v140000gp/T/iwai-gaussian-portability-do4f9tx9",
+  "python": "3.12.9 (v3.12.9:fdb81425a9a, Feb  4 2025, 12:21:36) [Clang 13.0.0 (clang-1300.0.29.30)]",
+  "platform": "macOS-26.3-arm64-arm-64bit",
+  "archive_name": "IWAI_communication_camera_ready_2026-09-20_with_gaussians.zip",
+  "payload_root": "/private/var/folders/4j/0mg6l_gd2k7bwqy4zsfy3v140000gp/T/iwai-gaussian-portability-do4f9tx9/IWAI_communication_camera_ready_2026-09-20",
+  "manifest_sha256": "044a8a38bd39d031094704993c8fe830e6b7d290674d52ec31c4afdeafa6d156",
+  "mathematical_tests": {
+    "status": "passed",
+    "tests": 11,
+    "failures": 0,
+    "errors": 0,
+    "elapsed_seconds": 95.3193973749876,
+    "test_seeds": "900100..900109; excluded from scientific paired streams",
+    "independence": "Expected references, weighted gates, Gaussian densities, information updates and predictive NLL derived separately in NumPy/SciPy; production engine called only for actual values and engine-equivalence check."
+  },
+  "analysis_boundary_tests": "See analysis_boundaries.log for complete unittest result",
+  "figure_validation": {
+    "status": "passed",
+    "new_figures": 2,
+    "prior_figures_unchanged": 7,
+    "pack_pages": 9,
+    "width_inches": 4.8,
+    "fonts": {
+      "fig_matched_camp_models": [
+        "CMMI8",
+        "CMR8",
+        "SFBX0800",
+        "SFRM0700",
+        "SFRM0800"
+      ],
+      "fig_matched_camp_diagnostics": [
+        "CMMI8",
+        "CMR8",
+        "SFBX0800",
+        "SFRM0700",
+        "SFRM0800"
+      ]
+    },
+    "bounded_probability_or_influence_arrays": 20,
+    "vector": "no raster images in plot PDFs",
+    "plotting_style": "orx with real LaTeX Computer Modern",
+    "uncertainty": "2000 shared whole-seed resamples, seed20260920, pointwise95percentile; all50pairedseeds"
+  },
+  "new_asset_sha256": {
+    "paper/gaussian_comparison/figures/fig_matched_camp_models.svg": "f0f5ea62afb89eba04468d47a2ed2198d51f11d7bdf95bc6a8da2646f9afb986",
+    "paper/gaussian_comparison/figures/fig_matched_camp_diagnostics.svg": "b723f0523cfaa6410a4cbff9cf07030a65c4b92d0cf5a8779465e6e49364c5bd",
+    "paper/gaussian_comparison/figures/fig_matched_camp_diagnostics.pdf": "daa7c3fd4da42c72766e62446f6f5d8988847be2798d4022b4164b713653433b",
+    "paper/gaussian_comparison/figures/fig_matched_camp_diagnostics.png": "fb905835a06b426ecfe534555677b8f1904f51be17c752d4fcd1170bab6fddbd",
+    "paper/gaussian_comparison/figures/fig_matched_camp_models.png": "471ea2f492a26d0a23d971b45aea04012e92323e27ecc887304f733239c38477",
+    "paper/gaussian_comparison/figures/fig_matched_camp_models.pdf": "54a6ce0112867c5bdc09522f0e84d37b9c3450311d1dd78a6efc3481fbee88af"
+  },
+  "new_asset_byte_equality": {
+    "paper/gaussian_comparison/figures/fig_matched_camp_models.svg": true,
+    "paper/gaussian_comparison/figures/fig_matched_camp_diagnostics.svg": true,
+    "paper/gaussian_comparison/figures/fig_matched_camp_diagnostics.pdf": true,
+    "paper/gaussian_comparison/figures/fig_matched_camp_diagnostics.png": true,
+    "paper/gaussian_comparison/figures/fig_matched_camp_models.png": true,
+    "paper/gaussian_comparison/figures/fig_matched_camp_models.pdf": true
+  },
+  "old_asset_sha256": {
+    "paper/communication_experiments/figures/fig_network_channels.pdf": "b836b4616920498d366f73c69295ec48957a5d77a34f42a09e65b54b99ee77c9",
+    "paper/communication_experiments/figures/fig_network_channels.svg": "6364fd38c9d544679724949982323bef293a1dcaf64e7dee9a150adfebbbefbd",
+    "paper/communication_experiments/figures/fig_network_channels.png": "f594b247ca4dc83afab11409929ef63d86bd2cd4871d9bd1cd6a899c12bb436d",
+    "paper/communication_experiments/figures/fig_camp_channels.pdf": "eff0aae2752971e86a6f56ce18533105f8455b0b3fcf11ad554770e36a84c07c",
+    "paper/communication_experiments/figures/fig_camp_channels.svg": "2a970d823d0b1742cbb0409a7925311f8d45b208f80d98c75a7445b126ec0eee",
+    "paper/communication_experiments/figures/fig_camp_channels.png": "cb5442087fc3bd3a070c1afe77091d82b2703d9f0205831b158bed5942efd6b3",
+    "paper/communication_experiments/figures/fig_reference_diagnostics.pdf": "ec29b626bc2ca73def2b41aca1d9f827331fcdf96ffa38b7a19da56c23c5567a",
+    "paper/communication_experiments/figures/fig_reference_diagnostics.svg": "7ee379365f551cf2880be930ec7169501feedd1e25fbd7384ec2e27e0fdb11fc",
+    "paper/communication_experiments/figures/fig_reference_diagnostics.png": "3e7140a35802d41c6e3266cb76009549ba96f4d848bde6d1bc2f98bbb4fef436",
+    "paper/communication_experiments/figures/fig_weight_sharing_intervention.pdf": "b23b43fb3d2551e2b6299c5f1ebdd93eab91f204f012cff247f5e53c56b23938",
+    "paper/communication_experiments/figures/fig_weight_sharing_intervention.svg": "5de40feca248b0b66174cf518edf111f460c201001034ab44c7bba8e8b31efb1",
+    "paper/communication_experiments/figures/fig_weight_sharing_intervention.png": "bffc458214080801b16ac122a6d8e512ff42f60162e61c514cb9f1d65d1a2e4e",
+    "paper/communication_experiments/figures/fig_all_camp_conditions.pdf": "600b32e444040ffb840a7b15a564b23a9ae206c0b9a34c7f4510864fbdbc74d6",
+    "paper/communication_experiments/figures/fig_all_camp_conditions.svg": "6891716f8de541b9fea97e30553982200b759ea0262a8e1ea1f72c77f132964a",
+    "paper/communication_experiments/figures/fig_all_camp_conditions.png": "edea67c4a0b6d08fe1f177aa10a580d3dccdc8440edd91041b4afba301c51663",
+    "paper/communication_experiments/figures/fig_intervention_prediction.pdf": "d164da9b2b4f74ae03792a06ec04d42bf8e24ca370c9f2e35e4e2b2ea7456605",
+    "paper/communication_experiments/figures/fig_intervention_prediction.svg": "6155ce7ce5fe578ea71f2e63f6750e085b296d961160d387282b2adefc4d56ad",
+    "paper/communication_experiments/figures/fig_intervention_prediction.png": "12c5dc0f3403542e6606ca446a7f99040ebbcdff44487530f83fa3d90e3e09d2",
+    "paper/communication_experiments/figures/fig_individual_and_uncertainty.pdf": "5a48431d1d53684dcb3efc61ed3a7d53adb1443e4add3b2b7ff31a936b02eeea",
+    "paper/communication_experiments/figures/fig_individual_and_uncertainty.svg": "b636ec547e358c4df638d7af93eb0340e7183f34bb56590986736b6d5c455499",
+    "paper/communication_experiments/figures/fig_individual_and_uncertainty.png": "fc2321b2d9321b81711714d963b4cf5cf1b24369c661b6ad2655ad6a4c3d2cc0"
+  },
+  "old_asset_unchanged": {
+    "paper/communication_experiments/figures/fig_network_channels.pdf": true,
+    "paper/communication_experiments/figures/fig_network_channels.svg": true,
+    "paper/communication_experiments/figures/fig_network_channels.png": true,
+    "paper/communication_experiments/figures/fig_camp_channels.pdf": true,
+    "paper/communication_experiments/figures/fig_camp_channels.svg": true,
+    "paper/communication_experiments/figures/fig_camp_channels.png": true,
+    "paper/communication_experiments/figures/fig_reference_diagnostics.pdf": true,
+    "paper/communication_experiments/figures/fig_reference_diagnostics.svg": true,
+    "paper/communication_experiments/figures/fig_reference_diagnostics.png": true,
+    "paper/communication_experiments/figures/fig_weight_sharing_intervention.pdf": true,
+    "paper/communication_experiments/figures/fig_weight_sharing_intervention.svg": true,
+    "paper/communication_experiments/figures/fig_weight_sharing_intervention.png": true,
+    "paper/communication_experiments/figures/fig_all_camp_conditions.pdf": true,
+    "paper/communication_experiments/figures/fig_all_camp_conditions.svg": true,
+    "paper/communication_experiments/figures/fig_all_camp_conditions.png": true,
+    "paper/communication_experiments/figures/fig_intervention_prediction.pdf": true,
+    "paper/communication_experiments/figures/fig_intervention_prediction.svg": true,
+    "paper/communication_experiments/figures/fig_intervention_prediction.png": true,
+    "paper/communication_experiments/figures/fig_individual_and_uncertainty.pdf": true,
+    "paper/communication_experiments/figures/fig_individual_and_uncertainty.svg": true,
+    "paper/communication_experiments/figures/fig_individual_and_uncertainty.png": true
+  },
+  "regenerated_nine_page_pack_byte_identical": true,
+  "pack_sha256": "08e054854e13b0921b6f4239983708007f7e3a3667abaffe16131edde823e05f",
+  "plotted_curve_statistics_byte_identical": true,
+  "curve_statistics_sha256": "99980174a73a33037047b93746b236eb9a44bd0267beb39bd0e7ec8d3603c0bb",
+  "scope": "Fresh ZIP extraction, complete payload SHA manifest, all11 independent mathematical tests, all6 analysis boundary tests, figure validator before and after actual regeneration; all6 new PDF/SVG/PNG assets and9-page pack byte-identical; all21 old assets preserved without rerender.",
+  "hash_binding": "Archive final SHA intentionally omitted from this payload report. Parent writes an external final archive validation binding after inserting this report.",
+  "commands": [
+    {
+      "label": "payload_manifest",
+      "command": [
+        "/Users/davand/Library/CloudStorage/OneDrive-Personal/Documents/Programming/Active_Inference_Social_Lock_In/.venv-reproduction/bin/python",
+        "/private/var/folders/4j/0mg6l_gd2k7bwqy4zsfy3v140000gp/T/iwai-gaussian-portability-do4f9tx9/IWAI_communication_camera_ready_2026-09-20/VERIFY_PACKAGE.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 23.74900333303958,
+      "log_sha256": "80f0e17699de3bbc38f24928694773049e8d1a07bc191c278cb830f2d18d96cf"
+    },
+    {
+      "label": "independent_mathematics",
+      "command": [
+        "/Users/davand/Library/CloudStorage/OneDrive-Personal/Documents/Programming/Active_Inference_Social_Lock_In/.venv-reproduction/bin/python",
+        "/private/var/folders/4j/0mg6l_gd2k7bwqy4zsfy3v140000gp/T/iwai-gaussian-portability-do4f9tx9/IWAI_communication_camera_ready_2026-09-20/paper/gaussian_comparison/independent_tests.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 106.69928416702896,
+      "log_sha256": "0b7974d4a3dd220c16466009bd68eff2b12955d51eedf0449f7c4435a9091a9e"
+    },
+    {
+      "label": "analysis_boundaries",
+      "command": [
+        "/Users/davand/Library/CloudStorage/OneDrive-Personal/Documents/Programming/Active_Inference_Social_Lock_In/.venv-reproduction/bin/python",
+        "/private/var/folders/4j/0mg6l_gd2k7bwqy4zsfy3v140000gp/T/iwai-gaussian-portability-do4f9tx9/IWAI_communication_camera_ready_2026-09-20/paper/gaussian_comparison/test_analysis.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.8828607499599457,
+      "log_sha256": "b80852b2437a08b4e3e7434071f09896442c20914cf2ffd403285b1155d89f56"
+    },
+    {
+      "label": "validate_shipped_figures",
+      "command": [
+        "/Users/davand/Library/CloudStorage/OneDrive-Personal/Documents/Programming/Active_Inference_Social_Lock_In/.venv-reproduction/bin/python",
+        "/private/var/folders/4j/0mg6l_gd2k7bwqy4zsfy3v140000gp/T/iwai-gaussian-portability-do4f9tx9/IWAI_communication_camera_ready_2026-09-20/paper/gaussian_comparison/figures/validate_figures.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.8753610418643802,
+      "log_sha256": "9e25f24b9d0796e754ae471d3e05608be76be3a3e253ab937593b8b90cb2cde1"
+    },
+    {
+      "label": "regenerate_new_figures_and_pack",
+      "command": [
+        "/Users/davand/Library/CloudStorage/OneDrive-Personal/Documents/Programming/Active_Inference_Social_Lock_In/.venv-reproduction/bin/python",
+        "/private/var/folders/4j/0mg6l_gd2k7bwqy4zsfy3v140000gp/T/iwai-gaussian-portability-do4f9tx9/IWAI_communication_camera_ready_2026-09-20/paper/gaussian_comparison/figures/plot_figures.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 276.13249700004235,
+      "log_sha256": "c061dae2a1c2bcba22cb11ad86bbecc5fb521cff1f91515c946676c9a552d6ec"
+    },
+    {
+      "label": "validate_regenerated_figures",
+      "command": [
+        "/Users/davand/Library/CloudStorage/OneDrive-Personal/Documents/Programming/Active_Inference_Social_Lock_In/.venv-reproduction/bin/python",
+        "/private/var/folders/4j/0mg6l_gd2k7bwqy4zsfy3v140000gp/T/iwai-gaussian-portability-do4f9tx9/IWAI_communication_camera_ready_2026-09-20/paper/gaussian_comparison/figures/validate_figures.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 4.232897666981444,
+      "log_sha256": "9e25f24b9d0796e754ae471d3e05608be76be3a3e253ab937593b8b90cb2cde1"
+    }
+  ],
+  "elapsed_seconds": 419.3394627501257
+}

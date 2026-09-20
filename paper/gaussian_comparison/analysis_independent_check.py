@@ -134,6 +134,8 @@ def main():
     parser.add_argument("--analysis", type=Path, default=HERE / "analysis")
     parser.add_argument("--curves", type=Path, default=HERE / "figures/curve_statistics.csv")
     parser.add_argument("--output", type=Path, default=HERE / "INDEPENDENT_ANALYSIS_CHECK.json")
+    parser.add_argument("--portable-only", action="store_true",
+                        help="Verify reductions/figures from portable raw-reduced inputs; companion audit.py checks all raw chunks independently")
     args = parser.parse_args()
     started = time.monotonic()
     check = Check()
@@ -155,15 +157,37 @@ def main():
     total_files = 0
     for name in NEW + OLD:
         root, manifest = (args.raw, manifests[0]) if name in NEW else (args.candidate_raw, manifests[1])
-        values, count = load_raw(root, name, manifest)
+        if args.portable_only:
+            # Deliberately separate scope: the companion raw audit independently
+            # verifies these upstream reductions. Here verify the portable
+            # scientific inputs, summaries and actual plotted statistics.
+            values = {key.split("::")[1]: portable[key] for key in portable.files
+                      if key.startswith(name + "::") and portable[key].ndim >= 2}
+            count = 0
+            for kind in ("mixture", "map"):
+                vector = values[kind + "_difference"]
+                check.same(values[kind + "_distance"], np.sqrt(np.sum(vector * vector, axis=-1)),
+                           "portable_distance_from_observable_difference")
+        else:
+            values, count = load_raw(root, name, manifest)
         total_files += count
-        for key, value in values.items():
-            portable_key = name + "::" + key
-            if portable_key in portable:
-                check.same(portable[portable_key], value, "complete_portable_trajectories")
+        if not args.portable_only:
+            for key, value in values.items():
+                portable_key = name + "::" + key
+                if portable_key in portable:
+                    check.same(portable[portable_key], value, "complete_portable_trajectories")
         stored_metrics[name] = {}
         for horizon, (start, end) in WINDOWS.items():
             metrics, vectors = reduce_window(values, start, end)
+            if args.portable_only:
+                # Full MSE/NLL time series are intentionally absent from the
+                # portable plotting inputs. Their per-seed windows are supplied
+                # and independently checked against raw data by audit.py.
+                for measure in ("mse", "nll"):
+                    for group in ("A", "B"):
+                        for which in ("tail", "endpoint"):
+                            key = measure + "_" + group + "_" + which
+                            metrics[key] = portable[name + "::" + key + "_" + horizon]
             stored_metrics[name][horizon] = metrics
             reported = summary[name]["windows"][horizon]
             assert (reported["first_state"], reported["last_state"], reported["n_states"]) == (start, end, end-start+1)
@@ -175,11 +199,12 @@ def main():
                 assert stat["n"] == 50
                 check.same([stat[k] for k in ("mean", "lo", "hi")], interval(x, samples), "all_summary_intervals")
             for kind, vector in vectors.items():
-                distribution = np.sqrt(np.sum((np.sum(vector[samples], axis=1) / 50) ** 2, axis=1))
                 point = np.sqrt(np.sum((np.sum(vector, axis=0) / 50) ** 2))
-                bounds = np.percentile(distribution, [2.5, 97.5])
                 stat = reported["metrics"][kind + "_norm_of_across_seed_time_mean_difference"]
-                check.same([stat[k] for k in ("mean", "lo", "hi")], [point, *bounds], "ensemble_norm_order_and_intervals")
+                check.same(stat["mean"], point, "descriptive_ensemble_norm_order")
+                # The norm is nonregular at zero. The finalized analysis reports
+                # no inferential percentile interval for this descriptive point.
+                assert stat["lo"] is None and stat["hi"] is None
         for (condition, metric), rows in curve_rows.items():
             if condition != name:
                 continue
@@ -208,7 +233,7 @@ def main():
                 "measured_mass_mse_interval": list(interval(stored_metrics[name]["5000"]["mse_B_tail"], samples)),
                 "interpretation": "Stationary analytic mean vector, squared norm and MSE are compared to their matching finite late-window estimands. RMS is not compared to mean instantaneous norm. Intervals are pointwise; coverage is not a deterministic acceptance test.",
             }
-        print("Independently verified", name, count, "raw chunks", flush=True)
+        print("Independently verified", name, "portable inputs" if args.portable_only else str(count) + " raw chunks", flush=True)
     for label, (plus, minus) in CONTRASTS.items():
         assert (contrasts[label]["plus"], contrasts[label]["minus"]) == (plus, minus)
         for horizon in WINDOWS:
@@ -225,10 +250,11 @@ def main():
                   raw_files_verified=total_files, compared_scalar_counts=check.counts,
                   maximum_absolute_discrepancy=check.maximum,
                   conditions=list(NEW + OLD), seeds=SEEDS, windows=WINDOWS,
-                  independence="NumPy/stdlib raw reductions without simulator, analysis or plotting imports. Explicit indexed whole-seed resampling independently checks figure count-weight intervals.",
+                  independence="NumPy/stdlib reductions without simulator, analysis or plotting imports. Explicit indexed whole-seed resampling independently checks figure count-weight intervals.",
+                  input_mode="portable inputs previously checked against raw data by separate audit.py" if args.portable_only else "independent complete raw reductions",
                   curves_present=bool(curve_rows), curve_series_checked=len(curve_rows),
                   curve_interval_states=list(CURVE_CHECK_STATES),
-                  scope="All raw-derived seed/window scalars, portable trajectory inputs, summary/contrast intervals, plotted curve means; curve confidence bounds checked at preselected boundary states, not every state.",
+                  scope=("Portable vector-to-distance consistency, trajectory-to-window reductions, all summary/contrast intervals and plotted curve means. Upstream raw-to-portable reductions and per-seed MSE/NLL inputs are verified by the separate raw auditor, not repeated here. " if args.portable_only else "All raw-derived seed/window scalars, portable trajectory inputs, summary/contrast intervals, plotted curve means. ") + "Curve confidence bounds checked at preselected boundary states, not every state.",
                   stationary_estimand_comparisons=stationary,
                   source_hashes={"script": digest(__file__), "new_manifest": digest(args.raw / "manifest.json"),
                       "candidate_manifest": digest(args.candidate_raw / "manifest.json"),

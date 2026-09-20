@@ -40,7 +40,7 @@ $$z_{ij,t}^2=\sum_{v\in\{C,G,M\}}\frac{(\mu_{jv,t}-\mu_{iv,t})^2}{1/(P_{i,t})_{v
 
 $$V_{ij,t}=\frac{W_{\beta,ij}\gamma_{ij,t}}{\sum_l W_{\beta,il}\gamma_{il,t}}.\tag{5}$$
 
-The reciprocal diagonal precision in Eq. (4) is a conditional-variance approximation, not the marginal covariance diagonal. The value $\nu=.01$ comes from the earlier Gaussian comparison; it is not tuned here. The gate modifies conditional social influence, not observation reliability, utility or model support. Realized total cross-group influence is recorded per agent and update; it can differ from the base .05 after gating.
+The reciprocal diagonal precision in Eq. (4) is an exact Gaussian conditional variance, not a marginal variance. The approximation is to use these diagonal conditional variances in place of a full covariance distance. The value $\nu=.01$ comes from the earlier Gaussian comparison; it is not tuned here. The gate modifies conditional social influence, not observation reliability, utility or model support. Realized total cross-group influence is recorded per agent and update; it can differ from the base .05 after gating.
 
 The wrapper supplies Eq. (5) to the unchanged engine with its internal gate disabled. This ensures that the existing gate kernel reweights the intended base matrix rather than replacing it with a normalized binary adjacency. The denominator is strictly positive because the self weight is positive. Exact row normalization therefore needs no additive epsilon. Equal entering means recover the base matrix, up to arithmetic rounding; the same holds as the kernel becomes constant.
 

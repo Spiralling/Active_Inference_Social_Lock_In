@@ -1,0 +1,50 @@
+PROTOCOL_SHA256 60261c38b6a36d91a46f041940e55d873242894ba6c130fdf4d72423b9cc4e4f
+SETUP {"condition": "G_plain_info", "N": 16, "T": 5000, "reference_variant": "info", "omega": 0.3, "sigma_o": 0.5, "beta": 0.05, "gate_nu": null}
+SETUP {"condition": "G_gated_info", "N": 16, "T": 5000, "reference_variant": "info", "omega": 0.3, "sigma_o": 0.5, "beta": 0.05, "gate_nu": 0.01}
+BATCH {"condition": "G_plain_info", "seeds": [10000, 10001, 10002, 10003, 10004], "elapsed_seconds": 41.11}
+BATCH {"condition": "G_gated_info", "seeds": [10000, 10001, 10002, 10003, 10004], "elapsed_seconds": 44.54}
+BATCH {"condition": "G_plain_info", "seeds": [10005, 10006, 10007, 10008, 10009], "elapsed_seconds": 60.32}
+BATCH {"condition": "G_gated_info", "seeds": [10005, 10006, 10007, 10008, 10009], "elapsed_seconds": 65.38}
+BATCH {"condition": "G_plain_info", "seeds": [10010, 10011, 10012, 10013, 10014], "elapsed_seconds": 76.26}
+BATCH {"condition": "G_gated_info", "seeds": [10010, 10011, 10012, 10013, 10014], "elapsed_seconds": 84.72}
+BATCH {"condition": "G_plain_info", "seeds": [10015, 10016, 10017, 10018, 10019], "elapsed_seconds": 94.05}
+BATCH {"condition": "G_gated_info", "seeds": [10015, 10016, 10017, 10018, 10019], "elapsed_seconds": 108.63}
+BATCH {"condition": "G_plain_info", "seeds": [10020, 10021, 10022, 10023, 10024], "elapsed_seconds": 118.5}
+BATCH {"condition": "G_gated_info", "seeds": [10020, 10021, 10022, 10023, 10024], "elapsed_seconds": 133.06}
+BATCH {"condition": "G_plain_info", "seeds": [10025, 10026, 10027, 10028, 10029], "elapsed_seconds": 138.25}
+BATCH {"condition": "G_gated_info", "seeds": [10025, 10026, 10027, 10028, 10029], "elapsed_seconds": 153.9}
+BATCH {"condition": "G_plain_info", "seeds": [10030, 10031, 10032, 10033, 10034], "elapsed_seconds": 156.08}
+BATCH {"condition": "G_plain_info", "seeds": [10035, 10036, 10037, 10038, 10039], "elapsed_seconds": 175.64}
+BATCH {"condition": "G_gated_info", "seeds": [10030, 10031, 10032, 10033, 10034], "elapsed_seconds": 176.29}
+BATCH {"condition": "G_plain_info", "seeds": [10040, 10041, 10042, 10043, 10044], "elapsed_seconds": 212.53}
+BATCH {"condition": "G_gated_info", "seeds": [10035, 10036, 10037, 10038, 10039], "elapsed_seconds": 223.17}
+BATCH {"condition": "G_plain_info", "seeds": [10045, 10046, 10047, 10048, 10049], "elapsed_seconds": 251.0}
+CONDITION {"condition": "G_plain_info", "elapsed_seconds": 251.08, "seed_count": 50, "final_state": 5000, "endpoint_only": true, "endpoint_mean_observable_camp_distance": 0.5029394984464078, "endpoint_mean_mse_gas": 0.35740902741484704, "endpoint_mean_mse_mass": 0.16208615461907033, "endpoint_mean_nll_gas": 3.359056454421767, "endpoint_mean_nll_mass": 3.108503734865597, "endpoint_mean_gate_crossweight": 0.04999999999999999}
+SETUP {"condition": "G_plain_moment", "N": 16, "T": 5000, "reference_variant": "moment", "omega": 0.3, "sigma_o": 0.5, "beta": 0.05, "gate_nu": null}
+BATCH {"condition": "G_gated_info", "seeds": [10040, 10041, 10042, 10043, 10044], "elapsed_seconds": 259.03}
+BATCH {"condition": "G_plain_moment", "seeds": [10000, 10001, 10002, 10003, 10004], "elapsed_seconds": 280.66}
+BATCH {"condition": "G_gated_info", "seeds": [10045, 10046, 10047, 10048, 10049], "elapsed_seconds": 283.94}
+CONDITION {"condition": "G_gated_info", "elapsed_seconds": 284.09, "seed_count": 50, "final_state": 5000, "endpoint_only": true, "endpoint_mean_observable_camp_distance": 0.5273316130650425, "endpoint_mean_mse_gas": 0.36970361408730734, "endpoint_mean_mse_mass": 0.1622618166418604, "endpoint_mean_nll_gas": 3.376704344524238, "endpoint_mean_nll_mass": 3.111712766677276, "endpoint_mean_gate_crossweight": 0.007064343800860745}
+SETUP {"condition": "G_gated_moment", "N": 16, "T": 5000, "reference_variant": "moment", "omega": 0.3, "sigma_o": 0.5, "beta": 0.05, "gate_nu": 0.01}
+BATCH {"condition": "G_plain_moment", "seeds": [10005, 10006, 10007, 10008, 10009], "elapsed_seconds": 305.09}
+BATCH {"condition": "G_gated_moment", "seeds": [10000, 10001, 10002, 10003, 10004], "elapsed_seconds": 318.31}
+BATCH {"condition": "G_plain_moment", "seeds": [10010, 10011, 10012, 10013, 10014], "elapsed_seconds": 324.06}
+BATCH {"condition": "G_gated_moment", "seeds": [10005, 10006, 10007, 10008, 10009], "elapsed_seconds": 339.31}
+BATCH {"condition": "G_plain_moment", "seeds": [10015, 10016, 10017, 10018, 10019], "elapsed_seconds": 341.72}
+BATCH {"condition": "G_gated_moment", "seeds": [10010, 10011, 10012, 10013, 10014], "elapsed_seconds": 361.8}
+BATCH {"condition": "G_plain_moment", "seeds": [10020, 10021, 10022, 10023, 10024], "elapsed_seconds": 361.87}
+BATCH {"condition": "G_plain_moment", "seeds": [10025, 10026, 10027, 10028, 10029], "elapsed_seconds": 394.42}
+BATCH {"condition": "G_gated_moment", "seeds": [10015, 10016, 10017, 10018, 10019], "elapsed_seconds": 397.94}
+BATCH {"condition": "G_plain_moment", "seeds": [10030, 10031, 10032, 10033, 10034], "elapsed_seconds": 421.2}
+BATCH {"condition": "G_gated_moment", "seeds": [10020, 10021, 10022, 10023, 10024], "elapsed_seconds": 426.39}
+BATCH {"condition": "G_plain_moment", "seeds": [10035, 10036, 10037, 10038, 10039], "elapsed_seconds": 444.83}
+BATCH {"condition": "G_gated_moment", "seeds": [10025, 10026, 10027, 10028, 10029], "elapsed_seconds": 457.39}
+BATCH {"condition": "G_plain_moment", "seeds": [10040, 10041, 10042, 10043, 10044], "elapsed_seconds": 480.68}
+BATCH {"condition": "G_gated_moment", "seeds": [10030, 10031, 10032, 10033, 10034], "elapsed_seconds": 490.3}
+BATCH {"condition": "G_plain_moment", "seeds": [10045, 10046, 10047, 10048, 10049], "elapsed_seconds": 498.29}
+CONDITION {"condition": "G_plain_moment", "elapsed_seconds": 498.45, "seed_count": 50, "final_state": 5000, "endpoint_only": true, "endpoint_mean_observable_camp_distance": 0.7016716232820599, "endpoint_mean_mse_gas": 0.3124874809096023, "endpoint_mean_mse_mass": 0.04910459380373929, "endpoint_mean_nll_gas": 3.3522544962363114, "endpoint_mean_nll_mass": 3.007137033237966, "endpoint_mean_gate_crossweight": 0.04999999999999999}
+BATCH {"condition": "G_gated_moment", "seeds": [10035, 10036, 10037, 10038, 10039], "elapsed_seconds": 509.88}
+BATCH {"condition": "G_gated_moment", "seeds": [10040, 10041, 10042, 10043, 10044], "elapsed_seconds": 527.8}
+BATCH {"condition": "G_gated_moment", "seeds": [10045, 10046, 10047, 10048, 10049], "elapsed_seconds": 543.68}
+CONDITION {"condition": "G_gated_moment", "elapsed_seconds": 543.83, "seed_count": 50, "final_state": 5000, "endpoint_only": true, "endpoint_mean_observable_camp_distance": 0.7594555844667021, "endpoint_mean_mse_gas": 0.34756781416870025, "endpoint_mean_mse_mass": 0.04843760702952284, "endpoint_mean_nll_gas": 3.3867510211878082, "endpoint_mean_nll_mass": 3.011531575806954, "endpoint_mean_gate_crossweight": 0.008320208475120777}
+COMPLETE {"conditions": 4, "seconds": 544.4559631347656}

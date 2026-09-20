@@ -124,9 +124,10 @@ def comparison(data, records):
     for x, name, color in zip(range(5), names, [ORANGE, RED, GREEN, BLUE, GREY]):
         for group, offset, marker in [('A', -.10, 'o'), ('B', .10, 's')]:
             points(loss, x + offset, data.metric(name, 'mse_' + group + '_tail'), color, marker, group == 'B')
-    loss.set_xticks(range(5), ['G', 'Gated', 'Private', 'Shared', 'Var.'], rotation=35, ha='right')
+    loss.set_xticks(range(5), ['Plain', 'Gate', 'Priv.', 'Share', 'Var.'], rotation=45, ha='right', fontsize=7.5)
     loss.set_xlim(-.4, 4.4)
-    loss.set_ylim(bottom=0)
+    loss.set_ylim(bottom=-.05)
+    loss.set_yticks([0, .5, 1])
     loss.set_ylabel('Full-signal MSE')
     panel(loss, 'c')
     fig.legend([Line2D([], [], color=c, ls=ls) for _, c, ls, _ in MODELS],
@@ -170,9 +171,10 @@ def diagnostics(data, records):
             ('mixture_distance_of_time_means_tail', 0, 's', BLUE),
             ('mixture_norm_of_across_seed_time_mean_difference', .18, '^', ORANGE)]:
             points(d, x + offset, data.metric(name, key), color, marker, marker == '^')
-    d.set_xticks(range(4), ['G', 'Gated', 'Private', 'Shared'], rotation=35, ha='right')
+    d.set_xticks(range(4), ['Plain', 'Gate', 'Priv.', 'Share'], rotation=45, ha='right', fontsize=7.5)
     d.set_xlim(-.4, 3.4)
-    d.set_ylim(bottom=0)
+    d.set_ylim(bottom=-.055)
+    d.set_yticks([0, .5, 1, 1.5, 2])
     d.set_ylabel('Late-window distance')
     for ax, letter in zip(axes.flat, 'abcd'):
         panel(ax, letter)
@@ -198,24 +200,24 @@ def captions():
               r'$\beta=.05$, $\omega=.3$, $\sigma_o=.5$, and the constant full signal $(C,G,M)=(1,1,1)$. ')
     return {
         'fig_matched_camp_models':
-            r'\textbf{Matched representations separate predictive disagreement from opposing theory support.} '
+            r'\textbf{Numerical disagreement persists with a single Gaussian.} '
             r'(a) Distance $\|\langle\mu\rangle_{\mathrm{gas}}-\langle\mu\rangle_{\mathrm{mass}}\|_2$ in the common observable coordinates $(C,G,M)$. '
             r'The horizontal axis in (a) is logarithmic; the distance axis includes zero. The two Gaussian arms share one information-pooled reference; the gated arm reweights the same social matrix using entering-mean disagreement ($\nu=.01$). '
             r'Candidate predictions use the posterior mixture mean. Model weights are private in green and shared with $\alpha_m=.02$ in blue; conditional sharing is enabled throughout. '
             r'(b) Gas (solid) and mass (dotted) group-mean oxygen probabilities for the two candidate arms; the single Gaussian has no corresponding theory probability. '
             r'(c) Full-signal predictive MSE averaged over states 3,751--5,000: gas circles and open mass squares. '
-            r'G, Gated, Private and Shared correspond to (a); Var. is the candidate/private arm with only the release gas residual variance changed from .5 to .5448. '
+            r'Plain and Gate denote Gaussian and gated Gaussian; Priv. and Share denote private and shared candidate weights. Var. is the candidate/private arm with only the release gas residual variance changed from .5 to .5448. '
             r'Distinct single-Gaussian predictions under sustained selective observations are not evidence of distinct theoretical commitments. ' + common,
         'fig_matched_camp_diagnostics':
-            r'\textbf{Reference compression, actual communication and the definition of distance matter.} '
-            r'(a) Gaussian (orange) and gated Gaussian (red) distances with information-pool (solid) and equal-mixture moment-matched (dashed) observable references; '
-            r'moment matching includes the between-candidate mean covariance. Panels (a,b) use logarithmic time to resolve early changes. '
-            r'(b) The gated operator\textquotesingle s realized total weight on the opposite group, computed before that update\textquotesingle s observation: '
-            r'information-pool reference (purple), moment reference (grey); gas (solid), mass (dotted). The horizontal dashed line is the ungated total .05. '
+            r'\textbf{Reference compression and readout choices affect the comparison.} '
+            r'(a) Gaussian (orange) and gated Gaussian (red) distances: information-pool (solid) or equal-mixture moment-matched (dashed) references, including between-candidate mean covariance. '
+            r'Panels (a,b) use logarithmic time. '
+            r'(b) Realized cross-group weight before each observation: information-pool reference (purple), moment reference (grey); gas (solid), mass (dotted). '
+            r'Dashed horizontal: ungated weight .05. '
             r'(c) Candidate/private (green) and candidate/shared (blue) distances using mixture means (solid) and selected-candidate/MAP means (dashed). '
             r'(d) Three different quantities over states 3,751--5,000: the mean instantaneous norm (grey circle), '
             r'the seed-average norm after time-averaging the signed camp difference (blue square), and the norm after both time and seed averaging (open orange triangle). '
-            r'The last two distinguish time-averaged directional differences from fluctuations. The orange triangle is a descriptive point without an interval: a norm alone cannot establish a nonzero ensemble mean. '
+            r'Plain, Gate, Priv. and Share denote Gaussian, gated Gaussian, candidates/private and candidates/shared, respectively. The last two distance definitions distinguish time-averaged directional differences from fluctuations. The orange triangle is a descriptive point without an interval: a norm alone cannot establish a nonzero ensemble mean. '
             r'All hidden candidate-specific coordinates are excluded. ' + common,
     }
 

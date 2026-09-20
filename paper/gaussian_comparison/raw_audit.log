@@ -1,0 +1,27 @@
+Independently audited G_plain_info
+Independently audited G_gated_info
+Independently audited G_plain_moment
+Independently audited G_gated_moment
+Independently audited C10
+Independently audited C11
+Independently audited C10_gasvar_matched
+{
+  "status": "passed",
+  "elapsed_seconds": 531.2540354582015,
+  "checks": {
+    "new_raw_chunks": 800,
+    "candidate_raw_chunks": 600,
+    "paired_observation_hashes": 800,
+    "paired_evaluation_hashes": 800,
+    "paired_random_state_equalities": 1600,
+    "checkpoint_equalities": 5320,
+    "positive_definite_matrices": 16000000,
+    "full_gaussian_update_states": 1000000,
+    "predeposit_scores": 16000000,
+    "sequential_numpy_updates": 2000,
+    "predictive_NLL_values": 160000
+  },
+  "seed_scalar_comparisons": 23600,
+  "summary_scalar_comparisons": 1360,
+  "paired_contrast_scalar_comparisons": 1128
+}

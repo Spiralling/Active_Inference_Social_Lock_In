@@ -1,0 +1,8 @@
+Reduced G_plain_info all 50 seeds and 5,000 states
+Reduced G_gated_info all 50 seeds and 5,000 states
+Reduced G_plain_moment all 50 seeds and 5,000 states
+Reduced G_gated_moment all 50 seeds and 5,000 states
+Reduced C10 all 50 seeds and 5,000 states
+Reduced C11 all 50 seeds and 5,000 states
+Reduced C10_gasvar_matched all 50 seeds and 5,000 states
+Wrote paired analysis to /private/tmp/iwai-gaussian-comparison/paper/gaussian_comparison/analysis

@@ -28,9 +28,18 @@ def audit(raw,candidate_raw,analysis,out):
     manifest=json.loads((raw/'manifest.json').read_text());archive=json.loads((candidate_raw/'manifest.json').read_text())
     if len(manifest)!=800 or {r['condition'] for r in manifest}!=set(NEW):raise AssertionError('Wrong new raw records')
     protocol=json.loads((raw/'protocol.json').read_text());seedlist=protocol['seeds']
+    completion=json.loads((raw/'completion.json').read_text())
+    if completion['status']!='complete' or completion['chunks']!=800:raise AssertionError('Incomplete production')
+    if sha(raw/'protocol.json')!=sha(HERE/'protocol.json'):raise AssertionError('Frozen protocol mismatch')
+    if json.loads((raw/'engine_hashes.json').read_text())!=json.loads((candidate_raw/'engine_hashes.json').read_text()):raise AssertionError('Archived engine changed')
+    environment=json.loads((raw/'environment.json').read_text());old_environment=json.loads((candidate_raw/'environment.json').read_text())
+    if environment['world_sha256']!=old_environment['world_sha256']:raise AssertionError('Candidate world changed')
+    if environment['parent_runner_sha256']!=old_environment['runner_sha256']:raise AssertionError('Parent instrumentation changed')
+    for package,version in old_environment['packages'].items():
+        if environment['packages'][package]!=version:raise AssertionError('Pinned numerical package changed: '+package)
     if seedlist!=list(range(10000,10050)):raise AssertionError('Seed registry mismatch')
     expected_old={(tuple(r['seeds']),r['start_step']):r for r in archive if r['condition']=='C10'}
-    errors={};checks=dict(new_raw_chunks=0,candidate_raw_chunks=0,paired_observation_hashes=0,paired_evaluation_hashes=0,checkpoint_equalities=0,positive_definite_matrices=0,full_gaussian_update_states=0,predeposit_scores=0,sequential_numpy_updates=0,predictive_NLL_values=0)
+    errors={};checks=dict(new_raw_chunks=0,candidate_raw_chunks=0,paired_observation_hashes=0,paired_evaluation_hashes=0,paired_random_state_equalities=0,checkpoint_equalities=0,positive_definite_matrices=0,full_gaussian_update_states=0,predeposit_scores=0,sequential_numpy_updates=0,predictive_NLL_values=0)
     independent_rows=[];coverage={};sample_plan=[];vector_means={}
     def close(label,x,y,atol=3e-10,rtol=3e-11):
         difference=float(np.max(np.abs(np.asarray(x)-np.asarray(y))))
@@ -73,6 +82,9 @@ def audit(raw,candidate_raw,analysis,out):
                 if arrsha(data['obs'])!=row['observation_sha256'] or row['observation_sha256']!=original['observation_sha256']:raise AssertionError('Observation pairing')
                 if row['evaluation_observation_sha256']!=original['evaluation_observation_sha256']:raise AssertionError('Evaluation pairing')
                 checks['paired_observation_hashes']+=1;checks['paired_evaluation_hashes']+=1
+                with np.load(candidate_raw/original['file'],allow_pickle=False) as old:
+                    for key in ('initial_key','final_key'):
+                        np.testing.assert_array_equal(data[key],old[key]);checks['paired_random_state_equalities']+=1
                 P=data['Pi_history'];np.linalg.cholesky(P);checks['positive_definite_matrices']+=int(np.prod(P.shape[:-2]))
                 np.testing.assert_array_equal(data['q'],1.)
                 np.testing.assert_array_equal(data['mu_conditional'][...,0,:],data['mu_mixture'])
@@ -80,7 +92,7 @@ def audit(raw,candidate_raw,analysis,out):
                 close('precision_dummy_diagonal',P[...,0,0],4.,atol=3e-14,rtol=0.)
                 np.testing.assert_array_equal(P[...,0,1:],0.);np.testing.assert_array_equal(P[...,1:,0],0.)
                 current_mu=np.concatenate([np.zeros_like(data['mu_conditional'][...,:1]),data['mu_conditional']],axis=-1)
-                current_h=np.einsum('btnkij,btnkj->btnki',P,current_mu)
+                current_h=np.einsum('stnkij,stnkj->stnki',P,current_mu)
                 previous_P=np.concatenate([data['initial_Pi'][:,None],P[:,:-1]],axis=1)
                 previous_h=np.concatenate([data['initial_h'][:,None],current_h[:,:-1]],axis=1)
                 previous_mu=np.concatenate([np.linalg.solve(data['initial_Pi'],data['initial_h'][...,None])[...,0][:,None],current_mu[:,:-1]],axis=1)
@@ -94,8 +106,8 @@ def audit(raw,candidate_raw,analysis,out):
                 if np.any(weights<=0):raise AssertionError('Disconnected or negative effective weights')
                 cross=np.concatenate([weights[:,:,:8,8:].sum(-1),weights[:,:,8:,:8].sum(-1)],axis=-1)
                 close('crossweight',data['gate_crossweight'],cross,atol=3e-12,rtol=3e-11)
-                Pbar=np.einsum('btij,btjkab->btikab',weights,previous_P);hbar=np.einsum('btij,btjkd->btikd',weights,previous_h)
-                deposit=np.einsum('ia,ni,btni->btna',H,att,data['obs'])/sigma**2
+                Pbar=np.einsum('stij,stjkab->stikab',weights,previous_P);hbar=np.einsum('stij,stjkd->stikd',weights,previous_h)
+                deposit=np.einsum('ia,ni,stni->stna',H,att,data['obs'])/sigma**2
                 close('precision_update',P,(1-omega)*P0+omega*(Pbar+J[None,None,:,None]))
                 close('information_update',current_h,(1-omega)*h0+omega*(hbar+deposit[...,None,:]))
                 close('final_precision',data['final_Pi'],P[:,-1],atol=0,rtol=0)
@@ -104,10 +116,10 @@ def audit(raw,candidate_raw,analysis,out):
                 # using independent matrix inverse/solve instead of engine score.
                 covariance=np.linalg.inv(Pbar);means=np.linalg.solve(Pbar,hbar[...,None])[...,0]
                 Hs=np.sqrt(att)[:,:,None]*H
-                V=np.einsum('nia,btnkab,njb->btnkij',Hs,covariance,Hs)+sigma**2*np.eye(3)
+                V=np.einsum('nia,stnkab,njb->stnkij',Hs,covariance,Hs)+sigma**2*np.eye(3)
                 V=(V+V.swapaxes(-1,-2))/2
-                residual=np.sqrt(att)[None,None,:,None,:]*data['obs'][...,None,:]-np.einsum('nia,btnka->btnki',Hs,means)
-                ell=-.5*(3*np.log(2*np.pi)+np.linalg.slogdet(V)[1]+np.einsum('btnki,btnki->btnk',residual,np.linalg.solve(V,residual[...,None])[...,0]))
+                residual=np.sqrt(att)[None,None,:,None,:]*data['obs'][...,None,:]-np.einsum('nia,stnka->stnki',Hs,means)
+                ell=-.5*(3*np.log(2*np.pi)+np.linalg.slogdet(V)[1]+np.einsum('stnki,stnki->stnk',residual,np.linalg.solve(V,residual[...,None])[...,0]))
                 close('predeposit_score',data['ell'],ell,atol=3e-11,rtol=3e-11)
                 prevL=np.concatenate([data['initial_L'][:,None],data['L'][:,:-1]],axis=1)
                 close('logscore_recurrence',data['L'],prevL+ell,atol=3e-10,rtol=3e-11)
@@ -143,7 +155,7 @@ def audit(raw,candidate_raw,analysis,out):
                     if arrsha(ev)!=row['evaluation_observation_sha256']:raise AssertionError('Fresh evaluation RNG mismatch')
                     C=np.linalg.inv(P[...,0,:,:])[...,1:,1:]+sigma**2*np.eye(3)
                     resid=ev-data['mu_mixture'][...,None,:]
-                    score=-.5*(3*np.log(2*np.pi)+np.linalg.slogdet(C)[1][...,None]+np.einsum('btnri,btnij,btnrj->btnr',resid,np.linalg.inv(C),resid))
+                    score=-.5*(3*np.log(2*np.pi)+np.linalg.slogdet(C)[1][...,None]+np.einsum('stnri,stnij,stnrj->stnr',resid,np.linalg.inv(C),resid))
                     close('independent_heldout_NLL',-score.mean(-1),data['nll_full'],atol=2e-11,rtol=2e-11)
                     checks['predictive_NLL_values']+=B*T*16
             # Separately reduce every raw state, then seed-level windows. The
@@ -217,7 +229,7 @@ def audit(raw,candidate_raw,analysis,out):
             observed=summary[condition]['windows'][str(horizon)]['metrics']
             for key,prediction in [('mixture_difference_'+c+'_tail',f['expected_mean_gap'][i]) for i,c in enumerate('CGM')]+[('mse_A_tail',f['gas_expected_mse']),('mse_B_tail',f['mass_expected_mse'])]:
                 m=observed[key];forecast_comparisons.append(dict(condition=condition,horizon=horizon,metric=key,prediction=prediction,mean=m['mean'],lo=m['lo'],hi=m['hi'],inside_pointwise_interval=bool(m['lo']<=prediction<=m['hi'])))
-    report=dict(status='passed',elapsed_seconds=time.monotonic()-start,checks=checks,coverage=coverage,max_absolute_discrepancies=errors,seed_scalar_comparisons=compared,summary_scalar_comparisons=summary_compares,paired_contrast_scalar_comparisons=contrast_compares,sequential_sample_plan='Predeclared before production: first seed in first/last chunk of first seed batch of each arm; held-out scores for all five seeds of those chunks.',sequential_sample_files=sample_plan,forecast_comparisons=forecast_comparisons,forecast_qualification='Pointwise intervals are correlated; forecast agreement is diagnostic, not an acceptance requirement. No expected curve ordering asserted.',raw_manifest_sha256=sha(raw/'manifest.json'),candidate_manifest_sha256=sha(candidate_raw/'manifest.json'),independence='All expected equations and reductions constructed here in NumPy/SciPy; no producer gate/score/deposit or analysis helper used. Production setup JSON supplies frozen parameters. Archived candidates independently re-reduced; their engine was audited in the preceding package.')
+    report=dict(status='passed',elapsed_seconds=time.monotonic()-start,checks=checks,coverage=coverage,max_absolute_discrepancies=errors,seed_scalar_comparisons=compared,summary_scalar_comparisons=summary_compares,paired_contrast_scalar_comparisons=contrast_compares,sequential_sample_plan='Predeclared before production: first seed in first/last chunk of first seed batch of each arm; held-out scores for all five seeds of those chunks.',sequential_sample_files=sample_plan,forecast_comparisons=forecast_comparisons,forecast_qualification='Pointwise intervals are correlated; forecast agreement is diagnostic, not an acceptance requirement. No expected curve ordering asserted.',producer_environment_sha256=sha(raw/'environment.json'),protocol_sha256=sha(raw/'protocol.json'),frozen_engine_world_and_packages_match_archive=True,raw_manifest_sha256=sha(raw/'manifest.json'),candidate_manifest_sha256=sha(candidate_raw/'manifest.json'),independence='All expected equations and reductions constructed here in NumPy/SciPy; no producer gate/score/deposit or analysis helper used. Production setup JSON supplies frozen parameters. Archived candidates independently re-reduced; their engine was audited in the preceding package.')
     out.write_text(json.dumps(report,indent=2)+'\n')
     columns=list(dict.fromkeys(k for r in independent_rows for k in r))
     with out.with_name('INDEPENDENT_SEED_METRICS.csv').open('w',newline='') as f:

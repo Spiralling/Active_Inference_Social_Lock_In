@@ -1,6 +1,6 @@
 # Matched Gaussian comparison and revised figure pack
 
-This extension adds plain and socially gated single-Gaussian baselines to the completed communication experiment. It preserves the original candidate runs, underlying engine and combustion references. Read `RESULTS.md` for the measured outcomes and `METHODS.md` for equations, reference constructions, update timing, readouts and pseudocode. The results report is generated after the production run and independent audit.
+This extension adds plain and socially gated single-Gaussian baselines to the completed communication experiment. It preserves the original candidate runs, underlying engine and combustion references. Read `RESULTS.md` for the measured outcomes and `METHODS.md` for equations, reference constructions, update timing, readouts and pseudocode. The results report identifies the completed run and distinguishes new Gaussian simulations from reused candidate outcomes.
 
 The revised `figures/figure_pack.pdf` contains the original seven communication figures plus the new main comparison and sensitivity figure. The original figure assets remain in `../communication_experiments/figures/`. New figures use the same orx style and actual LaTeX Computer Modern fonts, with vector PDF/SVG assets and PNG previews. Captions and LaTeX integration blocks are included.
 
@@ -17,8 +17,11 @@ Existing `C10`, `C11` and `C10_gasvar_matched` candidate trajectories are reused
 Run commands from the handoff root containing `paper/`. Use the pinned environment in `requirements.txt`, Python 3.12.9, and a working LaTeX installation including Computer Modern/T1 fonts. The recorded execution uses macOS arm64 CPU with JAX float64. Last-bit agreement on other numerical backends is not guaranteed.
 
 ```bash
+python -m pip install -r paper/gaussian_comparison/requirements.txt
 python paper/gaussian_comparison/independent_tests.py
+python paper/gaussian_comparison/test_analysis.py
 python paper/gaussian_comparison/analyze.py --raw gaussian_raw_data --candidate-raw raw_data
+python paper/gaussian_comparison/audit.py --raw gaussian_raw_data --candidate-raw raw_data
 python paper/gaussian_comparison/figures/plot_figures.py
 python paper/gaussian_comparison/figures/validate_figures.py
 ```

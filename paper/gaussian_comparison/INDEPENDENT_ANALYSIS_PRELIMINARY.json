@@ -1,0 +1,231 @@
+{
+  "status": "passed",
+  "elapsed_seconds": 6.878428915981203,
+  "raw_files_verified": 0,
+  "compared_scalar_counts": {
+    "bootstrap_seed_indices": 100000,
+    "public_state_axis": 5000,
+    "portable_distance_from_observable_difference": 3500000,
+    "all_seed_window_metrics": 22200,
+    "portable_seed_window_metrics": 22200,
+    "all_summary_intervals": 1332,
+    "descriptive_ensemble_norm_order": 28,
+    "all_plotted_curve_means": 80000,
+    "fixed_state_curve_intervals": 624,
+    "all_paired_seed_differences": 18800,
+    "all_paired_contrast_intervals": 1128
+  },
+  "maximum_absolute_discrepancy": {
+    "bootstrap_seed_indices": 0.0,
+    "public_state_axis": 0.0,
+    "portable_distance_from_observable_difference": 0.0,
+    "all_seed_window_metrics": 0.0,
+    "portable_seed_window_metrics": 0.0,
+    "all_summary_intervals": 0.0,
+    "descriptive_ensemble_norm_order": 0.0,
+    "all_plotted_curve_means": 0.0,
+    "fixed_state_curve_intervals": 1.1102230246251565e-15,
+    "all_paired_seed_differences": 0.0,
+    "all_paired_contrast_intervals": 0.0
+  },
+  "conditions": [
+    "G_plain_info",
+    "G_gated_info",
+    "G_plain_moment",
+    "G_gated_moment",
+    "C10",
+    "C11",
+    "C10_gasvar_matched"
+  ],
+  "seeds": [
+    10000,
+    10001,
+    10002,
+    10003,
+    10004,
+    10005,
+    10006,
+    10007,
+    10008,
+    10009,
+    10010,
+    10011,
+    10012,
+    10013,
+    10014,
+    10015,
+    10016,
+    10017,
+    10018,
+    10019,
+    10020,
+    10021,
+    10022,
+    10023,
+    10024,
+    10025,
+    10026,
+    10027,
+    10028,
+    10029,
+    10030,
+    10031,
+    10032,
+    10033,
+    10034,
+    10035,
+    10036,
+    10037,
+    10038,
+    10039,
+    10040,
+    10041,
+    10042,
+    10043,
+    10044,
+    10045,
+    10046,
+    10047,
+    10048,
+    10049
+  ],
+  "windows": {
+    "1500": [
+      1126,
+      1500
+    ],
+    "5000": [
+      3751,
+      5000
+    ]
+  },
+  "independence": "NumPy/stdlib reductions without simulator, analysis or plotting imports. Explicit indexed whole-seed resampling independently checks figure count-weight intervals.",
+  "input_mode": "portable inputs previously checked against raw data by separate audit.py",
+  "curves_present": true,
+  "curve_series_checked": 16,
+  "curve_interval_states": [
+    1,
+    2,
+    3,
+    10,
+    100,
+    250,
+    251,
+    1125,
+    1126,
+    1500,
+    3750,
+    3751,
+    5000
+  ],
+  "scope": "Portable vector-to-distance consistency, trajectory-to-window reductions, all summary/contrast intervals and plotted curve means. Upstream raw-to-portable reductions and per-seed MSE/NLL inputs are verified by the separate raw auditor, not repeated here. Curve confidence bounds checked at preselected boundary states, not every state.",
+  "stationary_estimand_comparisons": {
+    "G_plain_info": {
+      "gas_minus_mass_expected_vector": [
+        0.05750063492933821,
+        0.12887488188984697,
+        -0.4753894828185182
+      ],
+      "measured_mean_vector": [
+        0.05751116463440388,
+        0.12890169779846,
+        -0.47543607744455874
+      ],
+      "measured_coordinate_intervals": [
+        [
+          0.057511164634403894,
+          0.057300910844912456,
+          0.05773058832833369
+        ],
+        [
+          0.12890169779846,
+          0.1282811438954141,
+          0.12955988604566052
+        ],
+        [
+          -0.47543607744455857,
+          -0.4761937504697448,
+          -0.47466878223201814
+        ]
+      ],
+      "analytic_norm_of_expected_vector": 0.495893354032757,
+      "measured_norm_of_mean_vector": 0.4959462122940344,
+      "analytic_expected_squared_centroid_gap": 0.256410848390197,
+      "measured_squared_centroid_gap_interval": [
+        0.2564355555888149,
+        0.2557235899466941,
+        0.2571681467033033
+      ],
+      "analytic_gas_mse": 0.35555903598134164,
+      "measured_gas_mse_interval": [
+        0.3555192325568961,
+        0.3553655116754522,
+        0.3556752713964174
+      ],
+      "analytic_mass_mse": 0.15939090669045664,
+      "measured_mass_mse_interval": [
+        0.1593918283208448,
+        0.15912029294853824,
+        0.15966453119110602
+      ],
+      "interpretation": "Stationary analytic mean vector, squared norm and MSE are compared to their matching finite late-window estimands. RMS is not compared to mean instantaneous norm. Intervals are pointwise; coverage is not a deterministic acceptance test."
+    },
+    "G_plain_moment": {
+      "gas_minus_mass_expected_vector": [
+        -0.00017788239775795578,
+        -0.020729390224041744,
+        -0.6963495558652335
+      ],
+      "measured_mean_vector": [
+        -0.00016304559774876624,
+        -0.02069669035412495,
+        -0.6964164980120447
+      ],
+      "measured_coordinate_intervals": [
+        [
+          -0.00016304559774876624,
+          -0.00043960222979416626,
+          0.0001245516698636864
+        ],
+        [
+          -0.020696690354124955,
+          -0.021349335890850373,
+          -0.02001409626044102
+        ],
+        [
+          -0.6964164980120446,
+          -0.6974686041524133,
+          -0.6953650636756781
+        ]
+      ],
+      "analytic_norm_of_expected_vector": 0.696658053290792,
+      "measured_norm_of_mean_vector": 0.6967239900267838,
+      "analytic_expected_squared_centroid_gap": 0.5019339860511526,
+      "measured_squared_centroid_gap_interval": [
+        0.5019982957168477,
+        0.5004997371700177,
+        0.5035251023635569
+      ],
+      "analytic_gas_mse": 0.31108163702297104,
+      "measured_gas_mse_interval": [
+        0.3110396896285896,
+        0.31095230994180684,
+        0.3111255286952828
+      ],
+      "analytic_mass_mse": 0.04443237920762958,
+      "measured_mass_mse_interval": [
+        0.04445958524553398,
+        0.044262120748619946,
+        0.04466818056212512
+      ],
+      "interpretation": "Stationary analytic mean vector, squared norm and MSE are compared to their matching finite late-window estimands. RMS is not compared to mean instantaneous norm. Intervals are pointwise; coverage is not a deterministic acceptance test."
+    }
+  },
+  "source_hashes": {
+    "script": "d9d149eeac27dec69efd2b8c77a31886634fbf1e10f474bc588f338d13791fe0",
+    "new_manifest": "286556120c5f7f443581c7bdd4476f506ddf64171b2b2141ab0091d5f6bfbd71",
+    "candidate_manifest": "8944584e86eb400c3feab8d84e2ad1bcf46c1f1898a3f68926366a0211a00c9f",
+    "analysis_manifest": "1289a114f4fbe992018ae5e24d56331d4ffe6b8eee307c0e0a82b293d56b1824",
+    "curve_csv": "99980174a73a33037047b93746b236eb9a44bd0267beb39bd0e7ec8d3603c0bb"
+  }
+}
