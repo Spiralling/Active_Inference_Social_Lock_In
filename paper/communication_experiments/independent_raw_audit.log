@@ -1,0 +1,69 @@
+integrity 1 / 1960
+integrity 101 / 1960
+integrity 201 / 1960
+integrity 301 / 1960
+integrity 401 / 1960
+integrity 501 / 1960
+integrity 601 / 1960
+integrity 701 / 1960
+integrity 801 / 1960
+integrity 901 / 1960
+integrity 1001 / 1960
+integrity 1101 / 1960
+integrity 1201 / 1960
+integrity 1301 / 1960
+integrity 1401 / 1960
+integrity 1501 / 1960
+integrity 1601 / 1960
+integrity 1701 / 1960
+integrity 1801 / 1960
+integrity 1901 / 1960
+independent replay C00 0
+independent replay C00 4750
+independent replay C01 0
+independent replay C01 4750
+independent replay C10 0
+independent replay C10 4750
+independent replay C10_beta50 0
+independent replay C10_beta50 4750
+independent replay C10_gasvar_matched 0
+independent replay C10_gasvar_matched 4750
+independent replay C10_omega90 0
+independent replay C10_omega90 4750
+independent replay C11 0
+independent replay C11 4750
+independent replay N00 0
+independent replay N00 80
+independent replay N00 580
+independent replay N01 0
+independent replay N01 80
+independent replay N01 580
+independent replay N10 0
+independent replay N10 80
+independent replay N10 580
+independent replay N11 0
+independent replay N11 80
+independent replay N11 580
+independent replay S_enable_weights 0
+independent replay S_enable_weights 1500
+independent replay S_enable_weights 4750
+independent replay S_keep_private 0
+independent replay S_keep_private 4750
+{
+  "status": "passed",
+  "accepted_engine_files": 46,
+  "world_source_matches_supplied_archive": true,
+  "elapsed_seconds": 69.2131193340756,
+  "manifest_records": 1960,
+  "unique_raw_files": 1670,
+  "hashed_files": 1837,
+  "logical_conditions": 13,
+  "seed_condition_runs": 650,
+  "independent_replay_updates": 6150,
+  "independent_replay_selection": "First and last physical chunks of each condition, first seed; plus network round80 and enable-weights round1500. RNG hashes checked all5 seeds in each selected chunk.",
+  "archive_regression": "all three archived network arms, all50seeds, all600updates and finalstates",
+  "replication_note": "650 logical paired seed-condition histories include reused branch data; independent units are50networkseeds and50campseeds, not650 independent replications.",
+  "independent_seed_metrics_file": "INDEPENDENT_SEED_METRICS.csv",
+  "independent_seed_metrics_rows": 1100,
+  "scope": "All raw hashes and perround recurrence/probability/MSE/channel-pair checks; independent NumPy replay subset as declared; no production numerical helpers."
+}

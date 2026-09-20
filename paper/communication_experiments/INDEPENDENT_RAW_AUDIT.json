@@ -1,0 +1,513 @@
+{
+  "status": "passed",
+  "accepted_engine_files": 46,
+  "world_source_matches_supplied_archive": true,
+  "elapsed_seconds": 69.2131193340756,
+  "manifest_records": 1960,
+  "unique_raw_files": 1670,
+  "hashed_files": 1837,
+  "logical_conditions": 13,
+  "seed_condition_runs": 650,
+  "independent_replay_updates": 6150,
+  "independent_replay_chunks": [
+    {
+      "condition": "C00",
+      "start_step": 0,
+      "steps": 250,
+      "seeds": [
+        10000,
+        10001,
+        10002,
+        10003,
+        10004
+      ]
+    },
+    {
+      "condition": "C00",
+      "start_step": 4750,
+      "steps": 250,
+      "seeds": [
+        10000,
+        10001,
+        10002,
+        10003,
+        10004
+      ]
+    },
+    {
+      "condition": "C01",
+      "start_step": 0,
+      "steps": 250,
+      "seeds": [
+        10000,
+        10001,
+        10002,
+        10003,
+        10004
+      ]
+    },
+    {
+      "condition": "C01",
+      "start_step": 4750,
+      "steps": 250,
+      "seeds": [
+        10000,
+        10001,
+        10002,
+        10003,
+        10004
+      ]
+    },
+    {
+      "condition": "C10",
+      "start_step": 0,
+      "steps": 250,
+      "seeds": [
+        10000,
+        10001,
+        10002,
+        10003,
+        10004
+      ]
+    },
+    {
+      "condition": "C10",
+      "start_step": 4750,
+      "steps": 250,
+      "seeds": [
+        10000,
+        10001,
+        10002,
+        10003,
+        10004
+      ]
+    },
+    {
+      "condition": "C10_beta50",
+      "start_step": 0,
+      "steps": 250,
+      "seeds": [
+        10000,
+        10001,
+        10002,
+        10003,
+        10004
+      ]
+    },
+    {
+      "condition": "C10_beta50",
+      "start_step": 4750,
+      "steps": 250,
+      "seeds": [
+        10000,
+        10001,
+        10002,
+        10003,
+        10004
+      ]
+    },
+    {
+      "condition": "C10_gasvar_matched",
+      "start_step": 0,
+      "steps": 250,
+      "seeds": [
+        10000,
+        10001,
+        10002,
+        10003,
+        10004
+      ]
+    },
+    {
+      "condition": "C10_gasvar_matched",
+      "start_step": 4750,
+      "steps": 250,
+      "seeds": [
+        10000,
+        10001,
+        10002,
+        10003,
+        10004
+      ]
+    },
+    {
+      "condition": "C10_omega90",
+      "start_step": 0,
+      "steps": 250,
+      "seeds": [
+        10000,
+        10001,
+        10002,
+        10003,
+        10004
+      ]
+    },
+    {
+      "condition": "C10_omega90",
+      "start_step": 4750,
+      "steps": 250,
+      "seeds": [
+        10000,
+        10001,
+        10002,
+        10003,
+        10004
+      ]
+    },
+    {
+      "condition": "C11",
+      "start_step": 0,
+      "steps": 250,
+      "seeds": [
+        10000,
+        10001,
+        10002,
+        10003,
+        10004
+      ]
+    },
+    {
+      "condition": "C11",
+      "start_step": 4750,
+      "steps": 250,
+      "seeds": [
+        10000,
+        10001,
+        10002,
+        10003,
+        10004
+      ]
+    },
+    {
+      "condition": "N00",
+      "start_step": 0,
+      "steps": 80,
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "condition": "N00",
+      "start_step": 80,
+      "steps": 250,
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "condition": "N00",
+      "start_step": 580,
+      "steps": 20,
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "condition": "N01",
+      "start_step": 0,
+      "steps": 80,
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "condition": "N01",
+      "start_step": 80,
+      "steps": 250,
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "condition": "N01",
+      "start_step": 580,
+      "steps": 20,
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "condition": "N10",
+      "start_step": 0,
+      "steps": 80,
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "condition": "N10",
+      "start_step": 80,
+      "steps": 250,
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "condition": "N10",
+      "start_step": 580,
+      "steps": 20,
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "condition": "N11",
+      "start_step": 0,
+      "steps": 80,
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "condition": "N11",
+      "start_step": 80,
+      "steps": 250,
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "condition": "N11",
+      "start_step": 580,
+      "steps": 20,
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "condition": "S_enable_weights",
+      "start_step": 0,
+      "steps": 250,
+      "seeds": [
+        10000,
+        10001,
+        10002,
+        10003,
+        10004
+      ]
+    },
+    {
+      "condition": "S_enable_weights",
+      "start_step": 1500,
+      "steps": 250,
+      "seeds": [
+        10000,
+        10001,
+        10002,
+        10003,
+        10004
+      ]
+    },
+    {
+      "condition": "S_enable_weights",
+      "start_step": 4750,
+      "steps": 250,
+      "seeds": [
+        10000,
+        10001,
+        10002,
+        10003,
+        10004
+      ]
+    },
+    {
+      "condition": "S_keep_private",
+      "start_step": 0,
+      "steps": 250,
+      "seeds": [
+        10000,
+        10001,
+        10002,
+        10003,
+        10004
+      ]
+    },
+    {
+      "condition": "S_keep_private",
+      "start_step": 4750,
+      "steps": 250,
+      "seeds": [
+        10000,
+        10001,
+        10002,
+        10003,
+        10004
+      ]
+    }
+  ],
+  "independent_replay_selection": "First and last physical chunks of each condition, first seed; plus network round80 and enable-weights round1500. RNG hashes checked all5 seeds in each selected chunk.",
+  "checks": {
+    "q_softmax": 1960,
+    "q_sum": 1960,
+    "L_score_recurrence": 1960,
+    "log_odds_source": 1960,
+    "observable_mixture": 1960,
+    "MSE_noiseless_full": 1960,
+    "MAP_observable": 1960,
+    "initial_precision_deterministic": 1960,
+    "final_precision_history": 1960,
+    "precision_update": 1960,
+    "last_L": 1960,
+    "initial_reference_precision": 130,
+    "initial_reference_information": 130,
+    "initial_log_weights_zero": 130,
+    "initial_seed_keys": 130,
+    "checkpoint_Pi": 1830,
+    "checkpoint_h": 1830,
+    "checkpoint_L": 1830,
+    "checkpoint_key": 1790,
+    "archive_N00_L": 40,
+    "archive_N00_q": 40,
+    "archive_N00_mu_map": 40,
+    "archive_N00_mu_mixture": 40,
+    "archive_N00_mse_full": 40,
+    "archive_N00_nll_full": 40,
+    "network_phase2_key_reset": 40,
+    "archive_N00_final_Pi": 10,
+    "archive_N00_final_h": 10,
+    "archive_N00_final_L": 10,
+    "archive_N10_L": 40,
+    "archive_N10_q": 40,
+    "archive_N10_mu_map": 40,
+    "archive_N10_mu_mixture": 40,
+    "archive_N10_mse_full": 40,
+    "archive_N10_nll_full": 40,
+    "archive_N10_final_Pi": 10,
+    "archive_N10_final_h": 10,
+    "archive_N10_final_L": 10,
+    "archive_N11_L": 40,
+    "archive_N11_q": 40,
+    "archive_N11_mu_map": 40,
+    "archive_N11_mu_mixture": 40,
+    "archive_N11_mse_full": 40,
+    "archive_N11_nll_full": 40,
+    "archive_N11_final_Pi": 10,
+    "archive_N11_final_h": 10,
+    "archive_N11_final_L": 10,
+    "channel_pair_obs": 680,
+    "channel_pair_ell": 680,
+    "channel_pair_mu_conditional": 680,
+    "channel_pair_initial_Pi": 680,
+    "channel_pair_initial_h": 680,
+    "channel_pair_initial_key": 680,
+    "channel_pair_final_Pi": 680,
+    "channel_pair_final_h": 680,
+    "channel_pair_final_key": 680,
+    "channel_pair_precision": 680,
+    "reconstructed_training": 31,
+    "reconstructed_final_key": 31,
+    "numpy_replay_ell": 6150,
+    "numpy_replay_L": 6150,
+    "numpy_replay_q": 6150,
+    "numpy_replay_mu_conditional": 6150,
+    "numpy_replay_mu_mixture": 6150,
+    "numpy_replay_precision": 6150,
+    "numpy_replay_mixture_NLL": 62,
+    "numpy_replay_final_Pi": 31,
+    "numpy_replay_final_h": 31,
+    "numpy_replay_final_L": 31
+  },
+  "maximum_absolute_errors": {
+    "q_softmax": 2.220446049250313e-16,
+    "q_sum": 2.220446049250313e-16,
+    "L_score_recurrence": 1.8189894035458565e-12,
+    "log_odds_source": 2.5721647034515627e-12,
+    "observable_mixture": 0.0,
+    "MSE_noiseless_full": 4.440892098500626e-16,
+    "MAP_observable": 0.0,
+    "final_precision_history": 0.0,
+    "precision_update": 3.552713678800501e-15,
+    "initial_reference_precision": 0.0,
+    "initial_reference_information": 0.0,
+    "archive_N00_L": 0.0,
+    "archive_N00_q": 0.0,
+    "archive_N00_mu_map": 0.0,
+    "archive_N00_mu_mixture": 0.0,
+    "archive_N00_mse_full": 0.0,
+    "archive_N00_nll_full": 0.0,
+    "archive_N00_final_Pi": 0.0,
+    "archive_N00_final_h": 0.0,
+    "archive_N00_final_L": 0.0,
+    "archive_N10_L": 0.0,
+    "archive_N10_q": 0.0,
+    "archive_N10_mu_map": 0.0,
+    "archive_N10_mu_mixture": 0.0,
+    "archive_N10_mse_full": 0.0,
+    "archive_N10_nll_full": 0.0,
+    "archive_N10_final_Pi": 0.0,
+    "archive_N10_final_h": 0.0,
+    "archive_N10_final_L": 0.0,
+    "archive_N11_L": 0.0,
+    "archive_N11_q": 0.0,
+    "archive_N11_mu_map": 0.0,
+    "archive_N11_mu_mixture": 0.0,
+    "archive_N11_mse_full": 0.0,
+    "archive_N11_nll_full": 0.0,
+    "archive_N11_final_Pi": 0.0,
+    "archive_N11_final_h": 0.0,
+    "archive_N11_final_L": 0.0,
+    "numpy_replay_ell": 1.0658141036401503e-14,
+    "numpy_replay_L": 1.2732925824820995e-11,
+    "numpy_replay_q": 3.638200851696638e-13,
+    "numpy_replay_mu_conditional": 3.9968028886505635e-15,
+    "numpy_replay_mu_mixture": 7.457368056407176e-13,
+    "numpy_replay_precision": 3.907985046680551e-14,
+    "numpy_replay_mixture_NLL": 6.439293542825908e-13,
+    "numpy_replay_final_Pi": 2.4868995751603507e-14,
+    "numpy_replay_final_h": 2.1316282072803006e-14,
+    "numpy_replay_final_L": 1.1823431123048067e-11
+  },
+  "archive_regression": "all three archived network arms, all50seeds, all600updates and finalstates",
+  "replication_note": "650 logical paired seed-condition histories include reused branch data; independent units are50networkseeds and50campseeds, not650 independent replications.",
+  "independent_seed_metrics_file": "INDEPENDENT_SEED_METRICS.csv",
+  "independent_seed_metrics_rows": 1100,
+  "scope": "All raw hashes and perround recurrence/probability/MSE/channel-pair checks; independent NumPy replay subset as declared; no production numerical helpers."
+}

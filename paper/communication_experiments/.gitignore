@@ -1,3 +1,6 @@
 runs/
 __pycache__/
 .pytest_cache/
+.matplotlib-cache/
+analysis/plot_data.npz
+INDEPENDENT_ANALYSIS_RECOMPUTATION.json

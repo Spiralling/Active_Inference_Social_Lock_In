@@ -1,0 +1,27 @@
+{
+  "status": "passed",
+  "comparisons": {
+    "windows": 3300,
+    "seed_metrics": 17600,
+    "opposition": 9000,
+    "opposition_pass": 1800,
+    "paired_bootstrap": 216,
+    "summary_bootstrap": 1056,
+    "occupancy_bootstrap": 108,
+    "wilson_interval": 180,
+    "event_flags": 43100,
+    "event_times": 172400,
+    "branch_status": 300,
+    "event_summary_counts": 188,
+    "event_summary_medians": 282
+  },
+  "maximum_absolute_errors": {
+    "seed_metrics": 1.7763568394002505e-15,
+    "opposition": 0.0,
+    "paired_bootstrap": 4.440892098500626e-16,
+    "summary_bootstrap": 8.881784197001252e-16,
+    "occupancy_bootstrap": 0.0,
+    "wilson_interval": 6.938893903907228e-18
+  },
+  "interpretation": "Independent raw reconstruction agrees on every specified seed metric/window, occupancy, crossing/censoring event, and network/branch paired contrast interval."
+}

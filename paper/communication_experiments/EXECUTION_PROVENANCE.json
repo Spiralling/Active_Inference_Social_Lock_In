@@ -1,0 +1,44 @@
+{
+  "orx_project": "49b2c5d7-2a4b-4c60-8487-589091edec33",
+  "orx_experiment": "a86619b3-3074-4305-a939-7df683956319",
+  "orx_run": "ccaba0e8-39ca-4993-a219-64ce4cd09de5",
+  "producer_commit": "139225df25e641d387f4ea5e020e54203fe32c6b",
+  "branch": "orx/communication-channel-confirmation",
+  "delivery_branch": "publication/communication-camera-ready",
+  "raw_run_path": "/Users/davand/.local/share/openresearch/local-runs/ccaba0e8-39ca-4993-a219-64ce4cd09de5/repo/paper/communication_experiments/runs/confirmation-2026-09-20",
+  "completion": {
+    "status": "complete",
+    "conditions": 13,
+    "logical_chunks": 1960,
+    "unique_data_files": 1670,
+    "elapsed_seconds": 145.43715810775757,
+    "protocol_sha256": "7fdc4b7e5946e7c6e11d9511cccf8e472f98e4922cb2e0d62f2697e66c87c614"
+  },
+  "environment": {
+    "python": "3.12.9 (v3.12.9:fdb81425a9a, Feb  4 2025, 12:21:36) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "macOS-26.3-arm64-arm-64bit",
+    "backend": "cpu",
+    "jax_enable_x64": true,
+    "jax_default_prng_impl": "threefry2x32",
+    "jax_devices": [
+      "TFRT_CPU_0"
+    ],
+    "engine_file": "/Users/davand/.local/share/openresearch/local-runs/ccaba0e8-39ca-4993-a219-64ce4cd09de5/repo/paper/four_variable_experiments/engine/src/structural/rival.py",
+    "world_sha256": "dd227ae6e0e20e653b979a329fdce5eb389afb2fc491365b10f506ce6889dee1",
+    "runner_sha256": "40a2c5485f8c93c00ec1506818bdc91f426ccbb2982c9ec3d8611c17ef4a49f4",
+    "packages": {
+      "jax": "0.9.0",
+      "jaxlib": "0.9.0",
+      "numpy": "2.3.4",
+      "scipy": "1.16.3",
+      "equinox": "0.13.6",
+      "networkx": "3.5",
+      "matplotlib": "3.10.7"
+    }
+  },
+  "protocol_sha256": "7fdc4b7e5946e7c6e11d9511cccf8e472f98e4922cb2e0d62f2697e66c87c614",
+  "observed_production_failures": 0,
+  "independent_replications": "50 paired network seeds and50 paired camp seeds;13 logical conditions are not650 independent replications",
+  "prior_archive": "12048402-ea93-4028-bfbe-9fff80fbd00b",
+  "model_preserved": "Original combustion candidate family, means, no utility/no gates/no model-score decay;onlyspecifiedcommunication,conditionalretentionandgasresidualdiagnostic."
+}

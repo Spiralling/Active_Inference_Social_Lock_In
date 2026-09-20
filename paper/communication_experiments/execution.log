@@ -1,0 +1,148 @@
+PROTOCOL_SHA256 7fdc4b7e5946e7c6e11d9511cccf8e472f98e4922cb2e0d62f2697e66c87c614
+SETUP {"condition": "N10", "family": "network", "N": 24, "T": 600, "start_step": 80, "seeds": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49], "fuse_nets": true, "alpha_m": 0.0, "omega": 0.9, "sigma_o": 1.0, "beta": null, "reference_variant": "original combustion references"}SETUP {"condition": "N00", "family": "network", "N": 24, "T": 600, "start_step": 80, "seeds": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49], "fuse_nets": false, "alpha_m": 0.0, "omega": 0.9, "sigma_o": 1.0, "beta": null, "reference_variant": "original combustion references"}
+SETUP {"condition": "N01", "family": "network", "N": 24, "T": 600, "start_step": 80, "seeds": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49], "fuse_nets": false, "alpha_m": 0.02, "omega": 0.9, "sigma_o": 1.0, "beta": null, "reference_variant": "original combustion references"}
+
+BATCH {"condition": "N10", "seeds": [0, 1, 2, 3, 4], "elapsed_seconds": 6.03}
+BATCH {"condition": "N01", "seeds": [0, 1, 2, 3, 4], "elapsed_seconds": 6.97}
+BATCH {"condition": "N10", "seeds": [5, 6, 7, 8, 9], "elapsed_seconds": 7.04}
+BATCH {"condition": "N00", "seeds": [0, 1, 2, 3, 4], "elapsed_seconds": 7.2}
+BATCH {"condition": "N01", "seeds": [5, 6, 7, 8, 9], "elapsed_seconds": 7.43}
+BATCH {"condition": "N10", "seeds": [10, 11, 12, 13, 14], "elapsed_seconds": 7.51}
+BATCH {"condition": "N00", "seeds": [5, 6, 7, 8, 9], "elapsed_seconds": 7.62}
+BATCH {"condition": "N01", "seeds": [10, 11, 12, 13, 14], "elapsed_seconds": 7.85}
+BATCH {"condition": "N10", "seeds": [15, 16, 17, 18, 19], "elapsed_seconds": 7.95}
+BATCH {"condition": "N00", "seeds": [10, 11, 12, 13, 14], "elapsed_seconds": 8.03}
+BATCH {"condition": "N01", "seeds": [15, 16, 17, 18, 19], "elapsed_seconds": 8.26}
+BATCH {"condition": "N10", "seeds": [20, 21, 22, 23, 24], "elapsed_seconds": 8.4}
+BATCH {"condition": "N00", "seeds": [15, 16, 17, 18, 19], "elapsed_seconds": 8.46}
+BATCH {"condition": "N01", "seeds": [20, 21, 22, 23, 24], "elapsed_seconds": 8.67}
+BATCH {"condition": "N10", "seeds": [25, 26, 27, 28, 29], "elapsed_seconds": 8.83}
+BATCH {"condition": "N00", "seeds": [20, 21, 22, 23, 24], "elapsed_seconds": 8.87}
+BATCH {"condition": "N01", "seeds": [25, 26, 27, 28, 29], "elapsed_seconds": 9.08}
+BATCH {"condition": "N10", "seeds": [30, 31, 32, 33, 34], "elapsed_seconds": 9.28}
+BATCH {"condition": "N00", "seeds": [25, 26, 27, 28, 29], "elapsed_seconds": 9.31}
+BATCH {"condition": "N01", "seeds": [30, 31, 32, 33, 34], "elapsed_seconds": 9.51}
+BATCH {"condition": "N10", "seeds": [35, 36, 37, 38, 39], "elapsed_seconds": 9.71}
+BATCH {"condition": "N00", "seeds": [30, 31, 32, 33, 34], "elapsed_seconds": 9.75}
+BATCH {"condition": "N01", "seeds": [35, 36, 37, 38, 39], "elapsed_seconds": 9.94}
+BATCH {"condition": "N10", "seeds": [40, 41, 42, 43, 44], "elapsed_seconds": 10.13}
+BATCH {"condition": "N00", "seeds": [35, 36, 37, 38, 39], "elapsed_seconds": 10.14}
+BATCH {"condition": "N01", "seeds": [40, 41, 42, 43, 44], "elapsed_seconds": 10.39}
+BATCH {"condition": "N00", "seeds": [40, 41, 42, 43, 44], "elapsed_seconds": 10.56}BATCH {"condition": "N10", "seeds": [45, 46, 47, 48, 49], "elapsed_seconds": 10.56}
+
+CONDITION {"condition": "N10", "elapsed_seconds": 10.57, "seed_count": 50, "final_state": 600, "endpoint_only": true, "endpoint_mean_q_group1": 1.0, "endpoint_mean_q_group2": 0.14584717017434468, "endpoint_mean_mse": 0.23196019584820796, "endpoint_mean_nll": 4.552769634159821}
+SETUP {"condition": "N11", "family": "network", "N": 24, "T": 600, "start_step": 80, "seeds": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49], "fuse_nets": true, "alpha_m": 0.02, "omega": 0.9, "sigma_o": 1.0, "beta": null, "reference_variant": "original combustion references"}
+BATCH {"condition": "N01", "seeds": [45, 46, 47, 48, 49], "elapsed_seconds": 10.83}
+CONDITION {"condition": "N01", "elapsed_seconds": 10.83, "seed_count": 50, "final_state": 600, "endpoint_only": true, "endpoint_mean_q_group1": 0.995678432679972, "endpoint_mean_q_group2": 0.9877196385062134, "endpoint_mean_mse": 0.023916540214991445, "endpoint_mean_nll": 4.385810172108695}
+BATCH {"condition": "N00", "seeds": [45, 46, 47, 48, 49], "elapsed_seconds": 11.0}
+CONDITION {"condition": "N00", "elapsed_seconds": 11.0, "seed_count": 50, "final_state": 600, "endpoint_only": true, "endpoint_mean_q_group1": 0.9999999602519574, "endpoint_mean_q_group2": 0.7722746111712959, "endpoint_mean_mse": 0.12174549763555868, "endpoint_mean_nll": 4.486221719531074}
+BATCH {"condition": "N11", "seeds": [0, 1, 2, 3, 4], "elapsed_seconds": 12.63}
+BATCH {"condition": "N11", "seeds": [5, 6, 7, 8, 9], "elapsed_seconds": 13.0}
+BATCH {"condition": "N11", "seeds": [10, 11, 12, 13, 14], "elapsed_seconds": 13.38}
+BATCH {"condition": "N11", "seeds": [15, 16, 17, 18, 19], "elapsed_seconds": 13.73}
+BATCH {"condition": "N11", "seeds": [20, 21, 22, 23, 24], "elapsed_seconds": 14.1}
+BATCH {"condition": "N11", "seeds": [25, 26, 27, 28, 29], "elapsed_seconds": 14.45}
+BATCH {"condition": "N11", "seeds": [30, 31, 32, 33, 34], "elapsed_seconds": 14.81}
+BATCH {"condition": "N11", "seeds": [35, 36, 37, 38, 39], "elapsed_seconds": 15.19}
+BATCH {"condition": "N11", "seeds": [40, 41, 42, 43, 44], "elapsed_seconds": 15.57}
+BATCH {"condition": "N11", "seeds": [45, 46, 47, 48, 49], "elapsed_seconds": 15.96}
+CONDITION {"condition": "N11", "elapsed_seconds": 15.97, "seed_count": 50, "final_state": 600, "endpoint_only": true, "endpoint_mean_q_group1": 1.0, "endpoint_mean_q_group2": 0.9999999999736986, "endpoint_mean_mse": 0.011534125362909289, "endpoint_mean_nll": 4.30994472535407}
+SETUP {"condition": "C01", "family": "camp", "N": 16, "T": 5000, "start_step": 0, "seeds": [10000, 10001, 10002, 10003, 10004, 10005, 10006, 10007, 10008, 10009, 10010, 10011, 10012, 10013, 10014, 10015, 10016, 10017, 10018, 10019, 10020, 10021, 10022, 10023, 10024, 10025, 10026, 10027, 10028, 10029, 10030, 10031, 10032, 10033, 10034, 10035, 10036, 10037, 10038, 10039, 10040, 10041, 10042, 10043, 10044, 10045, 10046, 10047, 10048, 10049], "fuse_nets": false, "alpha_m": 0.02, "omega": 0.3, "sigma_o": 0.5, "beta": 0.05, "reference_variant": "original combustion references"}
+SETUP {"condition": "C10", "family": "camp", "N": 16, "T": 5000, "start_step": 0, "seeds": [10000, 10001, 10002, 10003, 10004, 10005, 10006, 10007, 10008, 10009, 10010, 10011, 10012, 10013, 10014, 10015, 10016, 10017, 10018, 10019, 10020, 10021, 10022, 10023, 10024, 10025, 10026, 10027, 10028, 10029, 10030, 10031, 10032, 10033, 10034, 10035, 10036, 10037, 10038, 10039, 10040, 10041, 10042, 10043, 10044, 10045, 10046, 10047, 10048, 10049], "fuse_nets": true, "alpha_m": 0.0, "omega": 0.3, "sigma_o": 0.5, "beta": 0.05, "reference_variant": "original combustion references"}
+SETUP {"condition": "C00", "family": "camp", "N": 16, "T": 5000, "start_step": 0, "seeds": [10000, 10001, 10002, 10003, 10004, 10005, 10006, 10007, 10008, 10009, 10010, 10011, 10012, 10013, 10014, 10015, 10016, 10017, 10018, 10019, 10020, 10021, 10022, 10023, 10024, 10025, 10026, 10027, 10028, 10029, 10030, 10031, 10032, 10033, 10034, 10035, 10036, 10037, 10038, 10039, 10040, 10041, 10042, 10043, 10044, 10045, 10046, 10047, 10048, 10049], "fuse_nets": false, "alpha_m": 0.0, "omega": 0.3, "sigma_o": 0.5, "beta": 0.05, "reference_variant": "original combustion references"}
+BATCH {"condition": "C10", "seeds": [10000, 10001, 10002, 10003, 10004], "elapsed_seconds": 21.03}
+BATCH {"condition": "C00", "seeds": [10000, 10001, 10002, 10003, 10004], "elapsed_seconds": 21.29}
+BATCH {"condition": "C01", "seeds": [10000, 10001, 10002, 10003, 10004], "elapsed_seconds": 21.59}
+BATCH {"condition": "C10", "seeds": [10005, 10006, 10007, 10008, 10009], "elapsed_seconds": 23.9}
+BATCH {"condition": "C00", "seeds": [10005, 10006, 10007, 10008, 10009], "elapsed_seconds": 24.06}
+BATCH {"condition": "C01", "seeds": [10005, 10006, 10007, 10008, 10009], "elapsed_seconds": 24.35}
+BATCH {"condition": "C10", "seeds": [10010, 10011, 10012, 10013, 10014], "elapsed_seconds": 26.77}
+BATCH {"condition": "C00", "seeds": [10010, 10011, 10012, 10013, 10014], "elapsed_seconds": 26.79}
+BATCH {"condition": "C01", "seeds": [10010, 10011, 10012, 10013, 10014], "elapsed_seconds": 27.11}
+BATCH {"condition": "C00", "seeds": [10015, 10016, 10017, 10018, 10019], "elapsed_seconds": 29.68}
+BATCH {"condition": "C10", "seeds": [10015, 10016, 10017, 10018, 10019], "elapsed_seconds": 29.73}
+BATCH {"condition": "C01", "seeds": [10015, 10016, 10017, 10018, 10019], "elapsed_seconds": 30.06}
+BATCH {"condition": "C00", "seeds": [10020, 10021, 10022, 10023, 10024], "elapsed_seconds": 32.68}
+BATCH {"condition": "C10", "seeds": [10020, 10021, 10022, 10023, 10024], "elapsed_seconds": 32.87}
+BATCH {"condition": "C01", "seeds": [10020, 10021, 10022, 10023, 10024], "elapsed_seconds": 32.97}
+BATCH {"condition": "C00", "seeds": [10025, 10026, 10027, 10028, 10029], "elapsed_seconds": 35.49}
+BATCH {"condition": "C10", "seeds": [10025, 10026, 10027, 10028, 10029], "elapsed_seconds": 35.77}
+BATCH {"condition": "C01", "seeds": [10025, 10026, 10027, 10028, 10029], "elapsed_seconds": 35.77}
+BATCH {"condition": "C00", "seeds": [10030, 10031, 10032, 10033, 10034], "elapsed_seconds": 38.32}
+BATCH {"condition": "C01", "seeds": [10030, 10031, 10032, 10033, 10034], "elapsed_seconds": 38.6}
+BATCH {"condition": "C10", "seeds": [10030, 10031, 10032, 10033, 10034], "elapsed_seconds": 38.61}
+BATCH {"condition": "C00", "seeds": [10035, 10036, 10037, 10038, 10039], "elapsed_seconds": 41.22}
+BATCH {"condition": "C01", "seeds": [10035, 10036, 10037, 10038, 10039], "elapsed_seconds": 41.5}
+BATCH {"condition": "C10", "seeds": [10035, 10036, 10037, 10038, 10039], "elapsed_seconds": 41.55}
+BATCH {"condition": "C00", "seeds": [10040, 10041, 10042, 10043, 10044], "elapsed_seconds": 44.19}
+BATCH {"condition": "C01", "seeds": [10040, 10041, 10042, 10043, 10044], "elapsed_seconds": 44.47}
+BATCH {"condition": "C10", "seeds": [10040, 10041, 10042, 10043, 10044], "elapsed_seconds": 44.48}
+BATCH {"condition": "C00", "seeds": [10045, 10046, 10047, 10048, 10049], "elapsed_seconds": 47.07}
+CONDITION {"condition": "C00", "elapsed_seconds": 47.09, "seed_count": 50, "final_state": 5000, "endpoint_only": true, "endpoint_mean_q_group1": 2.543830628782031e-11, "endpoint_mean_q_group2": 1.0, "endpoint_mean_mse": 0.6882591582489571, "endpoint_mean_nll": 3.889630300731992}
+SETUP {"condition": "C11", "family": "camp", "N": 16, "T": 5000, "start_step": 0, "seeds": [10000, 10001, 10002, 10003, 10004, 10005, 10006, 10007, 10008, 10009, 10010, 10011, 10012, 10013, 10014, 10015, 10016, 10017, 10018, 10019, 10020, 10021, 10022, 10023, 10024, 10025, 10026, 10027, 10028, 10029, 10030, 10031, 10032, 10033, 10034, 10035, 10036, 10037, 10038, 10039, 10040, 10041, 10042, 10043, 10044, 10045, 10046, 10047, 10048, 10049], "fuse_nets": true, "alpha_m": 0.02, "omega": 0.3, "sigma_o": 0.5, "beta": 0.05, "reference_variant": "original combustion references"}
+BATCH {"condition": "C01", "seeds": [10045, 10046, 10047, 10048, 10049], "elapsed_seconds": 47.43}
+CONDITION {"condition": "C01", "elapsed_seconds": 47.46, "seed_count": 50, "final_state": 5000, "endpoint_only": true, "endpoint_mean_q_group1": 1.0, "endpoint_mean_q_group2": 1.0, "endpoint_mean_mse": 0.02274557368654643, "endpoint_mean_nll": 2.844437859932134}
+SETUP {"condition": "C10_beta50", "family": "camp", "N": 16, "T": 5000, "start_step": 0, "seeds": [10000, 10001, 10002, 10003, 10004, 10005, 10006, 10007, 10008, 10009, 10010, 10011, 10012, 10013, 10014, 10015, 10016, 10017, 10018, 10019, 10020, 10021, 10022, 10023, 10024, 10025, 10026, 10027, 10028, 10029, 10030, 10031, 10032, 10033, 10034, 10035, 10036, 10037, 10038, 10039, 10040, 10041, 10042, 10043, 10044, 10045, 10046, 10047, 10048, 10049], "fuse_nets": true, "alpha_m": 0.0, "omega": 0.3, "sigma_o": 0.5, "beta": 0.5, "reference_variant": "original combustion references"}
+BATCH {"condition": "C10", "seeds": [10045, 10046, 10047, 10048, 10049], "elapsed_seconds": 47.86}
+CONDITION {"condition": "C10", "elapsed_seconds": 47.91, "seed_count": 50, "final_state": 5000, "endpoint_only": true, "endpoint_mean_q_group1": 6.336588060511223e-07, "endpoint_mean_q_group2": 1.0, "endpoint_mean_mse": 0.6508935569059483, "endpoint_mean_nll": 3.8502919905680657}
+SETUP {"condition": "C10_omega90", "family": "camp", "N": 16, "T": 5000, "start_step": 0, "seeds": [10000, 10001, 10002, 10003, 10004, 10005, 10006, 10007, 10008, 10009, 10010, 10011, 10012, 10013, 10014, 10015, 10016, 10017, 10018, 10019, 10020, 10021, 10022, 10023, 10024, 10025, 10026, 10027, 10028, 10029, 10030, 10031, 10032, 10033, 10034, 10035, 10036, 10037, 10038, 10039, 10040, 10041, 10042, 10043, 10044, 10045, 10046, 10047, 10048, 10049], "fuse_nets": true, "alpha_m": 0.0, "omega": 0.9, "sigma_o": 0.5, "beta": 0.05, "reference_variant": "original combustion references"}
+BATCH {"condition": "C11", "seeds": [10000, 10001, 10002, 10003, 10004], "elapsed_seconds": 52.41}
+BATCH {"condition": "C10_beta50", "seeds": [10000, 10001, 10002, 10003, 10004], "elapsed_seconds": 52.66}
+BATCH {"condition": "C10_omega90", "seeds": [10000, 10001, 10002, 10003, 10004], "elapsed_seconds": 53.01}
+BATCH {"condition": "C11", "seeds": [10005, 10006, 10007, 10008, 10009], "elapsed_seconds": 56.54}
+BATCH {"condition": "C10_beta50", "seeds": [10005, 10006, 10007, 10008, 10009], "elapsed_seconds": 56.7}
+BATCH {"condition": "C10_omega90", "seeds": [10005, 10006, 10007, 10008, 10009], "elapsed_seconds": 57.02}
+BATCH {"condition": "C11", "seeds": [10010, 10011, 10012, 10013, 10014], "elapsed_seconds": 59.72}
+BATCH {"condition": "C10_beta50", "seeds": [10010, 10011, 10012, 10013, 10014], "elapsed_seconds": 59.89}
+BATCH {"condition": "C10_omega90", "seeds": [10010, 10011, 10012, 10013, 10014], "elapsed_seconds": 60.18}
+BATCH {"condition": "C11", "seeds": [10015, 10016, 10017, 10018, 10019], "elapsed_seconds": 62.99}
+BATCH {"condition": "C10_beta50", "seeds": [10015, 10016, 10017, 10018, 10019], "elapsed_seconds": 63.14}
+BATCH {"condition": "C10_omega90", "seeds": [10015, 10016, 10017, 10018, 10019], "elapsed_seconds": 63.45}
+BATCH {"condition": "C11", "seeds": [10020, 10021, 10022, 10023, 10024], "elapsed_seconds": 66.0}
+BATCH {"condition": "C10_beta50", "seeds": [10020, 10021, 10022, 10023, 10024], "elapsed_seconds": 66.15}
+BATCH {"condition": "C10_omega90", "seeds": [10020, 10021, 10022, 10023, 10024], "elapsed_seconds": 66.45}
+BATCH {"condition": "C11", "seeds": [10025, 10026, 10027, 10028, 10029], "elapsed_seconds": 69.02}
+BATCH {"condition": "C10_beta50", "seeds": [10025, 10026, 10027, 10028, 10029], "elapsed_seconds": 69.23}
+BATCH {"condition": "C10_omega90", "seeds": [10025, 10026, 10027, 10028, 10029], "elapsed_seconds": 69.46}
+BATCH {"condition": "C11", "seeds": [10030, 10031, 10032, 10033, 10034], "elapsed_seconds": 72.42}
+BATCH {"condition": "C10_beta50", "seeds": [10030, 10031, 10032, 10033, 10034], "elapsed_seconds": 72.59}
+BATCH {"condition": "C10_omega90", "seeds": [10030, 10031, 10032, 10033, 10034], "elapsed_seconds": 72.75}
+BATCH {"condition": "C11", "seeds": [10035, 10036, 10037, 10038, 10039], "elapsed_seconds": 75.81}
+BATCH {"condition": "C10_beta50", "seeds": [10035, 10036, 10037, 10038, 10039], "elapsed_seconds": 75.92}
+BATCH {"condition": "C10_omega90", "seeds": [10035, 10036, 10037, 10038, 10039], "elapsed_seconds": 76.11}
+BATCH {"condition": "C11", "seeds": [10040, 10041, 10042, 10043, 10044], "elapsed_seconds": 79.04}
+BATCH {"condition": "C10_beta50", "seeds": [10040, 10041, 10042, 10043, 10044], "elapsed_seconds": 79.09}
+BATCH {"condition": "C10_omega90", "seeds": [10040, 10041, 10042, 10043, 10044], "elapsed_seconds": 79.42}
+BATCH {"condition": "C11", "seeds": [10045, 10046, 10047, 10048, 10049], "elapsed_seconds": 82.07}
+CONDITION {"condition": "C11", "elapsed_seconds": 82.12, "seed_count": 50, "final_state": 5000, "endpoint_only": true, "endpoint_mean_q_group1": 1.0, "endpoint_mean_q_group2": 1.0, "endpoint_mean_mse": 0.021925748355464233, "endpoint_mean_nll": 2.8371472977902115}
+BATCH {"condition": "C10_beta50", "seeds": [10045, 10046, 10047, 10048, 10049], "elapsed_seconds": 82.27}
+CONDITION {"condition": "C10_beta50", "elapsed_seconds": 82.33, "seed_count": 50, "final_state": 5000, "endpoint_only": true, "endpoint_mean_q_group1": 1.0, "endpoint_mean_q_group2": 1.0, "endpoint_mean_mse": 0.02413670405041403, "endpoint_mean_nll": 2.813929874582638}
+SETUP {"condition": "C10_gasvar_matched", "family": "camp", "N": 16, "T": 5000, "start_step": 0, "seeds": [10000, 10001, 10002, 10003, 10004, 10005, 10006, 10007, 10008, 10009, 10010, 10011, 10012, 10013, 10014, 10015, 10016, 10017, 10018, 10019, 10020, 10021, 10022, 10023, 10024, 10025, 10026, 10027, 10028, 10029, 10030, 10031, 10032, 10033, 10034, 10035, 10036, 10037, 10038, 10039, 10040, 10041, 10042, 10043, 10044, 10045, 10046, 10047, 10048, 10049], "fuse_nets": true, "alpha_m": 0.0, "omega": 0.3, "sigma_o": 0.5, "beta": 0.05, "reference_variant": "release gas residual .5448"}
+BATCH {"condition": "C10_omega90", "seeds": [10045, 10046, 10047, 10048, 10049], "elapsed_seconds": 82.64}
+CONDITION {"condition": "C10_omega90", "elapsed_seconds": 82.69, "seed_count": 50, "final_state": 5000, "endpoint_only": true, "endpoint_mean_q_group1": 0.9545758453997304, "endpoint_mean_q_group2": 1.0, "endpoint_mean_mse": 0.003036740398921942, "endpoint_mean_nll": 2.3454761682000327}
+BATCH {"condition": "C10_gasvar_matched", "seeds": [10000, 10001, 10002, 10003, 10004], "elapsed_seconds": 86.28}
+BATCH {"condition": "C10_gasvar_matched", "seeds": [10005, 10006, 10007, 10008, 10009], "elapsed_seconds": 88.82}
+BATCH {"condition": "C10_gasvar_matched", "seeds": [10010, 10011, 10012, 10013, 10014], "elapsed_seconds": 91.42}
+BATCH {"condition": "C10_gasvar_matched", "seeds": [10015, 10016, 10017, 10018, 10019], "elapsed_seconds": 93.91}
+BATCH {"condition": "C10_gasvar_matched", "seeds": [10020, 10021, 10022, 10023, 10024], "elapsed_seconds": 96.44}
+BATCH {"condition": "C10_gasvar_matched", "seeds": [10025, 10026, 10027, 10028, 10029], "elapsed_seconds": 99.02}
+BATCH {"condition": "C10_gasvar_matched", "seeds": [10030, 10031, 10032, 10033, 10034], "elapsed_seconds": 101.67}
+BATCH {"condition": "C10_gasvar_matched", "seeds": [10035, 10036, 10037, 10038, 10039], "elapsed_seconds": 104.2}
+BATCH {"condition": "C10_gasvar_matched", "seeds": [10040, 10041, 10042, 10043, 10044], "elapsed_seconds": 106.72}
+BATCH {"condition": "C10_gasvar_matched", "seeds": [10045, 10046, 10047, 10048, 10049], "elapsed_seconds": 109.62}
+CONDITION {"condition": "C10_gasvar_matched", "elapsed_seconds": 109.68, "seed_count": 50, "final_state": 5000, "endpoint_only": true, "endpoint_mean_q_group1": 0.9909191390485126, "endpoint_mean_q_group2": 1.0, "endpoint_mean_mse": 0.022015135897930072, "endpoint_mean_nll": 2.8407146634305875}
+SETUP {"condition": "S_keep_private", "family": "camp", "N": 16, "T": 5000, "start_step": 1500, "seeds": [10000, 10001, 10002, 10003, 10004, 10005, 10006, 10007, 10008, 10009, 10010, 10011, 10012, 10013, 10014, 10015, 10016, 10017, 10018, 10019, 10020, 10021, 10022, 10023, 10024, 10025, 10026, 10027, 10028, 10029, 10030, 10031, 10032, 10033, 10034, 10035, 10036, 10037, 10038, 10039, 10040, 10041, 10042, 10043, 10044, 10045, 10046, 10047, 10048, 10049], "fuse_nets": true, "alpha_m": 0.0, "omega": 0.3, "sigma_o": 0.5, "beta": 0.05, "reference_variant": "original combustion references"}
+CONDITION {"condition": "S_keep_private", "elapsed_seconds": 126.72, "seed_count": 50, "final_state": 5000, "endpoint_only": true, "endpoint_mean_q_group1": 6.336588060511223e-07, "endpoint_mean_q_group2": 1.0, "endpoint_mean_mse": 0.6508935569059483, "endpoint_mean_nll": 3.8502919905680657, "reused_after_exact_restart_check": true}
+SETUP {"condition": "S_enable_weights", "family": "camp", "N": 16, "T": 5000, "start_step": 1500, "seeds": [10000, 10001, 10002, 10003, 10004, 10005, 10006, 10007, 10008, 10009, 10010, 10011, 10012, 10013, 10014, 10015, 10016, 10017, 10018, 10019, 10020, 10021, 10022, 10023, 10024, 10025, 10026, 10027, 10028, 10029, 10030, 10031, 10032, 10033, 10034, 10035, 10036, 10037, 10038, 10039, 10040, 10041, 10042, 10043, 10044, 10045, 10046, 10047, 10048, 10049], "fuse_nets": true, "alpha_m": 0.02, "omega": 0.3, "sigma_o": 0.5, "beta": 0.05, "reference_variant": "original combustion references"}
+BATCH {"condition": "S_enable_weights", "seeds": [10000, 10001, 10002, 10003, 10004], "elapsed_seconds": 129.48}
+BATCH {"condition": "S_enable_weights", "seeds": [10005, 10006, 10007, 10008, 10009], "elapsed_seconds": 131.24}
+BATCH {"condition": "S_enable_weights", "seeds": [10010, 10011, 10012, 10013, 10014], "elapsed_seconds": 132.97}
+BATCH {"condition": "S_enable_weights", "seeds": [10015, 10016, 10017, 10018, 10019], "elapsed_seconds": 134.71}
+BATCH {"condition": "S_enable_weights", "seeds": [10020, 10021, 10022, 10023, 10024], "elapsed_seconds": 136.45}
+BATCH {"condition": "S_enable_weights", "seeds": [10025, 10026, 10027, 10028, 10029], "elapsed_seconds": 138.24}
+BATCH {"condition": "S_enable_weights", "seeds": [10030, 10031, 10032, 10033, 10034], "elapsed_seconds": 139.98}
+BATCH {"condition": "S_enable_weights", "seeds": [10035, 10036, 10037, 10038, 10039], "elapsed_seconds": 141.76}
+BATCH {"condition": "S_enable_weights", "seeds": [10040, 10041, 10042, 10043, 10044], "elapsed_seconds": 143.49}
+BATCH {"condition": "S_enable_weights", "seeds": [10045, 10046, 10047, 10048, 10049], "elapsed_seconds": 145.25}
+CONDITION {"condition": "S_enable_weights", "elapsed_seconds": 145.33, "seed_count": 50, "final_state": 5000, "endpoint_only": true, "endpoint_mean_q_group1": 1.0, "endpoint_mean_q_group2": 1.0, "endpoint_mean_mse": 0.021925748355464233, "endpoint_mean_nll": 2.8371472977902115}
+COMPLETE {"conditions": 13, "seconds": 145.4384880065918}

@@ -8,6 +8,7 @@ step, score, analysis or plotting function is called by this audit.
 """
 from __future__ import annotations
 import argparse
+import csv
 import hashlib
 import json
 from pathlib import Path
@@ -37,8 +38,13 @@ def main():
     args=parser.parse_args();base=args.run; started=time.monotonic()
     records=json.loads((base/'manifest.json').read_text())
     protocol=json.loads((base/'protocol.json').read_text())
+    expected_engine=json.loads((Path(__file__).resolve().parent/'reference/camera_ready_provenance/accepted_engine_hashes.json').read_text())
+    run_engine=json.loads((base/'engine_hashes.json').read_text())
+    if run_engine!=expected_engine:raise AssertionError('Accepted engine identities differ')
+    recorded_environment=json.loads((base/'environment.json').read_text())
+    if recorded_environment['world_sha256']!=sha(Path(__file__).resolve().parent/'reference/camera_ready_provenance/world.py'):raise AssertionError('World source differs')
     metas={name:json.loads((base/name/'setup.json').read_text()) for name in sorted({r['condition'] for r in records})}
-    maxima={};checks={};filehashes={};precisions={};unique_raw=set();last={};index={};coverage={};selected=[];rngchecks=[]
+    maxima={};checks={};filehashes={};precisions={};unique_raw=set();last={};index={};coverage={};selected=[];rngchecks=[];independent_metrics={}
     def close(label,a,b,atol=2e-9,rtol=2e-11):
         a=np.asarray(a);b=np.asarray(b);err=float(np.max(np.abs(a-b),initial=0))
         maxima[label]=max(maxima.get(label,0.),err);checks[label]=checks.get(label,0)+1
@@ -62,7 +68,10 @@ def main():
     archive={}
     mapping={'N00':'network_all_social_off','N10':'network_hypothesis_off','N11':'network_complete'}
     if args.archive:
-        for name,old in mapping.items():archive[name]=np.load(args.archive/(old+'.npz'))
+        for name,old in mapping.items():
+            archive[name]=np.load(args.archive/(old+'.npz'))
+            manifest=json.loads((args.archive/'results_manifest.json').read_text())
+            if sha(args.archive/(old+'.npz'))!=manifest[old]['sha256']:raise AssertionError('Archived source NPZ hash mismatch')
     ordered=sorted(records,key=lambda r:(r['condition'],r['seeds'][0],r['start_step']))
     selections={}
     for name in metas:
@@ -132,6 +141,28 @@ def main():
                 close('archive_'+name+'_'+new,raw[new],reference,atol=3e-10,rtol=3e-10)
             if t+T==600:
                 for k in ('Pi','h','L'):close('archive_'+name+'_final_'+k,raw['final_'+k],old['final_'+k][ss],atol=3e-10,rtol=3e-10)
+        # Independently accumulate per-seed primary summaries from every update.
+        split=4 if name.startswith('N') else n//2
+        qA=raw['q'][:,:,:split,1].mean(-1);qB=raw['q'][:,:,split:,1].mean(-1)
+        histories={'q_A':qA,'q_B':qB}
+        for prefix,field in [('mse','mse_full'),('nll','nll_full')]:
+            histories[prefix+'_A']=raw[field][:,:,:split].mean(-1)
+            histories[prefix+'_B']=raw[field][:,:,split:].mean(-1)
+        score=raw['ell'][...,1]-raw['ell'][...,0]
+        histories['score_A']=score[:,:,:split].mean(-1);histories['score_B']=score[:,:,split:].mean(-1)
+        if not name.startswith('N'):
+            histories['primary_opposition']=((qA<.1)&(qB>.9)).astype(float)
+            histories['secondary_opposition']=(((raw['q'][:,:,:split,1]<.1).mean(-1)>=.9)&((raw['q'][:,:,split:,1]>.9).mean(-1)>=.9)).astype(float)
+        windows=[(600,450)] if name.startswith('N') else [(1500,1125),(5000,3750)]
+        for horizon,left in windows:
+            lower=max(t,left);upper=min(t+T,horizon)
+            if lower>=upper:continue
+            for ii,seed in enumerate(ss):
+                metricrow=independent_metrics.setdefault((name,seed,horizon),{'condition':name,'seed':seed,'horizon':horizon,'count':0})
+                metricrow['count']+=upper-lower
+                for metric,values in histories.items():
+                    key=metric+'_tail';metricrow[key]=metricrow.get(key,0.)+float(values[ii,lower-t:upper-t].sum())
+                    if t<=horizon-1<t+T:metricrow[metric+'_endpoint']=float(values[ii,horizon-1-t])
         if ss[0]==min(meta['seeds']) and t in selections[name]:selected.append((r,raw,cfg,W,att,phi,P))
         if count%100==0:print('integrity',count+1,'/',len(ordered),flush=True)
     for group,total in coverage.items():
@@ -199,7 +230,18 @@ def main():
         for k,v in [('Pi',P),('h',h),('L',L)]:close('numpy_replay_final_'+k,v,raw['final_'+k][0],atol=5e-9,rtol=5e-11)
         rngchecks.append(dict(condition=r['condition'],start_step=r['start_step'],steps=T,seeds=r['seeds']))
         print('independent replay',r['condition'],r['start_step'],flush=True)
-    result=dict(status='passed',elapsed_seconds=time.monotonic()-started,manifest_records=len(records),unique_raw_files=len(unique_raw),hashed_files=len(filehashes),logical_conditions=len(metas),seed_condition_runs=sum(len(m['seeds']) for m in metas.values()),independent_replay_updates=replay_updates,independent_replay_chunks=rngchecks,independent_replay_selection='First and last physical chunks of each condition, first seed; plus network round80 and enable-weights round1500. RNG hashes checked all5 seeds in each selected chunk.',checks=checks,maximum_absolute_errors=maxima,archive_regression='all three archived network arms, all50seeds, all600updates and finalstates' if archive else 'not requested',scope='All raw hashes and perround recurrence/probability/MSE/channel-pair checks; independent NumPy replay subset as declared; no production numerical helpers.')
+    for row in independent_metrics.values():
+        expected_count={600:150,1500:375,5000:1250}[row['horizon']]
+        if row['count']!=expected_count:raise AssertionError('Tailwindowlength')
+        for key in row:
+            if key.endswith('_tail'):row[key]/=row['count']
+    metricrows=list(independent_metrics.values())
+    output=args.output or base/'INDEPENDENT_RAW_AUDIT.json'
+    metricsfile=output.with_name('INDEPENDENT_SEED_METRICS.csv')
+    columns=sorted({key for row in metricrows for key in row})
+    with metricsfile.open('w',newline='') as stream:
+        writer=csv.DictWriter(stream,fieldnames=columns);writer.writeheader();writer.writerows(metricrows)
+    result=dict(status='passed',accepted_engine_files=len(expected_engine),world_source_matches_supplied_archive=True,elapsed_seconds=time.monotonic()-started,manifest_records=len(records),unique_raw_files=len(unique_raw),hashed_files=len(filehashes),logical_conditions=len(metas),seed_condition_runs=sum(len(m['seeds']) for m in metas.values()),independent_replay_updates=replay_updates,independent_replay_chunks=rngchecks,independent_replay_selection='First and last physical chunks of each condition, first seed; plus network round80 and enable-weights round1500. RNG hashes checked all5 seeds in each selected chunk.',checks=checks,maximum_absolute_errors=maxima,archive_regression='all three archived network arms, all50seeds, all600updates and finalstates' if archive else 'not requested',replication_note='650 logical paired seed-condition histories include reused branch data; independent units are50networkseeds and50campseeds, not650 independent replications.',independent_seed_metrics_file=metricsfile.name,independent_seed_metrics_rows=len(metricrows),scope='All raw hashes and perround recurrence/probability/MSE/channel-pair checks; independent NumPy replay subset as declared; no production numerical helpers.')
     output=args.output or base/'INDEPENDENT_RAW_AUDIT.json';output.write_text(json.dumps(result,indent=2)+'\n')
     print(json.dumps({k:v for k,v in result.items() if k not in ('independent_replay_chunks','checks','maximum_absolute_errors')},indent=2))
 

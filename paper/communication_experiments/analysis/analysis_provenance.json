@@ -1,0 +1,53 @@
+{
+  "raw_root": "/Users/davand/.local/share/openresearch/local-runs/ccaba0e8-39ca-4993-a219-64ce4cd09de5/repo/paper/communication_experiments/runs/confirmation-2026-09-20",
+  "manifest_sha256": "8944584e86eb400c3feab8d84e2ad1bcf46c1f1898a3f68926366a0211a00c9f",
+  "protocol_sha256": "7fdc4b7e5946e7c6e11d9511cccf8e472f98e4922cb2e0d62f2697e66c87c614",
+  "analysis_script_sha256": "12424fb7ff679c5ca1857501bb0e9353eb5fc1b875ec4bb37b03c49a18cee80a",
+  "conditions": [
+    "N00",
+    "N10",
+    "N01",
+    "N11",
+    "C00",
+    "C10",
+    "C01",
+    "C11",
+    "C10_beta50",
+    "C10_omega90",
+    "C10_gasvar_matched",
+    "S_keep_private",
+    "S_enable_weights"
+  ],
+  "seed_condition_count": 650,
+  "seed_window_rows": 1100,
+  "raw_rounds": "All raw rounds used in every statistical window",
+  "states": "Completed state n equals raw round t+1; windows are inclusive in public tables",
+  "bootstrap": {
+    "replicates": 2000,
+    "seed": 20260920,
+    "unit": "whole independent seed",
+    "pairing": "Same resample indices across every arm; paired differences formed before bootstrap",
+    "bands": "pointwise 95% percentile intervals of means, not simultaneous or individual dispersion"
+  },
+  "pass_interval": "Wilson 95%",
+  "endpoint_vs_window": "Reported separately; no endpoint substituted for occupancy",
+  "display": "Every-round group q retained; auxiliary curves fixed stride10 plus boundaries; no smoothing",
+  "illustrative_seed": 10000,
+  "network_illustrative_seed": 0,
+  "event_censoring": "Non-events null; horizon is censoring time, not event; sustained start and detection separately recorded",
+  "branch_loss": "First 20 nonopposing states after1500 across all50seeds; does not imply a transition from opposition for a seed already nonopposing",
+  "secondary_distances": "Mixture/MAP groupmean differences use observable C,G,M only, never compare candidate hidden P/O",
+  "forecasts": "Frozen stationary score predictions; not exact finite-trajectory/adoption targets",
+  "selection": "All frozen conditions and seeds retained; no outcome-based figure seed selection",
+  "outputs": {
+    "all_seed_metrics.csv": "f2237df051767223f274b050dd19b367e138387294c08232f441c456cb61a350",
+    "branch_paired_contrasts.csv": "71a56fc4e7502fe5408d1f1c270e6601a17e90f43d9c375638d48d7669a064d6",
+    "event_summary.csv": "c79434b29a54c5c2ca8134bf74cdb449f9f9a7cce258fad385c6d089f55c44b4",
+    "events.csv": "f971820eef1c4eed5049ffc751e35fe2b5d8a758c50271662afbb6bcc87b144e",
+    "network_factorial_contrasts.csv": "cb743a7fe9c396a25151a59fe5cf279465a3b56aed3987199c2bbd98bddb2031",
+    "opposition_episodes.json": "5b2e0c6b27a922c378f939a620924ed9eb3854f0b7c2c58a81f8e53d2fa8ccd9",
+    "plot_data.npz": "1b5a6dcc60762d610e41d9e28dc3831fe4d2d50e7cf8f0b6020ce0eb30a51c52",
+    "stationary_forecast_comparison.csv": "d393f7a89355e9841923c0523fcf68ecdc26c92fd37a5492cb7ab3300e75c284",
+    "summary.json": "2ab49ba9976ac5d44000fb4f68cae6349b3b9230030eb06a7108295e6183eadc"
+  }
+}
