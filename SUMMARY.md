@@ -1,6 +1,6 @@
 # Collaborator summary: the experiments behind the two IWAI figure versions
 
-Branch: **`collaboration/iwai-figure-experiments`**. It has not been pushed.
+Branch: **`collaboration/iwai-figure-experiments`** in `Spiralling/Active_Inference_Social_Lock_In`.
 
 This branch is a clean, standalone extraction of the code needed for the figures in `IWAI2026_camera_ready_source.zip` and `IWAI2026_figure_layout_source.zip`. It covers **18 numbered figures, 19 asset appearances and 16 unique PDF assets**. Camera-ready Figure 7 combines two PDFs; the model diagram, probability/entropy cycle and topology plot are shared between versions.
 
