@@ -308,10 +308,10 @@ def main():
 
 
 if __name__=="__main__":
-    # The orx child inherits this exact command. Its committed default now
-    # selects the revised suite in a separate package; the earlier implementation
-    # and outputs remain available through an explicit --protocol argument.
-    revised = HERE.parent / "combustion_experiments" / "run.py"
+    # Preserve the fixed orx command while selecting this child's versioned suite.
+    # Scientific changes live in committed code/config, never environment knobs.
+    # The archived combustion wrapper and adaptive engine remain unchanged.
+    revised = HERE.parent / "communication_experiments" / "run.py"
     if revised.exists() and len(sys.argv) == 1:
         import runpy
         runpy.run_path(str(revised), run_name="__main__")
