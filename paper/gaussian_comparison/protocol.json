@@ -1,0 +1,224 @@
+{
+  "name": "matched-gaussian-camp-comparison",
+  "output": "runs/matched-2026-09-20",
+  "T": 5000,
+  "seeds": [
+    10000,
+    10001,
+    10002,
+    10003,
+    10004,
+    10005,
+    10006,
+    10007,
+    10008,
+    10009,
+    10010,
+    10011,
+    10012,
+    10013,
+    10014,
+    10015,
+    10016,
+    10017,
+    10018,
+    10019,
+    10020,
+    10021,
+    10022,
+    10023,
+    10024,
+    10025,
+    10026,
+    10027,
+    10028,
+    10029,
+    10030,
+    10031,
+    10032,
+    10033,
+    10034,
+    10035,
+    10036,
+    10037,
+    10038,
+    10039,
+    10040,
+    10041,
+    10042,
+    10043,
+    10044,
+    10045,
+    10046,
+    10047,
+    10048,
+    10049
+  ],
+  "chunk_steps": 250,
+  "batch_seeds": 5,
+  "heldout_draws": 4,
+  "condition_workers": 2,
+  "conditions": [
+    {
+      "name": "G_plain_info",
+      "N": 16,
+      "omega": 0.3,
+      "sigma_o": 0.5,
+      "beta": 0.05,
+      "gate_nu": null,
+      "reference_variant": "info"
+    },
+    {
+      "name": "G_gated_info",
+      "N": 16,
+      "omega": 0.3,
+      "sigma_o": 0.5,
+      "beta": 0.05,
+      "gate_nu": 0.01,
+      "reference_variant": "info"
+    },
+    {
+      "name": "G_plain_moment",
+      "N": 16,
+      "omega": 0.3,
+      "sigma_o": 0.5,
+      "beta": 0.05,
+      "gate_nu": null,
+      "reference_variant": "moment"
+    },
+    {
+      "name": "G_gated_moment",
+      "N": 16,
+      "omega": 0.3,
+      "sigma_o": 0.5,
+      "beta": 0.05,
+      "gate_nu": 0.01,
+      "reference_variant": "moment"
+    }
+  ],
+  "world": {
+    "signal": [
+      0.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "observable_coordinates": [
+      1,
+      2,
+      3
+    ],
+    "observation_groups": {
+      "gas": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "mass": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ]
+    },
+    "attention": "gas (0,1,0); mass (0,0,1)",
+    "sampling": "same fixed signal plus independent Gaussian sensor noise, not samples from the candidate DAGs"
+  },
+  "references": {
+    "source": "unchanged combustion world, original candidate means and covariances",
+    "marginalization": "first marginalize each candidate to C,G,M; never pool distinct hidden P/O coordinates",
+    "info": "equal average of observable marginal precision matrices and information vectors",
+    "moment": "Gaussian with mean and covariance of equal-weight observable candidate mixture, including between-mean covariance",
+    "dummy": "independent unobserved mean-zero coordinate, variance .25",
+    "initialization": "every agent starts at the same shared K=1 reference in each condition; no camp-specific anchor"
+  },
+  "gate": {
+    "formula": "W_eff[i,j] = W[i,j] * gamma[i,j] / sum_l W[i,l]*gamma[i,l]",
+    "gamma": "(nu+1)/(nu+z2), existing social mean-disagreement gate",
+    "z2": "sum over C,G,M of squared entering-mean differences divided by 1/Pi_i[v,v] + 1/Pi_j[v,v]",
+    "nu": 0.01,
+    "normalization": "exact positive row denominator, no epsilon mass deficit; positive self weight guarantees denominator",
+    "timing": "entering-state means, before communication and observation",
+    "scope": "conditional social sharing only; no sensory gate, model support gate, utility or model-score forgetting",
+    "readout": "retain per-agent realized total weight assigned to opposite group"
+  },
+  "pairing": {
+    "rng": "JAX threefry2x32; key,sk=split(key), agent_keys=split(sk,N); seed initializes PRNGKey",
+    "evaluation": "fold_in(entering_key,314159); normal((N,4,3),float64), never enters training state",
+    "archive_conditions": [
+      "C10",
+      "C11",
+      "C10_gasvar_matched"
+    ],
+    "archive_run": "ccaba0e8-39ca-4993-a219-64ce4cd09de5",
+    "archive_producer": "139225df25e641d387f4ea5e020e54203fe32c6b",
+    "claim": "paired extension of existing seed streams, not new independent confirmation of candidate outcomes"
+  },
+  "analysis": {
+    "horizons": [
+      1500,
+      5000
+    ],
+    "windows": {
+      "1500": [
+        1126,
+        1500
+      ],
+      "5000": [
+        3751,
+        5000
+      ]
+    },
+    "state_index": "postupdate state n=t+1",
+    "distance": "Euclidean distance between camp averages of observable posterior predictive means; candidate mixture primary, MAP secondary",
+    "signed_difference": "gas camp minus mass camp on C,G,M",
+    "systematic_gap": "within each seed average signed difference over window before taking norm; distinguish mean instantaneous norm and norm after across-seed averaging",
+    "performance": "per-group full observable signal MSE and independent held-out Gaussian/mixture NLL, both tail and endpoint",
+    "contrasts": [
+      "gated-minus-plain within information-pool reference",
+      "gated-minus-plain within moment-matched reference",
+      "moment-minus-information reference within each Gaussian mechanism"
+    ],
+    "bootstrap_replicates": 2000,
+    "bootstrap_seed": 20260920,
+    "unit": "whole seed, paired across arms; pointwise 95% percentile intervals",
+    "no_smoothing": true,
+    "no_outcome_seed_selection": true,
+    "gate_diagnostics": "effective cross-group conditional influence, reported separately for each group",
+    "no_expected_ordering_assertions": true,
+    "across_seed_norm": "norm of across-seed average signed gap is a descriptive point only; no percentile CI or significance inference from its nonnegative norm; report signed coordinates separately"
+  },
+  "figure_plan": {
+    "main": "old-style camp predictive distance with Gaussian, gated Gaussian, private candidate and shared-weight candidate control; candidate q by group; late predictive losses including gas-variance control",
+    "supplement": "reference-compression sensitivity, MAP vs mixture distance, systematic vs instantaneous gap, effective cross-group influence",
+    "style": "orx vendored style, actual LaTeX Computer Modern, 4.8in vector PDF/SVG plus PNG preview",
+    "existing_figures": "retain previous seven figures unchanged"
+  },
+  "interpretation_limits": [
+    "Matched retention and information access do not make the K=1 prior identical to a two-component mixture.",
+    "Continuous prediction disagreement is not opposing theoretical commitment.",
+    "Continual heterogeneous observations plus reference retention can sustain a single-Gaussian gap.",
+    "The private-weight candidate condition does not exchange model support; shared-weight control must be visible.",
+    "Gate nu inherited from archived experiment, not tuned to the resulting trajectories.",
+    "Variance control and predictive costs remain part of any camp-separation claim."
+  ],
+  "validation_plan": [
+    "independent prior compilation and expected stationary means for ungated K1",
+    "weighted-gate and ungated limit checks",
+    "independent NumPy per-step score/deposit/retention and full-observation predictive NLL",
+    "paired observation/evaluation hashes vs archived C10",
+    "restart equivalence and no RNG consumption by readouts",
+    "raw finiteness positive definiteness, all hashes and checkpoint continuity",
+    "independent reductions of scalar and gap statistics",
+    "font/vector/layout validation and visual inspection"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "renderer": "LaTeX via text.usetex",
+  "text_family": "Computer Modern / CM-Super",
+  "text_encoding": "T1",
+  "math_family": "Computer Modern",
+  "preamble": "\\usepackage[T1]{fontenc}",
+  "reference_manuscript": "paper/communication_experiments/reference/camera_ready_main.tex",
+  "reference_manuscript_sha256": "362b5000f714ce99e7aca356b73380a9ae4bdd701af1625808609537a2cb186a"
+}

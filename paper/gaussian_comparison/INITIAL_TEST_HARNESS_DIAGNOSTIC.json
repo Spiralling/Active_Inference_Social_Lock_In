@@ -1,0 +1,15 @@
+{
+  "status": "test-only floating point tolerance defect",
+  "initial_result": {
+    "status": "failed",
+    "tests": 11,
+    "failures": 1,
+    "errors": 0,
+    "elapsed_seconds": 302.0455396671314,
+    "test_seeds": "900100..900109; excluded from scientific paired streams",
+    "independence": "Expected references, weighted gates, Gaussian densities, information updates and predictive NLL derived separately in NumPy/SciPy; production engine called only for actual values and engine-equivalence check."
+  },
+  "failed_assertion": "row normalization absolute tolerance 4e-16, observed 4.440892098500626e-16 (two ulp)",
+  "resolution": "Use the standard 16-term floating-point summation bound gamma_16=16*eps/(1-16*eps), approximately 3.55e-15. The legacy denominator adds 1e-12; the corrected implementation has no added epsilon. No producer changes; independent gate arrays and all ten other tests passed.",
+  "initial_log": "initial_independent_tests.log"
+}

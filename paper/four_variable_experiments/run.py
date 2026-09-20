@@ -311,7 +311,7 @@ if __name__=="__main__":
     # Preserve the fixed orx command while selecting this child's versioned suite.
     # Scientific changes live in committed code/config, never environment knobs.
     # The archived combustion wrapper and adaptive engine remain unchanged.
-    revised = HERE.parent / "communication_experiments" / "run.py"
+    revised = HERE.parent / "gaussian_comparison" / "run.py"
     if revised.exists() and len(sys.argv) == 1:
         import runpy
         runpy.run_path(str(revised), run_name="__main__")
