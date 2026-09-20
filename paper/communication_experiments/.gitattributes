@@ -1,2 +1,2 @@
-analysis/*.csv -text
+*.csv -text
 reference/camera_ready_provenance/*.csv -text

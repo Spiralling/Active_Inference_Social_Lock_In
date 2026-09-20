@@ -31,7 +31,7 @@ python -m venv .venv
 
 The recorded environment is Python 3.12.9, JAX/jaxlib 0.9.0, NumPy 2.3.4, SciPy 1.16.3 and Matplotlib 3.10.7 on macOS arm64 CPU. Figures require a working LaTeX installation with Computer Modern/CM-Super fonts; the original used TeX Live 2025. The renderer invokes `pdflatex` to build the captioned pack. On this Mac it recognizes `/Library/TeX/texbin`; elsewhere it also uses the normal executable search path. No simulation is needed to regenerate figures from `analysis/plot_data.npz`.
 
-The figure renderer and validator were tested on a fresh extraction of the final handoff. See top-level `PACKAGE_VALIDATION.json` beside the ZIP for the tested archive identity and checks; it is outside the ZIP to avoid a self-referential archive hash.
+A fresh extraction passed all 11 engine tests and six analysis tests and regenerated all 21 PDF/SVG/PNG assets and the seven-page figure pack byte for byte. The tested scientific files are unchanged in the final package; the final assembly adds these check records and documentation. See [checks/PORTABLE_PAYLOAD_CHECK.json](checks/PORTABLE_PAYLOAD_CHECK.json) and its logs. `PACKAGE_VALIDATION.json` beside the ZIP binds this check to the final archive hash; it stays outside the ZIP to avoid a self-referential hash.
 
 ## Tests and analysis from complete raw data
 

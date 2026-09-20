@@ -1,0 +1,56 @@
+{
+  "status": "passed",
+  "figure_count": 7,
+  "pack_pages": 7,
+  "width_inches": 4.8,
+  "vector": "No plot PDF contains raster images",
+  "fonts": {
+    "fig_network_channels": [
+      "CMMI8",
+      "CMR8",
+      "SFBX0800",
+      "SFRM0800"
+    ],
+    "fig_camp_channels": [
+      "CMMI8",
+      "CMR8",
+      "SFBX0800",
+      "SFRM0800"
+    ],
+    "fig_reference_diagnostics": [
+      "CMMI8",
+      "CMR5",
+      "CMR8",
+      "CMSY5",
+      "SFBX0800",
+      "SFRM0800"
+    ],
+    "fig_weight_sharing_intervention": [
+      "CMMI8",
+      "CMR8",
+      "SFBX0800",
+      "SFRM0800"
+    ],
+    "fig_all_camp_conditions": [
+      "CMMI8",
+      "CMR8",
+      "SFBX0800",
+      "SFRM0800"
+    ],
+    "fig_intervention_prediction": [
+      "CMMI8",
+      "CMR8",
+      "CMSY8",
+      "SFBX0800",
+      "SFRM0800"
+    ],
+    "fig_individual_and_uncertainty": [
+      "CMMI8",
+      "CMR8",
+      "SFBX0800",
+      "SFRM0800"
+    ]
+  },
+  "bounded_probability_arrays": 48,
+  "uncertainty": "pointwise whole-seed percentile bootstrap, bounded by construction"
+}
